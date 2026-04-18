@@ -1,0 +1,31 @@
+/* Custom styles for map popup tooltips */
+.map-popup .mapboxgl-popup-content {
+  padding: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.map-popup .mapboxgl-popup-tip {
+  border-top-color: white !important;
+}
+
+.map-popup .mapboxgl-popup-close-button {
+  font-size: 16px !important;
+  padding: 4px 8px !important;
+  color: #6b7280 !important;
+}
+
+.map-popup .mapboxgl-popup-close-button:hover {
+  background-color: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+/* Hover effects for map points */
+.mapboxgl-canvas-container {
+  cursor: default;
+}
+
+.mapboxgl-canvas-container.mapboxgl-track-pointer {
+  cursor: pointer;
+}
