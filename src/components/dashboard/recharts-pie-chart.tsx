@@ -195,8 +195,8 @@ export function RechartsPieChart({
                 </g>
               )}
               onMouseEnter={(data, index) => {
-                if (data && data.type) {
-                  setActiveType(data.type);
+                if (data && 'type' in data && data.type) {
+                  setActiveType(data.type as string);
                 }
               }}
               onMouseLeave={() => {
