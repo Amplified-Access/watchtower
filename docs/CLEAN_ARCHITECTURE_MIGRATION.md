@@ -112,7 +112,7 @@ Completed:
 In progress:
 
 - `admin` (organization user-management + form-management + incident-management flows migrated)
-- `super-admin` (form-management + incident-management + report-management flows migrated)
+- `super-admin` (form-management + incident-management + report-management + dashboard-stats flow migrated)
 
 In queue (next):
 

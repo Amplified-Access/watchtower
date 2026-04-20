@@ -2,15 +2,17 @@ import { db as defaultDb } from "@/db";
 import { user } from "@/db/schemas/auth";
 import { forms } from "@/db/schemas/forms";
 import { incidents } from "@/db/schemas/incidents";
+import { organizationApplications } from "@/db/schemas/organization-applications";
 import { organizations } from "@/db/schemas/organizations";
 import { reports } from "@/db/schemas/reports";
-import { and, asc, count, desc, eq } from "drizzle-orm";
+import { and, asc, count, desc, eq, or, sql } from "drizzle-orm";
 import type { SuperAdminFormRepository } from "../../domain/super-admin-form-repository";
 import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
   SuperAdminIncidentRecord,
+  SuperAdminDashboardStats,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
   SuperAdminReportRecord,
@@ -363,6 +365,145 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       reports: filteredData as SuperAdminReportRecord[],
       totalCount,
       hasMore: input.offset + filteredData.length < totalCount,
+    };
+  }
+
+  async getDashboardStats(): Promise<SuperAdminDashboardStats> {
+    const now = new Date();
+    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const [organizationsCount] = await this.database
+      .select({ count: count() })
+      .from(organizations);
+
+    const [adminsCount] = await this.database
+      .select({ count: count() })
+      .from(user)
+      .where(eq(user.role, "admin"));
+
+    const [watchersCount] = await this.database
+      .select({ count: count() })
+      .from(user)
+      .where(eq(user.role, "watcher"));
+
+    const [organizationsThisMonth] = await this.database
+      .select({ count: count() })
+      .from(organizations)
+      .where(sql`${organizations.createdAt} >= ${currentMonth}`);
+
+    const [organizationsLastMonth] = await this.database
+      .select({ count: count() })
+      .from(organizations)
+      .where(
+        and(
+          sql`${organizations.createdAt} >= ${lastMonth}`,
+          sql`${organizations.createdAt} < ${currentMonth}`,
+        ),
+      );
+
+    const [adminsThisMonth] = await this.database
+      .select({ count: count() })
+      .from(user)
+      .where(and(eq(user.role, "admin"), sql`${user.createdAt} >= ${currentMonth}`));
+
+    const [adminsLastMonth] = await this.database
+      .select({ count: count() })
+      .from(user)
+      .where(
+        and(
+          eq(user.role, "admin"),
+          sql`${user.createdAt} >= ${lastMonth}`,
+          sql`${user.createdAt} < ${currentMonth}`,
+        ),
+      );
+
+    const [watchersThisMonth] = await this.database
+      .select({ count: count() })
+      .from(user)
+      .where(
+        and(eq(user.role, "watcher"), sql`${user.createdAt} >= ${currentMonth}`),
+      );
+
+    const [watchersLastMonth] = await this.database
+      .select({ count: count() })
+      .from(user)
+      .where(
+        and(
+          eq(user.role, "watcher"),
+          sql`${user.createdAt} >= ${lastMonth}`,
+          sql`${user.createdAt} < ${currentMonth}`,
+        ),
+      );
+
+    const [pendingApplicationsCount] = await this.database
+      .select({ count: count() })
+      .from(organizationApplications)
+      .where(eq(organizationApplications.status, "pending"));
+
+    const [reportsThisMonth] = await this.database
+      .select({ count: count() })
+      .from(reports)
+      .where(sql`${reports.createdAt} >= ${currentMonth}`);
+
+    const [formsCount] = await this.database.select({ count: count() }).from(forms);
+
+    const [criticalIncidentsCount] = await this.database
+      .select({ count: count() })
+      .from(incidents)
+      .where(
+        or(eq(incidents.status, "reported"), eq(incidents.status, "investigating")),
+      );
+
+    const calculateGrowth = (current: number, previous: number) => {
+      if (previous === 0) {
+        return current > 0 ? 100 : 0;
+      }
+      return Math.round(((current - previous) / previous) * 100);
+    };
+
+    return {
+      totalOrganizations: organizationsCount.count,
+      totalAdmins: adminsCount.count,
+      totalWatchers: watchersCount.count,
+      pendingApplications: pendingApplicationsCount.count,
+      reportsThisMonth: reportsThisMonth.count,
+      activeForms: formsCount.count,
+      criticalIncidents: criticalIncidentsCount.count,
+      uptimePercentage: 99.9,
+      growth: {
+        organizations: {
+          current: organizationsThisMonth.count,
+          previous: organizationsLastMonth.count,
+          percentage: calculateGrowth(
+            organizationsThisMonth.count,
+            organizationsLastMonth.count,
+          ),
+        },
+        admins: {
+          current: adminsThisMonth.count,
+          previous: adminsLastMonth.count,
+          percentage: calculateGrowth(adminsThisMonth.count, adminsLastMonth.count),
+        },
+        watchers: {
+          current: watchersThisMonth.count,
+          previous: watchersLastMonth.count,
+          percentage: calculateGrowth(
+            watchersThisMonth.count,
+            watchersLastMonth.count,
+          ),
+        },
+      },
+      metrics: {
+        newOrganizationsThisMonth: organizationsThisMonth.count,
+        newAdminsThisMonth: adminsThisMonth.count,
+        newWatchersThisMonth: watchersThisMonth.count,
+        averageReportsPerOrg:
+          organizationsCount.count > 0
+            ? Math.round((reportsThisMonth.count / organizationsCount.count) * 10) /
+              10
+            : 0,
+      },
     };
   }
 }

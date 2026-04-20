@@ -91,3 +91,31 @@ export interface GetAllReportsForSuperAdminInput {
   limit: number;
   offset: number;
 }
+
+export interface SuperAdminGrowthMetric {
+  current: number;
+  previous: number;
+  percentage: number;
+}
+
+export interface SuperAdminDashboardStats {
+  totalOrganizations: number;
+  totalAdmins: number;
+  totalWatchers: number;
+  pendingApplications: number;
+  reportsThisMonth: number;
+  activeForms: number;
+  criticalIncidents: number;
+  uptimePercentage: number;
+  growth: {
+    organizations: SuperAdminGrowthMetric;
+    admins: SuperAdminGrowthMetric;
+    watchers: SuperAdminGrowthMetric;
+  };
+  metrics: {
+    newOrganizationsThisMonth: number;
+    newAdminsThisMonth: number;
+    newWatchersThisMonth: number;
+    averageReportsPerOrg: number;
+  };
+}

@@ -1,5 +1,6 @@
 import { DeleteFormForSuperAdmin } from "../application/use-cases/delete-form-for-super-admin";
 import { DeleteIncidentForSuperAdmin } from "../application/use-cases/delete-incident-for-super-admin";
+import { GetDashboardStatsForSuperAdmin } from "../application/use-cases/get-dashboard-stats-for-super-admin";
 import { GetAllIncidentsForSuperAdmin } from "../application/use-cases/get-all-incidents-for-super-admin";
 import { GetAllFormsForSuperAdmin } from "../application/use-cases/get-all-forms-for-super-admin";
 import { GetAllReportsForSuperAdmin } from "../application/use-cases/get-all-reports-for-super-admin";
@@ -20,6 +21,7 @@ export interface SuperAdminFormUseCases {
   updateIncidentStatusForSuperAdmin: UpdateIncidentStatusForSuperAdmin;
   deleteIncidentForSuperAdmin: DeleteIncidentForSuperAdmin;
   getAllReportsForSuperAdmin: GetAllReportsForSuperAdmin;
+  getDashboardStatsForSuperAdmin: GetDashboardStatsForSuperAdmin;
 }
 
 export const createSuperAdminFormUseCases = (
@@ -37,5 +39,8 @@ export const createSuperAdminFormUseCases = (
     ),
     deleteIncidentForSuperAdmin: new DeleteIncidentForSuperAdmin(repository),
     getAllReportsForSuperAdmin: new GetAllReportsForSuperAdmin(repository),
+    getDashboardStatsForSuperAdmin: new GetDashboardStatsForSuperAdmin(
+      repository,
+    ),
   };
 };

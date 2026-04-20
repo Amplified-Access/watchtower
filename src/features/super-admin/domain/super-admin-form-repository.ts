@@ -2,6 +2,7 @@ import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  SuperAdminDashboardStats,
   SuperAdminIncidentRecord,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
@@ -33,4 +34,5 @@ export interface SuperAdminFormRepository {
     totalCount: number;
     hasMore: boolean;
   }>;
+  getDashboardStats(): Promise<SuperAdminDashboardStats>;
 }

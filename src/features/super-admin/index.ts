@@ -2,6 +2,8 @@ export type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  SuperAdminDashboardStats,
+  SuperAdminGrowthMetric,
   SuperAdminIncidentRecord,
   SuperAdminIncidentStatus,
   SuperAdminFormRecord,
