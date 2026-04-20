@@ -3,7 +3,6 @@
  * Run this script to create sample organizations
  */
 
-// Load environment variables
 import "dotenv/config";
 
 import { db } from "../db/index";
@@ -14,81 +13,78 @@ async function seedOrganizations() {
   console.log("🌱 Seeding organizations data...");
 
   try {
-    // Get existing organizations
     const existingOrgs = await db.select().from(organizations);
     console.log(`Found ${existingOrgs.length} existing organizations`);
 
     if (existingOrgs.length > 0) {
-      // Update the first organization with sample data
       await db
         .update(organizations)
         .set({
           description:
-            "A leading digital rights organization working to protect and promote human rights in the digital age across East Africa.",
-          website: "https://example-org.com",
+            "Kenya's leading independent governance and accountability research organization. We monitor corruption, electoral integrity, and abuse of public office, publishing evidence-based reports used by civil society, media, and oversight bodies.",
+          website: "https://africog.org",
           location: "Nairobi, Kenya",
-          contactEmail: "volunteers@example-org.com",
+          contactEmail: "info@africog.org",
         })
         .where(eq(organizations.id, existingOrgs[0].id));
 
-      console.log("✅ Updated first organization with sample data");
+      console.log("✅ Updated first organization with Africa Centre for Open Governance data");
     }
 
-    // Add sample organizations
-    console.log("Creating sample organizations...");
     const organizationsData = [
       {
-        name: "Tech for Good Initiative",
-        slug: "tech-for-good-initiative",
+        name: "Kenya Human Rights Commission",
+        slug: "kenya-human-rights-commission",
         description:
-          "Empowering communities through technology and digital literacy programs. We focus on building capacity in underserved communities and creating sustainable tech solutions.",
-        website: "https://techforgood.org",
+          "A leading Kenyan human rights organization that documents and responds to police misconduct, arbitrary detention, torture in custody, and state violence. KHRC conducts investigations, publishes reports, and provides legal support to victims of security force abuses across all 47 counties.",
+        website: "https://khrc.or.ke",
+        location: "Nairobi, Kenya",
+        contactEmail: "admin@khrc.or.ke",
+      },
+      {
+        name: "Uganda Human Rights Commission",
+        slug: "uganda-human-rights-commission",
+        description:
+          "Uganda's constitutional human rights body mandated to investigate violations including police brutality, unlawful detention, abuse of authority, and electoral malpractice. Receives and adjudicates individual complaints and produces annual state-of-human-rights reports.",
+        website: "https://uhrc.ug",
         location: "Kampala, Uganda",
-        contactEmail: "volunteers@techforgood.org",
+        contactEmail: "uhrc@uhrc.ug",
       },
       {
-        name: "Civic Engagement Platform",
-        slug: "civic-engagement-platform",
+        name: "Tanzania Human Rights Defenders Coalition",
+        slug: "thrdc",
         description:
-          "Building digital tools to enhance citizen participation in governance and democracy. Our mission is to make government more transparent and accessible.",
-        website: "https://civicplatform.org",
+          "A national coalition of over 300 civil society organizations monitoring human rights conditions in Tanzania. Documents incidents of police misconduct, suppression of public demonstrations, election irregularities, and abuse of public office by state officials.",
+        website: "https://thrdc.or.tz",
         location: "Dar es Salaam, Tanzania",
-        contactEmail: "info@civicplatform.org",
+        contactEmail: "info@thrdc.or.tz",
       },
       {
-        name: "Data Privacy Alliance",
-        slug: "data-privacy-alliance",
+        name: "Ethiopian Human Rights Commission",
+        slug: "ethiopian-human-rights-commission",
         description:
-          "Advocating for strong data protection laws and digital privacy rights. We work with policymakers and communities to ensure digital rights are protected.",
-        website: "https://dataprivacy.org",
+          "Ethiopia's independent constitutional human rights institution monitoring state conduct, security force behavior, and civil liberties. Publishes thematic reports on protest crackdowns, detention conditions, election environments, and misuse of government authority.",
+        website: "https://www.ehrc.org.et",
+        location: "Addis Ababa, Ethiopia",
+        contactEmail: "info@ehrc.org.et",
+      },
+      {
+        name: "Rwanda Civil Society Platform",
+        slug: "rwanda-civil-society-platform",
+        description:
+          "An umbrella body coordinating over 170 Rwandan civil society organizations working on governance accountability, community petitions, and civic participation. Serves as a liaison between citizen grievances and government institutions, facilitating formal petitioning processes.",
+        website: "https://rcsp.rw",
         location: "Kigali, Rwanda",
-        contactEmail: "hello@dataprivacy.org",
-      },
-      {
-        name: "Open Source Africa",
-        slug: "open-source-africa",
-        description:
-          "Promoting open source software development and digital innovation across the African continent. We support developers and tech entrepreneurs.",
-        website: "https://opensourceafrica.org",
-        location: "Lagos, Nigeria",
-        contactEmail: "community@opensourceafrica.org",
-      },
-      {
-        name: "Digital Rights Foundation",
-        slug: "digital-rights-foundation",
-        description:
-          "A research and advocacy organization focused on internet freedom, digital security, and online civil liberties in emerging democracies.",
-        website: "https://digitalrights.foundation",
-        location: "Accra, Ghana",
-        contactEmail: "contact@digitalrights.foundation",
+        contactEmail: "info@rcsp.rw",
       },
     ];
 
     const createdOrgs = await db
       .insert(organizations)
       .values(organizationsData)
+      .onConflictDoNothing()
       .returning();
-    console.log(`✅ Created ${createdOrgs.length} sample organizations`);
+    console.log(`✅ Upserted ${createdOrgs.length} organizations`);
 
     console.log("🎉 Organizations seeding completed successfully!");
   } catch (error) {
@@ -97,7 +93,6 @@ async function seedOrganizations() {
   }
 }
 
-// Run the seeding
 seedOrganizations()
   .then(() => {
     console.log("✨ Organizations seeding process completed");

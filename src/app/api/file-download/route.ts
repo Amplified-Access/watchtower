@@ -23,6 +23,11 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // External datasets: redirect to the source URL directly
+    if (fileKey.startsWith("https://") || fileKey.startsWith("http://")) {
+      return NextResponse.redirect(fileKey);
+    }
+
     // Get file from Cloudflare R2
     const getObjectCommand = new GetObjectCommand({
       Bucket: "amplified-access-bucket",
