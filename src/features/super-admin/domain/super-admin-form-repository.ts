@@ -1,9 +1,11 @@
 import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
+  GetAllReportsForSuperAdminInput,
   SuperAdminIncidentRecord,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  SuperAdminReportRecord,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
 } from "./super-admin-form-types";
@@ -26,4 +28,9 @@ export interface SuperAdminFormRepository {
   getIncidentById(incidentId: string): Promise<SuperAdminIncidentRecord | null>;
   updateIncidentStatus(input: UpdateIncidentStatusForSuperAdminInput): Promise<void>;
   deleteIncident(incidentId: string): Promise<void>;
+  getAllReports(input: GetAllReportsForSuperAdminInput): Promise<{
+    reports: SuperAdminReportRecord[];
+    totalCount: number;
+    hasMore: boolean;
+  }>;
 }

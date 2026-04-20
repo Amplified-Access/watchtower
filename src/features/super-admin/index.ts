@@ -1,10 +1,13 @@
 export type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
+  GetAllReportsForSuperAdminInput,
   SuperAdminIncidentRecord,
   SuperAdminIncidentStatus,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  SuperAdminReportRecord,
+  SuperAdminReportStatus,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
 } from "./domain/super-admin-form-types";

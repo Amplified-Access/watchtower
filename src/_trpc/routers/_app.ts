@@ -1442,107 +1442,12 @@ export const appRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const {
-        search,
-        organizationId,
-        status,
-        sortBy,
-        sortOrder,
-        limit,
-        offset,
-      } = input;
-
       try {
-        // Build where conditions
-        const whereConditions = [];
-
-        if (organizationId) {
-          whereConditions.push(eq(reports.organizationId, organizationId));
-        }
-
-        if (status !== "all") {
-          whereConditions.push(eq(reports.status, status));
-        }
-
-        // Determine order by clause
-        let orderByClause;
-        if (sortBy === "createdAt") {
-          orderByClause =
-            sortOrder === "desc"
-              ? desc(reports.createdAt)
-              : asc(reports.createdAt);
-        } else if (sortBy === "updatedAt") {
-          orderByClause =
-            sortOrder === "desc"
-              ? desc(reports.updatedAt)
-              : asc(reports.updatedAt);
-        } else if (sortBy === "title") {
-          orderByClause =
-            sortOrder === "desc" ? desc(reports.title) : asc(reports.title);
-        } else {
-          orderByClause = desc(reports.updatedAt); // default
-        }
-
-        // Execute the main query
-        const data = await db
-          .select({
-            id: reports.id,
-            organizationId: reports.organizationId,
-            reportedById: reports.reportedById,
-            title: reports.title,
-            fileKey: reports.fileKey,
-            status: reports.status,
-            createdAt: reports.createdAt,
-            updatedAt: reports.updatedAt,
-            authorName: user.name,
-            authorEmail: user.email,
-            organizationName: organizations.name,
-          })
-          .from(reports)
-          .leftJoin(user, eq(reports.reportedById, user.id))
-          .leftJoin(organizations, eq(reports.organizationId, organizations.id))
-          .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined,
-          )
-          .orderBy(orderByClause)
-          .limit(limit)
-          .offset(offset);
-
-        // If search is provided, filter results
-        let filteredData = data;
-        if (search) {
-          filteredData = data.filter((report) => {
-            const searchLower = search.toLowerCase();
-            const title = (report.title || "").toLowerCase();
-            const organizationName = (
-              report.organizationName || ""
-            ).toLowerCase();
-            const authorName = (report.authorName || "").toLowerCase();
-
-            return (
-              title.includes(searchLower) ||
-              organizationName.includes(searchLower) ||
-              authorName.includes(searchLower)
-            );
-          });
-        }
-
-        // Get total count for pagination
-        const totalCountResult = await db
-          .select({ count: count() })
-          .from(reports)
-          .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined,
-          );
-
-        const totalCount = totalCountResult[0]?.count || 0;
-
-        return {
-          reports: filteredData,
-          totalCount,
-          hasMore: offset + filteredData.length < totalCount,
-        };
+        return await superAdminForms.getAllReportsForSuperAdmin.execute(input);
       } catch (error) {
+        if (error instanceof SuperAdminFormValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Failed to retrieve reports:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

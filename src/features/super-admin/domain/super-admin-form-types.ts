@@ -65,3 +65,29 @@ export interface UpdateIncidentStatusForSuperAdminInput {
   incidentId: string;
   status: SuperAdminIncidentStatus;
 }
+
+export type SuperAdminReportStatus = "draft" | "published";
+
+export interface SuperAdminReportRecord {
+  id: string;
+  organizationId: string;
+  reportedById: string;
+  title: string;
+  fileKey: string;
+  status: SuperAdminReportStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  authorName: string | null;
+  authorEmail: string | null;
+  organizationName: string | null;
+}
+
+export interface GetAllReportsForSuperAdminInput {
+  search?: string;
+  organizationId?: string;
+  status: SuperAdminReportStatus | "all";
+  sortBy: "createdAt" | "updatedAt" | "title";
+  sortOrder: "asc" | "desc";
+  limit: number;
+  offset: number;
+}

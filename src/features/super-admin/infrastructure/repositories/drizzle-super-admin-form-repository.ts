@@ -3,14 +3,17 @@ import { user } from "@/db/schemas/auth";
 import { forms } from "@/db/schemas/forms";
 import { incidents } from "@/db/schemas/incidents";
 import { organizations } from "@/db/schemas/organizations";
+import { reports } from "@/db/schemas/reports";
 import { and, asc, count, desc, eq } from "drizzle-orm";
 import type { SuperAdminFormRepository } from "../../domain/super-admin-form-repository";
 import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
+  GetAllReportsForSuperAdminInput,
   SuperAdminIncidentRecord,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  SuperAdminReportRecord,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
 } from "../../domain/super-admin-form-types";
@@ -286,5 +289,80 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
 
   async deleteIncident(incidentId: string): Promise<void> {
     await this.database.delete(incidents).where(eq(incidents.id, incidentId));
+  }
+
+  async getAllReports(input: GetAllReportsForSuperAdminInput) {
+    const whereConditions = [];
+
+    if (input.organizationId) {
+      whereConditions.push(eq(reports.organizationId, input.organizationId));
+    }
+
+    if (input.status !== "all") {
+      whereConditions.push(eq(reports.status, input.status));
+    }
+
+    let orderByClause;
+    if (input.sortBy === "createdAt") {
+      orderByClause =
+        input.sortOrder === "desc" ? desc(reports.createdAt) : asc(reports.createdAt);
+    } else if (input.sortBy === "updatedAt") {
+      orderByClause =
+        input.sortOrder === "desc" ? desc(reports.updatedAt) : asc(reports.updatedAt);
+    } else {
+      orderByClause =
+        input.sortOrder === "desc" ? desc(reports.title) : asc(reports.title);
+    }
+
+    const data = await this.database
+      .select({
+        id: reports.id,
+        organizationId: reports.organizationId,
+        reportedById: reports.reportedById,
+        title: reports.title,
+        fileKey: reports.fileKey,
+        status: reports.status,
+        createdAt: reports.createdAt,
+        updatedAt: reports.updatedAt,
+        authorName: user.name,
+        authorEmail: user.email,
+        organizationName: organizations.name,
+      })
+      .from(reports)
+      .leftJoin(user, eq(reports.reportedById, user.id))
+      .leftJoin(organizations, eq(reports.organizationId, organizations.id))
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+      .orderBy(orderByClause)
+      .limit(input.limit)
+      .offset(input.offset);
+
+    let filteredData = data;
+    if (input.search) {
+      const searchLower = input.search.toLowerCase();
+      filteredData = data.filter((report) => {
+        const title = (report.title || "").toLowerCase();
+        const organizationName = (report.organizationName || "").toLowerCase();
+        const authorName = (report.authorName || "").toLowerCase();
+
+        return (
+          title.includes(searchLower) ||
+          organizationName.includes(searchLower) ||
+          authorName.includes(searchLower)
+        );
+      });
+    }
+
+    const totalCountResult = await this.database
+      .select({ count: count() })
+      .from(reports)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
+
+    const totalCount = totalCountResult[0]?.count || 0;
+
+    return {
+      reports: filteredData as SuperAdminReportRecord[],
+      totalCount,
+      hasMore: input.offset + filteredData.length < totalCount,
+    };
   }
 }
