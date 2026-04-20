@@ -2492,34 +2492,10 @@ export const appRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { limit } = input;
-
       try {
-        const criticalIncidents = await db
-          .select({
-            id: incidents.id,
-            title: sql`'Security Incident'`.as("title"),
-            status: incidents.status,
-            createdAt: incidents.createdAt,
-          })
-          .from(incidents)
-          .where(
-            or(
-              eq(incidents.status, "reported"),
-              eq(incidents.status, "investigating"),
-            ),
-          )
-          .orderBy(desc(incidents.createdAt))
-          .limit(limit);
-
-        return criticalIncidents.map((incident) => ({
-          id: String(incident.id),
-          title: String(incident.title),
-          status: incident.status,
-          date: formatTimeAgo(new Date(incident.createdAt)),
-          type: "Security Incident",
-          href: `/superadmin/incidents/${incident.id}`,
-        }));
+        return await superAdminForms.getCriticalIncidentsForSuperAdmin.execute(
+          input,
+        );
       } catch (error) {
         console.error("Error fetching critical incidents:", error);
         throw new TRPCError({

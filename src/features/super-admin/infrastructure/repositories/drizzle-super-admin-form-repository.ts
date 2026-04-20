@@ -11,8 +11,10 @@ import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  GetCriticalIncidentsForSuperAdminInput,
   GetPendingApplicationsForSuperAdminInput,
   GetRecentActivityForSuperAdminInput,
+  SuperAdminCriticalIncidentItem,
   SuperAdminIncidentRecord,
   SuperAdminDashboardStats,
   SuperAdminFormRecord,
@@ -650,6 +652,36 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       date: this.formatTimeAgo(new Date(app.createdAt)),
       type: "Organization Application",
       href: `/superadmin/applications/${app.id}`,
+    }));
+  }
+
+  async getCriticalIncidents(
+    input: GetCriticalIncidentsForSuperAdminInput,
+  ): Promise<SuperAdminCriticalIncidentItem[]> {
+    const criticalIncidents = await this.database
+      .select({
+        id: incidents.id,
+        title: sql`'Security Incident'`.as("title"),
+        status: incidents.status,
+        createdAt: incidents.createdAt,
+      })
+      .from(incidents)
+      .where(
+        or(
+          eq(incidents.status, "reported"),
+          eq(incidents.status, "investigating"),
+        ),
+      )
+      .orderBy(desc(incidents.createdAt))
+      .limit(input.limit);
+
+    return criticalIncidents.map((incident) => ({
+      id: String(incident.id),
+      title: String(incident.title),
+      status: incident.status as SuperAdminCriticalIncidentItem["status"],
+      date: this.formatTimeAgo(new Date(incident.createdAt)),
+      type: "Security Incident",
+      href: `/superadmin/incidents/${incident.id}`,
     }));
   }
 

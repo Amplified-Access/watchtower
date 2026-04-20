@@ -2,8 +2,10 @@ import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  GetCriticalIncidentsForSuperAdminInput,
   GetPendingApplicationsForSuperAdminInput,
   GetRecentActivityForSuperAdminInput,
+  SuperAdminCriticalIncidentItem,
   SuperAdminDashboardStats,
   SuperAdminIncidentRecord,
   SuperAdminFormRecord,
@@ -47,4 +49,7 @@ export interface SuperAdminFormRepository {
   getPendingApplications(
     input: GetPendingApplicationsForSuperAdminInput,
   ): Promise<SuperAdminPendingApplicationItem[]>;
+  getCriticalIncidents(
+    input: GetCriticalIncidentsForSuperAdminInput,
+  ): Promise<SuperAdminCriticalIncidentItem[]>;
 }

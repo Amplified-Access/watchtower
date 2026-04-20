@@ -154,3 +154,16 @@ export interface SuperAdminPendingApplicationItem {
   type: "Organization Application";
   href: string;
 }
+
+export interface GetCriticalIncidentsForSuperAdminInput {
+  limit: number;
+}
+
+export interface SuperAdminCriticalIncidentItem {
+  id: string;
+  title: string;
+  status: SuperAdminIncidentStatus;
+  date: string;
+  type: "Security Incident";
+  href: string;
+}
