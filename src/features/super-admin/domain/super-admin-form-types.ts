@@ -119,3 +119,25 @@ export interface SuperAdminDashboardStats {
     averageReportsPerOrg: number;
   };
 }
+
+export interface GetRecentActivityForSuperAdminInput {
+  limit: number;
+}
+
+export type SuperAdminRecentActivityType =
+  | "incident"
+  | "report"
+  | "form"
+  | "application"
+  | "admin"
+  | "watcher";
+
+export interface SuperAdminRecentActivityItem {
+  id: string;
+  title: string;
+  description: string;
+  timestamp: string;
+  type: SuperAdminRecentActivityType;
+  status: string;
+  href: string;
+}

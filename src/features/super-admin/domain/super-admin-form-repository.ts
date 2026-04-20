@@ -2,10 +2,12 @@ import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  GetRecentActivityForSuperAdminInput,
   SuperAdminDashboardStats,
   SuperAdminIncidentRecord,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  SuperAdminRecentActivityItem,
   SuperAdminReportRecord,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
@@ -27,7 +29,9 @@ export interface SuperAdminFormRepository {
     hasMore: boolean;
   }>;
   getIncidentById(incidentId: string): Promise<SuperAdminIncidentRecord | null>;
-  updateIncidentStatus(input: UpdateIncidentStatusForSuperAdminInput): Promise<void>;
+  updateIncidentStatus(
+    input: UpdateIncidentStatusForSuperAdminInput,
+  ): Promise<void>;
   deleteIncident(incidentId: string): Promise<void>;
   getAllReports(input: GetAllReportsForSuperAdminInput): Promise<{
     reports: SuperAdminReportRecord[];
@@ -35,4 +39,7 @@ export interface SuperAdminFormRepository {
     hasMore: boolean;
   }>;
   getDashboardStats(): Promise<SuperAdminDashboardStats>;
+  getRecentActivity(
+    input: GetRecentActivityForSuperAdminInput,
+  ): Promise<SuperAdminRecentActivityItem[]>;
 }

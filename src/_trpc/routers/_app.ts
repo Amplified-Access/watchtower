@@ -289,7 +289,9 @@ export const appRouter = router({
     )
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getAllIncidentsForSuperAdmin.execute(input);
+        return await superAdminForms.getAllIncidentsForSuperAdmin.execute(
+          input,
+        );
       } catch (error) {
         if (error instanceof SuperAdminFormValidationError) {
           throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
@@ -2335,110 +2337,10 @@ export const appRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { limit } = input;
-
       try {
-        // Get recent organization applications
-        const recentApplications = await db
-          .select({
-            id: organizationApplications.id,
-            title: organizationApplications.organizationName,
-            type: sql`'application'`.as("type"),
-            status: organizationApplications.status,
-            createdAt: organizationApplications.createdAt,
-            description:
-              sql`CONCAT('Organization application from ', ${organizationApplications.applicantName})`.as(
-                "description",
-              ),
-          })
-          .from(organizationApplications)
-          .orderBy(desc(organizationApplications.createdAt))
-          .limit(3);
-
-        // Get recent incidents
-        const recentIncidents = await db
-          .select({
-            id: incidents.id,
-            title: sql`'Incident Report'`.as("title"),
-            type: sql`'incident'`.as("type"),
-            status: incidents.status,
-            createdAt: incidents.createdAt,
-            description: sql`'Security incident reported'`.as("description"),
-          })
-          .from(incidents)
-          .orderBy(desc(incidents.createdAt))
-          .limit(3);
-
-        // Get recent reports
-        const recentReports = await db
-          .select({
-            id: reports.id,
-            title: reports.title,
-            type: sql`'report'`.as("type"),
-            status: reports.status,
-            createdAt: reports.createdAt,
-            description: sql`CONCAT('Report published: ', ${reports.title})`.as(
-              "description",
-            ),
-          })
-          .from(reports)
-          .where(eq(reports.status, "published"))
-          .orderBy(desc(reports.createdAt))
-          .limit(3);
-
-        // Get recent users (admins and watchers)
-        const recentUsers = await db
-          .select({
-            id: user.id,
-            title: user.name,
-            type: user.role, // Use role directly so we get 'admin' or 'watcher'
-            status: sql`'active'`.as("status"),
-            createdAt: user.createdAt,
-            description:
-              sql`CONCAT(${user.role}, ' user added: ', ${user.name})`.as(
-                "description",
-              ),
-          })
-          .from(user)
-          .where(or(eq(user.role, "admin"), eq(user.role, "watcher")))
-          .orderBy(desc(user.createdAt))
-          .limit(2);
-
-        // Combine all activities and sort by date
-        const allActivities = [
-          ...recentApplications,
-          ...recentIncidents,
-          ...recentReports,
-          ...recentUsers,
-        ].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        return await superAdminForms.getRecentActivityForSuperAdmin.execute(
+          input,
         );
-
-        // Take only the requested number of items
-        const limitedActivities = allActivities.slice(0, limit);
-
-        // Format activities for the frontend
-        const formattedActivities = limitedActivities.map((activity) => {
-          const timeAgo = formatTimeAgo(new Date(activity.createdAt));
-          return {
-            id: String(activity.id),
-            title: String(activity.title || "Unknown Activity"),
-            description: String(activity.description),
-            timestamp: timeAgo,
-            type: String(activity.type) as
-              | "incident"
-              | "report"
-              | "form"
-              | "application"
-              | "admin"
-              | "watcher",
-            status: String(activity.status),
-            href: getActivityHref(String(activity.type), String(activity.id)),
-          };
-        });
-
-        return formattedActivities;
       } catch (error) {
         console.error("Error fetching recent activity:", error);
         throw new TRPCError({

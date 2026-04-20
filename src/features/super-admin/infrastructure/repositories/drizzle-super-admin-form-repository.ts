@@ -11,10 +11,12 @@ import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  GetRecentActivityForSuperAdminInput,
   SuperAdminIncidentRecord,
   SuperAdminDashboardStats,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  SuperAdminRecentActivityItem,
   SuperAdminReportRecord,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
@@ -37,12 +39,17 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
     let orderByClause;
     if (input.sortBy === "createdAt") {
       orderByClause =
-        input.sortOrder === "desc" ? desc(forms.createdAt) : asc(forms.createdAt);
+        input.sortOrder === "desc"
+          ? desc(forms.createdAt)
+          : asc(forms.createdAt);
     } else if (input.sortBy === "updatedAt") {
       orderByClause =
-        input.sortOrder === "desc" ? desc(forms.updatedAt) : asc(forms.updatedAt);
+        input.sortOrder === "desc"
+          ? desc(forms.updatedAt)
+          : asc(forms.updatedAt);
     } else {
-      orderByClause = input.sortOrder === "desc" ? desc(forms.name) : asc(forms.name);
+      orderByClause =
+        input.sortOrder === "desc" ? desc(forms.name) : asc(forms.name);
     }
 
     const data = await this.database
@@ -86,7 +93,8 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
         const organizationName = (form.organizationName || "").toLowerCase();
 
         return (
-          formName.includes(searchLower) || organizationName.includes(searchLower)
+          formName.includes(searchLower) ||
+          organizationName.includes(searchLower)
         );
       });
     }
@@ -147,7 +155,10 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       updateData.isActive = input.isActive;
     }
 
-    await this.database.update(forms).set(updateData).where(eq(forms.id, input.formId));
+    await this.database
+      .update(forms)
+      .set(updateData)
+      .where(eq(forms.id, input.formId));
   }
 
   async getFormIncidentCount(formId: string): Promise<number> {
@@ -191,7 +202,9 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
           : asc(incidents.updatedAt);
     } else {
       orderByClause =
-        input.sortOrder === "desc" ? desc(incidents.status) : asc(incidents.status);
+        input.sortOrder === "desc"
+          ? desc(incidents.status)
+          : asc(incidents.status);
     }
 
     const data = await this.database
@@ -223,7 +236,9 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       filteredData = data.filter((incident) => {
         const dataString = JSON.stringify(incident.data).toLowerCase();
         const formName = (incident.formName || "").toLowerCase();
-        const organizationName = (incident.organizationName || "").toLowerCase();
+        const organizationName = (
+          incident.organizationName || ""
+        ).toLowerCase();
         const reporterEmail = (incident.reporterEmail || "").toLowerCase();
 
         return (
@@ -307,10 +322,14 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
     let orderByClause;
     if (input.sortBy === "createdAt") {
       orderByClause =
-        input.sortOrder === "desc" ? desc(reports.createdAt) : asc(reports.createdAt);
+        input.sortOrder === "desc"
+          ? desc(reports.createdAt)
+          : asc(reports.createdAt);
     } else if (input.sortBy === "updatedAt") {
       orderByClause =
-        input.sortOrder === "desc" ? desc(reports.updatedAt) : asc(reports.updatedAt);
+        input.sortOrder === "desc"
+          ? desc(reports.updatedAt)
+          : asc(reports.updatedAt);
     } else {
       orderByClause =
         input.sortOrder === "desc" ? desc(reports.title) : asc(reports.title);
@@ -405,7 +424,9 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
     const [adminsThisMonth] = await this.database
       .select({ count: count() })
       .from(user)
-      .where(and(eq(user.role, "admin"), sql`${user.createdAt} >= ${currentMonth}`));
+      .where(
+        and(eq(user.role, "admin"), sql`${user.createdAt} >= ${currentMonth}`),
+      );
 
     const [adminsLastMonth] = await this.database
       .select({ count: count() })
@@ -422,7 +443,10 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       .select({ count: count() })
       .from(user)
       .where(
-        and(eq(user.role, "watcher"), sql`${user.createdAt} >= ${currentMonth}`),
+        and(
+          eq(user.role, "watcher"),
+          sql`${user.createdAt} >= ${currentMonth}`,
+        ),
       );
 
     const [watchersLastMonth] = await this.database
@@ -446,13 +470,18 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       .from(reports)
       .where(sql`${reports.createdAt} >= ${currentMonth}`);
 
-    const [formsCount] = await this.database.select({ count: count() }).from(forms);
+    const [formsCount] = await this.database
+      .select({ count: count() })
+      .from(forms);
 
     const [criticalIncidentsCount] = await this.database
       .select({ count: count() })
       .from(incidents)
       .where(
-        or(eq(incidents.status, "reported"), eq(incidents.status, "investigating")),
+        or(
+          eq(incidents.status, "reported"),
+          eq(incidents.status, "investigating"),
+        ),
       );
 
     const calculateGrowth = (current: number, previous: number) => {
@@ -483,7 +512,10 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
         admins: {
           current: adminsThisMonth.count,
           previous: adminsLastMonth.count,
-          percentage: calculateGrowth(adminsThisMonth.count, adminsLastMonth.count),
+          percentage: calculateGrowth(
+            adminsThisMonth.count,
+            adminsLastMonth.count,
+          ),
         },
         watchers: {
           current: watchersThisMonth.count,
@@ -500,10 +532,136 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
         newWatchersThisMonth: watchersThisMonth.count,
         averageReportsPerOrg:
           organizationsCount.count > 0
-            ? Math.round((reportsThisMonth.count / organizationsCount.count) * 10) /
-              10
+            ? Math.round(
+                (reportsThisMonth.count / organizationsCount.count) * 10,
+              ) / 10
             : 0,
       },
     };
+  }
+
+  async getRecentActivity(
+    input: GetRecentActivityForSuperAdminInput,
+  ): Promise<SuperAdminRecentActivityItem[]> {
+    const recentApplications = await this.database
+      .select({
+        id: organizationApplications.id,
+        title: organizationApplications.organizationName,
+        type: sql`'application'`.as("type"),
+        status: organizationApplications.status,
+        createdAt: organizationApplications.createdAt,
+        description:
+          sql`CONCAT('Organization application from ', ${organizationApplications.applicantName})`.as(
+            "description",
+          ),
+      })
+      .from(organizationApplications)
+      .orderBy(desc(organizationApplications.createdAt))
+      .limit(3);
+
+    const recentIncidents = await this.database
+      .select({
+        id: incidents.id,
+        title: sql`'Incident Report'`.as("title"),
+        type: sql`'incident'`.as("type"),
+        status: incidents.status,
+        createdAt: incidents.createdAt,
+        description: sql`'Security incident reported'`.as("description"),
+      })
+      .from(incidents)
+      .orderBy(desc(incidents.createdAt))
+      .limit(3);
+
+    const recentReports = await this.database
+      .select({
+        id: reports.id,
+        title: reports.title,
+        type: sql`'report'`.as("type"),
+        status: reports.status,
+        createdAt: reports.createdAt,
+        description: sql`CONCAT('Report published: ', ${reports.title})`.as(
+          "description",
+        ),
+      })
+      .from(reports)
+      .where(eq(reports.status, "published"))
+      .orderBy(desc(reports.createdAt))
+      .limit(3);
+
+    const recentUsers = await this.database
+      .select({
+        id: user.id,
+        title: user.name,
+        type: user.role,
+        status: sql`'active'`.as("status"),
+        createdAt: user.createdAt,
+        description:
+          sql`CONCAT(${user.role}, ' user added: ', ${user.name})`.as(
+            "description",
+          ),
+      })
+      .from(user)
+      .where(or(eq(user.role, "admin"), eq(user.role, "watcher")))
+      .orderBy(desc(user.createdAt))
+      .limit(2);
+
+    const allActivities = [
+      ...recentApplications,
+      ...recentIncidents,
+      ...recentReports,
+      ...recentUsers,
+    ].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+
+    return allActivities.slice(0, input.limit).map((activity) => ({
+      id: String(activity.id),
+      title: String(activity.title || "Unknown Activity"),
+      description: String(activity.description),
+      timestamp: this.formatTimeAgo(new Date(activity.createdAt)),
+      type: String(activity.type) as SuperAdminRecentActivityItem["type"],
+      status: String(activity.status),
+      href: this.getActivityHref(String(activity.type), String(activity.id)),
+    }));
+  }
+
+  private formatTimeAgo(date: Date): string {
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 1) {
+      return "Just now";
+    }
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes}m ago`;
+    }
+    if (diffInHours < 24) {
+      return `${diffInHours}h ago`;
+    }
+    if (diffInDays < 7) {
+      return `${diffInDays}d ago`;
+    }
+
+    return date.toLocaleDateString();
+  }
+
+  private getActivityHref(type: string, id: string): string {
+    switch (type) {
+      case "application":
+        return `/superadmin/applications/${id}`;
+      case "incident":
+        return `/superadmin/incidents/${id}`;
+      case "report":
+        return `/superadmin/reports/${id}`;
+      case "admin":
+      case "watcher":
+        return `/superadmin/admin-management`;
+      default:
+        return "/superadmin";
+    }
   }
 }
