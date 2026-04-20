@@ -104,16 +104,16 @@ Completed:
 - `alert-subscriptions`
 - `notifications`
 - `anonymous-reporting`
+- `auth`
 
 In queue (next):
 
-1. `auth`
-2. `organization-registration`
-3. `datasets`
-4. `maps`
-5. `watcher`
-6. `admin`
-7. `super-admin`
+1. `organization-registration`
+2. `datasets`
+3. `maps`
+4. `watcher`
+5. `admin`
+6. `super-admin`
 
 Notes:
 

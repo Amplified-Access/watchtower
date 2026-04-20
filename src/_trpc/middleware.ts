@@ -2,9 +2,9 @@ import { TRPCError } from "@trpc/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { publicProcedure } from "./trpc";
-import { db } from "@/db";
-import { user } from "@/db/schemas/auth";
-import { eq } from "drizzle-orm";
+import { createAuthUseCases } from "@/features/auth";
+
+const authUseCases = createAuthUseCases();
 
 /**
  * Auth middleware that checks if user is authenticated
@@ -21,21 +21,16 @@ export const authMiddleware = publicProcedure.use(async ({ next }) => {
     });
   }
 
-  // Fetch complete user data from database including organizationId
-  const userData = await db
-    .select()
-    .from(user)
-    .where(eq(user.id, session.user.id))
-    .limit(1);
+  const fullUser = await authUseCases.getAuthUserById
+    .execute(session.user.id)
+    .catch(() => null);
 
-  if (!userData.length) {
+  if (!fullUser) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "User not found in database",
     });
   }
-
-  const fullUser = userData[0];
 
   return next({
     ctx: {
