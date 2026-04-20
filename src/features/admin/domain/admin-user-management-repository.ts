@@ -1,5 +1,7 @@
 import type {
   AvailableIncidentTypeRecord,
+  AdminDashboardPendingReportItem,
+  AdminDashboardRecentIncidentItem,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
@@ -55,10 +57,22 @@ export interface AdminUserManagementRepository {
   isIncidentTypeEnabledForOrganization(
     input: IncidentTypeActionInput,
   ): Promise<boolean>;
-  enableIncidentTypeForOrganization(input: IncidentTypeActionInput): Promise<void>;
-  createIncidentType(input: CreateIncidentTypeInput): Promise<AvailableIncidentTypeRecord>;
+  enableIncidentTypeForOrganization(
+    input: IncidentTypeActionInput,
+  ): Promise<void>;
+  createIncidentType(
+    input: CreateIncidentTypeInput,
+  ): Promise<AvailableIncidentTypeRecord>;
   getOrganizationIncidentTypeLinkId(
     input: IncidentTypeActionInput,
   ): Promise<string | null>;
   disableIncidentTypeForOrganization(linkId: string): Promise<void>;
+  getOrganizationRecentIncidents(input: {
+    organizationId: string;
+    limit: number;
+  }): Promise<AdminDashboardRecentIncidentItem[]>;
+  getOrganizationPendingReports(input: {
+    organizationId: string;
+    limit: number;
+  }): Promise<AdminDashboardPendingReportItem[]>;
 }

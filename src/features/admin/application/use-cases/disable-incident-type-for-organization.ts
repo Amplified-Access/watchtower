@@ -12,7 +12,8 @@ export class DisableIncidentTypeForOrganization {
       );
     }
 
-    const linkId = await this.repository.getOrganizationIncidentTypeLinkId(input);
+    const linkId =
+      await this.repository.getOrganizationIncidentTypeLinkId(input);
 
     if (!linkId) {
       throw new AdminNotFoundError(

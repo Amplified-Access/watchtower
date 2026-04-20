@@ -1,6 +1,8 @@
 export type {
   AdminActorContext,
   AvailableIncidentTypeRecord,
+  AdminDashboardPendingReportItem,
+  AdminDashboardRecentIncidentItem,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
@@ -8,6 +10,7 @@ export type {
   BasicUserRecord,
   CreateIncidentTypeInput,
   DeleteFormInput,
+  GetAdminDashboardListInput,
   GetIncidentByIdInput,
   GetOrganizationIncidentsInput,
   IncidentTypeActionInput,

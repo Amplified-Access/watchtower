@@ -13,6 +13,8 @@ import { GetAvailableIncidentTypes } from "../application/use-cases/get-availabl
 import { EnableIncidentTypeForOrganization } from "../application/use-cases/enable-incident-type-for-organization";
 import { CreateIncidentTypeForOrganization } from "../application/use-cases/create-incident-type-for-organization";
 import { DisableIncidentTypeForOrganization } from "../application/use-cases/disable-incident-type-for-organization";
+import { GetOrganizationPendingReports } from "../application/use-cases/get-organization-pending-reports";
+import { GetOrganizationRecentIncidents } from "../application/use-cases/get-organization-recent-incidents";
 import type { AdminUserManagementRepository } from "../domain/admin-user-management-repository";
 import { DrizzleAdminUserManagementRepository } from "./repositories/drizzle-admin-user-management-repository";
 
@@ -32,6 +34,8 @@ export interface AdminUserManagementUseCases {
   enableIncidentTypeForOrganization: EnableIncidentTypeForOrganization;
   createIncidentTypeForOrganization: CreateIncidentTypeForOrganization;
   disableIncidentTypeForOrganization: DisableIncidentTypeForOrganization;
+  getOrganizationRecentIncidents: GetOrganizationRecentIncidents;
+  getOrganizationPendingReports: GetOrganizationPendingReports;
 }
 
 export const createAdminUserManagementUseCases = (
@@ -57,7 +61,12 @@ export const createAdminUserManagementUseCases = (
     createIncidentTypeForOrganization: new CreateIncidentTypeForOrganization(
       repository,
     ),
-    disableIncidentTypeForOrganization:
-      new DisableIncidentTypeForOrganization(repository),
+    disableIncidentTypeForOrganization: new DisableIncidentTypeForOrganization(
+      repository,
+    ),
+    getOrganizationRecentIncidents: new GetOrganizationRecentIncidents(
+      repository,
+    ),
+    getOrganizationPendingReports: new GetOrganizationPendingReports(repository),
   };
 };

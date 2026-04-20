@@ -5,6 +5,7 @@ import { incidentTypes } from "@/db/schemas/incident-types";
 import { incidents } from "@/db/schemas/incidents";
 import { organizationIncidentTypes } from "@/db/schemas/organization-incident-types";
 import { organizations } from "@/db/schemas/organizations";
+import { reports } from "@/db/schemas/reports";
 import { auth } from "@/lib/auth";
 import { generateRandomSecurePassword } from "@/utils/generate-random-password";
 import { and, asc, count, desc, eq, sql } from "drizzle-orm";
@@ -12,6 +13,8 @@ import { headers } from "next/headers";
 import type { AdminUserManagementRepository } from "../../domain/admin-user-management-repository";
 import type {
   AvailableIncidentTypeRecord,
+  AdminDashboardPendingReportItem,
+  AdminDashboardRecentIncidentItem,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
@@ -376,7 +379,10 @@ export class DrizzleAdminUserManagementRepository implements AdminUserManagement
       })
       .from(incidentTypes)
       .where(
-        and(eq(incidentTypes.id, incidentTypeId), eq(incidentTypes.isActive, true)),
+        and(
+          eq(incidentTypes.id, incidentTypeId),
+          eq(incidentTypes.isActive, true),
+        ),
       )
       .limit(1);
 
@@ -411,7 +417,10 @@ export class DrizzleAdminUserManagementRepository implements AdminUserManagement
       .from(organizationIncidentTypes)
       .where(
         and(
-          eq(organizationIncidentTypes.organizationId, input.actor.organizationId!),
+          eq(
+            organizationIncidentTypes.organizationId,
+            input.actor.organizationId!,
+          ),
           eq(organizationIncidentTypes.incidentTypeId, input.incidentTypeId),
           eq(organizationIncidentTypes.isEnabled, true),
         ),
@@ -463,7 +472,10 @@ export class DrizzleAdminUserManagementRepository implements AdminUserManagement
       .from(organizationIncidentTypes)
       .where(
         and(
-          eq(organizationIncidentTypes.organizationId, input.actor.organizationId!),
+          eq(
+            organizationIncidentTypes.organizationId,
+            input.actor.organizationId!,
+          ),
           eq(organizationIncidentTypes.incidentTypeId, input.incidentTypeId),
           eq(organizationIncidentTypes.isEnabled, true),
         ),
@@ -481,5 +493,95 @@ export class DrizzleAdminUserManagementRepository implements AdminUserManagement
         updatedAt: new Date(),
       })
       .where(eq(organizationIncidentTypes.id, linkId));
+  }
+
+  async getOrganizationRecentIncidents(input: {
+    organizationId: string;
+    limit: number;
+  }): Promise<AdminDashboardRecentIncidentItem[]> {
+    const recentIncidents = await this.database
+      .select({
+        id: incidents.id,
+        title: sql<string>`CASE 
+              WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
+              THEN ${incidents.data}->>'incidentType'
+              ELSE 'Incident'
+            END`,
+        status: incidents.status,
+        date: incidents.createdAt,
+        type: sql<string>`CASE 
+              WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
+              THEN ${incidents.data}->>'incidentType'
+              ELSE 'General Incident'
+            END`,
+      })
+      .from(incidents)
+      .where(eq(incidents.organizationId, input.organizationId))
+      .orderBy(desc(incidents.createdAt))
+      .limit(input.limit);
+
+    return recentIncidents.map((incident) => ({
+      id: incident.id,
+      title: incident.title,
+      status: incident.status as AdminDashboardRecentIncidentItem["status"],
+      date: this.formatRelativeTime(incident.date),
+      type: incident.type,
+      href: `/admin/incidents/${incident.id}`,
+    }));
+  }
+
+  async getOrganizationPendingReports(input: {
+    organizationId: string;
+    limit: number;
+  }): Promise<AdminDashboardPendingReportItem[]> {
+    const pendingReports = await this.database
+      .select({
+        id: reports.id,
+        title: reports.title,
+        status: reports.status,
+        date: reports.updatedAt,
+        type: sql<string>`'Report'`,
+      })
+      .from(reports)
+      .where(
+        and(
+          eq(reports.organizationId, input.organizationId),
+          eq(reports.status, "draft"),
+        ),
+      )
+      .orderBy(desc(reports.updatedAt))
+      .limit(input.limit);
+
+    return pendingReports.map((report) => ({
+      id: report.id,
+      title: report.title,
+      status: report.status as AdminDashboardPendingReportItem["status"],
+      date: this.formatRelativeTime(report.date),
+      type: report.type,
+      href: `/admin/reports/${report.id}`,
+    }));
+  }
+
+  private formatRelativeTime(date: Date): string {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) {
+      return "Just now";
+    }
+    if (minutes < 60) {
+      return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+    }
+    if (hours < 24) {
+      return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    }
+    if (days < 7) {
+      return `${days} day${days > 1 ? "s" : ""} ago`;
+    }
+    return date.toLocaleDateString();
   }
 }

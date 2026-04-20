@@ -522,14 +522,16 @@ export const appRouter = router({
     .input(z.object({ incidentTypeId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       try {
-        return await adminUserManagement.enableIncidentTypeForOrganization.execute({
-          incidentTypeId: input.incidentTypeId,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
+        return await adminUserManagement.enableIncidentTypeForOrganization.execute(
+          {
+            incidentTypeId: input.incidentTypeId,
+            actor: {
+              userId: ctx.user.id,
+              role: ctx.user.role ?? "",
+              organizationId: ctx.user.organizationId,
+            },
           },
-        });
+        );
       } catch (error) {
         console.error("Error enabling incident type:", error);
 
@@ -566,16 +568,18 @@ export const appRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       try {
-        return await adminUserManagement.createIncidentTypeForOrganization.execute({
-          name: input.name,
-          description: input.description,
-          color: input.color,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
+        return await adminUserManagement.createIncidentTypeForOrganization.execute(
+          {
+            name: input.name,
+            description: input.description,
+            color: input.color,
+            actor: {
+              userId: ctx.user.id,
+              role: ctx.user.role ?? "",
+              organizationId: ctx.user.organizationId,
+            },
           },
-        });
+        );
       } catch (error) {
         console.error("Error creating incident type for organization:", error);
 
@@ -600,14 +604,16 @@ export const appRouter = router({
     .input(z.object({ incidentTypeId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       try {
-        return await adminUserManagement.disableIncidentTypeForOrganization.execute({
-          incidentTypeId: input.incidentTypeId,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
+        return await adminUserManagement.disableIncidentTypeForOrganization.execute(
+          {
+            incidentTypeId: input.incidentTypeId,
+            actor: {
+              userId: ctx.user.id,
+              role: ctx.user.role ?? "",
+              organizationId: ctx.user.organizationId,
+            },
           },
-        });
+        );
       } catch (error) {
         console.error("Error disabling incident type:", error);
 
@@ -2254,48 +2260,19 @@ export const appRouter = router({
   getOrganizationRecentIncidents: organizationProcedure
     .input(z.object({ limit: z.number().default(5) }))
     .query(async ({ input, ctx }) => {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
       try {
-        const recentIncidents = await db
-          .select({
-            id: incidents.id,
-            title: sql<string>`CASE 
-              WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
-              THEN ${incidents.data}->>'incidentType'
-              ELSE 'Incident'
-            END`,
-            status: incidents.status,
-            date: incidents.createdAt,
-            type: sql<string>`CASE 
-              WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
-              THEN ${incidents.data}->>'incidentType'
-              ELSE 'General Incident'
-            END`,
-          })
-          .from(incidents)
-          .where(eq(incidents.organizationId, userWithOrg.organizationId))
-          .orderBy(desc(incidents.createdAt))
-          .limit(input.limit);
-
-        return recentIncidents.map((incident) => ({
-          id: incident.id,
-          title: incident.title,
-          status: incident.status,
-          date: formatRelativeTime(incident.date),
-          type: incident.type,
-          href: `/admin/incidents/${incident.id}`,
-        }));
+        return await adminUserManagement.getOrganizationRecentIncidents.execute({
+          limit: input.limit,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof AdminValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Failed to fetch recent incidents:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -2310,45 +2287,19 @@ export const appRouter = router({
   getOrganizationPendingReports: organizationProcedure
     .input(z.object({ limit: z.number().default(5) }))
     .query(async ({ input, ctx }) => {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
       try {
-        const pendingReports = await db
-          .select({
-            id: reports.id,
-            title: reports.title,
-            status: reports.status,
-            date: reports.updatedAt,
-            type: sql<string>`'Report'`,
-          })
-          .from(reports)
-          .where(
-            and(
-              eq(reports.organizationId, userWithOrg.organizationId),
-              eq(reports.status, "draft"),
-            ),
-          )
-          .orderBy(desc(reports.updatedAt))
-          .limit(input.limit);
-
-        return pendingReports.map((report) => ({
-          id: report.id,
-          title: report.title,
-          status: report.status,
-          date: formatRelativeTime(report.date),
-          type: report.type,
-          href: `/admin/reports/${report.id}`,
-        }));
+        return await adminUserManagement.getOrganizationPendingReports.execute({
+          limit: input.limit,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof AdminValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Failed to fetch pending reports:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

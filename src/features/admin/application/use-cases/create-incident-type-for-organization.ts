@@ -13,9 +13,8 @@ export class CreateIncidentTypeForOrganization {
     }
 
     const normalizedName = input.name.trim();
-    const existingType = await this.repository.findIncidentTypeByNameInsensitive(
-      normalizedName,
-    );
+    const existingType =
+      await this.repository.findIncidentTypeByNameInsensitive(normalizedName);
 
     if (existingType) {
       const alreadyEnabled =

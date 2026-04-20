@@ -138,3 +138,26 @@ export interface CreateIncidentTypeInput {
   color: string;
   actor: AdminActorContext;
 }
+
+export interface GetAdminDashboardListInput {
+  limit: number;
+  actor: AdminActorContext;
+}
+
+export interface AdminDashboardRecentIncidentItem {
+  id: string;
+  title: string;
+  status: AdminIncidentStatus;
+  date: string;
+  type: string;
+  href: string;
+}
+
+export interface AdminDashboardPendingReportItem {
+  id: string;
+  title: string;
+  status: "draft" | "published";
+  date: string;
+  type: string;
+  href: string;
+}
