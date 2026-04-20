@@ -1,20 +1,25 @@
 import { db as defaultDb } from "@/db";
 import { user } from "@/db/schemas/auth";
+import { forms } from "@/db/schemas/forms";
+import { incidents } from "@/db/schemas/incidents";
 import { organizations } from "@/db/schemas/organizations";
 import { auth } from "@/lib/auth";
 import { generateRandomSecurePassword } from "@/utils/generate-random-password";
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import type { AdminUserManagementRepository } from "../../domain/admin-user-management-repository";
 import type {
+  AdminFormRecord,
+  AdminFormWithIncidentCount,
   BasicUserRecord,
+  DeleteFormInput,
   InviteWatcherInput,
   OrganizationWatcher,
+  SaveFormDefinitionInput,
+  UpdateFormInput,
 } from "../../domain/admin-user-management-types";
 
-export class DrizzleAdminUserManagementRepository
-  implements AdminUserManagementRepository
-{
+export class DrizzleAdminUserManagementRepository implements AdminUserManagementRepository {
   constructor(private readonly database = defaultDb) {}
 
   async getOrganizationWatchers(
@@ -31,7 +36,9 @@ export class DrizzleAdminUserManagementRepository
       })
       .from(user)
       .leftJoin(organizations, eq(user.organizationId, organizations.id))
-      .where(and(eq(user.role, "watcher"), eq(user.organizationId, organizationId)));
+      .where(
+        and(eq(user.role, "watcher"), eq(user.organizationId, organizationId)),
+      );
 
     return data;
   }
@@ -91,5 +98,77 @@ export class DrizzleAdminUserManagementRepository
         redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
       },
     });
+  }
+
+  async saveFormDefinition(input: SaveFormDefinitionInput): Promise<void> {
+    await this.database.insert(forms).values({
+      organizationId: input.organizationId,
+      name: input.title,
+      definition: input.definition,
+    });
+  }
+
+  async getOrganizationFormsWithIncidentCounts(
+    organizationId: string,
+  ): Promise<AdminFormWithIncidentCount[]> {
+    const formsData = await this.database
+      .select()
+      .from(forms)
+      .where(eq(forms.organizationId, organizationId));
+
+    const formsWithIncidentCounts = await Promise.all(
+      formsData.map(async (form) => {
+        const incidentCountResult = await this.database
+          .select({ count: count() })
+          .from(incidents)
+          .where(eq(incidents.formId, form.id));
+
+        return {
+          ...form,
+          isActive: form.isActive ?? false,
+          incidentCount: incidentCountResult[0]?.count || 0,
+        };
+      }),
+    );
+
+    return formsWithIncidentCounts as AdminFormWithIncidentCount[];
+  }
+
+  async findFormById(formId: string): Promise<AdminFormRecord | null> {
+    const [existingForm] = await this.database
+      .select()
+      .from(forms)
+      .where(eq(forms.id, formId))
+      .limit(1);
+
+    if (!existingForm) {
+      return null;
+    }
+
+    return {
+      ...(existingForm as AdminFormRecord),
+      isActive: existingForm.isActive ?? false,
+    };
+  }
+
+  async updateForm(input: UpdateFormInput): Promise<void> {
+    const existingForm = await this.findFormById(input.formId);
+
+    await this.database
+      .update(forms)
+      .set({
+        name: input.title,
+        definition: input.definition,
+        isActive:
+          input.isActive !== undefined
+            ? input.isActive
+            : (existingForm?.isActive ?? true),
+        updatedAt: new Date(),
+      })
+      .where(eq(forms.id, input.formId));
+  }
+
+  async deleteForm(input: DeleteFormInput): Promise<void> {
+    await this.database.delete(forms).where(eq(forms.id, input.formId));
   }
 }

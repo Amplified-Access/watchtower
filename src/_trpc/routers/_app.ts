@@ -120,7 +120,6 @@ export const appRouter = router({
           error: error instanceof Error ? error.message : String(error),
         };
       }
-
     }),
 
   /**
@@ -152,29 +151,14 @@ export const appRouter = router({
     .mutation(async (opts) => {
       const { input } = opts;
 
-      console.log("Received form schema:", input);
-
-      console.log("Starting save procedure");
-
       try {
-        await db.insert(forms).values({
-          organizationId: input.organizationId,
-          name: input.title,
-          definition: input.definition,
-        });
-        console.log("success");
-        return {
-          success: true,
-          message: "Form definition saved successfully",
-        };
+        return await adminUserManagement.saveFormDefinition.execute(input);
       } catch (error) {
         console.error("Error saving form schema: ", error);
         return {
           success: false,
           message: "Failed to save form definition",
         };
-      } finally {
-        console.log("Completed save procedure");
       }
     }),
 
@@ -295,7 +279,7 @@ export const appRouter = router({
         sortOrder: z.enum(["asc", "desc"]).default("desc"),
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const {
@@ -365,11 +349,11 @@ export const appRouter = router({
           .leftJoin(forms, eq(incidents.formId, forms.id))
           .leftJoin(
             organizations,
-            eq(incidents.organizationId, organizations.id)
+            eq(incidents.organizationId, organizations.id),
           )
           .leftJoin(user, eq(incidents.reportedByUserId, user.id))
           .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
+            whereConditions.length > 0 ? and(...whereConditions) : undefined,
           )
           .orderBy(orderByClause)
           .limit(limit)
@@ -402,13 +386,13 @@ export const appRouter = router({
           .select({ count: count() })
           .from(incidents)
           .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
+            whereConditions.length > 0 ? and(...whereConditions) : undefined,
           );
 
         const totalCount = totalCountResult[0]?.count || 0;
 
         console.log(
-          `Found ${filteredData.length} incidents (${totalCount} total)`
+          `Found ${filteredData.length} incidents (${totalCount} total)`,
         );
 
         return {
@@ -452,7 +436,7 @@ export const appRouter = router({
           .leftJoin(forms, eq(incidents.formId, forms.id))
           .leftJoin(
             organizations,
-            eq(incidents.organizationId, organizations.id)
+            eq(incidents.organizationId, organizations.id),
           )
           .leftJoin(user, eq(incidents.reportedByUserId, user.id))
           .where(eq(incidents.id, incidentId))
@@ -486,7 +470,7 @@ export const appRouter = router({
       z.object({
         incidentId: z.string(),
         status: z.enum(["reported", "investigating", "resolved", "closed"]),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const { incidentId, status } = input;
@@ -661,7 +645,7 @@ export const appRouter = router({
       z.object({
         userId: z.string(),
         email: z.string().email(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -721,16 +705,16 @@ export const appRouter = router({
         .from(organizationIncidentTypes)
         .innerJoin(
           incidentTypes,
-          eq(organizationIncidentTypes.incidentTypeId, incidentTypes.id)
+          eq(organizationIncidentTypes.incidentTypeId, incidentTypes.id),
         )
         .where(
           and(
             eq(
               organizationIncidentTypes.organizationId,
-              userWithOrg.organizationId
+              userWithOrg.organizationId,
             ),
-            eq(organizationIncidentTypes.isEnabled, true)
-          )
+            eq(organizationIncidentTypes.isEnabled, true),
+          ),
         )
         .orderBy(asc(incidentTypes.name));
 
@@ -778,8 +762,8 @@ export const appRouter = router({
               FROM organization_incident_types 
               WHERE organization_id = ${userWithOrg.organizationId} 
               AND is_enabled = true
-            )`
-          )
+            )`,
+          ),
         )
         .orderBy(asc(incidentTypes.name));
 
@@ -823,8 +807,8 @@ export const appRouter = router({
           .where(
             and(
               eq(incidentTypes.id, incidentTypeId),
-              eq(incidentTypes.isActive, true)
-            )
+              eq(incidentTypes.isActive, true),
+            ),
           )
           .limit(1);
 
@@ -843,11 +827,11 @@ export const appRouter = router({
             and(
               eq(
                 organizationIncidentTypes.organizationId,
-                userWithOrg.organizationId
+                userWithOrg.organizationId,
               ),
               eq(organizationIncidentTypes.incidentTypeId, incidentTypeId),
-              eq(organizationIncidentTypes.isEnabled, true)
-            )
+              eq(organizationIncidentTypes.isEnabled, true),
+            ),
           )
           .limit(1);
 
@@ -895,7 +879,7 @@ export const appRouter = router({
           .string()
           .regex(/^#[0-9A-F]{6}$/i, "Invalid hex color")
           .default("#ef4444"),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { name, description, color } = input;
@@ -928,11 +912,11 @@ export const appRouter = router({
               and(
                 eq(
                   organizationIncidentTypes.organizationId,
-                  userWithOrg.organizationId
+                  userWithOrg.organizationId,
                 ),
                 eq(organizationIncidentTypes.incidentTypeId, existingType.id),
-                eq(organizationIncidentTypes.isEnabled, true)
-              )
+                eq(organizationIncidentTypes.isEnabled, true),
+              ),
             )
             .limit(1);
 
@@ -1026,11 +1010,11 @@ export const appRouter = router({
             and(
               eq(
                 organizationIncidentTypes.organizationId,
-                userWithOrg.organizationId
+                userWithOrg.organizationId,
               ),
               eq(organizationIncidentTypes.incidentTypeId, incidentTypeId),
-              eq(organizationIncidentTypes.isEnabled, true)
-            )
+              eq(organizationIncidentTypes.isEnabled, true),
+            ),
           )
           .limit(1);
 
@@ -1072,49 +1056,27 @@ export const appRouter = router({
     .input(
       z.object({
         organizationId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
-      const { organizationId } = input;
-
-      // Users can only access forms from their own organization unless they're super admin
-      if (ctx.user.role !== "super-admin") {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-        if (userWithOrg.organizationId !== organizationId) {
+      try {
+        return await adminUserManagement.getOrganizationFormsByOrganizationId.execute(
+          {
+            organizationId: input.organizationId,
+            actor: {
+              userId: ctx.user.id,
+              role: ctx.user.role ?? "",
+              organizationId: ctx.user.organizationId,
+            },
+          },
+        );
+      } catch (error) {
+        if (error instanceof AdminForbiddenError) {
           throw new TRPCError({
             code: "FORBIDDEN",
-            message: "You can only access forms from your own organization",
+            message: error.message,
           });
         }
-      }
-
-      try {
-        // First get all forms for the organization
-        const formsData = await db
-          .select()
-          .from(forms)
-          .where(eq(forms.organizationId, organizationId));
-
-        // Then get incident counts for each form
-        const formsWithIncidentCounts = await Promise.all(
-          formsData.map(async (form) => {
-            const incidentCountResult = await db
-              .select({ count: count() })
-              .from(incidents)
-              .where(eq(incidents.formId, form.id));
-
-            return {
-              ...form,
-              incidentCount: incidentCountResult[0]?.count || 0,
-            };
-          })
-        );
-
-        console.log("Got forms: ", formsWithIncidentCounts);
-        return formsWithIncidentCounts;
-      } catch (error) {
         console.error("Failed to fetch forms for Organization");
         return [];
       }
@@ -1166,57 +1128,27 @@ export const appRouter = router({
         title: z.string(),
         definition: z.any(),
         isActive: z.boolean().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { formId, title, definition, isActive } = input;
-
       try {
-        // First check if form exists and user has access
-        const [existingForm] = await db
-          .select()
-          .from(forms)
-          .where(eq(forms.id, formId))
-          .limit(1);
-
-        if (!existingForm) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Form not found",
-          });
-        }
-
-        // Check if user has access to this form's organization
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== existingForm.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "You can only update forms from your own organization",
-            });
-          }
-        }
-
-        // Update the form
-        await db
-          .update(forms)
-          .set({
-            name: title,
-            definition: definition,
-            isActive: isActive !== undefined ? isActive : existingForm.isActive,
-            updatedAt: new Date(),
-          })
-          .where(eq(forms.id, formId));
-
-        return {
-          success: true,
-          message: "Form updated successfully",
-        };
+        return await adminUserManagement.updateForm.execute({
+          formId: input.formId,
+          title: input.title,
+          definition: input.definition,
+          isActive: input.isActive,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof AdminForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
         }
         console.error("Failed to update form:", error);
         return {
@@ -1257,46 +1189,21 @@ export const appRouter = router({
   deleteForm: organizationProcedure
     .input(z.object({ formId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const { formId } = input;
-
       try {
-        // First check if form exists and user has access
-        const [existingForm] = await db
-          .select()
-          .from(forms)
-          .where(eq(forms.id, formId))
-          .limit(1);
-
-        if (!existingForm) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Form not found",
-          });
-        }
-
-        // Check if user has access to this form's organization
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== existingForm.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "You can only delete forms from your own organization",
-            });
-          }
-        }
-
-        // Delete the form
-        await db.delete(forms).where(eq(forms.id, formId));
-
-        return {
-          success: true,
-          message: "Form deleted successfully",
-        };
+        return await adminUserManagement.deleteForm.execute({
+          formId: input.formId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof AdminForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
         }
         console.error("Failed to delete form:", error);
         return {
@@ -1322,7 +1229,7 @@ export const appRouter = router({
         sortOrder: z.enum(["asc", "desc"]).default("desc"),
         limit: z.number().default(50),
         offset: z.number().default(0),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const {
@@ -1431,7 +1338,7 @@ export const appRouter = router({
         const totalCount = totalCountResult[0]?.count || 0;
 
         console.log(
-          `Found ${filteredData.length} incidents (${totalCount} total)`
+          `Found ${filteredData.length} incidents (${totalCount} total)`,
         );
 
         return {
@@ -1518,7 +1425,7 @@ export const appRouter = router({
       z.object({
         incidentId: z.string(),
         status: z.enum(["reported", "investigating", "resolved", "closed"]),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { incidentId, status } = input;
@@ -1587,7 +1494,7 @@ export const appRouter = router({
       z.object({
         formId: z.string(),
         data: z.record(z.string(), z.any()),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -1634,7 +1541,7 @@ export const appRouter = router({
         sortOrder: z.enum(["asc", "desc"]).default("desc"),
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const {
@@ -1689,7 +1596,7 @@ export const appRouter = router({
           .from(forms)
           .leftJoin(organizations, eq(forms.organizationId, organizations.id))
           .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
+            whereConditions.length > 0 ? and(...whereConditions) : undefined,
           )
           .orderBy(orderByClause)
           .limit(limit)
@@ -1707,7 +1614,7 @@ export const appRouter = router({
               ...form,
               incidentCount: incidentCountResult[0]?.count || 0,
             };
-          })
+          }),
         );
 
         // If search is provided, filter results
@@ -1732,7 +1639,7 @@ export const appRouter = router({
           .select({ count: count() })
           .from(forms)
           .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
+            whereConditions.length > 0 ? and(...whereConditions) : undefined,
           );
 
         const totalCount = totalCountResult[0]?.count || 0;
@@ -1808,7 +1715,7 @@ export const appRouter = router({
         name: z.string().optional(),
         definition: z.any().optional(),
         isActive: z.boolean().optional(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const { formId, name, definition, isActive } = input;
@@ -1928,7 +1835,7 @@ export const appRouter = router({
         title: z.string().min(1, "Title is required"),
         fileKey: z.string().min(1, "File key is required"),
         status: z.enum(["draft", "published"]).default("draft"),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { title, fileKey, status } = input;
@@ -1983,7 +1890,7 @@ export const appRouter = router({
         status: z.enum(["draft", "published", "all"]).default("all"),
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { organizationId, status, limit, offset } = input;
@@ -2067,7 +1974,7 @@ export const appRouter = router({
         sortOrder: z.enum(["asc", "desc"]).default("desc"),
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const {
@@ -2130,7 +2037,7 @@ export const appRouter = router({
           .leftJoin(user, eq(reports.reportedById, user.id))
           .leftJoin(organizations, eq(reports.organizationId, organizations.id))
           .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
+            whereConditions.length > 0 ? and(...whereConditions) : undefined,
           )
           .orderBy(orderByClause)
           .limit(limit)
@@ -2160,7 +2067,7 @@ export const appRouter = router({
           .select({ count: count() })
           .from(reports)
           .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
+            whereConditions.length > 0 ? and(...whereConditions) : undefined,
           );
 
         const totalCount = totalCountResult[0]?.count || 0;
@@ -2250,7 +2157,7 @@ export const appRouter = router({
         reportId: z.string(),
         title: z.string().optional(),
         status: z.enum(["draft", "published"]).optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { reportId, title, status } = input;
@@ -2381,7 +2288,7 @@ export const appRouter = router({
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
         search: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit, offset, search } = input;
@@ -2480,7 +2387,7 @@ export const appRouter = router({
         offset: z.number().min(0).default(0),
         search: z.string().optional(),
         tagId: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit, offset, search, tagId } = input;
@@ -2510,7 +2417,7 @@ export const appRouter = router({
           .leftJoin(user, eq(insights.authorId, user.id))
           .leftJoin(
             organizations,
-            eq(insights.organizationId, organizations.id)
+            eq(insights.organizationId, organizations.id),
           )
           .where(and(...whereConditions))
           .orderBy(desc(insights.publishedAt))
@@ -2536,14 +2443,14 @@ export const appRouter = router({
             .leftJoin(user, eq(insights.authorId, user.id))
             .leftJoin(
               organizations,
-              eq(insights.organizationId, organizations.id)
+              eq(insights.organizationId, organizations.id),
             )
             .innerJoin(
               insightTagRelations,
-              eq(insights.id, insightTagRelations.insightId)
+              eq(insights.id, insightTagRelations.insightId),
             )
             .where(
-              and(...whereConditions, eq(insightTagRelations.tagId, tagId))
+              and(...whereConditions, eq(insightTagRelations.tagId, tagId)),
             )
             .orderBy(desc(insights.publishedAt))
             .limit(limit)
@@ -2590,7 +2497,7 @@ export const appRouter = router({
           .leftJoin(user, eq(insights.authorId, user.id))
           .leftJoin(
             organizations,
-            eq(insights.organizationId, organizations.id)
+            eq(insights.organizationId, organizations.id),
           )
           .where(and(eq(insights.slug, slug), eq(insights.status, "published")))
           .limit(1);
@@ -2612,7 +2519,7 @@ export const appRouter = router({
           .from(insightTags)
           .innerJoin(
             insightTagRelations,
-            eq(insightTags.id, insightTagRelations.tagId)
+            eq(insightTags.id, insightTagRelations.tagId),
           )
           .where(eq(insightTagRelations.insightId, insight.id));
 
@@ -2670,7 +2577,7 @@ export const appRouter = router({
         imageAlt: z.string().optional(),
         tagIds: z.array(z.string()).default([]),
         status: z.enum(["draft", "published"]).default("draft"),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const {
@@ -2711,7 +2618,7 @@ export const appRouter = router({
             tagIds.map((tagId) => ({
               insightId: newInsight.id,
               tagId,
-            }))
+            })),
           );
         }
 
@@ -2738,7 +2645,7 @@ export const appRouter = router({
         search: z.string().optional(),
         limit: z.number().min(1).max(50).default(12),
         offset: z.number().min(0).default(0),
-      })
+      }),
     )
     .query(async ({ input }) => {
       try {
@@ -2771,7 +2678,7 @@ export const appRouter = router({
                 .where(
                   whereConditions.length === 1
                     ? whereConditions[0]
-                    : and(...whereConditions)
+                    : and(...whereConditions),
                 )
                 .orderBy(desc(organizations.createdAt))
                 .limit(limit)
@@ -2789,7 +2696,7 @@ export const appRouter = router({
             ? await baseCount.where(
                 whereConditions.length === 1
                   ? whereConditions[0]
-                  : and(...whereConditions)
+                  : and(...whereConditions),
               )
             : await baseCount;
 
@@ -2916,7 +2823,7 @@ export const appRouter = router({
         fileName: z.string(),
         fileSize: z.number(),
         fileType: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       try {
@@ -2937,7 +2844,7 @@ export const appRouter = router({
     .input(
       datasetFilterSchema.extend({
         includePrivate: z.boolean().optional().default(true),
-      })
+      }),
     )
     .query(async ({ input }) => {
       try {
@@ -2963,7 +2870,8 @@ export const appRouter = router({
     .input(datasetUpdateSchema)
     .mutation(async ({ input }) => {
       try {
-        const updatedDataset = await datasetsFeature.updateDataset.execute(input);
+        const updatedDataset =
+          await datasetsFeature.updateDataset.execute(input);
 
         if (!updatedDataset) {
           throw new TRPCError({
@@ -3044,7 +2952,7 @@ export const appRouter = router({
       const currentMonthEnd = new Date(
         now.getFullYear(),
         now.getMonth() + 1,
-        0
+        0,
       );
       const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
@@ -3075,8 +2983,8 @@ export const appRouter = router({
         .where(
           and(
             sql`${organizations.createdAt} >= ${lastMonth}`,
-            sql`${organizations.createdAt} < ${currentMonth}`
-          )
+            sql`${organizations.createdAt} < ${currentMonth}`,
+          ),
         );
 
       // Get growth data for admins
@@ -3084,7 +2992,10 @@ export const appRouter = router({
         .select({ count: count() })
         .from(user)
         .where(
-          and(eq(user.role, "admin"), sql`${user.createdAt} >= ${currentMonth}`)
+          and(
+            eq(user.role, "admin"),
+            sql`${user.createdAt} >= ${currentMonth}`,
+          ),
         );
 
       const [adminsLastMonth] = await db
@@ -3094,8 +3005,8 @@ export const appRouter = router({
           and(
             eq(user.role, "admin"),
             sql`${user.createdAt} >= ${lastMonth}`,
-            sql`${user.createdAt} < ${currentMonth}`
-          )
+            sql`${user.createdAt} < ${currentMonth}`,
+          ),
         );
 
       // Get growth data for watchers
@@ -3105,8 +3016,8 @@ export const appRouter = router({
         .where(
           and(
             eq(user.role, "watcher"),
-            sql`${user.createdAt} >= ${currentMonth}`
-          )
+            sql`${user.createdAt} >= ${currentMonth}`,
+          ),
         );
 
       const [watchersLastMonth] = await db
@@ -3116,8 +3027,8 @@ export const appRouter = router({
           and(
             eq(user.role, "watcher"),
             sql`${user.createdAt} >= ${lastMonth}`,
-            sql`${user.createdAt} < ${currentMonth}`
-          )
+            sql`${user.createdAt} < ${currentMonth}`,
+          ),
         );
 
       // Get pending applications count
@@ -3142,8 +3053,8 @@ export const appRouter = router({
         .where(
           or(
             eq(incidents.status, "reported"),
-            eq(incidents.status, "investigating")
-          )
+            eq(incidents.status, "investigating"),
+          ),
         );
 
       // Calculate system uptime (mock for now - in real world this would come from monitoring)
@@ -3157,15 +3068,15 @@ export const appRouter = router({
 
       const organizationGrowth = calculateGrowth(
         organizationsThisMonth.count,
-        organizationsLastMonth.count
+        organizationsLastMonth.count,
       );
       const adminGrowth = calculateGrowth(
         adminsThisMonth.count,
-        adminsLastMonth.count
+        adminsLastMonth.count,
       );
       const watcherGrowth = calculateGrowth(
         watchersThisMonth.count,
-        watchersLastMonth.count
+        watchersLastMonth.count,
       );
 
       return {
@@ -3201,7 +3112,7 @@ export const appRouter = router({
           averageReportsPerOrg:
             organizationsCount.count > 0
               ? Math.round(
-                  (reportsThisMonth.count / organizationsCount.count) * 10
+                  (reportsThisMonth.count / organizationsCount.count) * 10,
                 ) / 10
               : 0,
         },
@@ -3222,7 +3133,7 @@ export const appRouter = router({
     .input(
       z.object({
         limit: z.number().min(1).max(50).default(10),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit } = input;
@@ -3238,7 +3149,7 @@ export const appRouter = router({
             createdAt: organizationApplications.createdAt,
             description:
               sql`CONCAT('Organization application from ', ${organizationApplications.applicantName})`.as(
-                "description"
+                "description",
               ),
           })
           .from(organizationApplications)
@@ -3268,7 +3179,7 @@ export const appRouter = router({
             status: reports.status,
             createdAt: reports.createdAt,
             description: sql`CONCAT('Report published: ', ${reports.title})`.as(
-              "description"
+              "description",
             ),
           })
           .from(reports)
@@ -3286,7 +3197,7 @@ export const appRouter = router({
             createdAt: user.createdAt,
             description:
               sql`CONCAT(${user.role}, ' user added: ', ${user.name})`.as(
-                "description"
+                "description",
               ),
           })
           .from(user)
@@ -3302,7 +3213,7 @@ export const appRouter = router({
           ...recentUsers,
         ].sort(
           (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
 
         // Take only the requested number of items
@@ -3345,7 +3256,7 @@ export const appRouter = router({
     .input(
       z.object({
         limit: z.number().min(1).max(20).default(5),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit } = input;
@@ -3437,8 +3348,8 @@ export const appRouter = router({
           .where(
             and(
               sql`${reports.createdAt} >= ${weekStart}`,
-              sql`${reports.createdAt} < ${weekEnd}`
-            )
+              sql`${reports.createdAt} < ${weekEnd}`,
+            ),
           );
 
         const [incidentsCount] = await db
@@ -3447,8 +3358,8 @@ export const appRouter = router({
           .where(
             and(
               sql`${incidents.createdAt} >= ${weekStart}`,
-              sql`${incidents.createdAt} < ${weekEnd}`
-            )
+              sql`${incidents.createdAt} < ${weekEnd}`,
+            ),
           );
 
         const [applicationsCount] = await db
@@ -3457,8 +3368,8 @@ export const appRouter = router({
           .where(
             and(
               sql`${organizationApplications.createdAt} >= ${weekStart}`,
-              sql`${organizationApplications.createdAt} < ${weekEnd}`
-            )
+              sql`${organizationApplications.createdAt} < ${weekEnd}`,
+            ),
           );
 
         const totalActivity =
@@ -3497,7 +3408,7 @@ export const appRouter = router({
     .input(
       z.object({
         limit: z.number().min(1).max(20).default(5),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit } = input;
@@ -3514,8 +3425,8 @@ export const appRouter = router({
           .where(
             or(
               eq(incidents.status, "reported"),
-              eq(incidents.status, "investigating")
-            )
+              eq(incidents.status, "investigating"),
+            ),
           )
           .orderBy(desc(incidents.createdAt))
           .limit(limit);
@@ -3566,7 +3477,7 @@ export const appRouter = router({
           message: "Failed to fetch dashboard stats",
         });
       }
-    }
+    },
   ),
 
   /**
@@ -3691,8 +3602,8 @@ export const appRouter = router({
           .where(
             and(
               eq(reports.organizationId, userWithOrg.organizationId),
-              eq(reports.status, "draft")
-            )
+              eq(reports.status, "draft"),
+            ),
           )
           .orderBy(desc(reports.updatedAt))
           .limit(input.limit);
@@ -3751,8 +3662,8 @@ export const appRouter = router({
           .where(
             and(
               eq(incidents.organizationId, userWithOrg.organizationId),
-              gte(incidents.createdAt, startOfMonth)
-            )
+              gte(incidents.createdAt, startOfMonth),
+            ),
           )
           .groupBy(
             sql`
@@ -3761,7 +3672,7 @@ export const appRouter = router({
             THEN ${incidents.data}->>'incidentType'
             ELSE 'Other'
           END
-        `
+        `,
           )
           .orderBy(desc(count(incidents.id)));
 
@@ -3776,7 +3687,7 @@ export const appRouter = router({
           message: "Failed to fetch incident types analytics",
         });
       }
-    }
+    },
   ),
 
   /**
@@ -3810,8 +3721,8 @@ export const appRouter = router({
           .where(
             and(
               eq(incidents.organizationId, userWithOrg.organizationId),
-              gte(incidents.createdAt, sevenDaysAgo)
-            )
+              gte(incidents.createdAt, sevenDaysAgo),
+            ),
           )
           .groupBy(sql`DATE(${incidents.createdAt})`)
           .orderBy(sql`DATE(${incidents.createdAt})`);
@@ -3827,7 +3738,7 @@ export const appRouter = router({
           const dayName = daysOfWeek[currentDate.getDay()];
 
           const dataForDay = weeklyData.find(
-            (item) => item.date === dateString
+            (item) => item.date === dateString,
           );
           result.push({
             period: dayName,
@@ -3838,7 +3749,7 @@ export const appRouter = router({
         // Calculate current week total and change from previous week
         const currentWeekTotal = result.reduce(
           (sum, day) => sum + day.value,
-          0
+          0,
         );
 
         // Get previous week data for comparison
@@ -3855,8 +3766,8 @@ export const appRouter = router({
             and(
               eq(incidents.organizationId, userWithOrg.organizationId),
               gte(incidents.createdAt, fourteenDaysAgo),
-              lt(incidents.createdAt, sevenDaysAgo)
-            )
+              lt(incidents.createdAt, sevenDaysAgo),
+            ),
           );
 
         const previousWeekTotal = previousWeekData[0]?.count || 0;
@@ -3864,8 +3775,8 @@ export const appRouter = router({
           previousWeekTotal > 0
             ? ((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100
             : currentWeekTotal > 0
-            ? 100
-            : 0;
+              ? 100
+              : 0;
 
         return {
           data: result,
@@ -3880,7 +3791,7 @@ export const appRouter = router({
           message: "Failed to fetch weekly incident trend",
         });
       }
-    }
+    },
   ),
 });
 

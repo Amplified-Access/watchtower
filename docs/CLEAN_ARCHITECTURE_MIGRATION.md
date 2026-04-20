@@ -111,7 +111,7 @@ Completed:
 
 In progress:
 
-- `admin` (organization user-management flows migrated: watcher listing, invitation, password reset)
+- `admin` (organization user-management + form-management flows migrated)
 
 In queue (next):
 
