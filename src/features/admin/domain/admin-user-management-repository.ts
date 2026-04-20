@@ -1,12 +1,16 @@
 import type {
+  AvailableIncidentTypeRecord,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
   BasicUserRecord,
+  CreateIncidentTypeInput,
   DeleteFormInput,
   GetOrganizationIncidentsInput,
   GetIncidentByIdInput,
+  IncidentTypeActionInput,
   InviteWatcherInput,
+  OrganizationIncidentTypeRecord,
   OrganizationWatcher,
   SaveFormDefinitionInput,
   UpdateFormInput,
@@ -36,4 +40,25 @@ export interface AdminUserManagementRepository {
     input: GetIncidentByIdInput,
   ): Promise<AdminIncidentRecord | null>;
   updateIncidentStatus(input: UpdateIncidentStatusInput): Promise<void>;
+  getOrganizationIncidentTypes(
+    organizationId: string,
+  ): Promise<OrganizationIncidentTypeRecord[]>;
+  getAvailableIncidentTypes(
+    organizationId: string,
+  ): Promise<AvailableIncidentTypeRecord[]>;
+  findActiveIncidentTypeById(
+    incidentTypeId: string,
+  ): Promise<AvailableIncidentTypeRecord | null>;
+  findIncidentTypeByNameInsensitive(
+    name: string,
+  ): Promise<AvailableIncidentTypeRecord | null>;
+  isIncidentTypeEnabledForOrganization(
+    input: IncidentTypeActionInput,
+  ): Promise<boolean>;
+  enableIncidentTypeForOrganization(input: IncidentTypeActionInput): Promise<void>;
+  createIncidentType(input: CreateIncidentTypeInput): Promise<AvailableIncidentTypeRecord>;
+  getOrganizationIncidentTypeLinkId(
+    input: IncidentTypeActionInput,
+  ): Promise<string | null>;
+  disableIncidentTypeForOrganization(linkId: string): Promise<void>;
 }

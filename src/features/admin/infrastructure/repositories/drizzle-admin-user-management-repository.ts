@@ -1,22 +1,28 @@
 import { db as defaultDb } from "@/db";
 import { user } from "@/db/schemas/auth";
 import { forms } from "@/db/schemas/forms";
+import { incidentTypes } from "@/db/schemas/incident-types";
 import { incidents } from "@/db/schemas/incidents";
+import { organizationIncidentTypes } from "@/db/schemas/organization-incident-types";
 import { organizations } from "@/db/schemas/organizations";
 import { auth } from "@/lib/auth";
 import { generateRandomSecurePassword } from "@/utils/generate-random-password";
-import { and, asc, count, desc, eq } from "drizzle-orm";
+import { and, asc, count, desc, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import type { AdminUserManagementRepository } from "../../domain/admin-user-management-repository";
 import type {
+  AvailableIncidentTypeRecord,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
   BasicUserRecord,
+  CreateIncidentTypeInput,
   DeleteFormInput,
   GetIncidentByIdInput,
   GetOrganizationIncidentsInput,
+  IncidentTypeActionInput,
   InviteWatcherInput,
+  OrganizationIncidentTypeRecord,
   OrganizationWatcher,
   SaveFormDefinitionInput,
   UpdateFormInput,
@@ -292,5 +298,188 @@ export class DrizzleAdminUserManagementRepository implements AdminUserManagement
         updatedAt: new Date(),
       })
       .where(eq(incidents.id, input.incidentId));
+  }
+
+  async getOrganizationIncidentTypes(
+    organizationId: string,
+  ): Promise<OrganizationIncidentTypeRecord[]> {
+    const organizationTypes = await this.database
+      .select({
+        id: incidentTypes.id,
+        name: incidentTypes.name,
+        description: incidentTypes.description,
+        color: incidentTypes.color,
+        isActive: incidentTypes.isActive,
+        createdAt: incidentTypes.createdAt,
+        updatedAt: incidentTypes.updatedAt,
+        isEnabled: organizationIncidentTypes.isEnabled,
+        organizationEnabledAt: organizationIncidentTypes.createdAt,
+      })
+      .from(organizationIncidentTypes)
+      .innerJoin(
+        incidentTypes,
+        eq(organizationIncidentTypes.incidentTypeId, incidentTypes.id),
+      )
+      .where(
+        and(
+          eq(organizationIncidentTypes.organizationId, organizationId),
+          eq(organizationIncidentTypes.isEnabled, true),
+        ),
+      )
+      .orderBy(asc(incidentTypes.name));
+
+    return organizationTypes as OrganizationIncidentTypeRecord[];
+  }
+
+  async getAvailableIncidentTypes(
+    organizationId: string,
+  ): Promise<AvailableIncidentTypeRecord[]> {
+    const availableTypes = await this.database
+      .select({
+        id: incidentTypes.id,
+        name: incidentTypes.name,
+        description: incidentTypes.description,
+        color: incidentTypes.color,
+        isActive: incidentTypes.isActive,
+        createdAt: incidentTypes.createdAt,
+        updatedAt: incidentTypes.updatedAt,
+      })
+      .from(incidentTypes)
+      .where(
+        and(
+          eq(incidentTypes.isActive, true),
+          sql`${incidentTypes.id} NOT IN (
+              SELECT incident_type_id 
+              FROM organization_incident_types 
+              WHERE organization_id = ${organizationId} 
+              AND is_enabled = true
+            )`,
+        ),
+      )
+      .orderBy(asc(incidentTypes.name));
+
+    return availableTypes as AvailableIncidentTypeRecord[];
+  }
+
+  async findActiveIncidentTypeById(
+    incidentTypeId: string,
+  ): Promise<AvailableIncidentTypeRecord | null> {
+    const [incidentType] = await this.database
+      .select({
+        id: incidentTypes.id,
+        name: incidentTypes.name,
+        description: incidentTypes.description,
+        color: incidentTypes.color,
+        isActive: incidentTypes.isActive,
+        createdAt: incidentTypes.createdAt,
+        updatedAt: incidentTypes.updatedAt,
+      })
+      .from(incidentTypes)
+      .where(
+        and(eq(incidentTypes.id, incidentTypeId), eq(incidentTypes.isActive, true)),
+      )
+      .limit(1);
+
+    return (incidentType as AvailableIncidentTypeRecord) ?? null;
+  }
+
+  async findIncidentTypeByNameInsensitive(
+    name: string,
+  ): Promise<AvailableIncidentTypeRecord | null> {
+    const [incidentType] = await this.database
+      .select({
+        id: incidentTypes.id,
+        name: incidentTypes.name,
+        description: incidentTypes.description,
+        color: incidentTypes.color,
+        isActive: incidentTypes.isActive,
+        createdAt: incidentTypes.createdAt,
+        updatedAt: incidentTypes.updatedAt,
+      })
+      .from(incidentTypes)
+      .where(sql`LOWER(${incidentTypes.name}) = LOWER(${name})`)
+      .limit(1);
+
+    return (incidentType as AvailableIncidentTypeRecord) ?? null;
+  }
+
+  async isIncidentTypeEnabledForOrganization(
+    input: IncidentTypeActionInput,
+  ): Promise<boolean> {
+    const [existing] = await this.database
+      .select({ id: organizationIncidentTypes.id })
+      .from(organizationIncidentTypes)
+      .where(
+        and(
+          eq(organizationIncidentTypes.organizationId, input.actor.organizationId!),
+          eq(organizationIncidentTypes.incidentTypeId, input.incidentTypeId),
+          eq(organizationIncidentTypes.isEnabled, true),
+        ),
+      )
+      .limit(1);
+
+    return Boolean(existing);
+  }
+
+  async enableIncidentTypeForOrganization(
+    input: IncidentTypeActionInput,
+  ): Promise<void> {
+    await this.database.insert(organizationIncidentTypes).values({
+      organizationId: input.actor.organizationId!,
+      incidentTypeId: input.incidentTypeId,
+      isEnabled: true,
+    });
+  }
+
+  async createIncidentType(
+    input: CreateIncidentTypeInput,
+  ): Promise<AvailableIncidentTypeRecord> {
+    const [newIncidentType] = await this.database
+      .insert(incidentTypes)
+      .values({
+        name: input.name.trim(),
+        description: input.description?.trim(),
+        color: input.color,
+        isActive: true,
+      })
+      .returning({
+        id: incidentTypes.id,
+        name: incidentTypes.name,
+        description: incidentTypes.description,
+        color: incidentTypes.color,
+        isActive: incidentTypes.isActive,
+        createdAt: incidentTypes.createdAt,
+        updatedAt: incidentTypes.updatedAt,
+      });
+
+    return newIncidentType as AvailableIncidentTypeRecord;
+  }
+
+  async getOrganizationIncidentTypeLinkId(
+    input: IncidentTypeActionInput,
+  ): Promise<string | null> {
+    const [orgIncidentType] = await this.database
+      .select({ id: organizationIncidentTypes.id })
+      .from(organizationIncidentTypes)
+      .where(
+        and(
+          eq(organizationIncidentTypes.organizationId, input.actor.organizationId!),
+          eq(organizationIncidentTypes.incidentTypeId, input.incidentTypeId),
+          eq(organizationIncidentTypes.isEnabled, true),
+        ),
+      )
+      .limit(1);
+
+    return orgIncidentType?.id ?? null;
+  }
+
+  async disableIncidentTypeForOrganization(linkId: string): Promise<void> {
+    await this.database
+      .update(organizationIncidentTypes)
+      .set({
+        isEnabled: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(organizationIncidentTypes.id, linkId));
   }
 }

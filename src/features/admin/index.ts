@@ -1,14 +1,18 @@
 export type {
   AdminActorContext,
+  AvailableIncidentTypeRecord,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
   AdminIncidentStatus,
   BasicUserRecord,
+  CreateIncidentTypeInput,
   DeleteFormInput,
   GetIncidentByIdInput,
   GetOrganizationIncidentsInput,
+  IncidentTypeActionInput,
   InviteWatcherInput,
+  OrganizationIncidentTypeRecord,
   OrganizationWatcher,
   ResetUserPasswordInput,
   SaveFormDefinitionInput,
@@ -18,6 +22,7 @@ export type {
 export type { AdminUserManagementRepository } from "./domain/admin-user-management-repository";
 export {
   AdminForbiddenError,
+  AdminConflictError,
   AdminNotFoundError,
   AdminUserManagementError,
   AdminValidationError,

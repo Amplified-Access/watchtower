@@ -8,6 +8,11 @@ import { DeleteForm } from "../application/use-cases/delete-form";
 import { GetAllOrganizationIncidents } from "../application/use-cases/get-all-organization-incidents";
 import { GetIncidentById } from "../application/use-cases/get-incident-by-id";
 import { UpdateIncidentStatus } from "../application/use-cases/update-incident-status";
+import { GetOrganizationIncidentTypes } from "../application/use-cases/get-organization-incident-types";
+import { GetAvailableIncidentTypes } from "../application/use-cases/get-available-incident-types";
+import { EnableIncidentTypeForOrganization } from "../application/use-cases/enable-incident-type-for-organization";
+import { CreateIncidentTypeForOrganization } from "../application/use-cases/create-incident-type-for-organization";
+import { DisableIncidentTypeForOrganization } from "../application/use-cases/disable-incident-type-for-organization";
 import type { AdminUserManagementRepository } from "../domain/admin-user-management-repository";
 import { DrizzleAdminUserManagementRepository } from "./repositories/drizzle-admin-user-management-repository";
 
@@ -22,6 +27,11 @@ export interface AdminUserManagementUseCases {
   getAllOrganizationIncidents: GetAllOrganizationIncidents;
   getIncidentById: GetIncidentById;
   updateIncidentStatus: UpdateIncidentStatus;
+  getOrganizationIncidentTypes: GetOrganizationIncidentTypes;
+  getAvailableIncidentTypes: GetAvailableIncidentTypes;
+  enableIncidentTypeForOrganization: EnableIncidentTypeForOrganization;
+  createIncidentTypeForOrganization: CreateIncidentTypeForOrganization;
+  disableIncidentTypeForOrganization: DisableIncidentTypeForOrganization;
 }
 
 export const createAdminUserManagementUseCases = (
@@ -39,5 +49,15 @@ export const createAdminUserManagementUseCases = (
     getAllOrganizationIncidents: new GetAllOrganizationIncidents(repository),
     getIncidentById: new GetIncidentById(repository),
     updateIncidentStatus: new UpdateIncidentStatus(repository),
+    getOrganizationIncidentTypes: new GetOrganizationIncidentTypes(repository),
+    getAvailableIncidentTypes: new GetAvailableIncidentTypes(repository),
+    enableIncidentTypeForOrganization: new EnableIncidentTypeForOrganization(
+      repository,
+    ),
+    createIncidentTypeForOrganization: new CreateIncidentTypeForOrganization(
+      repository,
+    ),
+    disableIncidentTypeForOrganization:
+      new DisableIncidentTypeForOrganization(repository),
   };
 };

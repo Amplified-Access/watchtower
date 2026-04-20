@@ -104,3 +104,37 @@ export interface UpdateIncidentStatusInput {
   status: AdminIncidentStatus;
   actor: AdminActorContext;
 }
+
+export interface OrganizationIncidentTypeRecord {
+  id: string;
+  name: string;
+  description: string | null;
+  color: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  isEnabled: boolean;
+  organizationEnabledAt: Date;
+}
+
+export interface AvailableIncidentTypeRecord {
+  id: string;
+  name: string;
+  description: string | null;
+  color: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IncidentTypeActionInput {
+  incidentTypeId: string;
+  actor: AdminActorContext;
+}
+
+export interface CreateIncidentTypeInput {
+  name: string;
+  description?: string;
+  color: string;
+  actor: AdminActorContext;
+}

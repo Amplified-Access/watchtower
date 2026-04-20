@@ -25,3 +25,10 @@ export class AdminValidationError extends AdminUserManagementError {
     this.name = "AdminValidationError";
   }
 }
+
+export class AdminConflictError extends AdminUserManagementError {
+  constructor(message: string) {
+    super(message);
+    this.name = "AdminConflictError";
+  }
+}

@@ -60,6 +60,7 @@ import {
 } from "@/features/watcher";
 import {
   createAdminUserManagementUseCases,
+  AdminConflictError,
   AdminForbiddenError,
   AdminNotFoundError,
   AdminValidationError,
@@ -475,54 +476,15 @@ export const appRouter = router({
    */
   getOrganizationIncidentTypes: organizationProcedure.query(async ({ ctx }) => {
     try {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
-      // Get all incident types enabled by this organization
-      const organizationTypes = await db
-        .select({
-          id: incidentTypes.id,
-          name: incidentTypes.name,
-          description: incidentTypes.description,
-          color: incidentTypes.color,
-          isActive: incidentTypes.isActive,
-          createdAt: incidentTypes.createdAt,
-          updatedAt: incidentTypes.updatedAt,
-          isEnabled: organizationIncidentTypes.isEnabled,
-          organizationEnabledAt: organizationIncidentTypes.createdAt,
-        })
-        .from(organizationIncidentTypes)
-        .innerJoin(
-          incidentTypes,
-          eq(organizationIncidentTypes.incidentTypeId, incidentTypes.id),
-        )
-        .where(
-          and(
-            eq(
-              organizationIncidentTypes.organizationId,
-              userWithOrg.organizationId,
-            ),
-            eq(organizationIncidentTypes.isEnabled, true),
-          ),
-        )
-        .orderBy(asc(incidentTypes.name));
-
-      return {
-        success: true,
-        data: organizationTypes,
-      };
+      return await adminUserManagement.getOrganizationIncidentTypes.execute({
+        userId: ctx.user.id,
+        role: ctx.user.role ?? "",
+        organizationId: ctx.user.organizationId,
+      });
     } catch (error) {
       console.error("Error fetching organization incident types:", error);
-      if (error instanceof TRPCError) {
-        throw error;
+      if (error instanceof AdminValidationError) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
       }
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
@@ -536,40 +498,16 @@ export const appRouter = router({
    */
   getAvailableIncidentTypes: organizationProcedure.query(async ({ ctx }) => {
     try {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
-      // Get all active incident types not yet enabled by this organization
-      const availableTypes = await db
-        .select()
-        .from(incidentTypes)
-        .where(
-          and(
-            eq(incidentTypes.isActive, true),
-            sql`${incidentTypes.id} NOT IN (
-              SELECT incident_type_id 
-              FROM organization_incident_types 
-              WHERE organization_id = ${userWithOrg.organizationId} 
-              AND is_enabled = true
-            )`,
-          ),
-        )
-        .orderBy(asc(incidentTypes.name));
-
-      return {
-        success: true,
-        data: availableTypes,
-      };
+      return await adminUserManagement.getAvailableIncidentTypes.execute({
+        userId: ctx.user.id,
+        role: ctx.user.role ?? "",
+        organizationId: ctx.user.organizationId,
+      });
     } catch (error) {
       console.error("Error fetching available incident types:", error);
+      if (error instanceof AdminValidationError) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+      }
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to fetch available incident types",
@@ -583,78 +521,26 @@ export const appRouter = router({
   enableIncidentTypeForOrganization: organizationProcedure
     .input(z.object({ incidentTypeId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const { incidentTypeId } = input;
-
       try {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-
-        if (!userWithOrg.organizationId) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "User must be associated with an organization",
-          });
-        }
-
-        // Check if incident type exists and is active
-        const [incidentType] = await db
-          .select()
-          .from(incidentTypes)
-          .where(
-            and(
-              eq(incidentTypes.id, incidentTypeId),
-              eq(incidentTypes.isActive, true),
-            ),
-          )
-          .limit(1);
-
-        if (!incidentType) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Incident type not found or inactive",
-          });
-        }
-
-        // Check if already enabled
-        const [existing] = await db
-          .select()
-          .from(organizationIncidentTypes)
-          .where(
-            and(
-              eq(
-                organizationIncidentTypes.organizationId,
-                userWithOrg.organizationId,
-              ),
-              eq(organizationIncidentTypes.incidentTypeId, incidentTypeId),
-              eq(organizationIncidentTypes.isEnabled, true),
-            ),
-          )
-          .limit(1);
-
-        if (existing) {
-          throw new TRPCError({
-            code: "CONFLICT",
-            message: "Incident type is already enabled for this organization",
-          });
-        }
-
-        // Enable the incident type for organization
-        await db.insert(organizationIncidentTypes).values({
-          organizationId: userWithOrg.organizationId,
-          incidentTypeId: incidentTypeId,
-          isEnabled: true,
+        return await adminUserManagement.enableIncidentTypeForOrganization.execute({
+          incidentTypeId: input.incidentTypeId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
         });
-
-        return {
-          success: true,
-          message: "Incident type enabled successfully",
-        };
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error enabling incident type:", error);
 
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
+        if (error instanceof AdminNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof AdminConflictError) {
+          throw new TRPCError({ code: "CONFLICT", message: error.message });
         }
 
         throw new TRPCError({
@@ -679,97 +565,25 @@ export const appRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { name, description, color } = input;
-
       try {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-
-        if (!userWithOrg.organizationId) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "User must be associated with an organization",
-          });
-        }
-
-        // Check if incident type with this name already exists (case-insensitive)
-        const [existingType] = await db
-          .select()
-          .from(incidentTypes)
-          .where(sql`LOWER(${incidentTypes.name}) = LOWER(${name.trim()})`)
-          .limit(1);
-
-        if (existingType) {
-          // If it exists but organization hasn't enabled it, enable it instead
-          const [orgType] = await db
-            .select()
-            .from(organizationIncidentTypes)
-            .where(
-              and(
-                eq(
-                  organizationIncidentTypes.organizationId,
-                  userWithOrg.organizationId,
-                ),
-                eq(organizationIncidentTypes.incidentTypeId, existingType.id),
-                eq(organizationIncidentTypes.isEnabled, true),
-              ),
-            )
-            .limit(1);
-
-          if (orgType) {
-            throw new TRPCError({
-              code: "CONFLICT",
-              message:
-                "Your organization has already enabled this incident type",
-            });
-          } else {
-            // Enable existing incident type for this organization
-            await db.insert(organizationIncidentTypes).values({
-              organizationId: userWithOrg.organizationId,
-              incidentTypeId: existingType.id,
-              isEnabled: true,
-            });
-
-            return {
-              success: true,
-              message: "Existing incident type enabled for your organization",
-              data: existingType,
-              isExisting: true,
-            };
-          }
-        }
-
-        // Create new global incident type with color
-        const [newIncidentType] = await db
-          .insert(incidentTypes)
-          .values({
-            name: name.trim(),
-            description: description?.trim(),
-            color: color,
-            isActive: true,
-          })
-          .returning();
-
-        // Enable it for the creating organization
-        await db.insert(organizationIncidentTypes).values({
-          organizationId: userWithOrg.organizationId,
-          incidentTypeId: newIncidentType.id,
-          isEnabled: true,
+        return await adminUserManagement.createIncidentTypeForOrganization.execute({
+          name: input.name,
+          description: input.description,
+          color: input.color,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
         });
-
-        return {
-          success: true,
-          message:
-            "New incident type created and enabled for your organization",
-          data: newIncidentType,
-          isExisting: false,
-        };
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error creating incident type for organization:", error);
 
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
+        if (error instanceof AdminConflictError) {
+          throw new TRPCError({ code: "CONFLICT", message: error.message });
         }
 
         throw new TRPCError({
@@ -785,61 +599,23 @@ export const appRouter = router({
   disableIncidentTypeForOrganization: organizationProcedure
     .input(z.object({ incidentTypeId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const { incidentTypeId } = input;
-
       try {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-
-        if (!userWithOrg.organizationId) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "User must be associated with an organization",
-          });
-        }
-
-        // Check if organization has this incident type enabled
-        const [orgIncidentType] = await db
-          .select()
-          .from(organizationIncidentTypes)
-          .where(
-            and(
-              eq(
-                organizationIncidentTypes.organizationId,
-                userWithOrg.organizationId,
-              ),
-              eq(organizationIncidentTypes.incidentTypeId, incidentTypeId),
-              eq(organizationIncidentTypes.isEnabled, true),
-            ),
-          )
-          .limit(1);
-
-        if (!orgIncidentType) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Incident type not enabled for this organization",
-          });
-        }
-
-        // Disable for organization (soft delete)
-        await db
-          .update(organizationIncidentTypes)
-          .set({
-            isEnabled: false,
-            updatedAt: new Date(),
-          })
-          .where(eq(organizationIncidentTypes.id, orgIncidentType.id));
-
-        return {
-          success: true,
-          message: "Incident type disabled for your organization",
-        };
-      } catch (error: any) {
+        return await adminUserManagement.disableIncidentTypeForOrganization.execute({
+          incidentTypeId: input.incidentTypeId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
+      } catch (error) {
         console.error("Error disabling incident type:", error);
 
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
+        if (error instanceof AdminNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
         }
 
         throw new TRPCError({
