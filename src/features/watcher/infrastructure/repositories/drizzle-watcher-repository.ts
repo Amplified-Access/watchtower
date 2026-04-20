@@ -58,13 +58,17 @@ export class DrizzleWatcherRepository implements WatcherRepository {
         updatedAt: forms.updatedAt,
       })
       .from(forms)
-      .where(and(eq(forms.organizationId, organizationId), eq(forms.isActive, true)))
+      .where(
+        and(eq(forms.organizationId, organizationId), eq(forms.isActive, true)),
+      )
       .orderBy(desc(forms.updatedAt));
 
     return activeForms as WatcherForm[];
   }
 
-  async submitIncident(input: SubmitIncidentInput): Promise<{ incidentId: string }> {
+  async submitIncident(
+    input: SubmitIncidentInput,
+  ): Promise<{ incidentId: string }> {
     const [newIncident] = await this.database
       .insert(incidents)
       .values({
@@ -112,7 +116,9 @@ export class DrizzleWatcherRepository implements WatcherRepository {
     const [watcherStats] = await this.database
       .select({ total: count(user.id) })
       .from(user)
-      .where(and(eq(user.organizationId, organizationId), eq(user.role, "watcher")));
+      .where(
+        and(eq(user.organizationId, organizationId), eq(user.role, "watcher")),
+      );
 
     return {
       incidents: {
@@ -201,7 +207,10 @@ export class DrizzleWatcherRepository implements WatcherRepository {
         href: `/admin/reports/${item.id}`,
       })),
     ]
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      )
       .slice(0, limit);
 
     return allActivity;

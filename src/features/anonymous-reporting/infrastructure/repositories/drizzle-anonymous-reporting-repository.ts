@@ -14,9 +14,7 @@ import type {
   IncidentTypeDto,
 } from "../../domain/anonymous-reporting.types";
 
-export class DrizzleAnonymousReportingRepository
-  implements AnonymousReportingRepository
-{
+export class DrizzleAnonymousReportingRepository implements AnonymousReportingRepository {
   constructor(private readonly database = defaultDb) {}
 
   async getAllIncidentTypes(): Promise<IncidentTypeDto[]> {
@@ -75,7 +73,8 @@ export class DrizzleAnonymousReportingRepository
   async createAnonymousIncidentReport(
     input: AnonymousIncidentReportDraft,
   ): Promise<void> {
-    const injuriesCount = input.injuries === "6+" ? 6 : Number.parseInt(input.injuries, 10);
+    const injuriesCount =
+      input.injuries === "6+" ? 6 : Number.parseInt(input.injuries, 10);
     const fatalitiesCount =
       input.fatalities === "6+" ? 6 : Number.parseInt(input.fatalities, 10);
 
@@ -167,7 +166,9 @@ export class DrizzleAnonymousReportingRepository
         incidentTypes,
         eq(anonymousIncidentReports.incidentTypeId, incidentTypes.id),
       )
-      .where(sql`${anonymousIncidentReports.location} ->> 'region' LIKE '%Africa%'`)
+      .where(
+        sql`${anonymousIncidentReports.location} ->> 'region' LIKE '%Africa%'`,
+      )
       .groupBy(
         sql`${anonymousIncidentReports.location} ->> 'region'`,
         sql`${anonymousIncidentReports.location} ->> 'country'`,

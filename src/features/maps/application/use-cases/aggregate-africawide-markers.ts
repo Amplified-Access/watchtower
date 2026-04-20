@@ -62,8 +62,10 @@ export const aggregateAfricawideMarkers = (
         (acc[locationKey].incidentTypeStats[incidentType] || 0) +
         (report.incidentCount || 1);
       acc[locationKey].totalIncidents += report.incidentCount || 1;
-      acc[locationKey].totalFatalities += Number.parseInt(String(report.totalFatalities || 0), 10) || 0;
-      acc[locationKey].totalInjuries += Number.parseInt(String(report.totalInjuries || 0), 10) || 0;
+      acc[locationKey].totalFatalities +=
+        Number.parseInt(String(report.totalFatalities || 0), 10) || 0;
+      acc[locationKey].totalInjuries +=
+        Number.parseInt(String(report.totalInjuries || 0), 10) || 0;
 
       return acc;
     },
@@ -97,7 +99,10 @@ export const filterAfricawideMarkers = (
         location.incidentTypeStats,
         "protests",
       );
-      const riotsCount = getIncidentTypeCount(location.incidentTypeStats, "riots");
+      const riotsCount = getIncidentTypeCount(
+        location.incidentTypeStats,
+        "riots",
+      );
 
       return (
         violenceCiviliansCount >= thresholds.violence_civilians &&

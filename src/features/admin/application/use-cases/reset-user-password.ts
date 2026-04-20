@@ -1,7 +1,4 @@
-import {
-  AdminForbiddenError,
-  AdminNotFoundError,
-} from "../../domain/errors";
+import { AdminForbiddenError, AdminNotFoundError } from "../../domain/errors";
 import type { AdminUserManagementRepository } from "../../domain/admin-user-management-repository";
 import type { ResetUserPasswordInput } from "../../domain/admin-user-management-types";
 

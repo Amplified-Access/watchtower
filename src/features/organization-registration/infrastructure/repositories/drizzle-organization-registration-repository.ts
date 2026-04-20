@@ -10,9 +10,7 @@ import type {
 } from "../../domain/organization-application";
 import type { OrganizationRegistrationRepository } from "../../domain/organization-registration-repository";
 
-export class DrizzleOrganizationRegistrationRepository
-  implements OrganizationRegistrationRepository
-{
+export class DrizzleOrganizationRegistrationRepository implements OrganizationRegistrationRepository {
   constructor(private readonly database = defaultDb) {}
 
   async listApplications(): Promise<OrganizationApplication[]> {

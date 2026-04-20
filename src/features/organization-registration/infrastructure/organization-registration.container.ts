@@ -24,7 +24,9 @@ export const createOrganizationRegistrationUseCases = (
     getAllOrganizationApplications: new GetAllOrganizationApplications(
       repository,
     ),
-    submitOrganizationApplication: new SubmitOrganizationApplication(repository),
+    submitOrganizationApplication: new SubmitOrganizationApplication(
+      repository,
+    ),
     declineOrganizationApplication: new DeclineOrganizationApplication(
       repository,
     ),

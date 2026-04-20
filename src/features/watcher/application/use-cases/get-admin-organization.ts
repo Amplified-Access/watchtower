@@ -13,7 +13,10 @@ export class GetAdminOrganization {
       throw new WatcherValidationError("User id is required");
     }
 
-    if (input.actor.role !== "super-admin" && input.actor.userId !== input.userId) {
+    if (
+      input.actor.role !== "super-admin" &&
+      input.actor.userId !== input.userId
+    ) {
       throw new WatcherForbiddenError(
         "You can only access your own organization data",
       );

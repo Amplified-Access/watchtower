@@ -1,6 +1,4 @@
-import type {
-  AnonymousIncidentReportDraft,
-} from "../../domain/anonymous-reporting.types";
+import type { AnonymousIncidentReportDraft } from "../../domain/anonymous-reporting.types";
 import type { AnonymousReportingRepository } from "../../domain/anonymous-reporting-repository";
 
 export class SubmitAnonymousIncidentReport {

@@ -1,6 +1,4 @@
-import type {
-  AnonymousIncidentReportFilters,
-} from "../../domain/anonymous-reporting.types";
+import type { AnonymousIncidentReportFilters } from "../../domain/anonymous-reporting.types";
 import type { AnonymousReportingRepository } from "../../domain/anonymous-reporting-repository";
 
 export class GetAllAnonymousIncidentReports {

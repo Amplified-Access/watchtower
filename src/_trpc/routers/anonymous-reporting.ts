@@ -50,7 +50,8 @@ export const anonymousReportingRouter = router({
       const { searchTerm } = input;
       try {
         console.log("Fetching places:");
-        const result = await anonymousReporting.searchLocation.execute(searchTerm);
+        const result =
+          await anonymousReporting.searchLocation.execute(searchTerm);
         console.log("response: ", result.data);
         return result;
       } catch (error) {
@@ -73,9 +74,8 @@ export const anonymousReportingRouter = router({
       try {
         console.log("Submitting incident...");
 
-        const result = await anonymousReporting.submitAnonymousIncidentReport.execute(
-          input,
-        );
+        const result =
+          await anonymousReporting.submitAnonymousIncidentReport.execute(input);
 
         console.log("Incident report submitted successfully");
         return result;
@@ -144,9 +144,8 @@ export const anonymousReportingRouter = router({
       try {
         console.log("🔍 Getting combined reports with filters:", input);
 
-        const result = await anonymousReporting.getCombinedIncidentReports.execute(
-          input,
-        );
+        const result =
+          await anonymousReporting.getCombinedIncidentReports.execute(input);
         console.log(`✅ Total combined reports: ${result.data.length}`);
         return result;
       } catch (error) {

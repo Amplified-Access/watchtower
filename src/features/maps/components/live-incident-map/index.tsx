@@ -107,7 +107,9 @@ const LiveIncidentMap = () => {
   // Convert incident reports to GeoJSON format
   const geojsonData = useMemo(() => {
     return buildLiveIncidentGeoJson(
-      anonymousIncidentReports.data?.data as CombinedIncidentReport[] | undefined,
+      anonymousIncidentReports.data?.data as
+        | CombinedIncidentReport[]
+        | undefined,
     );
   }, [anonymousIncidentReports.data]);
 
@@ -221,7 +223,9 @@ const LiveIncidentMap = () => {
   // Auto-fit map to show all markers
   useEffect(() => {
     const viewport = calculateViewportForReports(
-      anonymousIncidentReports.data?.data as CombinedIncidentReport[] | undefined,
+      anonymousIncidentReports.data?.data as
+        | CombinedIncidentReport[]
+        | undefined,
     );
 
     if (viewport) {

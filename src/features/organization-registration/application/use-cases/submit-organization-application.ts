@@ -2,7 +2,9 @@ import type { OrganizationApplicationDraft } from "../../domain/organization-app
 import type { OrganizationRegistrationRepository } from "../../domain/organization-registration-repository";
 
 export class SubmitOrganizationApplication {
-  constructor(private readonly repository: OrganizationRegistrationRepository) {}
+  constructor(
+    private readonly repository: OrganizationRegistrationRepository,
+  ) {}
 
   async execute(input: OrganizationApplicationDraft) {
     await this.repository.submitApplication(input);

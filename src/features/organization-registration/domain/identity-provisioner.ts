@@ -5,5 +5,8 @@ export interface IdentityProvisioner {
     password: string;
   }): Promise<{ userId?: string }>;
   setUserRole(params: { userId: string; role: "admin" }): Promise<void>;
-  sendPasswordReset(params: { email: string; redirectTo: string }): Promise<void>;
+  sendPasswordReset(params: {
+    email: string;
+    redirectTo: string;
+  }): Promise<void>;
 }

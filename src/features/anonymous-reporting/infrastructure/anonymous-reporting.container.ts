@@ -26,10 +26,16 @@ export const createAnonymousReportingUseCases = (
 ): AnonymousReportingUseCases => {
   return {
     getAllIncidentTypes: new GetAllIncidentTypes(repository),
-    getActiveIncidentTypesForMaps: new GetActiveIncidentTypesForMaps(repository),
+    getActiveIncidentTypesForMaps: new GetActiveIncidentTypesForMaps(
+      repository,
+    ),
     searchLocation: new SearchLocation(locationProvider),
-    submitAnonymousIncidentReport: new SubmitAnonymousIncidentReport(repository),
-    getAllAnonymousIncidentReports: new GetAllAnonymousIncidentReports(repository),
+    submitAnonymousIncidentReport: new SubmitAnonymousIncidentReport(
+      repository,
+    ),
+    getAllAnonymousIncidentReports: new GetAllAnonymousIncidentReports(
+      repository,
+    ),
     getAfricawideHeatmapData: new GetAfricawideHeatmapData(repository),
     getCombinedIncidentReports: new GetCombinedIncidentReports(repository),
   };

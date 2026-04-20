@@ -24,7 +24,11 @@ export const createWatcherUseCases = (
     getFormById: new GetFormById(repository),
     getActiveFormsForWatcher: new GetActiveFormsForWatcher(repository),
     submitIncident: new SubmitIncident(repository),
-    getOrganizationDashboardStats: new GetOrganizationDashboardStats(repository),
-    getOrganizationRecentActivity: new GetOrganizationRecentActivity(repository),
+    getOrganizationDashboardStats: new GetOrganizationDashboardStats(
+      repository,
+    ),
+    getOrganizationRecentActivity: new GetOrganizationRecentActivity(
+      repository,
+    ),
   };
 };

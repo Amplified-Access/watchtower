@@ -1,4 +1,7 @@
-import type { CombinedIncidentReport, MapViewport } from "../../domain/map-report";
+import type {
+  CombinedIncidentReport,
+  MapViewport,
+} from "../../domain/map-report";
 
 export const DEFAULT_LIVE_MAP_VIEWPORT: MapViewport = {
   longitude: 52.5,
@@ -13,8 +16,12 @@ export const calculateViewportForReports = (
     return null;
   }
 
-  const lngs = reports.map((r) => Number(r.lon)).filter((n) => !Number.isNaN(n));
-  const lats = reports.map((r) => Number(r.lat)).filter((n) => !Number.isNaN(n));
+  const lngs = reports
+    .map((r) => Number(r.lon))
+    .filter((n) => !Number.isNaN(n));
+  const lats = reports
+    .map((r) => Number(r.lat))
+    .filter((n) => !Number.isNaN(n));
 
   if (!lngs.length || !lats.length) {
     return null;

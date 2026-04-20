@@ -19,7 +19,10 @@ export const buildLiveIncidentGeoJson = (
       type: "Feature" as const,
       geometry: {
         type: "Point" as const,
-        coordinates: [Number(report.lon), Number(report.lat)] as [number, number],
+        coordinates: [Number(report.lon), Number(report.lat)] as [
+          number,
+          number,
+        ],
       },
       properties: {
         totalReports: Number(report.totalReports) || 1,

@@ -87,7 +87,7 @@ export const requireOrganizationMembership = authMiddleware.use(
         organizationId: user.organizationId,
       },
     });
-  }
+  },
 );
 
 /**

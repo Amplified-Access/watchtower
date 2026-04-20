@@ -11,13 +11,19 @@ import type {
 export interface AnonymousReportingRepository {
   getAllIncidentTypes(): Promise<IncidentTypeDto[]>;
 
-  getActiveIncidentTypesForMaps(): Promise<Array<IncidentTypeDto & {
-    anonymousReportCount: unknown;
-    organizationReportCount: unknown;
-    totalReportCount: unknown;
-  }>>;
+  getActiveIncidentTypesForMaps(): Promise<
+    Array<
+      IncidentTypeDto & {
+        anonymousReportCount: unknown;
+        organizationReportCount: unknown;
+        totalReportCount: unknown;
+      }
+    >
+  >;
 
-  createAnonymousIncidentReport(input: AnonymousIncidentReportDraft): Promise<void>;
+  createAnonymousIncidentReport(
+    input: AnonymousIncidentReportDraft,
+  ): Promise<void>;
 
   getAllAnonymousIncidentReports(
     filters: AnonymousIncidentReportFilters,

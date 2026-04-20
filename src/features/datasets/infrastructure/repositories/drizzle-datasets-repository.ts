@@ -148,7 +148,9 @@ export class DrizzleDatasetsRepository implements DatasetsRepository {
     };
   }
 
-  async updateDataset(input: DatasetUpdateInput): Promise<DatasetRecord | null> {
+  async updateDataset(
+    input: DatasetUpdateInput,
+  ): Promise<DatasetRecord | null> {
     const { id, ...updateData } = input;
 
     const [updated] = await this.database

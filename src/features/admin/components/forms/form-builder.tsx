@@ -31,7 +31,7 @@ const FormBuilder = ({ formId }: FormBuilderProps) => {
     error: formError,
   } = trpc.getFormById.useQuery(
     { formId: formId || "" },
-    { enabled: !!formId }
+    { enabled: !!formId },
   );
 
   // Load existing form data
