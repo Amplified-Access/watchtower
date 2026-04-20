@@ -53,8 +53,10 @@ import {
   datasetFilterSchema,
 } from "@/features/datasets/schemas/dataset-schema";
 import { createOrganizationRegistrationUseCases } from "@/features/organization-registration";
+import { createDatasetsUseCases } from "@/features/datasets";
 
 const organizationRegistration = createOrganizationRegistrationUseCases();
+const datasetsFeature = createDatasetsUseCases();
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -2995,58 +2997,11 @@ export const appRouter = router({
     .input(datasetFilterSchema)
     .query(async ({ input }) => {
       try {
-        const { category, search, tags, format, page, limit } = input;
-        const offset = (page - 1) * limit;
-
-        // Build where conditions
-        const whereConditions: any[] = [eq(datasets.isPublic, true)];
-
-        if (category) {
-          whereConditions.push(eq(datasets.category, category));
-        }
-
-        if (format) {
-          whereConditions.push(eq(datasets.format, format));
-        }
-
-        if (search) {
-          whereConditions.push(
-            or(
-              ilike(datasets.title, `%${search}%`),
-              ilike(datasets.description, `%${search}%`),
-              ilike(datasets.source, `%${search}%`)
-            )
-          );
-        }
-
-        // Get datasets with pagination
-        const datasetsQuery = db
-          .select()
-          .from(datasets)
-          .where(and(...whereConditions))
-          .orderBy(desc(datasets.publishedAt))
-          .limit(limit)
-          .offset(offset);
-
-        const datasetsData = await datasetsQuery;
-
-        // Get total count for pagination
-        const totalCountQuery = db
-          .select({ count: count() })
-          .from(datasets)
-          .where(and(...whereConditions));
-
-        const [{ count: totalCount }] = await totalCountQuery;
-
-        return {
-          data: datasetsData,
-          pagination: {
-            page,
-            limit,
-            total: totalCount,
-            totalPages: Math.ceil(totalCount / limit),
-          },
-        };
+        return await datasetsFeature.getPublicDatasets.execute({
+          ...input,
+          page: input.page,
+          limit: input.limit,
+        });
       } catch (error) {
         console.error("Error fetching public datasets:", error);
         throw new TRPCError({
@@ -3063,10 +3018,7 @@ export const appRouter = router({
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input }) => {
       try {
-        const [dataset] = await db
-          .select()
-          .from(datasets)
-          .where(and(eq(datasets.id, input.id), eq(datasets.isPublic, true)));
+        const dataset = await datasetsFeature.getDatasetById.execute(input.id);
 
         if (!dataset) {
           throw new TRPCError({
@@ -3092,15 +3044,7 @@ export const appRouter = router({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input }) => {
       try {
-        await db
-          .update(datasets)
-          .set({
-            downloadCount: sql`${datasets.downloadCount} + 1`,
-            updatedAt: new Date(),
-          })
-          .where(eq(datasets.id, input.id));
-
-        return { success: true };
+        return await datasetsFeature.incrementDatasetDownload.execute(input.id);
       } catch (error) {
         console.error("Error incrementing download count:", error);
         throw new TRPCError({
@@ -3124,33 +3068,7 @@ export const appRouter = router({
     )
     .mutation(async ({ input }) => {
       try {
-        const [newDataset] = await db
-          .insert(datasets)
-          .values({
-            title: input.title,
-            description: input.description,
-            category: input.category,
-            tags: input.tags,
-            fileKey: input.fileKey,
-            fileName: input.fileName,
-            fileSize: input.fileSize,
-            fileType: input.fileType,
-            source: input.source,
-            license: input.license,
-            version: input.version,
-            coverage: input.coverage,
-            format: input.format,
-            keywords: input.keywords,
-            methodology: input.methodology,
-            isPublic: input.isPublic,
-          })
-          .returning();
-
-        return {
-          success: true,
-          message: "Dataset uploaded successfully",
-          dataset: newDataset,
-        };
+        return await datasetsFeature.uploadDataset.execute(input);
       } catch (error) {
         console.error("Error uploading dataset:", error);
         throw new TRPCError({
@@ -3171,67 +3089,12 @@ export const appRouter = router({
     )
     .query(async ({ input }) => {
       try {
-        const { category, search, tags, format, page, limit, includePrivate } =
-          input;
-        const offset = (page - 1) * limit;
-
-        // Build where conditions
-        const whereConditions: any[] = [];
-
-        if (!includePrivate) {
-          whereConditions.push(eq(datasets.isPublic, true));
-        }
-
-        if (category) {
-          whereConditions.push(eq(datasets.category, category));
-        }
-
-        if (format) {
-          whereConditions.push(eq(datasets.format, format));
-        }
-
-        if (search) {
-          whereConditions.push(
-            or(
-              ilike(datasets.title, `%${search}%`),
-              ilike(datasets.description, `%${search}%`),
-              ilike(datasets.source, `%${search}%`)
-            )
-          );
-        }
-
-        // Get datasets with pagination
-        const datasetsQuery = db
-          .select()
-          .from(datasets)
-          .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
-          )
-          .orderBy(desc(datasets.createdAt))
-          .limit(limit)
-          .offset(offset);
-
-        const datasetsData = await datasetsQuery;
-
-        // Get total count for pagination
-        const totalCountQuery = db
-          .select({ count: count() })
-          .from(datasets)
-          .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined
-          );
-
-        const [{ count: totalCount }] = await totalCountQuery;
-
-        return {
-          data: datasetsData,
-          pagination: {
-            page,
-            limit,
-            total: totalCount,
-            totalPages: Math.ceil(totalCount / limit),
-          },
-        };
+        return await datasetsFeature.getAllDatasets.execute({
+          ...input,
+          page: input.page,
+          limit: input.limit,
+          includePrivate: input.includePrivate,
+        });
       } catch (error) {
         console.error("Error fetching all datasets:", error);
         throw new TRPCError({
@@ -3248,16 +3111,7 @@ export const appRouter = router({
     .input(datasetUpdateSchema)
     .mutation(async ({ input }) => {
       try {
-        const { id, ...updateData } = input;
-
-        const [updatedDataset] = await db
-          .update(datasets)
-          .set({
-            ...updateData,
-            updatedAt: new Date(),
-          })
-          .where(eq(datasets.id, id))
-          .returning();
+        const updatedDataset = await datasetsFeature.updateDataset.execute(input);
 
         if (!updatedDataset) {
           throw new TRPCError({
@@ -3287,10 +3141,9 @@ export const appRouter = router({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input }) => {
       try {
-        const [deletedDataset] = await db
-          .delete(datasets)
-          .where(eq(datasets.id, input.id))
-          .returning();
+        const deletedDataset = await datasetsFeature.deleteDataset.execute(
+          input.id,
+        );
 
         if (!deletedDataset) {
           throw new TRPCError({
@@ -3317,17 +3170,7 @@ export const appRouter = router({
    */
   getDatasetCategories: publicProcedure.query(async () => {
     try {
-      const categoryStats = await db
-        .select({
-          category: datasets.category,
-          count: count(),
-        })
-        .from(datasets)
-        .where(eq(datasets.isPublic, true))
-        .groupBy(datasets.category)
-        .orderBy(desc(count()));
-
-      return categoryStats;
+      return await datasetsFeature.getDatasetCategories.execute();
     } catch (error) {
       console.error("Error fetching dataset categories:", error);
       throw new TRPCError({

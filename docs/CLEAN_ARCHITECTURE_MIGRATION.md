@@ -90,11 +90,12 @@ This allows replacing infrastructure with minimal blast radius.
 
 ## Recommended Next Targets
 
-1. `src/_trpc/routers/anonymous-reporting.ts`
-2. `src/_trpc/routers/notifications.ts`
-3. `src/_trpc/routers/alert-subscriptions.ts`
+1. `maps`
+2. `watcher`
+3. `admin`
+4. `super-admin`
 
-These are ideal because they currently blend transport, business logic, and persistence concerns.
+These are the next highest-impact vertical slices still mixing transport and business concerns.
 
 ## Migration Status
 
@@ -106,14 +107,14 @@ Completed:
 - `anonymous-reporting`
 - `auth`
 - `organization-registration`
+- `datasets`
 
 In queue (next):
 
-1. `datasets`
-2. `maps`
-3. `watcher`
-4. `admin`
-5. `super-admin`
+1. `maps`
+2. `watcher`
+3. `admin`
+4. `super-admin`
 
 Notes:
 
