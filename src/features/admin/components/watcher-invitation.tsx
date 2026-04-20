@@ -55,7 +55,7 @@ const WatcherInvitation = () => {
         ...values,
         organizationId: organization || "",
       });
-      if (result?.error) {
+      if ("error" in result && result.error) {
         toast.error(result.message);
         return;
       }

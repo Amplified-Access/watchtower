@@ -25,8 +25,6 @@ import {
   lt,
 } from "drizzle-orm";
 import { auth } from "@/lib/auth";
-import { generateRandomSecurePassword } from "@/utils/generate-random-password";
-import { headers } from "next/headers";
 import { user } from "@/db/schemas/auth";
 import { watcherIvitationSchema } from "@/features/admin/schemas/watcher-invitation";
 import { TRPCError } from "@trpc/server";
@@ -60,10 +58,17 @@ import {
   WatcherNotFoundError,
   WatcherValidationError,
 } from "@/features/watcher";
+import {
+  createAdminUserManagementUseCases,
+  AdminForbiddenError,
+  AdminNotFoundError,
+  AdminValidationError,
+} from "@/features/admin";
 
 const organizationRegistration = createOrganizationRegistrationUseCases();
 const datasetsFeature = createDatasetsUseCases();
 const watcherFeature = createWatcherUseCases();
+const adminUserManagement = createAdminUserManagementUseCases();
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -573,36 +578,15 @@ export const appRouter = router({
    */
   getOrganizationWatchers: protectedProcedure.query(async ({ ctx }) => {
     try {
-      // Get the user's organization ID
-      const userOrganizationId = ctx.user.organizationId;
-
-      if (!userOrganizationId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message:
-            "You must be associated with an organization to view watchers",
-        });
-      }
-
-      const data = await db
-        .select({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          organizationId: user.organizationId,
-          organization: organizations.name,
-        })
-        .from(user)
-        .leftJoin(organizations, eq(user.organizationId, organizations.id))
-        .where(
-          and(
-            eq(user.role, "watcher"),
-            eq(user.organizationId, userOrganizationId)
-          )
-        );
-      return data;
+      return await adminUserManagement.getOrganizationWatchers.execute({
+        userId: ctx.user.id,
+        role: ctx.user.role ?? "",
+        organizationId: ctx.user.organizationId,
+      });
     } catch (error) {
+      if (error instanceof AdminValidationError) {
+        throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+      }
       console.error("Error fetching organization watchers: ", error);
       return {
         success: false,
@@ -649,44 +633,17 @@ export const appRouter = router({
   inviteWatcher: adminProcedure
     .input(watcherIvitationSchema)
     .mutation(async (opts) => {
-      const { input } = opts; // Access the validated input data
-      console.log("Received watcher invitation:", input);
+      const { input } = opts;
       try {
-        const response = await auth.api
-          .signUpEmail({
-            body: {
-              name: input.name,
-              email: input.email,
-              password: generateRandomSecurePassword(),
-            },
-            asResponse: true, // returns a response object instead of data
-          })
-          .then((res) => res.json());
-
-        response?.user?.id &&
-          (await auth.api
-            .setRole({
-              body: {
-                userId: response?.user?.id,
-                role: "watcher", // required
-              },
-              // This endpoint requires session cookies.
-              headers: await headers(),
-            })
-            .then((res) => console.log("Role change response: ", res)));
-
-        await db
-          .update(user)
-          .set({ organizationId: input.organizationId })
-          .where(eq(user.id, response?.user?.id));
-
-        await auth.api.requestPasswordReset({
-          body: {
-            email: input.email,
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
-          },
-        });
+        return await adminUserManagement.inviteWatcher.execute(input);
       } catch (error) {
+        if (error instanceof AdminValidationError) {
+          return {
+            success: false,
+            message: error.message,
+            error: error.message,
+          };
+        }
         console.error("Error inviting watcher:", error);
         return {
           success: false,
@@ -707,52 +664,22 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { userId, email } = input;
-
       try {
-        // Verify the user exists
-        const [targetUser] = await db
-          .select()
-          .from(user)
-          .where(eq(user.id, userId))
-          .limit(1);
-
-        if (!targetUser) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "User not found",
-          });
-        }
-
-        // Check organization access for admins (non-super-admins)
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== targetUser.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message:
-                "You can only reset passwords for users in your organization",
-            });
-          }
-        }
-
-        // Trigger password reset email
-        await auth.api.requestPasswordReset({
-          body: {
-            email: email,
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
+        return await adminUserManagement.resetUserPassword.execute({
+          userId: input.userId,
+          email: input.email,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
           },
         });
-
-        return {
-          success: true,
-          message: "Password reset email sent successfully",
-        };
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof AdminForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
         }
         console.error("Error resetting user password:", error);
         throw new TRPCError({
