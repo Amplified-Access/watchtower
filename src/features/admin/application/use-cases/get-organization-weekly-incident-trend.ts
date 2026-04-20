@@ -12,6 +12,8 @@ export class GetOrganizationWeeklyIncidentTrend {
       );
     }
 
-    return this.repository.getOrganizationWeeklyIncidentTrend(actor.organizationId);
+    return this.repository.getOrganizationWeeklyIncidentTrend(
+      actor.organizationId,
+    );
   }
 }

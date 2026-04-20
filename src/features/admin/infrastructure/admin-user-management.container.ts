@@ -71,10 +71,13 @@ export const createAdminUserManagementUseCases = (
     getOrganizationRecentIncidents: new GetOrganizationRecentIncidents(
       repository,
     ),
-    getOrganizationPendingReports: new GetOrganizationPendingReports(repository),
+    getOrganizationPendingReports: new GetOrganizationPendingReports(
+      repository,
+    ),
     getOrganizationIncidentTypesAnalytics:
       new GetOrganizationIncidentTypesAnalytics(repository),
-    getOrganizationWeeklyIncidentTrend:
-      new GetOrganizationWeeklyIncidentTrend(repository),
+    getOrganizationWeeklyIncidentTrend: new GetOrganizationWeeklyIncidentTrend(
+      repository,
+    ),
   };
 };

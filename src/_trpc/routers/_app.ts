@@ -2261,14 +2261,16 @@ export const appRouter = router({
     .input(z.object({ limit: z.number().default(5) }))
     .query(async ({ input, ctx }) => {
       try {
-        return await adminUserManagement.getOrganizationRecentIncidents.execute({
-          limit: input.limit,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
+        return await adminUserManagement.getOrganizationRecentIncidents.execute(
+          {
+            limit: input.limit,
+            actor: {
+              userId: ctx.user.id,
+              role: ctx.user.role ?? "",
+              organizationId: ctx.user.organizationId,
+            },
           },
-        });
+        );
       } catch (error) {
         if (error instanceof AdminValidationError) {
           throw new TRPCError({ code: "BAD_REQUEST", message: error.message });

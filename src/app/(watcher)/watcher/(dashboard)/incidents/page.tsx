@@ -54,9 +54,7 @@ type IncidentStatusFilter =
 const page = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<IncidentStatusFilter>(
-    "all",
-  );
+  const [statusFilter, setStatusFilter] = useState<IncidentStatusFilter>("all");
 
   // Fetch user's organization data to get organization ID
   const { data: organizationData, isLoading: orgLoading } =
