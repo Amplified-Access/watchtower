@@ -62,3 +62,45 @@ export interface DeleteFormInput {
   formId: string;
   actor: AdminActorContext;
 }
+
+export type AdminIncidentStatus =
+  | "reported"
+  | "investigating"
+  | "resolved"
+  | "closed";
+
+export interface AdminIncidentRecord {
+  id: string;
+  organizationId: string;
+  formId: string;
+  reportedByUserId: string;
+  data: unknown;
+  status: AdminIncidentStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  formName: string | null;
+  reporterEmail: string | null;
+}
+
+export interface GetOrganizationIncidentsInput {
+  organizationId: string;
+  search?: string;
+  status?: AdminIncidentStatus;
+  formId?: string;
+  sortBy: "createdAt" | "updatedAt" | "status";
+  sortOrder: "asc" | "desc";
+  limit: number;
+  offset: number;
+  actor: AdminActorContext;
+}
+
+export interface GetIncidentByIdInput {
+  incidentId: string;
+  actor: AdminActorContext;
+}
+
+export interface UpdateIncidentStatusInput {
+  incidentId: string;
+  status: AdminIncidentStatus;
+  actor: AdminActorContext;
+}

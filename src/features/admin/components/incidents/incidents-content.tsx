@@ -64,10 +64,17 @@ const statusColors: Record<
   closed: "bg-gray-100 text-gray-800 border-gray-200",
 };
 
+type IncidentStatusFilter =
+  | "all"
+  | "reported"
+  | "investigating"
+  | "resolved"
+  | "closed";
+
 const IncidentsContent = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<IncidentStatusFilter>("all");
   const [formFilter, setFormFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"createdAt" | "updatedAt" | "status">(
     "createdAt"
@@ -194,7 +201,12 @@ const IncidentsContent = () => {
             </div>
 
             {/* Status Filter */}
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) =>
+                setStatusFilter(value as IncidentStatusFilter)
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>

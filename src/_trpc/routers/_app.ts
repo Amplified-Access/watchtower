@@ -1221,7 +1221,9 @@ export const appRouter = router({
       z.object({
         organizationId: z.string(),
         search: z.string().optional(),
-        status: z.string().optional(),
+        status: z
+          .enum(["reported", "investigating", "resolved", "closed"])
+          .optional(),
         formId: z.string().optional(),
         sortBy: z
           .enum(["createdAt", "updatedAt", "status"])
@@ -1232,121 +1234,24 @@ export const appRouter = router({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const {
-        organizationId,
-        search,
-        status,
-        formId,
-        sortBy,
-        sortOrder,
-        limit,
-        offset,
-      } = input;
-
-      // Users can only access incidents from their own organization unless they're super admin
-      if (ctx.user.role !== "super-admin") {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-        if (userWithOrg.organizationId !== organizationId) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "You can only access incidents from your own organization",
-          });
-        }
-      }
-
       try {
-        // Build where conditions
-        const whereConditions = [eq(incidents.organizationId, organizationId)];
-
-        if (status) {
-          whereConditions.push(eq(incidents.status, status));
-        }
-
-        if (formId) {
-          whereConditions.push(eq(incidents.formId, formId));
-        }
-
-        // Determine order by clause
-        let orderByClause;
-        if (sortBy === "createdAt") {
-          orderByClause =
-            sortOrder === "desc"
-              ? desc(incidents.createdAt)
-              : asc(incidents.createdAt);
-        } else if (sortBy === "updatedAt") {
-          orderByClause =
-            sortOrder === "desc"
-              ? desc(incidents.updatedAt)
-              : asc(incidents.updatedAt);
-        } else if (sortBy === "status") {
-          orderByClause =
-            sortOrder === "desc"
-              ? desc(incidents.status)
-              : asc(incidents.status);
-        } else {
-          orderByClause = desc(incidents.createdAt); // default
-        }
-
-        // Execute the query
-        const data = await db
-          .select({
-            id: incidents.id,
-            organizationId: incidents.organizationId,
-            formId: incidents.formId,
-            reportedByUserId: incidents.reportedByUserId,
-            data: incidents.data,
-            status: incidents.status,
-            createdAt: incidents.createdAt,
-            updatedAt: incidents.updatedAt,
-            formName: forms.name,
-            reporterEmail: user.email,
-          })
-          .from(incidents)
-          .leftJoin(forms, eq(incidents.formId, forms.id))
-          .leftJoin(user, eq(incidents.reportedByUserId, user.id))
-          .where(and(...whereConditions))
-          .orderBy(orderByClause)
-          .limit(limit)
-          .offset(offset);
-
-        // If search is provided, filter results (simple text search in data)
-        let filteredData = data;
-        if (search) {
-          filteredData = data.filter((incident) => {
-            const searchLower = search.toLowerCase();
-            const dataString = JSON.stringify(incident.data).toLowerCase();
-            const formName = (incident.formName || "").toLowerCase();
-            const reporterEmail = (incident.reporterEmail || "").toLowerCase();
-
-            return (
-              dataString.includes(searchLower) ||
-              formName.includes(searchLower) ||
-              reporterEmail.includes(searchLower) ||
-              incident.status.toLowerCase().includes(searchLower)
-            );
-          });
-        }
-
-        // Get total count for pagination
-        const totalCountResult = await db
-          .select({ count: count() })
-          .from(incidents)
-          .where(and(...whereConditions));
-
-        const totalCount = totalCountResult[0]?.count || 0;
-
-        console.log(
-          `Found ${filteredData.length} incidents (${totalCount} total)`,
-        );
-
-        return {
-          incidents: filteredData,
-          totalCount,
-          hasMore: offset + filteredData.length < totalCount,
-        };
+        return await adminUserManagement.getAllOrganizationIncidents.execute({
+          ...input,
+          organizationId: input.organizationId,
+          sortBy: input.sortBy,
+          sortOrder: input.sortOrder,
+          limit: input.limit,
+          offset: input.offset,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof AdminForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+        }
         console.error("Failed to fetch incidents:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -1361,53 +1266,21 @@ export const appRouter = router({
   getIncidentById: organizationProcedure
     .input(z.object({ incidentId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const { incidentId } = input;
-
       try {
-        const incident = await db
-          .select({
-            id: incidents.id,
-            organizationId: incidents.organizationId,
-            formId: incidents.formId,
-            reportedByUserId: incidents.reportedByUserId,
-            data: incidents.data,
-            status: incidents.status,
-            createdAt: incidents.createdAt,
-            updatedAt: incidents.updatedAt,
-            formName: forms.name,
-            reporterEmail: user.email,
-          })
-          .from(incidents)
-          .leftJoin(forms, eq(incidents.formId, forms.id))
-          .leftJoin(user, eq(incidents.reportedByUserId, user.id))
-          .where(eq(incidents.id, incidentId))
-          .limit(1);
-
-        if (!incident.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Incident not found",
-          });
-        }
-
-        // Check organization access
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== incident[0].organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message:
-                "You can only access incidents from your own organization",
-            });
-          }
-        }
-
-        return incident[0];
+        return await adminUserManagement.getIncidentById.execute({
+          incidentId: input.incidentId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof AdminForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
         }
         console.error("Failed to fetch incident:", error);
         throw new TRPCError({
@@ -1428,55 +1301,22 @@ export const appRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { incidentId, status } = input;
-
       try {
-        // First check if incident exists and user has access
-        const existingIncident = await db
-          .select()
-          .from(incidents)
-          .where(eq(incidents.id, incidentId))
-          .limit(1);
-
-        if (!existingIncident.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Incident not found",
-          });
-        }
-
-        // Check organization access
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (
-            userWithOrg.organizationId !== existingIncident[0].organizationId
-          ) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message:
-                "You can only update incidents from your own organization",
-            });
-          }
-        }
-
-        // Update the incident
-        await db
-          .update(incidents)
-          .set({
-            status,
-            updatedAt: new Date(),
-          })
-          .where(eq(incidents.id, incidentId));
-
-        return {
-          success: true,
-          message: "Incident status updated successfully",
-        };
+        return await adminUserManagement.updateIncidentStatus.execute({
+          incidentId: input.incidentId,
+          status: input.status,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof AdminNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof AdminForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
         }
         console.error("Failed to update incident:", error);
         throw new TRPCError({

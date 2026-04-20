@@ -2,13 +2,18 @@ export type {
   AdminActorContext,
   AdminFormRecord,
   AdminFormWithIncidentCount,
+  AdminIncidentRecord,
+  AdminIncidentStatus,
   BasicUserRecord,
   DeleteFormInput,
+  GetIncidentByIdInput,
+  GetOrganizationIncidentsInput,
   InviteWatcherInput,
   OrganizationWatcher,
   ResetUserPasswordInput,
   SaveFormDefinitionInput,
   UpdateFormInput,
+  UpdateIncidentStatusInput,
 } from "./domain/admin-user-management-types";
 export type { AdminUserManagementRepository } from "./domain/admin-user-management-repository";
 export {

@@ -44,10 +44,19 @@ const statusColors = {
   closed: "border-gray-200 text-gray-700 bg-gray-50",
 };
 
+type IncidentStatusFilter =
+  | "all"
+  | "reported"
+  | "investigating"
+  | "resolved"
+  | "closed";
+
 const page = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<IncidentStatusFilter>(
+    "all",
+  );
 
   // Fetch user's organization data to get organization ID
   const { data: organizationData, isLoading: orgLoading } =
@@ -257,7 +266,12 @@ const page = () => {
                   className="w-full"
                 />
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select
+                value={statusFilter}
+                onValueChange={(value) =>
+                  setStatusFilter(value as IncidentStatusFilter)
+                }
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
