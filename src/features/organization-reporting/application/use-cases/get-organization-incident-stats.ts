@@ -4,13 +4,13 @@ import type { OrganizationReportingRepository } from "../../domain/organization-
 export class GetOrganizationIncidentStats {
   constructor(private readonly repository: OrganizationReportingRepository) {}
 
-  async execute(input: {
-    organizationId?: string;
-  }): Promise<{
+  async execute(input: { organizationId?: string }): Promise<{
     success: true;
     data: NonNullable<
       Awaited<
-        ReturnType<OrganizationReportingRepository["getOrganizationIncidentStats"]>
+        ReturnType<
+          OrganizationReportingRepository["getOrganizationIncidentStats"]
+        >
       >
     >;
   }> {

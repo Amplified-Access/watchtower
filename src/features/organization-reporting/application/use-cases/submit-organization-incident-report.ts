@@ -36,12 +36,11 @@ export class SubmitOrganizationIncidentReport {
       throw new OrganizationMembershipRequiredError();
     }
 
-    const isEnabled = await this.repository.isIncidentTypeEnabledForOrganization(
-      {
+    const isEnabled =
+      await this.repository.isIncidentTypeEnabledForOrganization({
         organizationId: input.organizationId,
         incidentTypeId: input.category,
-      },
-    );
+      });
 
     if (!isEnabled) {
       throw new IncidentTypeNotEnabledError();

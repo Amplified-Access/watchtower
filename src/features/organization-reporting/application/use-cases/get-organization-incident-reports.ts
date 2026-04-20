@@ -12,7 +12,9 @@ export class GetOrganizationIncidentReports {
     success: true;
     message: string;
     data: Awaited<
-      ReturnType<OrganizationReportingRepository["getOrganizationIncidentReports"]>
+      ReturnType<
+        OrganizationReportingRepository["getOrganizationIncidentReports"]
+      >
     >;
   }> {
     if (!input.organizationId) {

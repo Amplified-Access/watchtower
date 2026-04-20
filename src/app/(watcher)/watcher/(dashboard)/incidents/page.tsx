@@ -53,7 +53,7 @@ const page = () => {
   const { data: organizationData, isLoading: orgLoading } =
     trpc.getAdminOrganization.useQuery(
       { userId: user?.id || "" },
-      { enabled: !!user?.id }
+      { enabled: !!user?.id },
     );
 
   // Get organization ID from the data
@@ -72,7 +72,7 @@ const page = () => {
         limit: 50,
         offset: 0,
       },
-      { enabled: !!organizationId }
+      { enabled: !!organizationId },
     );
 
   // Fetch new organization incident reports for the user
@@ -83,13 +83,13 @@ const page = () => {
         limit: 50,
         offset: 0,
       },
-      { enabled: !!user?.id && !!organizationId }
+      { enabled: !!user?.id && !!organizationId },
     );
 
   // Filter old incidents to only show those reported by the current watcher
   const myOldIncidents =
     incidentsData?.incidents?.filter(
-      (incident) => incident.reportedByUserId === user?.id
+      (incident) => incident.reportedByUserId === user?.id,
     ) || [];
 
   // Get organization incident reports (these are already filtered by user in the query)
@@ -133,8 +133,10 @@ const page = () => {
         incidentData?.location?.admin1 || "",
         incidentData?.location?.country || "",
         incidentData?.location?.display_name || "",
-      ].join(" ").toLowerCase();
-      
+      ]
+        .join(" ")
+        .toLowerCase();
+
       if (!searchableText.includes(searchLower)) {
         return false;
       }
@@ -143,7 +145,8 @@ const page = () => {
     return true;
   });
 
-  const isLoading = userLoading || orgLoading || incidentsLoading || orgIncidentReportsLoading;
+  const isLoading =
+    userLoading || orgLoading || incidentsLoading || orgIncidentReportsLoading;
 
   if (isLoading) {
     return <PageLoader />;
@@ -196,7 +199,10 @@ const page = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {allMyIncidents.filter((i) => i.status === "investigating").length}
+                {
+                  allMyIncidents.filter((i) => i.status === "investigating")
+                    .length
+                }
               </div>
               <p className="text-xs text-muted-foreground">
                 Currently being investigated
@@ -341,7 +347,7 @@ const page = () => {
                           <span className="text-sm">
                             {format(
                               new Date(incident.createdAt),
-                              "MMM dd, yyyy"
+                              "MMM dd, yyyy",
                             )}
                           </span>
                         </div>

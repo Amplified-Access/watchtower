@@ -31,7 +31,7 @@ export default function WatcherDashboardContent() {
   const { data: organizationData, isLoading: orgLoading } =
     trpc.getAdminOrganization.useQuery(
       { userId: user?.id || "" },
-      { enabled: !!user?.id }
+      { enabled: !!user?.id },
     );
 
   // Fetch real dashboard statistics
@@ -44,7 +44,7 @@ export default function WatcherDashboardContent() {
   const { data: recentActivity = [], isLoading: activityLoading } =
     trpc.getOrganizationRecentActivity.useQuery(
       { limit: 10 },
-      { enabled: !!user?.id }
+      { enabled: !!user?.id },
     );
 
   // Fetch user's organization incident reports
@@ -54,7 +54,7 @@ export default function WatcherDashboardContent() {
         limit: 5,
         offset: 0,
       },
-      { enabled: !!user?.id }
+      { enabled: !!user?.id },
     );
 
   const isLoading =
@@ -141,7 +141,9 @@ export default function WatcherDashboardContent() {
           />
           <StatsCard
             title="Pending Actions"
-            value={myIncidents.filter((i: any) => i.status === "reported").length}
+            value={
+              myIncidents.filter((i: any) => i.status === "reported").length
+            }
             icon={Clock}
             change={{
               value: "Awaiting review",
@@ -250,7 +252,7 @@ export default function WatcherDashboardContent() {
               {
                 period: "Mon",
                 value: recentActivity.filter(
-                  (a) => a.type === "incident" || a.type === "report"
+                  (a) => a.type === "incident" || a.type === "report",
                 ).length,
               },
               { period: "Tue", value: Math.floor(Math.random() * 6) + 1 },

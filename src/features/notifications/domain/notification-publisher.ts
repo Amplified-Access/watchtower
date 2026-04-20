@@ -27,7 +27,9 @@ export interface NotificationPublishResult {
 }
 
 export interface NotificationPublisher {
-  publishMessage(input: PublishMessageInput): Promise<NotificationPublishResult>;
+  publishMessage(
+    input: PublishMessageInput,
+  ): Promise<NotificationPublishResult>;
   publishIncidentAlert(
     input: PublishIncidentAlertInput,
   ): Promise<NotificationPublishResult>;

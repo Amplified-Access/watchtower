@@ -110,7 +110,7 @@ export const alertSubscriptionsRouter = router({
       z.object({
         email: z.string().email(),
         unsubscribeToken: z.string().optional(), // For unsubscribe links
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       try {

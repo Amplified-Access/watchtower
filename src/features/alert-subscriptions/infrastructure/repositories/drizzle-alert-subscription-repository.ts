@@ -9,9 +9,7 @@ import type {
 } from "../../domain/alert-subscription";
 import type { AlertSubscriptionRepository } from "../../domain/alert-subscription-repository";
 
-export class DrizzleAlertSubscriptionRepository
-  implements AlertSubscriptionRepository
-{
+export class DrizzleAlertSubscriptionRepository implements AlertSubscriptionRepository {
   constructor(private readonly database = defaultDb) {}
 
   async getByEmail(email: string): Promise<AlertSubscription | null> {
@@ -56,7 +54,9 @@ export class DrizzleAlertSubscriptionRepository
     return created as AlertSubscription;
   }
 
-  async update(input: AlertSubscriptionUpdate): Promise<AlertSubscription | null> {
+  async update(
+    input: AlertSubscriptionUpdate,
+  ): Promise<AlertSubscription | null> {
     const { id, ...updateData } = input;
 
     const [updated] = await this.database

@@ -43,7 +43,7 @@ export const notificationRouter = router({
         return await notifications.publishMessage.execute(input);
       } catch (error) {
         throw new Error(
-          error instanceof Error ? error.message : "Failed to publish message"
+          error instanceof Error ? error.message : "Failed to publish message",
         );
       }
     }),
@@ -58,7 +58,7 @@ export const notificationRouter = router({
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to publish incident alert"
+            : "Failed to publish incident alert",
         );
       }
     }),
@@ -73,7 +73,7 @@ export const notificationRouter = router({
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to publish system alert"
+            : "Failed to publish system alert",
         );
       }
     }),
@@ -84,7 +84,7 @@ export const notificationRouter = router({
       return await notifications.testConnection.execute();
     } catch (error) {
       throw new Error(
-        error instanceof Error ? error.message : "SNS connection test failed"
+        error instanceof Error ? error.message : "SNS connection test failed",
       );
     }
   }),

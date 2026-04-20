@@ -1,7 +1,5 @@
 import { AlertSubscriptionNotFoundError } from "../../domain/errors";
-import type {
-  AlertSubscription,
-} from "../../domain/alert-subscription";
+import type { AlertSubscription } from "../../domain/alert-subscription";
 import type { AlertSubscriptionRepository } from "../../domain/alert-subscription-repository";
 
 export class ActivateAlertSubscription {
