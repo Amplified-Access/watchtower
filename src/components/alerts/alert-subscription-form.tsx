@@ -155,7 +155,14 @@ const AlertSubscriptionForm: React.FC = () => {
       // Ensure data is an array before setting
       const locationData = searchLocation.data.data;
       if (Array.isArray(locationData)) {
-        setLocations(locationData);
+        setLocations(
+          locationData.map((location: any) => ({
+            name: location.display_name,
+            display_name: location.display_name,
+            lat: Number.parseFloat(location.lat),
+            lon: Number.parseFloat(location.lon),
+          })),
+        );
       } else {
         console.warn("Location data is not an array:", locationData);
         setLocations([]);

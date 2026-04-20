@@ -103,17 +103,17 @@ Completed:
 - `organization-reporting`
 - `alert-subscriptions`
 - `notifications`
+- `anonymous-reporting`
 
 In queue (next):
 
-1. `anonymous-reporting`
-2. `auth`
-3. `organization-registration`
-4. `datasets`
-5. `maps`
-6. `watcher`
-7. `admin`
-8. `super-admin`
+1. `auth`
+2. `organization-registration`
+3. `datasets`
+4. `maps`
+5. `watcher`
+6. `admin`
+7. `super-admin`
 
 Notes:
 
