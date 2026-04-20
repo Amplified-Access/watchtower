@@ -64,11 +64,17 @@ import {
   AdminNotFoundError,
   AdminValidationError,
 } from "@/features/admin";
+import {
+  createSuperAdminFormUseCases,
+  SuperAdminFormNotFoundError,
+  SuperAdminFormValidationError,
+} from "@/features/super-admin";
 
 const organizationRegistration = createOrganizationRegistrationUseCases();
 const datasetsFeature = createDatasetsUseCases();
 const watcherFeature = createWatcherUseCases();
 const adminUserManagement = createAdminUserManagementUseCases();
+const superAdminForms = createSuperAdminFormUseCases();
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -1384,113 +1390,8 @@ export const appRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const {
-        search,
-        organizationId,
-        isActive,
-        sortBy,
-        sortOrder,
-        limit,
-        offset,
-      } = input;
-
       try {
-        // Build where conditions
-        const whereConditions = [];
-
-        if (organizationId) {
-          whereConditions.push(eq(forms.organizationId, organizationId));
-        }
-
-        if (isActive !== undefined) {
-          whereConditions.push(eq(forms.isActive, isActive));
-        }
-
-        // Determine order by clause
-        let orderByClause;
-        if (sortBy === "createdAt") {
-          orderByClause =
-            sortOrder === "desc" ? desc(forms.createdAt) : asc(forms.createdAt);
-        } else if (sortBy === "updatedAt") {
-          orderByClause =
-            sortOrder === "desc" ? desc(forms.updatedAt) : asc(forms.updatedAt);
-        } else if (sortBy === "name") {
-          orderByClause =
-            sortOrder === "desc" ? desc(forms.name) : asc(forms.name);
-        } else {
-          orderByClause = desc(forms.createdAt); // default
-        }
-
-        // Execute the main query
-        const data = await db
-          .select({
-            id: forms.id,
-            organizationId: forms.organizationId,
-            name: forms.name,
-            definition: forms.definition,
-            isActive: forms.isActive,
-            createdAt: forms.createdAt,
-            updatedAt: forms.updatedAt,
-            organizationName: organizations.name,
-          })
-          .from(forms)
-          .leftJoin(organizations, eq(forms.organizationId, organizations.id))
-          .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined,
-          )
-          .orderBy(orderByClause)
-          .limit(limit)
-          .offset(offset);
-
-        // Add incident counts for each form
-        const formsWithIncidentCounts = await Promise.all(
-          data.map(async (form) => {
-            const incidentCountResult = await db
-              .select({ count: count() })
-              .from(incidents)
-              .where(eq(incidents.formId, form.id));
-
-            return {
-              ...form,
-              incidentCount: incidentCountResult[0]?.count || 0,
-            };
-          }),
-        );
-
-        // If search is provided, filter results
-        let filteredData = formsWithIncidentCounts;
-        if (search) {
-          filteredData = formsWithIncidentCounts.filter((form) => {
-            const searchLower = search.toLowerCase();
-            const formName = (form.name || "").toLowerCase();
-            const organizationName = (
-              form.organizationName || ""
-            ).toLowerCase();
-
-            return (
-              formName.includes(searchLower) ||
-              organizationName.includes(searchLower)
-            );
-          });
-        }
-
-        // Get total count for pagination
-        const totalCountResult = await db
-          .select({ count: count() })
-          .from(forms)
-          .where(
-            whereConditions.length > 0 ? and(...whereConditions) : undefined,
-          );
-
-        const totalCount = totalCountResult[0]?.count || 0;
-
-        console.log(`Found ${filteredData.length} forms (${totalCount} total)`);
-
-        return {
-          forms: filteredData,
-          totalCount,
-          hasMore: offset + filteredData.length < totalCount,
-        };
+        return await superAdminForms.getAllFormsForSuperAdmin.execute(input);
       } catch (error) {
         console.error("Failed to retrieve forms:", error);
         throw new TRPCError({
@@ -1506,36 +1407,13 @@ export const appRouter = router({
   getFormByIdForSuperAdmin: superAdminProcedure
     .input(z.object({ formId: z.string() }))
     .query(async ({ input }) => {
-      const { formId } = input;
-
       try {
-        const [form] = await db
-          .select({
-            id: forms.id,
-            organizationId: forms.organizationId,
-            name: forms.name,
-            definition: forms.definition,
-            isActive: forms.isActive,
-            createdAt: forms.createdAt,
-            updatedAt: forms.updatedAt,
-            organizationName: organizations.name,
-          })
-          .from(forms)
-          .leftJoin(organizations, eq(forms.organizationId, organizations.id))
-          .where(eq(forms.id, formId))
-          .limit(1);
-
-        if (!form) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Form not found",
-          });
-        }
-
-        return form;
+        return await superAdminForms.getFormByIdForSuperAdmin.execute(
+          input.formId,
+        );
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof SuperAdminFormNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
         }
         console.error("Failed to fetch form:", error);
         throw new TRPCError({
@@ -1558,48 +1436,11 @@ export const appRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const { formId, name, definition, isActive } = input;
-
       try {
-        // Check if form exists
-        const [existingForm] = await db
-          .select()
-          .from(forms)
-          .where(eq(forms.id, formId))
-          .limit(1);
-
-        if (!existingForm) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Form not found",
-          });
-        }
-
-        // Prepare update data
-        const updateData: any = {
-          updatedAt: new Date(),
-        };
-
-        if (name !== undefined) {
-          updateData.name = name;
-        }
-        if (definition !== undefined) {
-          updateData.definition = definition;
-        }
-        if (isActive !== undefined) {
-          updateData.isActive = isActive;
-        }
-
-        // Update the form
-        await db.update(forms).set(updateData).where(eq(forms.id, formId));
-
-        return {
-          success: true,
-          message: "Form updated successfully",
-        };
+        return await superAdminForms.updateFormForSuperAdmin.execute(input);
       } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof SuperAdminFormNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
         }
         console.error("Failed to update form:", error);
         throw new TRPCError({
@@ -1615,48 +1456,19 @@ export const appRouter = router({
   deleteFormForSuperAdmin: superAdminProcedure
     .input(z.object({ formId: z.string() }))
     .mutation(async ({ input }) => {
-      const { formId } = input;
-
       try {
-        // Check if form exists
-        const [existingForm] = await db
-          .select()
-          .from(forms)
-          .where(eq(forms.id, formId))
-          .limit(1);
-
-        if (!existingForm) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Form not found",
-          });
+        return await superAdminForms.deleteFormForSuperAdmin.execute(
+          input.formId,
+        );
+      } catch (error) {
+        if (error instanceof SuperAdminFormNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
         }
-
-        // Check if form has incidents
-        const incidentCountResult = await db
-          .select({ count: count() })
-          .from(incidents)
-          .where(eq(incidents.formId, formId));
-
-        const incidentCount = incidentCountResult[0]?.count || 0;
-
-        if (incidentCount > 0) {
+        if (error instanceof SuperAdminFormValidationError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: `Cannot delete form with ${incidentCount} associated incident(s). Delete incidents first.`,
+            message: error.message,
           });
-        }
-
-        // Delete the form
-        await db.delete(forms).where(eq(forms.id, formId));
-
-        return {
-          success: true,
-          message: "Form deleted successfully",
-        };
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
         }
         console.error("Failed to delete form:", error);
         throw new TRPCError({
