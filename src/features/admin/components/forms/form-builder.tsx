@@ -39,7 +39,7 @@ const FormBuilder = ({ formId }: FormBuilderProps) => {
     if (existingForm) {
       setFormTitle(existingForm.name);
       setQuestions(existingForm.definition || {});
-      setIsActive(existingForm.isActive);
+      setIsActive(existingForm.isActive ?? true);
     }
   }, [existingForm]);
 

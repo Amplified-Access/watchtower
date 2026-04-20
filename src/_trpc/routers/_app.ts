@@ -54,9 +54,16 @@ import {
 } from "@/features/datasets/schemas/dataset-schema";
 import { createOrganizationRegistrationUseCases } from "@/features/organization-registration";
 import { createDatasetsUseCases } from "@/features/datasets";
+import {
+  createWatcherUseCases,
+  WatcherForbiddenError,
+  WatcherNotFoundError,
+  WatcherValidationError,
+} from "@/features/watcher";
 
 const organizationRegistration = createOrganizationRegistrationUseCases();
 const datasetsFeature = createDatasetsUseCases();
+const watcherFeature = createWatcherUseCases();
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -611,34 +618,22 @@ export const appRouter = router({
   getAdminOrganization: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const { userId } = input;
-
-      // Users can only query their own organization unless they're super admin
-      if (ctx.user.role !== "super-admin" && ctx.user.id !== userId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You can only access your own organization data",
-        });
-      }
-
       try {
-        const data = await db
-          .select({
-            organizationId: user.organizationId,
-            organization: organizations.name,
-            description: organizations.description,
-            website: organizations.website,
-            location: organizations.location,
-            contactEmail: organizations.contactEmail,
-          })
-          .from(user)
-          .leftJoin(organizations, eq(user.organizationId, organizations.id))
-          .where(eq(user.id, userId));
-
-        console.log("Got org:", data);
-
-        return data[0];
+        return await watcherFeature.getAdminOrganization.execute({
+          userId: input.userId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof WatcherForbiddenError) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: error.message,
+          });
+        }
         console.error("Error fetching admin organization: ", error);
         return {
           success: false,
@@ -1204,39 +1199,27 @@ export const appRouter = router({
   getFormById: organizationProcedure
     .input(z.object({ formId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const { formId } = input;
-
       try {
-        const [form] = await db
-          .select()
-          .from(forms)
-          .where(eq(forms.id, formId))
-          .limit(1);
-
-        if (!form) {
+        return await watcherFeature.getFormById.execute({
+          formId: input.formId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
+      } catch (error) {
+        if (error instanceof WatcherNotFoundError) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Form not found",
+            message: error.message,
           });
         }
-
-        // Check if user has access to this form's organization
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== form.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "You can only access forms from your own organization",
-            });
-          }
-        }
-
-        return form;
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof WatcherForbiddenError) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: error.message,
+          });
         }
         console.error("Failed to fetch form:", error);
         throw new TRPCError({
@@ -1321,40 +1304,17 @@ export const appRouter = router({
    */
   getActiveFormsForWatcher: protectedProcedure.query(async ({ ctx }) => {
     try {
-      // Get user's organization
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
+      return await watcherFeature.getActiveFormsForWatcher.execute({
+        userId: ctx.user.id,
+        role: ctx.user.role ?? "",
+        organizationId: ctx.user.organizationId,
+      });
+    } catch (error) {
+      if (error instanceof WatcherValidationError) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
+          message: error.message,
         });
-      }
-
-      // Get only active forms for the user's organization
-      const activeForms = await db
-        .select({
-          id: forms.id,
-          name: forms.name,
-          definition: forms.definition,
-          createdAt: forms.createdAt,
-          updatedAt: forms.updatedAt,
-        })
-        .from(forms)
-        .where(
-          and(
-            eq(forms.organizationId, userWithOrg.organizationId),
-            eq(forms.isActive, true)
-          )
-        )
-        .orderBy(desc(forms.updatedAt));
-
-      return activeForms;
-    } catch (error) {
-      if (error instanceof TRPCError) {
-        throw error;
       }
       console.error("Failed to fetch active forms:", error);
       throw new TRPCError({
@@ -1703,63 +1663,28 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { formId, data } = input;
-
       try {
-        // First, verify the form exists and is active
-        const [form] = await db
-          .select()
-          .from(forms)
-          .where(eq(forms.id, formId));
-
-        if (!form) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Form not found",
-          });
+        return await watcherFeature.submitIncident.execute({
+          formId: input.formId,
+          data: input.data,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
+      } catch (error) {
+        if (error instanceof WatcherNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
         }
-
-        if (!form.isActive) {
+        if (error instanceof WatcherValidationError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "This form is not currently active",
+            message: error.message,
           });
         }
-
-        // Users can only submit to forms from their own organization unless they're super admin
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== form.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message:
-                "You can only submit reports to forms from your own organization",
-            });
-          }
-        }
-
-        // Create the incident
-        const [newIncident] = await db
-          .insert(incidents)
-          .values({
-            organizationId: form.organizationId,
-            formId: formId,
-            reportedByUserId: ctx.user.id,
-            data: data,
-            status: "reported",
-          })
-          .returning();
-
-        return {
-          success: true,
-          message: "Incident reported successfully",
-          incidentId: newIncident.id,
-        };
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
+        if (error instanceof WatcherForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
         }
         console.error("Failed to submit incident:", error);
         throw new TRPCError({
@@ -3695,82 +3620,19 @@ export const appRouter = router({
    */
   getOrganizationDashboardStats: organizationProcedure.query(
     async ({ ctx }) => {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
       try {
-        // Get total incidents count
-        const [incidentStats] = await db
-          .select({
-            total: count(incidents.id),
-            open: sql<number>`COUNT(CASE WHEN ${incidents.status} = 'reported' THEN 1 END)`,
-            investigating: sql<number>`COUNT(CASE WHEN ${incidents.status} = 'investigating' THEN 1 END)`,
-            resolved: sql<number>`COUNT(CASE WHEN ${incidents.status} = 'resolved' THEN 1 END)`,
-          })
-          .from(incidents)
-          .where(eq(incidents.organizationId, userWithOrg.organizationId));
-
-        // Get reports count by status
-        const [reportStats] = await db
-          .select({
-            total: count(reports.id),
-            draft: sql<number>`COUNT(CASE WHEN ${reports.status} = 'draft' THEN 1 END)`,
-            published: sql<number>`COUNT(CASE WHEN ${reports.status} = 'published' THEN 1 END)`,
-          })
-          .from(reports)
-          .where(eq(reports.organizationId, userWithOrg.organizationId));
-
-        // Get forms count
-        const [formStats] = await db
-          .select({
-            total: count(forms.id),
-            active: sql<number>`COUNT(CASE WHEN ${forms.isActive} = true THEN 1 END)`,
-          })
-          .from(forms)
-          .where(eq(forms.organizationId, userWithOrg.organizationId));
-
-        // Get watchers count
-        const [watcherStats] = await db
-          .select({
-            total: count(user.id),
-          })
-          .from(user)
-          .where(
-            and(
-              eq(user.organizationId, userWithOrg.organizationId),
-              eq(user.role, "watcher")
-            )
-          );
-
-        return {
-          incidents: {
-            total: incidentStats.total || 0,
-            open: incidentStats.open || 0,
-            investigating: incidentStats.investigating || 0,
-            resolved: incidentStats.resolved || 0,
-          },
-          reports: {
-            total: reportStats.total || 0,
-            draft: reportStats.draft || 0,
-            published: reportStats.published || 0,
-          },
-          forms: {
-            total: formStats.total || 0,
-            active: formStats.active || 0,
-          },
-          watchers: {
-            total: watcherStats.total || 0,
-          },
-        };
+        return await watcherFeature.getOrganizationDashboardStats.execute({
+          userId: ctx.user.id,
+          role: ctx.user.role ?? "",
+          organizationId: ctx.user.organizationId,
+        });
       } catch (error) {
+        if (error instanceof WatcherValidationError) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: error.message,
+          });
+        }
         console.error("Failed to fetch dashboard stats:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -3786,92 +3648,28 @@ export const appRouter = router({
   getOrganizationRecentActivity: organizationProcedure
     .input(z.object({ limit: z.number().default(10) }))
     .query(async ({ input, ctx }) => {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
       try {
-        // Get recent incidents
-        const recentIncidents = await db
-          .select({
-            id: incidents.id,
-            type: sql<string>`'incident'`,
-            title: sql<string>`CASE 
-              WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
-              THEN CONCAT(${incidents.data}->>'incidentType', ' incident reported')
-              ELSE 'New incident reported'
-            END`,
-            description: sql<string>`CASE 
-              WHEN ${incidents.data}->>'description' IS NOT NULL 
-              THEN ${incidents.data}->>'description'
-              ELSE 'No description provided'
-            END`,
-            status: incidents.status,
-            createdAt: incidents.createdAt,
-          })
-          .from(incidents)
-          .where(eq(incidents.organizationId, userWithOrg.organizationId))
-          .orderBy(desc(incidents.createdAt))
-          .limit(Math.floor(input.limit / 2));
+        const allActivity =
+          await watcherFeature.getOrganizationRecentActivity.execute({
+            limit: input.limit,
+            actor: {
+              userId: ctx.user.id,
+              role: ctx.user.role ?? "",
+              organizationId: ctx.user.organizationId,
+            },
+          });
 
-        // Get recent reports
-        const recentReports = await db
-          .select({
-            id: reports.id,
-            type: sql<string>`'report'`,
-            title: reports.title,
-            description: sql<string>`CASE 
-              WHEN ${reports.status} = 'published' THEN 'Report published'
-              ELSE 'Report draft created'
-            END`,
-            status: reports.status,
-            createdAt: reports.createdAt,
-          })
-          .from(reports)
-          .where(eq(reports.organizationId, userWithOrg.organizationId))
-          .orderBy(desc(reports.createdAt))
-          .limit(Math.floor(input.limit / 2));
-
-        // Combine and sort by date
-        const allActivity = [
-          ...recentIncidents.map((item) => ({
-            id: item.id,
-            title: item.title,
-            description: item.description,
-            timestamp: item.createdAt,
-            type: item.type as "incident",
-            status: item.status,
-            href: `/admin/incidents/${item.id}`,
-          })),
-          ...recentReports.map((item) => ({
-            id: item.id,
-            title: item.title,
-            description: item.description,
-            timestamp: item.createdAt,
-            type: item.type as "report",
-            status: item.status,
-            href: `/admin/reports/${item.id}`,
-          })),
-        ]
-          .sort(
-            (a, b) =>
-              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-          )
-          .slice(0, input.limit)
-          .map((item) => ({
-            ...item,
-            timestamp: formatRelativeTime(item.timestamp),
-          }));
-
-        return allActivity;
+        return allActivity.map((item) => ({
+          ...item,
+          timestamp: formatRelativeTime(item.timestamp),
+        }));
       } catch (error) {
+        if (error instanceof WatcherValidationError) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: error.message,
+          });
+        }
         console.error("Failed to fetch recent activity:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

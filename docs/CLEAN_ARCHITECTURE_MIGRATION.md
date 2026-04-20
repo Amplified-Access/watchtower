@@ -90,9 +90,8 @@ This allows replacing infrastructure with minimal blast radius.
 
 ## Recommended Next Targets
 
-1. `watcher`
-2. `admin`
-3. `super-admin`
+1. `admin`
+2. `super-admin`
 
 These are the next highest-impact vertical slices still mixing transport and business concerns.
 
@@ -108,12 +107,12 @@ Completed:
 - `organization-registration`
 - `datasets`
 - `maps`
+- `watcher`
 
 In queue (next):
 
-1. `watcher`
-2. `admin`
-3. `super-admin`
+1. `admin`
+2. `super-admin`
 
 Notes:
 
