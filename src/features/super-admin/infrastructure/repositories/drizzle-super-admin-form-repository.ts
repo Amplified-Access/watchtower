@@ -11,11 +11,13 @@ import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  GetPendingApplicationsForSuperAdminInput,
   GetRecentActivityForSuperAdminInput,
   SuperAdminIncidentRecord,
   SuperAdminDashboardStats,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  SuperAdminPendingApplicationItem,
   SuperAdminRecentActivityItem,
   SuperAdminReportRecord,
   UpdateIncidentStatusForSuperAdminInput,
@@ -623,6 +625,31 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       type: String(activity.type) as SuperAdminRecentActivityItem["type"],
       status: String(activity.status),
       href: this.getActivityHref(String(activity.type), String(activity.id)),
+    }));
+  }
+
+  async getPendingApplications(
+    input: GetPendingApplicationsForSuperAdminInput,
+  ): Promise<SuperAdminPendingApplicationItem[]> {
+    const pendingApplications = await this.database
+      .select({
+        id: organizationApplications.id,
+        title: organizationApplications.organizationName,
+        status: organizationApplications.status,
+        createdAt: organizationApplications.createdAt,
+      })
+      .from(organizationApplications)
+      .where(eq(organizationApplications.status, "pending"))
+      .orderBy(desc(organizationApplications.createdAt))
+      .limit(input.limit);
+
+    return pendingApplications.map((app) => ({
+      id: String(app.id),
+      title: app.title,
+      status: app.status,
+      date: this.formatTimeAgo(new Date(app.createdAt)),
+      type: "Organization Application",
+      href: `/superadmin/applications/${app.id}`,
     }));
   }
 

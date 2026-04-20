@@ -2,12 +2,14 @@ import type {
   GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
   GetAllReportsForSuperAdminInput,
+  GetPendingApplicationsForSuperAdminInput,
   GetRecentActivityForSuperAdminInput,
   SuperAdminDashboardStats,
   SuperAdminIncidentRecord,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
   SuperAdminRecentActivityItem,
+  SuperAdminPendingApplicationItem,
   SuperAdminReportRecord,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
@@ -42,4 +44,7 @@ export interface SuperAdminFormRepository {
   getRecentActivity(
     input: GetRecentActivityForSuperAdminInput,
   ): Promise<SuperAdminRecentActivityItem[]>;
+  getPendingApplications(
+    input: GetPendingApplicationsForSuperAdminInput,
+  ): Promise<SuperAdminPendingApplicationItem[]>;
 }

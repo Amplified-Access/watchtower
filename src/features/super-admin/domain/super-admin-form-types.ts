@@ -141,3 +141,16 @@ export interface SuperAdminRecentActivityItem {
   status: string;
   href: string;
 }
+
+export interface GetPendingApplicationsForSuperAdminInput {
+  limit: number;
+}
+
+export interface SuperAdminPendingApplicationItem {
+  id: string;
+  title: string;
+  status: string;
+  date: string;
+  type: "Organization Application";
+  href: string;
+}

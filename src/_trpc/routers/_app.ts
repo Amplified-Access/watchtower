@@ -2360,30 +2360,10 @@ export const appRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { limit } = input;
-
       try {
-        const pendingApplications = await db
-          .select({
-            id: organizationApplications.id,
-            title: organizationApplications.organizationName,
-            status: organizationApplications.status,
-            createdAt: organizationApplications.createdAt,
-            applicantName: organizationApplications.applicantName,
-          })
-          .from(organizationApplications)
-          .where(eq(organizationApplications.status, "pending"))
-          .orderBy(desc(organizationApplications.createdAt))
-          .limit(limit);
-
-        return pendingApplications.map((app) => ({
-          id: String(app.id),
-          title: app.title,
-          status: app.status,
-          date: formatTimeAgo(new Date(app.createdAt)),
-          type: "Organization Application",
-          href: `/superadmin/applications/${app.id}`,
-        }));
+        return await superAdminForms.getPendingApplicationsForSuperAdmin.execute(
+          input,
+        );
       } catch (error) {
         console.error("Error fetching pending applications:", error);
         throw new TRPCError({
