@@ -167,3 +167,8 @@ export interface SuperAdminCriticalIncidentItem {
   type: "Security Incident";
   href: string;
 }
+
+export interface SuperAdminOrganizationTypeDistributionItem {
+  name: string;
+  value: number;
+}

@@ -13,6 +13,7 @@ import type {
   SuperAdminRecentActivityItem,
   SuperAdminPendingApplicationItem,
   SuperAdminReportRecord,
+  SuperAdminOrganizationTypeDistributionItem,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
 } from "./super-admin-form-types";
@@ -52,4 +53,7 @@ export interface SuperAdminFormRepository {
   getCriticalIncidents(
     input: GetCriticalIncidentsForSuperAdminInput,
   ): Promise<SuperAdminCriticalIncidentItem[]>;
+  getOrganizationTypeDistribution(): Promise<
+    SuperAdminOrganizationTypeDistributionItem[]
+  >;
 }

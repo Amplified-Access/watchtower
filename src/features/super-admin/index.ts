@@ -10,6 +10,7 @@ export type {
   SuperAdminCriticalIncidentItem,
   SuperAdminIncidentRecord,
   SuperAdminIncidentStatus,
+  SuperAdminOrganizationTypeDistributionItem,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
   SuperAdminRecentActivityItem,

@@ -2381,21 +2381,7 @@ export const appRouter = router({
    */
   getOrganizationTypeDistribution: superAdminProcedure.query(async () => {
     try {
-      // Since organizations don't have a type field, let's group by location or create a simple distribution
-      const organizationsByLocation = await db
-        .select({
-          type: organizations.location,
-          count: count(),
-        })
-        .from(organizations)
-        .groupBy(organizations.location);
-
-      return organizationsByLocation
-        .filter((item) => item.type) // Filter out null locations
-        .map((item) => ({
-          name: item.type || "Unknown",
-          value: item.count,
-        }));
+      return await superAdminForms.getOrganizationTypeDistributionForSuperAdmin.execute();
     } catch (error) {
       console.error("Error fetching organization types:", error);
       // Return some default data if there's an error

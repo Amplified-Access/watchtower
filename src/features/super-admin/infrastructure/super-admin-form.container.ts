@@ -5,6 +5,7 @@ import { GetAllIncidentsForSuperAdmin } from "../application/use-cases/get-all-i
 import { GetAllFormsForSuperAdmin } from "../application/use-cases/get-all-forms-for-super-admin";
 import { GetAllReportsForSuperAdmin } from "../application/use-cases/get-all-reports-for-super-admin";
 import { GetCriticalIncidentsForSuperAdmin } from "../application/use-cases/get-critical-incidents-for-super-admin";
+import { GetOrganizationTypeDistributionForSuperAdmin } from "../application/use-cases/get-organization-type-distribution-for-super-admin";
 import { GetPendingApplicationsForSuperAdmin } from "../application/use-cases/get-pending-applications-for-super-admin";
 import { GetRecentActivityForSuperAdmin } from "../application/use-cases/get-recent-activity-for-super-admin";
 import { GetFormByIdForSuperAdmin } from "../application/use-cases/get-form-by-id-for-super-admin";
@@ -28,6 +29,7 @@ export interface SuperAdminFormUseCases {
   getRecentActivityForSuperAdmin: GetRecentActivityForSuperAdmin;
   getPendingApplicationsForSuperAdmin: GetPendingApplicationsForSuperAdmin;
   getCriticalIncidentsForSuperAdmin: GetCriticalIncidentsForSuperAdmin;
+  getOrganizationTypeDistributionForSuperAdmin: GetOrganizationTypeDistributionForSuperAdmin;
 }
 
 export const createSuperAdminFormUseCases = (
@@ -56,5 +58,7 @@ export const createSuperAdminFormUseCases = (
     getCriticalIncidentsForSuperAdmin: new GetCriticalIncidentsForSuperAdmin(
       repository,
     ),
+    getOrganizationTypeDistributionForSuperAdmin:
+      new GetOrganizationTypeDistributionForSuperAdmin(repository),
   };
 };

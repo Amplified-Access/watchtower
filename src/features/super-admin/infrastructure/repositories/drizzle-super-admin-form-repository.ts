@@ -19,6 +19,7 @@ import type {
   SuperAdminDashboardStats,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  SuperAdminOrganizationTypeDistributionItem,
   SuperAdminPendingApplicationItem,
   SuperAdminRecentActivityItem,
   SuperAdminReportRecord,
@@ -683,6 +684,25 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       type: "Security Incident",
       href: `/superadmin/incidents/${incident.id}`,
     }));
+  }
+
+  async getOrganizationTypeDistribution(): Promise<
+    SuperAdminOrganizationTypeDistributionItem[]
+  > {
+    const organizationsByLocation = await this.database
+      .select({
+        type: organizations.location,
+        count: count(),
+      })
+      .from(organizations)
+      .groupBy(organizations.location);
+
+    return organizationsByLocation
+      .filter((item) => item.type)
+      .map((item) => ({
+        name: item.type || "Unknown",
+        value: item.count,
+      }));
   }
 
   private formatTimeAgo(date: Date): string {
