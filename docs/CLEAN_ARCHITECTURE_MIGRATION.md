@@ -105,15 +105,15 @@ Completed:
 - `notifications`
 - `anonymous-reporting`
 - `auth`
+- `organization-registration`
 
 In queue (next):
 
-1. `organization-registration`
-2. `datasets`
-3. `maps`
-4. `watcher`
-5. `admin`
-6. `super-admin`
+1. `datasets`
+2. `maps`
+3. `watcher`
+4. `admin`
+5. `super-admin`
 
 Notes:
 

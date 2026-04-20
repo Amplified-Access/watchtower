@@ -52,6 +52,9 @@ import {
   datasetUpdateSchema,
   datasetFilterSchema,
 } from "@/features/datasets/schemas/dataset-schema";
+import { createOrganizationRegistrationUseCases } from "@/features/organization-registration";
+
+const organizationRegistration = createOrganizationRegistrationUseCases();
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -70,8 +73,7 @@ export const appRouter = router({
    */
   getAllOrganizatonApplications: superAdminProcedure.query(async () => {
     try {
-      const data = await db.select().from(organizationApplications);
-      return data;
+      return await organizationRegistration.getAllOrganizationApplications.execute();
     } catch (error) {
       console.error("Error fetching all applications: ", error);
       return {
@@ -93,13 +95,9 @@ export const appRouter = router({
       console.log("Received organization application:", input);
 
       try {
-        await db.insert(organizationApplications).values({
-          organizationName: input.organizationName,
-          applicantName: input.applicantName,
-          applicantEmail: input.applicantEmail,
-          website: input.website,
-          certificateOfIncorporation: input.certificateOfIncorporation,
-        });
+        return await organizationRegistration.submitOrganizationApplication.execute(
+          input,
+        );
       } catch (error) {
         console.error("Error inserting organization application:", error);
         return {
@@ -109,12 +107,6 @@ export const appRouter = router({
         };
       }
 
-      // Return a success message or the created/updated data
-      return {
-        success: true,
-        message: "Organization application submitted successfully!",
-        submittedData: input, // Optionally return the submitted data
-      };
     }),
 
   /**
@@ -125,26 +117,9 @@ export const appRouter = router({
     .mutation(async ({ input }) => {
       const { id } = input;
       try {
-        const [application] = await db
-          .select()
-          .from(organizationApplications)
-          .where(eq(organizationApplications.id, id));
-
-        if (!application) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Application not found.",
-          });
-        }
-
-        await db
-          .update(organizationApplications)
-          .set({ status: "declined" })
-          .where(eq(organizationApplications.id, id));
-        return {
-          success: true,
-          message: "FDeclined organization application.",
-        };
+        return await organizationRegistration.declineOrganizationApplication.execute(
+          id,
+        );
       } catch (error) {
         console.error("Error declining application : ", error);
         return {
@@ -200,102 +175,9 @@ export const appRouter = router({
       const { id } = input;
 
       try {
-        // Update application status to 'approved'
-
-        const [application] = await db
-
-          .update(organizationApplications)
-
-          .set({ status: "approved" })
-
-          .where(eq(organizationApplications.id, id))
-
-          .returning();
-
-        if (!application) {
-          return {
-            success: false,
-
-            message: "Application not found.",
-          };
-        } // Insert into organizations table // You may need to adjust the import and schema for organizations
-
-        const { organizationName, applicantEmail, applicantName } = application; // Generate a slug from the organization name (simple example)
-
-        const slug = organizationName
-
-          .toLowerCase()
-
-          .replace(/[^a-z0-9]+/g, "-")
-
-          .replace(/(^-|-$)+/g, "");
-
-        const [createdOrg] = await db
-
-          .insert(organizations)
-
-          .values({
-            name: organizationName,
-
-            slug,
-          })
-
-          .returning();
-
-        const organizationId = createdOrg?.id;
-
-        const response = await auth.api
-
-          .signUpEmail({
-            body: {
-              name: applicantName,
-
-              email: applicantEmail,
-
-              password: generateRandomSecurePassword(),
-            },
-
-            asResponse: true, // returns a response object instead of data
-          })
-
-          .then((res) => res.json()); // console.log("Response: ", response);
-
-        response?.user?.id &&
-          (await auth.api
-
-            .setRole({
-              body: {
-                userId: response?.user?.id,
-
-                role: "admin", // required
-              }, // This endpoint requires session cookies.
-
-              headers: await headers(),
-            })
-
-            .then((res) => console.log("Role change response: ", res)));
-
-        await db
-
-          .update(user)
-
-          .set({ organizationId: organizationId })
-
-          .where(eq(user.id, response?.user?.id));
-
-        await auth.api.requestPasswordReset({
-          body: {
-            email: application.applicantEmail,
-
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
-          },
-        });
-
-        return {
-          success: true,
-
-          message: "Application approved and organization created.",
-        };
+        return await organizationRegistration.approveOrganizationApplication.execute(
+          id,
+        );
       } catch (error) {
         console.error("Error approving application:", error);
 
@@ -314,8 +196,7 @@ export const appRouter = router({
    */
   getAllOrganizatons: publicProcedure.query(async () => {
     try {
-      const data = await db.select().from(organizations);
-      return data;
+      return await organizationRegistration.getAllOrganizations.execute();
     } catch (error) {
       console.error("Error fetching organizations: ", error);
       return {
