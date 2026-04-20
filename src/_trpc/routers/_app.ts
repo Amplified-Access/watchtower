@@ -2398,70 +2398,7 @@ export const appRouter = router({
    */
   getPlatformActivityTrend: superAdminProcedure.query(async () => {
     try {
-      // Get activity for the last 7 weeks
-      const weeks = [];
-      for (let i = 6; i >= 0; i--) {
-        const weekStart = new Date();
-        weekStart.setDate(weekStart.getDate() - i * 7);
-        weekStart.setHours(0, 0, 0, 0);
-
-        const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekEnd.getDate() + 7);
-
-        // Count activities for this week (reports, incidents, applications)
-        const [reportsCount] = await db
-          .select({ count: count() })
-          .from(reports)
-          .where(
-            and(
-              sql`${reports.createdAt} >= ${weekStart}`,
-              sql`${reports.createdAt} < ${weekEnd}`,
-            ),
-          );
-
-        const [incidentsCount] = await db
-          .select({ count: count() })
-          .from(incidents)
-          .where(
-            and(
-              sql`${incidents.createdAt} >= ${weekStart}`,
-              sql`${incidents.createdAt} < ${weekEnd}`,
-            ),
-          );
-
-        const [applicationsCount] = await db
-          .select({ count: count() })
-          .from(organizationApplications)
-          .where(
-            and(
-              sql`${organizationApplications.createdAt} >= ${weekStart}`,
-              sql`${organizationApplications.createdAt} < ${weekEnd}`,
-            ),
-          );
-
-        const totalActivity =
-          reportsCount.count + incidentsCount.count + applicationsCount.count;
-
-        weeks.push({
-          period: `Week ${7 - i}`,
-          value: totalActivity,
-        });
-      }
-
-      // Calculate current change (last week vs previous week)
-      const currentValue = weeks[weeks.length - 1]?.value || 0;
-      const previousValue = weeks[weeks.length - 2]?.value || 0;
-      const currentChange =
-        previousValue > 0
-          ? ((currentValue - previousValue) / previousValue) * 100
-          : 0;
-
-      return {
-        data: weeks,
-        currentValue,
-        currentChange: Math.round(currentChange * 10) / 10, // Round to 1 decimal
-        timeframe: "30d" as const,
-      };
+      return await superAdminForms.getPlatformActivityTrendForSuperAdmin.execute();
     } catch (error) {
       console.error("Error fetching platform activity trend:", error);
       throw new TRPCError({

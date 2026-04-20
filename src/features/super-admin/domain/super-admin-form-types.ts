@@ -172,3 +172,15 @@ export interface SuperAdminOrganizationTypeDistributionItem {
   name: string;
   value: number;
 }
+
+export interface SuperAdminPlatformActivityTrendPoint {
+  period: string;
+  value: number;
+}
+
+export interface SuperAdminPlatformActivityTrend {
+  data: SuperAdminPlatformActivityTrendPoint[];
+  currentValue: number;
+  currentChange: number;
+  timeframe: "30d";
+}

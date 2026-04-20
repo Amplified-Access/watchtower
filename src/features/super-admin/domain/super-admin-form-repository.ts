@@ -12,6 +12,7 @@ import type {
   SuperAdminFormWithIncidentCount,
   SuperAdminRecentActivityItem,
   SuperAdminPendingApplicationItem,
+  SuperAdminPlatformActivityTrend,
   SuperAdminReportRecord,
   SuperAdminOrganizationTypeDistributionItem,
   UpdateIncidentStatusForSuperAdminInput,
@@ -56,4 +57,5 @@ export interface SuperAdminFormRepository {
   getOrganizationTypeDistribution(): Promise<
     SuperAdminOrganizationTypeDistributionItem[]
   >;
+  getPlatformActivityTrend(): Promise<SuperAdminPlatformActivityTrend>;
 }

@@ -21,6 +21,7 @@ import type {
   SuperAdminFormWithIncidentCount,
   SuperAdminOrganizationTypeDistributionItem,
   SuperAdminPendingApplicationItem,
+  SuperAdminPlatformActivityTrend,
   SuperAdminRecentActivityItem,
   SuperAdminReportRecord,
   UpdateIncidentStatusForSuperAdminInput,
@@ -703,6 +704,70 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
         name: item.type || "Unknown",
         value: item.count,
       }));
+  }
+
+  async getPlatformActivityTrend(): Promise<SuperAdminPlatformActivityTrend> {
+    const weeks = [];
+    for (let i = 6; i >= 0; i--) {
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - i * 7);
+      weekStart.setHours(0, 0, 0, 0);
+
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 7);
+
+      const [reportsCount] = await this.database
+        .select({ count: count() })
+        .from(reports)
+        .where(
+          and(
+            sql`${reports.createdAt} >= ${weekStart}`,
+            sql`${reports.createdAt} < ${weekEnd}`,
+          ),
+        );
+
+      const [incidentsCount] = await this.database
+        .select({ count: count() })
+        .from(incidents)
+        .where(
+          and(
+            sql`${incidents.createdAt} >= ${weekStart}`,
+            sql`${incidents.createdAt} < ${weekEnd}`,
+          ),
+        );
+
+      const [applicationsCount] = await this.database
+        .select({ count: count() })
+        .from(organizationApplications)
+        .where(
+          and(
+            sql`${organizationApplications.createdAt} >= ${weekStart}`,
+            sql`${organizationApplications.createdAt} < ${weekEnd}`,
+          ),
+        );
+
+      const totalActivity =
+        reportsCount.count + incidentsCount.count + applicationsCount.count;
+
+      weeks.push({
+        period: `Week ${7 - i}`,
+        value: totalActivity,
+      });
+    }
+
+    const currentValue = weeks[weeks.length - 1]?.value || 0;
+    const previousValue = weeks[weeks.length - 2]?.value || 0;
+    const currentChange =
+      previousValue > 0
+        ? ((currentValue - previousValue) / previousValue) * 100
+        : 0;
+
+    return {
+      data: weeks,
+      currentValue,
+      currentChange: Math.round(currentChange * 10) / 10,
+      timeframe: "30d",
+    };
   }
 
   private formatTimeAgo(date: Date): string {
