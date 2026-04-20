@@ -1,6 +1,10 @@
 import { DeleteFormForSuperAdmin } from "../application/use-cases/delete-form-for-super-admin";
+import { DeleteIncidentForSuperAdmin } from "../application/use-cases/delete-incident-for-super-admin";
+import { GetAllIncidentsForSuperAdmin } from "../application/use-cases/get-all-incidents-for-super-admin";
 import { GetAllFormsForSuperAdmin } from "../application/use-cases/get-all-forms-for-super-admin";
 import { GetFormByIdForSuperAdmin } from "../application/use-cases/get-form-by-id-for-super-admin";
+import { GetIncidentByIdForSuperAdmin } from "../application/use-cases/get-incident-by-id-for-super-admin";
+import { UpdateIncidentStatusForSuperAdmin } from "../application/use-cases/update-incident-status-for-super-admin";
 import { UpdateFormForSuperAdmin } from "../application/use-cases/update-form-for-super-admin";
 import type { SuperAdminFormRepository } from "../domain/super-admin-form-repository";
 import { DrizzleSuperAdminFormRepository } from "./repositories/drizzle-super-admin-form-repository";
@@ -10,6 +14,10 @@ export interface SuperAdminFormUseCases {
   getFormByIdForSuperAdmin: GetFormByIdForSuperAdmin;
   updateFormForSuperAdmin: UpdateFormForSuperAdmin;
   deleteFormForSuperAdmin: DeleteFormForSuperAdmin;
+  getAllIncidentsForSuperAdmin: GetAllIncidentsForSuperAdmin;
+  getIncidentByIdForSuperAdmin: GetIncidentByIdForSuperAdmin;
+  updateIncidentStatusForSuperAdmin: UpdateIncidentStatusForSuperAdmin;
+  deleteIncidentForSuperAdmin: DeleteIncidentForSuperAdmin;
 }
 
 export const createSuperAdminFormUseCases = (
@@ -20,5 +28,11 @@ export const createSuperAdminFormUseCases = (
     getFormByIdForSuperAdmin: new GetFormByIdForSuperAdmin(repository),
     updateFormForSuperAdmin: new UpdateFormForSuperAdmin(repository),
     deleteFormForSuperAdmin: new DeleteFormForSuperAdmin(repository),
+    getAllIncidentsForSuperAdmin: new GetAllIncidentsForSuperAdmin(repository),
+    getIncidentByIdForSuperAdmin: new GetIncidentByIdForSuperAdmin(repository),
+    updateIncidentStatusForSuperAdmin: new UpdateIncidentStatusForSuperAdmin(
+      repository,
+    ),
+    deleteIncidentForSuperAdmin: new DeleteIncidentForSuperAdmin(repository),
   };
 };

@@ -1,7 +1,11 @@
 export type {
+  GetAllIncidentsForSuperAdminInput,
   GetAllFormsForSuperAdminInput,
+  SuperAdminIncidentRecord,
+  SuperAdminIncidentStatus,
   SuperAdminFormRecord,
   SuperAdminFormWithIncidentCount,
+  UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
 } from "./domain/super-admin-form-types";
 export type { SuperAdminFormRepository } from "./domain/super-admin-form-repository";
