@@ -161,3 +161,20 @@ export interface AdminDashboardPendingReportItem {
   type: string;
   href: string;
 }
+
+export interface AdminIncidentTypeAnalyticsItem {
+  name: string;
+  value: number;
+}
+
+export interface AdminWeeklyTrendPoint {
+  period: string;
+  value: number;
+}
+
+export interface AdminWeeklyIncidentTrend {
+  data: AdminWeeklyTrendPoint[];
+  currentValue: number;
+  currentChange: number;
+  timeframe: "7d";
+}

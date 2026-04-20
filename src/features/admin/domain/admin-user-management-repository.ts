@@ -2,6 +2,8 @@ import type {
   AvailableIncidentTypeRecord,
   AdminDashboardPendingReportItem,
   AdminDashboardRecentIncidentItem,
+  AdminIncidentTypeAnalyticsItem,
+  AdminWeeklyIncidentTrend,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
@@ -75,4 +77,10 @@ export interface AdminUserManagementRepository {
     organizationId: string;
     limit: number;
   }): Promise<AdminDashboardPendingReportItem[]>;
+  getOrganizationIncidentTypesAnalytics(
+    organizationId: string,
+  ): Promise<AdminIncidentTypeAnalyticsItem[]>;
+  getOrganizationWeeklyIncidentTrend(
+    organizationId: string,
+  ): Promise<AdminWeeklyIncidentTrend>;
 }

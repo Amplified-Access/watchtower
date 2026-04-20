@@ -2313,57 +2313,18 @@ export const appRouter = router({
    */
   getOrganizationIncidentTypesAnalytics: organizationProcedure.query(
     async ({ ctx }) => {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
       try {
-        // Get incident types with their counts for the current month
-        const startOfMonth = new Date();
-        startOfMonth.setDate(1);
-        startOfMonth.setHours(0, 0, 0, 0);
-
-        const incidentTypesData = await db
-          .select({
-            incidentType: sql<string>`
-            CASE 
-              WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
-              THEN ${incidents.data}->>'incidentType'
-              ELSE 'Other'
-            END
-          `,
-            count: count(incidents.id),
-          })
-          .from(incidents)
-          .where(
-            and(
-              eq(incidents.organizationId, userWithOrg.organizationId),
-              gte(incidents.createdAt, startOfMonth),
-            ),
-          )
-          .groupBy(
-            sql`
-          CASE 
-            WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
-            THEN ${incidents.data}->>'incidentType'
-            ELSE 'Other'
-          END
-        `,
-          )
-          .orderBy(desc(count(incidents.id)));
-
-        return incidentTypesData.map((item) => ({
-          name: item.incidentType,
-          value: item.count,
-        }));
+        return await adminUserManagement.getOrganizationIncidentTypesAnalytics.execute(
+          {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        );
       } catch (error) {
+        if (error instanceof AdminValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Failed to fetch incident types analytics:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -2378,96 +2339,18 @@ export const appRouter = router({
    */
   getOrganizationWeeklyIncidentTrend: organizationProcedure.query(
     async ({ ctx }) => {
-      const userWithOrg = ctx.user as typeof ctx.user & {
-        organizationId?: string;
-      };
-
-      if (!userWithOrg.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User must be associated with an organization",
-        });
-      }
-
       try {
-        // Get incidents for the last 7 days
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
-        sevenDaysAgo.setHours(0, 0, 0, 0);
-
-        const weeklyData = await db
-          .select({
-            date: sql<string>`DATE(${incidents.createdAt})`,
-            count: count(incidents.id),
-          })
-          .from(incidents)
-          .where(
-            and(
-              eq(incidents.organizationId, userWithOrg.organizationId),
-              gte(incidents.createdAt, sevenDaysAgo),
-            ),
-          )
-          .groupBy(sql`DATE(${incidents.createdAt})`)
-          .orderBy(sql`DATE(${incidents.createdAt})`);
-
-        // Create array for last 7 days with day names
-        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const result = [];
-
-        for (let i = 0; i < 7; i++) {
-          const currentDate = new Date();
-          currentDate.setDate(currentDate.getDate() - (6 - i));
-          const dateString = currentDate.toISOString().split("T")[0];
-          const dayName = daysOfWeek[currentDate.getDay()];
-
-          const dataForDay = weeklyData.find(
-            (item) => item.date === dateString,
-          );
-          result.push({
-            period: dayName,
-            value: dataForDay ? dataForDay.count : 0,
-          });
-        }
-
-        // Calculate current week total and change from previous week
-        const currentWeekTotal = result.reduce(
-          (sum, day) => sum + day.value,
-          0,
+        return await adminUserManagement.getOrganizationWeeklyIncidentTrend.execute(
+          {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
         );
-
-        // Get previous week data for comparison
-        const fourteenDaysAgo = new Date();
-        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
-        fourteenDaysAgo.setHours(0, 0, 0, 0);
-
-        const previousWeekData = await db
-          .select({
-            count: count(incidents.id),
-          })
-          .from(incidents)
-          .where(
-            and(
-              eq(incidents.organizationId, userWithOrg.organizationId),
-              gte(incidents.createdAt, fourteenDaysAgo),
-              lt(incidents.createdAt, sevenDaysAgo),
-            ),
-          );
-
-        const previousWeekTotal = previousWeekData[0]?.count || 0;
-        const percentageChange =
-          previousWeekTotal > 0
-            ? ((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100
-            : currentWeekTotal > 0
-              ? 100
-              : 0;
-
-        return {
-          data: result,
-          currentValue: currentWeekTotal,
-          currentChange: Math.round(percentageChange * 10) / 10, // Round to 1 decimal place
-          timeframe: "7d" as const,
-        };
       } catch (error) {
+        if (error instanceof AdminValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Failed to fetch weekly incident trend:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

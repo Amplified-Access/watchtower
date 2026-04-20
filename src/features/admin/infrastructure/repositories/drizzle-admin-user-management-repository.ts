@@ -8,13 +8,15 @@ import { organizations } from "@/db/schemas/organizations";
 import { reports } from "@/db/schemas/reports";
 import { auth } from "@/lib/auth";
 import { generateRandomSecurePassword } from "@/utils/generate-random-password";
-import { and, asc, count, desc, eq, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import type { AdminUserManagementRepository } from "../../domain/admin-user-management-repository";
 import type {
   AvailableIncidentTypeRecord,
   AdminDashboardPendingReportItem,
   AdminDashboardRecentIncidentItem,
+  AdminIncidentTypeAnalyticsItem,
+  AdminWeeklyIncidentTrend,
   AdminFormRecord,
   AdminFormWithIncidentCount,
   AdminIncidentRecord,
@@ -560,6 +562,121 @@ export class DrizzleAdminUserManagementRepository implements AdminUserManagement
       type: report.type,
       href: `/admin/reports/${report.id}`,
     }));
+  }
+
+  async getOrganizationIncidentTypesAnalytics(
+    organizationId: string,
+  ): Promise<AdminIncidentTypeAnalyticsItem[]> {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const incidentTypesData = await this.database
+      .select({
+        incidentType: sql<string>`
+            CASE 
+              WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
+              THEN ${incidents.data}->>'incidentType'
+              ELSE 'Other'
+            END
+          `,
+        count: count(incidents.id),
+      })
+      .from(incidents)
+      .where(
+        and(
+          eq(incidents.organizationId, organizationId),
+          gte(incidents.createdAt, startOfMonth),
+        ),
+      )
+      .groupBy(
+        sql`
+          CASE 
+            WHEN ${incidents.data}->>'incidentType' IS NOT NULL 
+            THEN ${incidents.data}->>'incidentType'
+            ELSE 'Other'
+          END
+        `,
+      )
+      .orderBy(desc(count(incidents.id)));
+
+    return incidentTypesData.map((item) => ({
+      name: item.incidentType,
+      value: item.count,
+    }));
+  }
+
+  async getOrganizationWeeklyIncidentTrend(
+    organizationId: string,
+  ): Promise<AdminWeeklyIncidentTrend> {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const weeklyData = await this.database
+      .select({
+        date: sql<string>`DATE(${incidents.createdAt})`,
+        count: count(incidents.id),
+      })
+      .from(incidents)
+      .where(
+        and(
+          eq(incidents.organizationId, organizationId),
+          gte(incidents.createdAt, sevenDaysAgo),
+        ),
+      )
+      .groupBy(sql`DATE(${incidents.createdAt})`)
+      .orderBy(sql`DATE(${incidents.createdAt})`);
+
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const result = [];
+
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() - (6 - i));
+      const dateString = currentDate.toISOString().split("T")[0];
+      const dayName = daysOfWeek[currentDate.getDay()];
+
+      const dataForDay = weeklyData.find((item) => item.date === dateString);
+      result.push({
+        period: dayName,
+        value: dataForDay ? dataForDay.count : 0,
+      });
+    }
+
+    const currentWeekTotal = result.reduce((sum, day) => sum + day.value, 0);
+
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
+    fourteenDaysAgo.setHours(0, 0, 0, 0);
+
+    const previousWeekData = await this.database
+      .select({
+        count: count(incidents.id),
+      })
+      .from(incidents)
+      .where(
+        and(
+          eq(incidents.organizationId, organizationId),
+          gte(incidents.createdAt, fourteenDaysAgo),
+          lt(incidents.createdAt, sevenDaysAgo),
+        ),
+      );
+
+    const previousWeekTotal = previousWeekData[0]?.count || 0;
+    const percentageChange =
+      previousWeekTotal > 0
+        ? ((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100
+        : currentWeekTotal > 0
+          ? 100
+          : 0;
+
+    return {
+      data: result,
+      currentValue: currentWeekTotal,
+      currentChange: Math.round(percentageChange * 10) / 10,
+      timeframe: "7d",
+    };
   }
 
   private formatRelativeTime(date: Date): string {
