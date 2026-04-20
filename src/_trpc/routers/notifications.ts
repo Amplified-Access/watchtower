@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
-import { snsService } from "@/lib/aws/sns";
+import { createNotificationUseCases } from "@/features/notifications";
+
+const notifications = createNotificationUseCases();
 
 const publishMessageSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -38,17 +40,7 @@ export const notificationRouter = router({
     .input(publishMessageSchema)
     .mutation(async ({ input }) => {
       try {
-        const result = await snsService.publishMessage(input);
-
-        if (!result.success) {
-          throw new Error(result.error || "Failed to publish message");
-        }
-
-        return {
-          success: true,
-          messageId: result.messageId,
-          message: "Message published successfully to watchtower-alerts-topic",
-        };
+        return await notifications.publishMessage.execute(input);
       } catch (error) {
         throw new Error(
           error instanceof Error ? error.message : "Failed to publish message"
@@ -61,17 +53,7 @@ export const notificationRouter = router({
     .input(publishIncidentAlertSchema)
     .mutation(async ({ input }) => {
       try {
-        const result = await snsService.publishIncidentAlert(input);
-
-        if (!result.success) {
-          throw new Error(result.error || "Failed to publish incident alert");
-        }
-
-        return {
-          success: true,
-          messageId: result.messageId,
-          message: "Incident alert published successfully",
-        };
+        return await notifications.publishIncidentAlert.execute(input);
       } catch (error) {
         throw new Error(
           error instanceof Error
@@ -86,17 +68,7 @@ export const notificationRouter = router({
     .input(publishSystemAlertSchema)
     .mutation(async ({ input }) => {
       try {
-        const result = await snsService.publishSystemAlert(input);
-
-        if (!result.success) {
-          throw new Error(result.error || "Failed to publish system alert");
-        }
-
-        return {
-          success: true,
-          messageId: result.messageId,
-          message: "System alert published successfully",
-        };
+        return await notifications.publishSystemAlert.execute(input);
       } catch (error) {
         throw new Error(
           error instanceof Error
@@ -109,24 +81,7 @@ export const notificationRouter = router({
   // Test SNS connection
   testConnection: publicProcedure.mutation(async () => {
     try {
-      const result = await snsService.publishMessage({
-        message: "Test message from Watchtower application",
-        subject: "SNS Connection Test",
-        attributes: {
-          test: "true",
-          source: "watchtower-trpc",
-        },
-      });
-
-      if (!result.success) {
-        throw new Error(result.error || "SNS connection test failed");
-      }
-
-      return {
-        success: true,
-        messageId: result.messageId,
-        message: "SNS connection test successful",
-      };
+      return await notifications.testConnection.execute();
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : "SNS connection test failed"

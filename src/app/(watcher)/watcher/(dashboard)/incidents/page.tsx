@@ -96,7 +96,7 @@ const page = () => {
   const myOrgIncidentReports = orgIncidentReports?.reports || [];
 
   // Transform organization incident reports to match the old incident format for display
-  const transformedOrgReports = myOrgIncidentReports.map((report) => ({
+  const transformedOrgReports = myOrgIncidentReports.map((report: any) => ({
     id: report.id,
     formName: `${report.incidentTypeName} Incident Report`,
     status: report.verified ? "resolved" : "reported", // Simple status mapping

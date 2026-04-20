@@ -1,9 +1,13 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
-import { db } from "@/db";
-import { alertSubscriptions } from "@/db/schemas/alert-subscriptions";
-import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { createAlertSubscriptionUseCases } from "@/features/alert-subscriptions";
+import {
+  AlertSubscriptionAlreadyExistsError,
+  AlertSubscriptionNotFoundError,
+} from "@/features/alert-subscriptions/domain/errors";
+
+const alertSubscriptionUseCases = createAlertSubscriptionUseCases();
 
 // Input validation schemas
 const LocationSchema = z.object({
@@ -46,48 +50,13 @@ export const alertSubscriptionsRouter = router({
     .input(AlertSubscriptionInputSchema)
     .mutation(async ({ input }) => {
       try {
-        // Check if subscription already exists for this email
-        const existingSubscription = await db
-          .select()
-          .from(alertSubscriptions)
-          .where(eq(alertSubscriptions.email, input.email))
-          .limit(1);
-
-        if (existingSubscription.length > 0) {
+        return await alertSubscriptionUseCases.create.execute(input);
+      } catch (error) {
+        if (error instanceof AlertSubscriptionAlreadyExistsError) {
           throw new TRPCError({
             code: "CONFLICT",
-            message:
-              "An alert subscription already exists for this email address",
+            message: error.message,
           });
-        }
-
-        // Create new subscription
-        const [newSubscription] = await db
-          .insert(alertSubscriptions)
-          .values({
-            email: input.email,
-            name: input.name,
-            phone: input.phone || null,
-            incidentTypes: input.incidentTypes,
-            locations: input.locations,
-            severityLevels: input.severityLevels,
-            emailNotifications: input.emailNotifications,
-            smsNotifications: input.smsNotifications,
-            alertFrequency: input.alertFrequency,
-            preferredLanguage: input.preferredLanguage,
-            timezone: input.timezone,
-            isActive: true,
-          })
-          .returning();
-
-        return {
-          success: true,
-          subscription: newSubscription,
-          message: "Successfully subscribed to alerts!",
-        };
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
         }
 
         console.error("Error creating alert subscription:", error);
@@ -103,13 +72,7 @@ export const alertSubscriptionsRouter = router({
     .input(z.object({ email: z.string().email() }))
     .query(async ({ input }) => {
       try {
-        const subscription = await db
-          .select()
-          .from(alertSubscriptions)
-          .where(eq(alertSubscriptions.email, input.email))
-          .limit(1);
-
-        return subscription[0] || null;
+        return await alertSubscriptionUseCases.getByEmail.execute(input.email);
       } catch (error) {
         console.error("Error fetching subscription:", error);
         throw new TRPCError({
@@ -124,40 +87,13 @@ export const alertSubscriptionsRouter = router({
     .input(UpdateSubscriptionSchema)
     .mutation(async ({ input }) => {
       try {
-        const { id, ...updateData } = input;
-
-        // Check if subscription exists
-        const existingSubscription = await db
-          .select()
-          .from(alertSubscriptions)
-          .where(eq(alertSubscriptions.id, id))
-          .limit(1);
-
-        if (existingSubscription.length === 0) {
+        return await alertSubscriptionUseCases.update.execute(input);
+      } catch (error) {
+        if (error instanceof AlertSubscriptionNotFoundError) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Alert subscription not found",
+            message: error.message,
           });
-        }
-
-        // Update subscription
-        const [updatedSubscription] = await db
-          .update(alertSubscriptions)
-          .set({
-            ...updateData,
-            updatedAt: new Date(),
-          })
-          .where(eq(alertSubscriptions.id, id))
-          .returning();
-
-        return {
-          success: true,
-          subscription: updatedSubscription,
-          message: "Subscription updated successfully!",
-        };
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
         }
 
         console.error("Error updating alert subscription:", error);
@@ -178,29 +114,13 @@ export const alertSubscriptionsRouter = router({
     )
     .mutation(async ({ input }) => {
       try {
-        const [deactivatedSubscription] = await db
-          .update(alertSubscriptions)
-          .set({
-            isActive: false,
-            updatedAt: new Date(),
-          })
-          .where(eq(alertSubscriptions.email, input.email))
-          .returning();
-
-        if (!deactivatedSubscription) {
+        return await alertSubscriptionUseCases.deactivate.execute(input.email);
+      } catch (error) {
+        if (error instanceof AlertSubscriptionNotFoundError) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Alert subscription not found",
+            message: error.message,
           });
-        }
-
-        return {
-          success: true,
-          message: "Successfully unsubscribed from alerts",
-        };
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
         }
 
         console.error("Error deactivating subscription:", error);
@@ -216,30 +136,13 @@ export const alertSubscriptionsRouter = router({
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
       try {
-        const [activatedSubscription] = await db
-          .update(alertSubscriptions)
-          .set({
-            isActive: true,
-            updatedAt: new Date(),
-          })
-          .where(eq(alertSubscriptions.email, input.email))
-          .returning();
-
-        if (!activatedSubscription) {
+        return await alertSubscriptionUseCases.activate.execute(input.email);
+      } catch (error) {
+        if (error instanceof AlertSubscriptionNotFoundError) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Alert subscription not found",
+            message: error.message,
           });
-        }
-
-        return {
-          success: true,
-          subscription: activatedSubscription,
-          message: "Successfully reactivated alert subscription",
-        };
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
         }
 
         console.error("Error activating subscription:", error);
@@ -253,22 +156,7 @@ export const alertSubscriptionsRouter = router({
   // Get all active subscriptions (for admin/analytics)
   getAllActive: publicProcedure.query(async () => {
     try {
-      const subscriptions = await db
-        .select({
-          id: alertSubscriptions.id,
-          email: alertSubscriptions.email,
-          name: alertSubscriptions.name,
-          incidentTypes: alertSubscriptions.incidentTypes,
-          locations: alertSubscriptions.locations,
-          severityLevels: alertSubscriptions.severityLevels,
-          alertFrequency: alertSubscriptions.alertFrequency,
-          createdAt: alertSubscriptions.createdAt,
-        })
-        .from(alertSubscriptions)
-        .where(eq(alertSubscriptions.isActive, true))
-        .orderBy(alertSubscriptions.createdAt);
-
-      return subscriptions;
+      return await alertSubscriptionUseCases.getAllActive.execute();
     } catch (error) {
       console.error("Error fetching active subscriptions:", error);
       throw new TRPCError({
@@ -281,45 +169,7 @@ export const alertSubscriptionsRouter = router({
   // Get subscription statistics
   getStats: publicProcedure.query(async () => {
     try {
-      const totalSubscriptions = await db
-        .select()
-        .from(alertSubscriptions)
-        .where(eq(alertSubscriptions.isActive, true));
-
-      // Count by frequency
-      const frequencyStats = totalSubscriptions.reduce(
-        (acc: Record<string, number>, sub) => {
-          const frequency = sub.alertFrequency || "immediate";
-          acc[frequency] = (acc[frequency] || 0) + 1;
-          return acc;
-        },
-        {}
-      );
-
-      // Count by incident types
-      const incidentTypeStats = totalSubscriptions.reduce(
-        (acc: Record<string, number>, sub) => {
-          const incidentTypes = sub.incidentTypes as string[];
-          incidentTypes.forEach((type: string) => {
-            acc[type] = (acc[type] || 0) + 1;
-          });
-          return acc;
-        },
-        {}
-      );
-
-      return {
-        totalActive: totalSubscriptions.length,
-        frequencyStats,
-        incidentTypeStats,
-        averageIncidentTypesPerUser:
-          totalSubscriptions.length > 0
-            ? totalSubscriptions.reduce((sum: number, sub) => {
-                const incidentTypes = sub.incidentTypes as string[];
-                return sum + incidentTypes.length;
-              }, 0) / totalSubscriptions.length
-            : 0,
-      };
+      return await alertSubscriptionUseCases.getStats.execute();
     } catch (error) {
       console.error("Error fetching subscription stats:", error);
       throw new TRPCError({

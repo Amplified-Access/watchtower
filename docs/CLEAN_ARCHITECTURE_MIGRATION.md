@@ -95,3 +95,27 @@ This allows replacing infrastructure with minimal blast radius.
 3. `src/_trpc/routers/alert-subscriptions.ts`
 
 These are ideal because they currently blend transport, business logic, and persistence concerns.
+
+## Migration Status
+
+Completed:
+
+- `organization-reporting`
+- `alert-subscriptions`
+
+In queue (next):
+
+1. `anonymous-reporting`
+2. `notifications`
+3. `auth`
+4. `organization-registration`
+5. `datasets`
+6. `maps`
+7. `watcher`
+8. `admin`
+9. `super-admin`
+
+Notes:
+
+- This list is feature-first and may be adjusted for dependency order.
+- Migration is considered complete for a feature when router/controller logic calls use cases, use cases depend on domain ports, and infrastructure is injected through a feature container.

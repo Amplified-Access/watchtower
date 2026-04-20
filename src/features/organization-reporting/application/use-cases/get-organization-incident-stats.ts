@@ -9,7 +9,9 @@ export class GetOrganizationIncidentStats {
   }): Promise<{
     success: true;
     data: NonNullable<
-      Awaited<ReturnType<OrganizationReportingRepository["getOrganizationIncidentStats"]>>
+      Awaited<
+        ReturnType<OrganizationReportingRepository["getOrganizationIncidentStats"]>
+      >
     >;
   }> {
     if (!input.organizationId) {

@@ -1,7 +1,7 @@
-import { GetOrganizationIncidentReports } from "../use-cases/get-organization-incident-reports";
-import { GetOrganizationIncidentStats } from "../use-cases/get-organization-incident-stats";
-import { GetUserOrganizationIncidentReports } from "../use-cases/get-user-organization-incident-reports";
-import { SubmitOrganizationIncidentReport } from "../use-cases/submit-organization-incident-report";
+import { GetOrganizationIncidentReports } from "../application/use-cases/get-organization-incident-reports";
+import { GetOrganizationIncidentStats } from "../application/use-cases/get-organization-incident-stats";
+import { GetUserOrganizationIncidentReports } from "../application/use-cases/get-user-organization-incident-reports";
+import { SubmitOrganizationIncidentReport } from "../application/use-cases/submit-organization-incident-report";
 import type { OrganizationReportingRepository } from "../domain/organization-reporting-repository";
 import { DrizzleOrganizationReportingRepository } from "./repositories/drizzle-organization-reporting-repository";
 
