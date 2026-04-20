@@ -216,19 +216,7 @@ export const appRouter = router({
    */
   getAllAdmins: superAdminProcedure.query(async () => {
     try {
-      const data = await db
-        .select({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          organizationId: user.organizationId,
-          organization: organizations.name,
-        })
-        .from(user)
-        .leftJoin(organizations, eq(user.organizationId, organizations.id))
-        .where(eq(user.role, "admin"));
-      return data;
+      return await superAdminForms.getAllAdminsForSuperAdmin.execute();
     } catch (error) {
       console.error("Error fetching admins: ", error);
       return {
@@ -244,19 +232,7 @@ export const appRouter = router({
    */
   getAllWatchers: superAdminProcedure.query(async () => {
     try {
-      const data = await db
-        .select({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          organizationId: user.organizationId,
-          organization: organizations.name,
-        })
-        .from(user)
-        .leftJoin(organizations, eq(user.organizationId, organizations.id))
-        .where(eq(user.role, "watcher"));
-      return data;
+      return await superAdminForms.getAllWatchersForSuperAdmin.execute();
     } catch (error) {
       console.error("Error fetching watchers: ", error);
       return {

@@ -24,6 +24,7 @@ import type {
   SuperAdminPlatformActivityTrend,
   SuperAdminRecentActivityItem,
   SuperAdminReportRecord,
+  SuperAdminUserDirectoryRecord,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
 } from "../../domain/super-admin-form-types";
@@ -768,6 +769,40 @@ export class DrizzleSuperAdminFormRepository implements SuperAdminFormRepository
       currentChange: Math.round(currentChange * 10) / 10,
       timeframe: "30d",
     };
+  }
+
+  async getAllAdmins(): Promise<SuperAdminUserDirectoryRecord[]> {
+    const data = await this.database
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        organizationId: user.organizationId,
+        organization: organizations.name,
+      })
+      .from(user)
+      .leftJoin(organizations, eq(user.organizationId, organizations.id))
+      .where(eq(user.role, "admin"));
+
+    return data as SuperAdminUserDirectoryRecord[];
+  }
+
+  async getAllWatchers(): Promise<SuperAdminUserDirectoryRecord[]> {
+    const data = await this.database
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        organizationId: user.organizationId,
+        organization: organizations.name,
+      })
+      .from(user)
+      .leftJoin(organizations, eq(user.organizationId, organizations.id))
+      .where(eq(user.role, "watcher"));
+
+    return data as SuperAdminUserDirectoryRecord[];
   }
 
   private formatTimeAgo(date: Date): string {

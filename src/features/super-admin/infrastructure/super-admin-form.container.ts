@@ -1,9 +1,11 @@
 import { DeleteFormForSuperAdmin } from "../application/use-cases/delete-form-for-super-admin";
 import { DeleteIncidentForSuperAdmin } from "../application/use-cases/delete-incident-for-super-admin";
 import { GetDashboardStatsForSuperAdmin } from "../application/use-cases/get-dashboard-stats-for-super-admin";
+import { GetAllAdminsForSuperAdmin } from "../application/use-cases/get-all-admins-for-super-admin";
 import { GetAllIncidentsForSuperAdmin } from "../application/use-cases/get-all-incidents-for-super-admin";
 import { GetAllFormsForSuperAdmin } from "../application/use-cases/get-all-forms-for-super-admin";
 import { GetAllReportsForSuperAdmin } from "../application/use-cases/get-all-reports-for-super-admin";
+import { GetAllWatchersForSuperAdmin } from "../application/use-cases/get-all-watchers-for-super-admin";
 import { GetCriticalIncidentsForSuperAdmin } from "../application/use-cases/get-critical-incidents-for-super-admin";
 import { GetOrganizationTypeDistributionForSuperAdmin } from "../application/use-cases/get-organization-type-distribution-for-super-admin";
 import { GetPendingApplicationsForSuperAdmin } from "../application/use-cases/get-pending-applications-for-super-admin";
@@ -32,6 +34,8 @@ export interface SuperAdminFormUseCases {
   getCriticalIncidentsForSuperAdmin: GetCriticalIncidentsForSuperAdmin;
   getOrganizationTypeDistributionForSuperAdmin: GetOrganizationTypeDistributionForSuperAdmin;
   getPlatformActivityTrendForSuperAdmin: GetPlatformActivityTrendForSuperAdmin;
+  getAllAdminsForSuperAdmin: GetAllAdminsForSuperAdmin;
+  getAllWatchersForSuperAdmin: GetAllWatchersForSuperAdmin;
 }
 
 export const createSuperAdminFormUseCases = (
@@ -64,5 +68,7 @@ export const createSuperAdminFormUseCases = (
       new GetOrganizationTypeDistributionForSuperAdmin(repository),
     getPlatformActivityTrendForSuperAdmin:
       new GetPlatformActivityTrendForSuperAdmin(repository),
+    getAllAdminsForSuperAdmin: new GetAllAdminsForSuperAdmin(repository),
+    getAllWatchersForSuperAdmin: new GetAllWatchersForSuperAdmin(repository),
   };
 };

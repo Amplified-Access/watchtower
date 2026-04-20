@@ -18,6 +18,7 @@ export type {
   SuperAdminPendingApplicationItem,
   SuperAdminPlatformActivityTrend,
   SuperAdminPlatformActivityTrendPoint,
+  SuperAdminUserDirectoryRecord,
   SuperAdminReportRecord,
   SuperAdminReportStatus,
   UpdateIncidentStatusForSuperAdminInput,

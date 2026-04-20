@@ -17,6 +17,7 @@ import type {
   SuperAdminOrganizationTypeDistributionItem,
   UpdateIncidentStatusForSuperAdminInput,
   UpdateFormForSuperAdminInput,
+  SuperAdminUserDirectoryRecord,
 } from "./super-admin-form-types";
 
 export interface SuperAdminFormRepository {
@@ -58,4 +59,6 @@ export interface SuperAdminFormRepository {
     SuperAdminOrganizationTypeDistributionItem[]
   >;
   getPlatformActivityTrend(): Promise<SuperAdminPlatformActivityTrend>;
+  getAllAdmins(): Promise<SuperAdminUserDirectoryRecord[]>;
+  getAllWatchers(): Promise<SuperAdminUserDirectoryRecord[]>;
 }

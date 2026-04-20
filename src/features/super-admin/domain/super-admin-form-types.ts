@@ -184,3 +184,12 @@ export interface SuperAdminPlatformActivityTrend {
   currentChange: number;
   timeframe: "30d";
 }
+
+export interface SuperAdminUserDirectoryRecord {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  organizationId: string | null;
+  organization: string | null;
+}
