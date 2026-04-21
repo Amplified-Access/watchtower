@@ -44,16 +44,23 @@ const statusColors = {
   closed: "border-gray-200 text-gray-700 bg-gray-50",
 };
 
+type IncidentStatusFilter =
+  | "all"
+  | "reported"
+  | "investigating"
+  | "resolved"
+  | "closed";
+
 const page = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<IncidentStatusFilter>("all");
 
   // Fetch user's organization data to get organization ID
   const { data: organizationData, isLoading: orgLoading } =
     trpc.getAdminOrganization.useQuery(
       { userId: user?.id || "" },
-      { enabled: !!user?.id }
+      { enabled: !!user?.id },
     );
 
   // Get organization ID from the data
@@ -72,7 +79,7 @@ const page = () => {
         limit: 50,
         offset: 0,
       },
-      { enabled: !!organizationId }
+      { enabled: !!organizationId },
     );
 
   // Fetch new organization incident reports for the user
@@ -83,20 +90,20 @@ const page = () => {
         limit: 50,
         offset: 0,
       },
-      { enabled: !!user?.id && !!organizationId }
+      { enabled: !!user?.id && !!organizationId },
     );
 
   // Filter old incidents to only show those reported by the current watcher
   const myOldIncidents =
     incidentsData?.incidents?.filter(
-      (incident) => incident.reportedByUserId === user?.id
+      (incident) => incident.reportedByUserId === user?.id,
     ) || [];
 
   // Get organization incident reports (these are already filtered by user in the query)
   const myOrgIncidentReports = orgIncidentReports?.reports || [];
 
   // Transform organization incident reports to match the old incident format for display
-  const transformedOrgReports = myOrgIncidentReports.map((report) => ({
+  const transformedOrgReports = myOrgIncidentReports.map((report: any) => ({
     id: report.id,
     formName: `${report.incidentTypeName} Incident Report`,
     status: report.verified ? "resolved" : "reported", // Simple status mapping
@@ -133,8 +140,10 @@ const page = () => {
         incidentData?.location?.admin1 || "",
         incidentData?.location?.country || "",
         incidentData?.location?.display_name || "",
-      ].join(" ").toLowerCase();
-      
+      ]
+        .join(" ")
+        .toLowerCase();
+
       if (!searchableText.includes(searchLower)) {
         return false;
       }
@@ -143,7 +152,8 @@ const page = () => {
     return true;
   });
 
-  const isLoading = userLoading || orgLoading || incidentsLoading || orgIncidentReportsLoading;
+  const isLoading =
+    userLoading || orgLoading || incidentsLoading || orgIncidentReportsLoading;
 
   if (isLoading) {
     return <PageLoader />;
@@ -196,7 +206,10 @@ const page = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {allMyIncidents.filter((i) => i.status === "investigating").length}
+                {
+                  allMyIncidents.filter((i) => i.status === "investigating")
+                    .length
+                }
               </div>
               <p className="text-xs text-muted-foreground">
                 Currently being investigated
@@ -251,7 +264,12 @@ const page = () => {
                   className="w-full"
                 />
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select
+                value={statusFilter}
+                onValueChange={(value) =>
+                  setStatusFilter(value as IncidentStatusFilter)
+                }
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
@@ -341,7 +359,7 @@ const page = () => {
                           <span className="text-sm">
                             {format(
                               new Date(incident.createdAt),
-                              "MMM dd, yyyy"
+                              "MMM dd, yyyy",
                             )}
                           </span>
                         </div>

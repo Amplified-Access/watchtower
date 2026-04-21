@@ -64,20 +64,27 @@ const statusColors: Record<
   closed: "bg-gray-100 text-gray-800 border-gray-200",
 };
 
+type IncidentStatusFilter =
+  | "all"
+  | "reported"
+  | "investigating"
+  | "resolved"
+  | "closed";
+
 const IncidentsContent = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<IncidentStatusFilter>("all");
   const [formFilter, setFormFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"createdAt" | "updatedAt" | "status">(
-    "createdAt"
+    "createdAt",
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Fetch forms for filter dropdown
   const { data: forms } = trpc.getAllOrganizationFormsByOrganizationId.useQuery(
     { organizationId: user?.organizationId || "" },
-    { enabled: !!user?.organizationId }
+    { enabled: !!user?.organizationId },
   );
 
   // Fetch incidents with filters
@@ -97,7 +104,7 @@ const IncidentsContent = () => {
       limit: 100,
       offset: 0,
     },
-    { enabled: !!user?.organizationId }
+    { enabled: !!user?.organizationId },
   );
 
   const updateStatusMutation = trpc.updateIncidentStatus.useMutation({
@@ -112,7 +119,7 @@ const IncidentsContent = () => {
 
   const handleStatusUpdate = async (
     incidentId: string,
-    newStatus: "reported" | "investigating" | "resolved" | "closed"
+    newStatus: "reported" | "investigating" | "resolved" | "closed",
   ) => {
     try {
       await updateStatusMutation.mutateAsync({ incidentId, status: newStatus });
@@ -194,7 +201,12 @@ const IncidentsContent = () => {
             </div>
 
             {/* Status Filter */}
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) =>
+                setStatusFilter(value as IncidentStatusFilter)
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>

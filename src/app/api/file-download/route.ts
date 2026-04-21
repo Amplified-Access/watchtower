@@ -23,6 +23,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    if (fileKey.startsWith("https://") || fileKey.startsWith("http://")) {
+      return NextResponse.json(
+        { error: "External URLs are not supported via this endpoint" },
+        { status: 400 }
+      );
+    }
+
     // Get file from Cloudflare R2
     const getObjectCommand = new GetObjectCommand({
       Bucket: "amplified-access-bucket",

@@ -12,10 +12,15 @@ import Link from "next/link";
 import { BsIncognito } from "react-icons/bs";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useMemo, Fragment } from "react";
 import { trpc } from "@/_trpc/client";
 import { useQueryState, parseAsInteger } from "nuqs";
 import Loader from "@/components/common/loader";
+import {
+  aggregateAfricawideMarkers,
+  filterAfricawideMarkers,
+  type AfricawideIncidentReport,
+} from "@/features/maps";
 
 const AfricawideHeatmap = () => {
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
@@ -54,122 +59,33 @@ const AfricawideHeatmap = () => {
     setSelectedMarker(null);
   };
 
-  // Helper function to get incident type count for filtering
-  const getIncidentTypeCount = (
-    incidentTypeStats: Record<string, number>,
-    filterKey: string,
-  ) => {
-    // Map filter keys to actual incident type names from the data
-    const typeMapping: Record<string, string[]> = {
-      violence_civilians: ["Violence against civilians"],
-      battles: ["Battles"],
-      strategic: ["Strategic developments"],
-      explosions: ["Explosions/Remote violence"],
-      protests: ["Protests"],
-      riots: ["Riots"],
-    };
+  const processedData = useMemo(
+    () =>
+      aggregateAfricawideMarkers(
+        africawideData.data?.data as AfricawideIncidentReport[] | undefined,
+      ),
+    [africawideData.data?.data],
+  );
 
-    const matchingTypes = typeMapping[filterKey] || [];
-
-    // Sum all incident counts that match this category
-    return Object.entries(incidentTypeStats).reduce((total, [type, count]) => {
-      const matchesCategory = matchingTypes.some(
-        (matchingType) =>
-          type.toLowerCase().includes(matchingType.toLowerCase()) ||
-          matchingType.toLowerCase().includes(type.toLowerCase()),
-      );
-      return matchesCategory ? total + count : total;
-    }, 0);
-  };
-
-  // Process the data to create aggregated markers by location and incident type
-  const processedData =
-    africawideData.data?.data?.reduce(
-      (
-        acc: Record<
-          string,
-          {
-            lat: number;
-            lng: number;
-            location: string;
-            incidentTypeStats: Record<string, number>;
-            totalIncidents: number;
-            totalFatalities: number;
-            totalInjuries: number;
-          }
-        >,
-        report: any,
-      ) => {
-        if (!report.lat || !report.lon) {
-          return acc;
-        }
-
-        const locationKey = `${report.lat},${report.lon}`;
-
-        if (!acc[locationKey]) {
-          acc[locationKey] = {
-            lat: parseFloat(report.lat),
-            lng: parseFloat(report.lon),
-            location:
-              report.displayName || report.country || "Unknown Location",
-            incidentTypeStats: {},
-            totalIncidents: 0,
-            totalFatalities: 0,
-            totalInjuries: 0,
-          };
-        }
-
-        const incidentType = report.incidentType || "Unknown";
-        acc[locationKey].incidentTypeStats[incidentType] =
-          (acc[locationKey].incidentTypeStats[incidentType] || 0) +
-          (report.incidentCount || 1);
-        acc[locationKey].totalIncidents += report.incidentCount || 1;
-        acc[locationKey].totalFatalities +=
-          parseInt(report.totalFatalities) || 0;
-        acc[locationKey].totalInjuries += parseInt(report.totalInjuries) || 0;
-
-        return acc;
-      },
-      {},
-    ) || {};
-
-  // Filter the processed data based on slider values
-  const filteredData = Object.fromEntries(
-    Object.entries(processedData).filter(([_, location]) => {
-      const violenceCiviliansCount = getIncidentTypeCount(
-        location.incidentTypeStats,
-        "violence_civilians",
-      );
-      const battlesCount = getIncidentTypeCount(
-        location.incidentTypeStats,
-        "battles",
-      );
-      const strategicCount = getIncidentTypeCount(
-        location.incidentTypeStats,
-        "strategic",
-      );
-      const explosionsCount = getIncidentTypeCount(
-        location.incidentTypeStats,
-        "explosions",
-      );
-      const protestsCount = getIncidentTypeCount(
-        location.incidentTypeStats,
-        "protests",
-      );
-      const riotsCount = getIncidentTypeCount(
-        location.incidentTypeStats,
-        "riots",
-      );
-
-      return (
-        violenceCiviliansCount >= violenceCiviliansMin &&
-        battlesCount >= battlesMin &&
-        strategicCount >= strategicMin &&
-        explosionsCount >= explosionsMin &&
-        protestsCount >= protestsMin &&
-        riotsCount >= riotsMin
-      );
-    }),
+  const filteredData = useMemo(
+    () =>
+      filterAfricawideMarkers(processedData, {
+        violence_civilians: violenceCiviliansMin,
+        battles: battlesMin,
+        strategic: strategicMin,
+        explosions: explosionsMin,
+        protests: protestsMin,
+        riots: riotsMin,
+      }),
+    [
+      processedData,
+      violenceCiviliansMin,
+      battlesMin,
+      strategicMin,
+      explosionsMin,
+      protestsMin,
+      riotsMin,
+    ],
   );
 
   return (

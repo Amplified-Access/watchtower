@@ -8,16 +8,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import MiniatureMapThumbnail from "./miniature-map-thumbnail";
-
-// Helper function to generate URL-friendly slug from incident type name
-const generateSlug = (name: string): string => {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9\s\-_]/g, "") // Keep underscores, spaces, and hyphens temporarily
-    .replace(/[\s_]+/g, "-") // Replace spaces AND underscores with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-    .trim();
-};
+import { generateIncidentTypeSlug } from "@/features/maps";
 
 const DynamicThematicMaps = () => {
   const {
@@ -67,7 +58,7 @@ const DynamicThematicMaps = () => {
         <HeadingTwo className="mb-8 md:pb-12">Thematic maps</HeadingTwo>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-8 mb-10">
           {incidentTypes.map((incidentType, index) => {
-            const slug = generateSlug(incidentType.name);
+            const slug = generateIncidentTypeSlug(incidentType.name);
 
             return (
               <div key={incidentType.id} className="relative">

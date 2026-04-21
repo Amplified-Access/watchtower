@@ -31,6 +31,12 @@ import Image from "next/image";
 import Loader from "@/components/common/loader";
 import { useQueryState } from "nuqs";
 import Logo from "@/components/logo";
+import {
+  buildLiveIncidentGeoJson,
+  calculateViewportForReports,
+  DEFAULT_LIVE_MAP_VIEWPORT,
+  type CombinedIncidentReport,
+} from "@/features/maps";
 
 const LiveIncidentMap = () => {
   const [hoveredFeature, setHoveredFeature] = useState<any | null>(null);
@@ -40,11 +46,9 @@ const LiveIncidentMap = () => {
     properties: any;
   } | null>(null);
   const mapRef = useRef<any>(null);
-  const [viewState, setViewState] = useState<Partial<ViewState>>({
-    longitude: 52.5, // Center between East Africa and Pakistan
-    latitude: 13, // Center between East Africa (lat ~0) and Pakistan (lat ~29)
-    zoom: 3.5, // Lower zoom to show both regions
-  });
+  const [viewState, setViewState] = useState<Partial<ViewState>>(
+    DEFAULT_LIVE_MAP_VIEWPORT,
+  );
   const [name] = useQueryState("country");
   const [selectedCategory] = useQueryState("category");
   const [searchTerm, setSearchTerm] = useQueryState("search", {
@@ -102,36 +106,11 @@ const LiveIncidentMap = () => {
 
   // Convert incident reports to GeoJSON format
   const geojsonData = useMemo(() => {
-    if (!anonymousIncidentReports.data?.data) {
-      return {
-        type: "FeatureCollection" as const,
-        features: [],
-      };
-    }
-
-    const features = anonymousIncidentReports.data.data
-      .filter((report) => report.lat && report.lon)
-      .map((report) => ({
-        type: "Feature" as const,
-        geometry: {
-          type: "Point" as const,
-          coordinates: [Number(report.lon), Number(report.lat)],
-        },
-        properties: {
-          totalReports: Number(report.totalReports) || 1,
-          totalInjuries: Number(report.totalInjuries) || 0,
-          totalFatalities: Number(report.totalFatalities) || 0,
-          displayName: String(report.displayName || "Unknown Location"),
-          incidentTypeDescriptions: String(
-            report.incidentTypeDescriptions || "",
-          ),
-        },
-      }));
-
-    return {
-      type: "FeatureCollection" as const,
-      features,
-    };
+    return buildLiveIncidentGeoJson(
+      anonymousIncidentReports.data?.data as
+        | CombinedIncidentReport[]
+        | undefined,
+    );
   }, [anonymousIncidentReports.data]);
 
   // Cluster layer - shows grouped incidents as circles
@@ -243,47 +222,14 @@ const LiveIncidentMap = () => {
 
   // Auto-fit map to show all markers
   useEffect(() => {
-    const reports = anonymousIncidentReports.data?.data;
-    if (reports && reports.length > 0) {
-      // Calculate bounds of all markers
-      const lngs = reports.map((r) => Number(r.lon)).filter((n) => !isNaN(n));
-      const lats = reports.map((r) => Number(r.lat)).filter((n) => !isNaN(n));
+    const viewport = calculateViewportForReports(
+      anonymousIncidentReports.data?.data as
+        | CombinedIncidentReport[]
+        | undefined,
+    );
 
-      if (lngs.length > 0 && lats.length > 0) {
-        const minLng = Math.min(...lngs);
-        const maxLng = Math.max(...lngs);
-        const minLat = Math.min(...lats);
-        const maxLat = Math.max(...lats);
-
-        // Calculate center
-        const centerLng = (minLng + maxLng) / 2;
-        const centerLat = (minLat + maxLat) / 2;
-
-        // Calculate appropriate zoom level based on bounds
-        const lngDiff = maxLng - minLng;
-        const latDiff = maxLat - minLat;
-        const maxDiff = Math.max(lngDiff, latDiff);
-
-        let zoom = 5; // Default for multiple countries
-        if (maxDiff < 0.5)
-          zoom = 10; // City/region
-        else if (maxDiff < 2)
-          zoom = 8; // Large region
-        else if (maxDiff < 5)
-          zoom = 6; // Country
-        else if (maxDiff < 15)
-          zoom = 4; // Multiple countries
-        else if (maxDiff < 40)
-          zoom = 3; // Continent
-        else zoom = 2; // Multi-continent
-
-        // Animate to new viewport
-        setViewState({
-          longitude: centerLng,
-          latitude: centerLat,
-          zoom: zoom,
-        });
-      }
+    if (viewport) {
+      setViewState(viewport);
     }
   }, [anonymousIncidentReports.data]);
 

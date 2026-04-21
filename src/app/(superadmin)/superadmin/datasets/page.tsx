@@ -668,11 +668,13 @@ const SuperAdminDatasetsPage = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories?.map((category) => (
+            {categories?.map(
+              (category: { category: string; count: number }) => (
               <SelectItem key={category.category} value={category.category}>
                 {category.category} ({category.count})
               </SelectItem>
-            ))}
+              ),
+            )}
           </SelectContent>
         </Select>
       </div>

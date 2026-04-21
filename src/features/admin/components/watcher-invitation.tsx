@@ -46,7 +46,6 @@ const WatcherInvitation = () => {
   async function onSubmit(values: z.infer<typeof watcherIvitationSchema>) {
     setIsInviting(true);
     try {
-      
       const organization =
         adminOrg.data && "organization" in adminOrg.data
           ? adminOrg.data.organizationId
@@ -55,13 +54,12 @@ const WatcherInvitation = () => {
         ...values,
         organizationId: organization || "",
       });
-      if (result?.error) {
+      if ("error" in result && result.error) {
         toast.error(result.message);
         return;
       }
-      
     } catch (error) {
-      console.error(error)
+      console.error(error);
       toast.error("Failed to invite watcher");
     } finally {
       setIsInviting(false);
@@ -74,7 +72,9 @@ const WatcherInvitation = () => {
 
   return (
     <div className=" mt-2  ">
-      <h2 className="font-semibold text-xl pb-4 font-title">Invite a watcher</h2>
+      <h2 className="font-semibold text-xl pb-4 font-title">
+        Invite a watcher
+      </h2>
       <div className="p-8 bg-white rounded-md border">
         <Form {...form}>
           <form
