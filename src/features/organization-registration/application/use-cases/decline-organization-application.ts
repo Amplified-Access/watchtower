@@ -18,7 +18,7 @@ export class DeclineOrganizationApplication {
 
     return {
       success: true,
-      message: "FDeclined organization application.",
+      message: "Declined organization application.",
     };
   }
 }

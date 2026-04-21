@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { publicProcedure } from "./trpc";
-import { createAuthUseCases } from "@/features/auth";
+import { createAuthUseCases, AuthUserNotFoundError } from "@/features/auth";
 
 const authUseCases = createAuthUseCases();
 
@@ -21,14 +21,19 @@ export const authMiddleware = publicProcedure.use(async ({ next }) => {
     });
   }
 
-  const fullUser = await authUseCases.getAuthUserById
-    .execute(session.user.id)
-    .catch(() => null);
-
-  if (!fullUser) {
+  let fullUser;
+  try {
+    fullUser = await authUseCases.getAuthUserById.execute(session.user.id);
+  } catch (error) {
+    if (error instanceof AuthUserNotFoundError) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User not found in database",
+      });
+    }
     throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "User not found in database",
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to verify user identity",
     });
   }
 

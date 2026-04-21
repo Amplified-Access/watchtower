@@ -31,7 +31,6 @@ export const coreRouter = router({
     .input(organizationApplicationSchema)
     .mutation(async (opts) => {
       const { input } = opts;
-      console.log("Received organization application:", input);
       try {
         return await organizationRegistration.submitOrganizationApplication.execute(
           input,

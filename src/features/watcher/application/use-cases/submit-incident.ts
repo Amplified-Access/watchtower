@@ -16,8 +16,17 @@ export class SubmitIncident {
       throw new WatcherNotFoundError("Form not found");
     }
 
-    if (!form.isActive) {
+    if (form.isActive === false) {
       throw new WatcherValidationError("This form is not currently active");
+    }
+
+    const resolvedOrganizationId =
+      form.organizationId ?? input.actor.organizationId;
+
+    if (!resolvedOrganizationId) {
+      throw new WatcherValidationError(
+        "Form is missing organization context",
+      );
     }
 
     if (
@@ -31,7 +40,7 @@ export class SubmitIncident {
 
     const result = await this.repository.submitIncident({
       ...input,
-      organizationId: form.organizationId || input.actor.organizationId || "",
+      organizationId: resolvedOrganizationId,
     });
 
     return {
