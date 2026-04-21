@@ -1,17 +1,8 @@
-import { db } from "@/db";
 import { publicProcedure, router } from "../trpc";
 import { organizationProcedure, protectedProcedure } from "../middleware";
 import { organizationApplicationSchema } from "@/features/organization-registration/schemas/organization-registration-scema";
 import z from "zod";
-import { organizations } from "@/db/schemas/organizations";
-import { eq, and, desc, ilike } from "drizzle-orm";
-import { user } from "@/db/schemas/auth";
 import { TRPCError } from "@trpc/server";
-import {
-  insights,
-  insightTags,
-  insightTagRelations,
-} from "@/db/schemas/insights";
 import { anonymousReportingRouter } from "./anonymous-reporting";
 import { organizationReportingRouter } from "./organization-reporting";
 import { notificationRouter } from "./notifications";
@@ -37,11 +28,17 @@ import {
   OrganizationDirectoryValidationError,
   OrganizationNotFoundError,
 } from "@/features/organizations";
+import {
+  createInsightCatalogUseCases,
+  InsightNotFoundError,
+  InsightValidationError,
+} from "@/features/insights";
 
 const organizationRegistration = createOrganizationRegistrationUseCases();
 const watcherFeature = createWatcherUseCases();
 const reportCatalog = createReportCatalogUseCases();
 const organizationDirectory = createOrganizationDirectoryUseCases();
+const insightCatalog = createInsightCatalogUseCases();
 
 const coreRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -373,66 +370,16 @@ const coreRouter = router({
     .query(async ({ input }) => {
       const { limit, offset, search, tagId } = input;
       try {
-        const whereConditions = [eq(insights.status, "published")];
-        if (search) {
-          whereConditions.push(ilike(insights.title, `%${search}%`));
-        }
-        let query = db
-          .select({
-            id: insights.id,
-            title: insights.title,
-            slug: insights.slug,
-            description: insights.description,
-            imageUrl: insights.imageUrl,
-            imageAlt: insights.imageAlt,
-            publishedAt: insights.publishedAt,
-            createdAt: insights.createdAt,
-            authorName: user.name,
-            organizationName: organizations.name,
-          })
-          .from(insights)
-          .leftJoin(user, eq(insights.authorId, user.id))
-          .leftJoin(
-            organizations,
-            eq(insights.organizationId, organizations.id),
-          )
-          .where(and(...whereConditions))
-          .orderBy(desc(insights.publishedAt))
-          .limit(limit)
-          .offset(offset);
-        if (tagId) {
-          query = db
-            .select({
-              id: insights.id,
-              title: insights.title,
-              slug: insights.slug,
-              description: insights.description,
-              imageUrl: insights.imageUrl,
-              imageAlt: insights.imageAlt,
-              publishedAt: insights.publishedAt,
-              createdAt: insights.createdAt,
-              authorName: user.name,
-              organizationName: organizations.name,
-            })
-            .from(insights)
-            .leftJoin(user, eq(insights.authorId, user.id))
-            .leftJoin(
-              organizations,
-              eq(insights.organizationId, organizations.id),
-            )
-            .innerJoin(
-              insightTagRelations,
-              eq(insights.id, insightTagRelations.insightId),
-            )
-            .where(
-              and(...whereConditions, eq(insightTagRelations.tagId, tagId)),
-            )
-            .orderBy(desc(insights.publishedAt))
-            .limit(limit)
-            .offset(offset);
-        }
-        return await query;
+        return await insightCatalog.getPublicInsights.execute({
+          limit,
+          offset,
+          search,
+          tagId,
+        });
       } catch (error) {
+        if (error instanceof InsightValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Failed to fetch public insights:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -446,49 +393,14 @@ const coreRouter = router({
     .query(async ({ input }) => {
       const { slug } = input;
       try {
-        const [insight] = await db
-          .select({
-            id: insights.id,
-            title: insights.title,
-            slug: insights.slug,
-            description: insights.description,
-            content: insights.content,
-            imageUrl: insights.imageUrl,
-            imageAlt: insights.imageAlt,
-            publishedAt: insights.publishedAt,
-            createdAt: insights.createdAt,
-            authorName: user.name,
-            authorEmail: user.email,
-            organizationName: organizations.name,
-          })
-          .from(insights)
-          .leftJoin(user, eq(insights.authorId, user.id))
-          .leftJoin(
-            organizations,
-            eq(insights.organizationId, organizations.id),
-          )
-          .where(and(eq(insights.slug, slug), eq(insights.status, "published")))
-          .limit(1);
-        if (!insight) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Insight not found",
-          });
-        }
-        const tags = await db
-          .select({
-            id: insightTags.id,
-            title: insightTags.title,
-            slug: insightTags.slug,
-          })
-          .from(insightTags)
-          .innerJoin(
-            insightTagRelations,
-            eq(insightTags.id, insightTagRelations.tagId),
-          )
-          .where(eq(insightTagRelations.insightId, insight.id));
-        return { ...insight, tags };
+        return await insightCatalog.getPublicInsightBySlug.execute(slug);
       } catch (error) {
+        if (error instanceof InsightValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
+        if (error instanceof InsightNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
         if (error instanceof TRPCError) throw error;
         console.error("Failed to fetch public insight:", error);
         throw new TRPCError({
@@ -500,14 +412,7 @@ const coreRouter = router({
 
   getInsightTags: publicProcedure.query(async () => {
     try {
-      return await db
-        .select({
-          id: insightTags.id,
-          title: insightTags.title,
-          slug: insightTags.slug,
-        })
-        .from(insightTags)
-        .orderBy(insightTags.title);
+      return await insightCatalog.getInsightTags.execute();
     } catch (error) {
       console.error("Failed to fetch insight tags:", error);
       throw new TRPCError({
@@ -542,37 +447,25 @@ const coreRouter = router({
         status,
       } = input;
       try {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-        const [newInsight] = await db
-          .insert(insights)
-          .values({
-            title,
-            slug,
-            description,
-            content,
-            imageUrl,
-            imageAlt,
-            authorId: ctx.user.id,
-            organizationId: userWithOrg.organizationId,
-            status,
-            publishedAt: status === "published" ? new Date() : null,
-          })
-          .returning();
-        if (tagIds.length > 0) {
-          await db
-            .insert(insightTagRelations)
-            .values(
-              tagIds.map((tagId) => ({ insightId: newInsight.id, tagId })),
-            );
-        }
-        return {
-          success: true,
-          message: "Insight created successfully",
-          insightId: newInsight.id,
-        };
+        return await insightCatalog.createInsight.execute({
+          title,
+          slug,
+          description,
+          content,
+          imageUrl,
+          imageAlt,
+          tagIds,
+          status,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof InsightValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Failed to create insight:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
