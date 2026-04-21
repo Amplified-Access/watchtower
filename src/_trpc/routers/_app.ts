@@ -1,5 +1,4 @@
 import { db } from "@/db";
-import { mergeRouters } from "@trpc/server";
 import { publicProcedure, router } from "../trpc";
 import { organizationProcedure, protectedProcedure } from "../middleware";
 import { organizationApplicationSchema } from "@/features/organization-registration/schemas/organization-registration-scema";
@@ -33,10 +32,16 @@ import {
   ReportNotFoundError,
   ReportValidationError,
 } from "@/features/reports";
+import {
+  createOrganizationDirectoryUseCases,
+  OrganizationDirectoryValidationError,
+  OrganizationNotFoundError,
+} from "@/features/organizations";
 
 const organizationRegistration = createOrganizationRegistrationUseCases();
 const watcherFeature = createWatcherUseCases();
 const reportCatalog = createReportCatalogUseCases();
+const organizationDirectory = createOrganizationDirectoryUseCases();
 
 const coreRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -679,52 +684,15 @@ const coreRouter = router({
     .query(async ({ input }) => {
       try {
         const { search, limit, offset } = input;
-        const whereConditions = [];
-        if (search) {
-          whereConditions.push(ilike(organizations.name, `%${search}%`));
-        }
-        const baseSelect = db
-          .select({
-            id: organizations.id,
-            name: organizations.name,
-            slug: organizations.slug,
-            description: organizations.description,
-            website: organizations.website,
-            location: organizations.location,
-            contactEmail: organizations.contactEmail,
-            createdAt: organizations.createdAt,
-          })
-          .from(organizations);
-        const result =
-          whereConditions.length > 0
-            ? await baseSelect
-                .where(
-                  whereConditions.length === 1
-                    ? whereConditions[0]
-                    : and(...whereConditions),
-                )
-                .orderBy(desc(organizations.createdAt))
-                .limit(limit)
-                .offset(offset)
-            : await baseSelect
-                .orderBy(desc(organizations.createdAt))
-                .limit(limit)
-                .offset(offset);
-        const baseCount = db.select({ count: count() }).from(organizations);
-        const [{ count: total }] =
-          whereConditions.length > 0
-            ? await baseCount.where(
-                whereConditions.length === 1
-                  ? whereConditions[0]
-                  : and(...whereConditions),
-              )
-            : await baseCount;
-        return {
-          organizations: result,
-          total,
-          hasMore: offset + limit < total,
-        };
+        return await organizationDirectory.getPublicOrganizations.execute({
+          search,
+          limit,
+          offset,
+        });
       } catch (error) {
+        if (error instanceof OrganizationDirectoryValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         console.error("Error fetching organizations:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -737,19 +705,16 @@ const coreRouter = router({
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
       try {
-        const [organization] = await db
-          .select()
-          .from(organizations)
-          .where(eq(organizations.slug, input.slug))
-          .limit(1);
-        if (!organization) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Organization not found",
-          });
-        }
-        return organization;
+        return await organizationDirectory.getOrganizationBySlug.execute(
+          input.slug,
+        );
       } catch (error) {
+        if (error instanceof OrganizationDirectoryValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
+        if (error instanceof OrganizationNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
         if (error instanceof TRPCError) throw error;
         console.error("Error fetching organization:", error);
         throw new TRPCError({
@@ -765,11 +730,11 @@ const coreRouter = router({
   alertSubscriptions: alertSubscriptionsRouter,
 });
 
-export const appRouter = mergeRouters(
-  coreRouter,
-  adminRouter,
-  superAdminRouter,
-  datasetsRouter,
-);
+export const appRouter = router({
+  ...coreRouter._def.record,
+  ...adminRouter._def.record,
+  ...superAdminRouter._def.record,
+  ...datasetsRouter._def.record,
+});
 
 export type AppRouter = typeof appRouter;

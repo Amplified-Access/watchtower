@@ -114,6 +114,7 @@ In progress:
 - `admin` (organization user-management + form-management + incident-management + incident-type-management + dashboard-list + dashboard-analytics flows migrated)
 - `super-admin` (form-management + incident-management + report-management + dashboard-stats + recent-activity + pending-applications + critical-incidents + organization-type-distribution + platform-activity-trend + admin-watcher-directory flows migrated)
 - `reports` (public read flows migrated: `getPublicReports`, `getPublicReportById`)
+- `organizations` (public directory flows migrated: `getPublicOrganizations`, `getOrganizationBySlug`)
 
 In queue (next):
 
