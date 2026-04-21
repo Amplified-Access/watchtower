@@ -126,3 +126,4 @@ Notes:
 
 - This list is feature-first and may be adjusted for dependency order.
 - Migration is considered complete for a feature when router/controller logic calls use cases, use cases depend on domain ports, and infrastructure is injected through a feature container.
+- `src/_trpc/routers/_app.ts` now acts as a composition root only; feature routes are split into dedicated router files (e.g., `core`, `reports`, `insights`, `organizations`) and merged there.
