@@ -24,9 +24,7 @@ export class SubmitIncident {
       form.organizationId ?? input.actor.organizationId;
 
     if (!resolvedOrganizationId) {
-      throw new WatcherValidationError(
-        "Form is missing organization context",
-      );
+      throw new WatcherValidationError("Form is missing organization context");
     }
 
     if (
