@@ -154,12 +154,12 @@ const DatasetsPage = () => {
                   <SelectItem value="all">All Categories</SelectItem>
                   {categories?.map(
                     (category: { category: string; count: number }) => (
-                    <SelectItem
-                      key={category.category}
-                      value={category.category}
-                    >
-                      {category.category} ({category.count})
-                    </SelectItem>
+                      <SelectItem
+                        key={category.category}
+                        value={category.category}
+                      >
+                        {category.category} ({category.count})
+                      </SelectItem>
                     ),
                   )}
                 </SelectContent>
@@ -480,7 +480,10 @@ const DatasetsPage = () => {
       </section>
 
       {/* Dataset info dialog */}
-      <Dialog open={!!infoDataset} onOpenChange={(open) => !open && setInfoDataset(null)}>
+      <Dialog
+        open={!!infoDataset}
+        onOpenChange={(open) => !open && setInfoDataset(null)}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="leading-snug pr-4">

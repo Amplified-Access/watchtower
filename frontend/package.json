@@ -96,12 +96,15 @@
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.3.1",
     "uuid": "^11.1.0",
+    "xlsx": "^0.18.5",
+    "pdfkit": "^0.15.2",
     "zod": "^4.0.5",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pdfkit": "^0.13.9",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.4",
