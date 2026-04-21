@@ -7,9 +7,13 @@ import type {
 } from "./insight-catalog-types";
 
 export interface InsightCatalogRepository {
-  getPublicInsights(input: GetPublicInsightsInput): Promise<PublicInsightListItem[]>;
+  getPublicInsights(
+    input: GetPublicInsightsInput,
+  ): Promise<PublicInsightListItem[]>;
 
-  getPublicInsightBySlug(slug: string): Promise<Omit<PublicInsightDetails, "tags"> | null>;
+  getPublicInsightBySlug(
+    slug: string,
+  ): Promise<Omit<PublicInsightDetails, "tags"> | null>;
 
   getInsightTagsByInsightId(insightId: string): Promise<InsightTagItem[]>;
 

@@ -74,7 +74,9 @@ export class DrizzleReportCatalogRepository implements ReportCatalogRepository {
     };
   }
 
-  async getReportById(reportId: string): Promise<OrganizationReportDetails | null> {
+  async getReportById(
+    reportId: string,
+  ): Promise<OrganizationReportDetails | null> {
     const [report] = await db
       .select({
         id: reports.id,
@@ -109,7 +111,10 @@ export class DrizzleReportCatalogRepository implements ReportCatalogRepository {
       updateData.status = input.status;
     }
 
-    await db.update(reports).set(updateData).where(eq(reports.id, input.reportId));
+    await db
+      .update(reports)
+      .set(updateData)
+      .where(eq(reports.id, input.reportId));
   }
 
   async deleteReport(reportId: string): Promise<void> {
@@ -145,7 +150,9 @@ export class DrizzleReportCatalogRepository implements ReportCatalogRepository {
       .offset(input.offset);
   }
 
-  async getPublicReportById(reportId: string): Promise<PublicReportDetails | null> {
+  async getPublicReportById(
+    reportId: string,
+  ): Promise<PublicReportDetails | null> {
     const [report] = await db
       .select({
         id: reports.id,

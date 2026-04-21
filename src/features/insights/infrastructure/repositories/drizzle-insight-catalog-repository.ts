@@ -64,8 +64,13 @@ export class DrizzleInsightCatalogRepository implements InsightCatalogRepository
         .from(insights)
         .leftJoin(user, eq(insights.authorId, user.id))
         .leftJoin(organizations, eq(insights.organizationId, organizations.id))
-        .innerJoin(insightTagRelations, eq(insights.id, insightTagRelations.insightId))
-        .where(and(...whereConditions, eq(insightTagRelations.tagId, input.tagId)))
+        .innerJoin(
+          insightTagRelations,
+          eq(insights.id, insightTagRelations.insightId),
+        )
+        .where(
+          and(...whereConditions, eq(insightTagRelations.tagId, input.tagId)),
+        )
         .orderBy(desc(insights.publishedAt))
         .limit(input.limit)
         .offset(input.offset);
@@ -101,7 +106,9 @@ export class DrizzleInsightCatalogRepository implements InsightCatalogRepository
     return insight ?? null;
   }
 
-  async getInsightTagsByInsightId(insightId: string): Promise<InsightTagItem[]> {
+  async getInsightTagsByInsightId(
+    insightId: string,
+  ): Promise<InsightTagItem[]> {
     return db
       .select({
         id: insightTags.id,
@@ -109,7 +116,10 @@ export class DrizzleInsightCatalogRepository implements InsightCatalogRepository
         slug: insightTags.slug,
       })
       .from(insightTags)
-      .innerJoin(insightTagRelations, eq(insightTags.id, insightTagRelations.tagId))
+      .innerJoin(
+        insightTagRelations,
+        eq(insightTags.id, insightTagRelations.tagId),
+      )
       .where(eq(insightTagRelations.insightId, insightId));
   }
 
@@ -124,7 +134,9 @@ export class DrizzleInsightCatalogRepository implements InsightCatalogRepository
       .orderBy(insightTags.title);
   }
 
-  async createInsight(input: CreateInsightInput): Promise<{ insightId: string }> {
+  async createInsight(
+    input: CreateInsightInput,
+  ): Promise<{ insightId: string }> {
     const [newInsight] = await db
       .insert(insights)
       .values({

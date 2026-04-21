@@ -16,7 +16,9 @@ export class UpdateReport {
   constructor(private readonly repository: ReportCatalogRepository) {}
 
   async execute(command: UpdateReportCommand) {
-    const existingReport = await this.repository.getReportById(command.reportId);
+    const existingReport = await this.repository.getReportById(
+      command.reportId,
+    );
     if (!existingReport) {
       throw new ReportNotFoundError("Report not found");
     }

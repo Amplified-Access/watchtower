@@ -8,7 +8,9 @@ import { InsightValidationError } from "../../domain/errors";
 export class GetPublicInsights {
   constructor(private readonly repository: InsightCatalogRepository) {}
 
-  async execute(input: GetPublicInsightsInput): Promise<PublicInsightListItem[]> {
+  async execute(
+    input: GetPublicInsightsInput,
+  ): Promise<PublicInsightListItem[]> {
     if (input.limit < 1 || input.limit > 100) {
       throw new InsightValidationError("Limit must be between 1 and 100");
     }

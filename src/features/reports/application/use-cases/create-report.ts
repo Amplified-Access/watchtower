@@ -1,5 +1,8 @@
 import type { ReportCatalogRepository } from "../../domain/report-catalog-repository";
-import type { ReportActorContext, ReportStatus } from "../../domain/report-catalog-types";
+import type {
+  ReportActorContext,
+  ReportStatus,
+} from "../../domain/report-catalog-types";
 import { ReportValidationError } from "../../domain/errors";
 
 interface CreateReportCommand {

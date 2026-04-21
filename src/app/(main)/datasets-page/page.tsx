@@ -145,14 +145,16 @@ const DatasetsPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categories?.map((category) => (
+                  {categories?.map(
+                    (category: { category: string; count: number }) => (
                     <SelectItem
                       key={category.category}
                       value={category.category}
                     >
                       {category.category} ({category.count})
                     </SelectItem>
-                  ))}
+                    ),
+                  )}
                 </SelectContent>
               </Select>
               <Select value={selectedFormat} onValueChange={setSelectedFormat}>
@@ -266,7 +268,7 @@ const DatasetsPage = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-12 mb-8">
-                {datasetsData?.data.map((dataset) => (
+                {datasetsData?.data.map((dataset: any) => (
                   <Card
                     key={dataset.id}
                     className="hover:shadow-xs shadow-none border-none relative p-2 md:p-6 py-10"
@@ -299,7 +301,7 @@ const DatasetsPage = () => {
                               {dataset.category}
                             </Badge>
                           </div>
-                          {dataset.tags?.slice(0, 2).map((tag) => (
+                          {dataset.tags?.slice(0, 2).map((tag: string) => (
                             <Badge
                               key={tag}
                               variant="outline"

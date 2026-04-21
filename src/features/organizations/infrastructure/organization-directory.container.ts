@@ -9,8 +9,7 @@ export interface OrganizationDirectoryUseCases {
 }
 
 export const createOrganizationDirectoryUseCases = (
-  repository: OrganizationDirectoryRepository =
-    new DrizzleOrganizationDirectoryRepository(),
+  repository: OrganizationDirectoryRepository = new DrizzleOrganizationDirectoryRepository(),
 ): OrganizationDirectoryUseCases => {
   return {
     getPublicOrganizations: new GetPublicOrganizations(repository),

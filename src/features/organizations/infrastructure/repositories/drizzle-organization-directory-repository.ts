@@ -9,9 +9,7 @@ import type {
   PublicOrganizationsResult,
 } from "../../domain/organization-directory-types";
 
-export class DrizzleOrganizationDirectoryRepository
-  implements OrganizationDirectoryRepository
-{
+export class DrizzleOrganizationDirectoryRepository implements OrganizationDirectoryRepository {
   async getPublicOrganizations(
     input: GetPublicOrganizationsInput,
   ): Promise<PublicOrganizationsResult> {
@@ -53,7 +51,9 @@ export class DrizzleOrganizationDirectoryRepository
     };
   }
 
-  async getOrganizationBySlug(slug: string): Promise<PublicOrganizationDetails | null> {
+  async getOrganizationBySlug(
+    slug: string,
+  ): Promise<PublicOrganizationDetails | null> {
     const [organization] = await db
       .select({
         id: organizations.id,

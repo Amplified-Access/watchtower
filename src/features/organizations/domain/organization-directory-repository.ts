@@ -9,5 +9,7 @@ export interface OrganizationDirectoryRepository {
     input: GetPublicOrganizationsInput,
   ): Promise<PublicOrganizationsResult>;
 
-  getOrganizationBySlug(slug: string): Promise<PublicOrganizationDetails | null>;
+  getOrganizationBySlug(
+    slug: string,
+  ): Promise<PublicOrganizationDetails | null>;
 }

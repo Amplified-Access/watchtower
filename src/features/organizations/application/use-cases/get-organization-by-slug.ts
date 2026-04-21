@@ -10,7 +10,9 @@ export class GetOrganizationBySlug {
 
   async execute(slug: string): Promise<PublicOrganizationDetails> {
     if (!slug.trim()) {
-      throw new OrganizationDirectoryValidationError("Organization slug is required");
+      throw new OrganizationDirectoryValidationError(
+        "Organization slug is required",
+      );
     }
 
     const organization = await this.repository.getOrganizationBySlug(slug);
