@@ -4,10 +4,9 @@ import { organizationProcedure, protectedProcedure } from "../middleware";
 import { organizationApplicationSchema } from "@/features/organization-registration/schemas/organization-registration-scema";
 import z from "zod";
 import { organizations } from "@/db/schemas/organizations";
-import { eq, and, count, desc, ilike } from "drizzle-orm";
+import { eq, and, desc, ilike } from "drizzle-orm";
 import { user } from "@/db/schemas/auth";
 import { TRPCError } from "@trpc/server";
-import { reports } from "@/db/schemas/reports";
 import {
   insights,
   insightTags,
@@ -29,6 +28,7 @@ import {
 } from "@/features/watcher";
 import {
   createReportCatalogUseCases,
+  ReportForbiddenError,
   ReportNotFoundError,
   ReportValidationError,
 } from "@/features/reports";
@@ -154,31 +154,20 @@ const coreRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { title, fileKey, status } = input;
       try {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-        if (!userWithOrg.organizationId) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "User must be associated with an organization",
-          });
-        }
-        const [newReport] = await db
-          .insert(reports)
-          .values({
-            organizationId: userWithOrg.organizationId,
-            reportedById: ctx.user.id,
-            title,
-            fileKey,
-            status,
-          })
-          .returning();
-        return {
-          success: true,
-          message: "Report created successfully",
-          reportId: newReport.id,
-        };
+        return await reportCatalog.createReport.execute({
+          title,
+          fileKey,
+          status,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof ReportValidationError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+        }
         if (error instanceof TRPCError) throw error;
         console.error("Failed to create report:", error);
         throw new TRPCError({
@@ -199,52 +188,22 @@ const coreRouter = router({
     )
     .query(async ({ input, ctx }) => {
       const { organizationId, status, limit, offset } = input;
-      if (ctx.user.role !== "super-admin") {
-        const userWithOrg = ctx.user as typeof ctx.user & {
-          organizationId?: string;
-        };
-        if (userWithOrg.organizationId !== organizationId) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "You can only access reports from your own organization",
-          });
-        }
-      }
       try {
-        const whereConditions = [eq(reports.organizationId, organizationId)];
-        if (status !== "all") {
-          whereConditions.push(eq(reports.status, status));
-        }
-        const data = await db
-          .select({
-            id: reports.id,
-            organizationId: reports.organizationId,
-            reportedById: reports.reportedById,
-            title: reports.title,
-            fileKey: reports.fileKey,
-            status: reports.status,
-            createdAt: reports.createdAt,
-            updatedAt: reports.updatedAt,
-            authorName: user.name,
-            authorEmail: user.email,
-          })
-          .from(reports)
-          .leftJoin(user, eq(reports.reportedById, user.id))
-          .where(and(...whereConditions))
-          .orderBy(desc(reports.updatedAt))
-          .limit(limit)
-          .offset(offset);
-        const totalCountResult = await db
-          .select({ count: count() })
-          .from(reports)
-          .where(and(...whereConditions));
-        const totalCount = totalCountResult[0]?.count || 0;
-        return {
-          reports: data,
-          totalCount,
-          hasMore: offset + data.length < totalCount,
-        };
+        return await reportCatalog.getOrganizationReports.execute({
+          organizationId,
+          status,
+          limit,
+          offset,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof ReportForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+        }
         console.error("Failed to fetch reports:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -258,44 +217,21 @@ const coreRouter = router({
     .query(async ({ input, ctx }) => {
       const { reportId } = input;
       try {
-        const [report] = await db
-          .select({
-            id: reports.id,
-            organizationId: reports.organizationId,
-            reportedById: reports.reportedById,
-            title: reports.title,
-            fileKey: reports.fileKey,
-            status: reports.status,
-            createdAt: reports.createdAt,
-            updatedAt: reports.updatedAt,
-            authorName: user.name,
-            authorEmail: user.email,
-            organizationName: organizations.name,
-          })
-          .from(reports)
-          .leftJoin(user, eq(reports.reportedById, user.id))
-          .leftJoin(organizations, eq(reports.organizationId, organizations.id))
-          .where(eq(reports.id, reportId))
-          .limit(1);
-        if (!report) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Report not found",
-          });
-        }
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== report.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "You can only access reports from your own organization",
-            });
-          }
-        }
-        return report;
+        return await reportCatalog.getReportById.execute({
+          reportId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof ReportNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof ReportForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+        }
         if (error instanceof TRPCError) throw error;
         console.error("Failed to fetch report:", error);
         throw new TRPCError({
@@ -316,37 +252,23 @@ const coreRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { reportId, title, status } = input;
       try {
-        const [existingReport] = await db
-          .select()
-          .from(reports)
-          .where(eq(reports.id, reportId))
-          .limit(1);
-        if (!existingReport) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Report not found",
-          });
-        }
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== existingReport.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "You can only update reports from your own organization",
-            });
-          }
-        }
-        const updateData: Record<string, unknown> = { updatedAt: new Date() };
-        if (title !== undefined) updateData.title = title;
-        if (status !== undefined) updateData.status = status;
-        await db
-          .update(reports)
-          .set(updateData)
-          .where(eq(reports.id, reportId));
-        return { success: true, message: "Report updated successfully" };
+        return await reportCatalog.updateReport.execute({
+          reportId,
+          title,
+          status,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof ReportNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof ReportForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+        }
         if (error instanceof TRPCError) throw error;
         console.error("Failed to update report:", error);
         throw new TRPCError({
@@ -361,31 +283,21 @@ const coreRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { reportId } = input;
       try {
-        const [existingReport] = await db
-          .select()
-          .from(reports)
-          .where(eq(reports.id, reportId))
-          .limit(1);
-        if (!existingReport) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Report not found",
-          });
-        }
-        if (ctx.user.role !== "super-admin") {
-          const userWithOrg = ctx.user as typeof ctx.user & {
-            organizationId?: string;
-          };
-          if (userWithOrg.organizationId !== existingReport.organizationId) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "You can only delete reports from your own organization",
-            });
-          }
-        }
-        await db.delete(reports).where(eq(reports.id, reportId));
-        return { success: true, message: "Report deleted successfully" };
+        return await reportCatalog.deleteReport.execute({
+          reportId,
+          actor: {
+            userId: ctx.user.id,
+            role: ctx.user.role ?? "",
+            organizationId: ctx.user.organizationId,
+          },
+        });
       } catch (error) {
+        if (error instanceof ReportNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        }
+        if (error instanceof ReportForbiddenError) {
+          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
+        }
         if (error instanceof TRPCError) throw error;
         console.error("Failed to delete report:", error);
         throw new TRPCError({

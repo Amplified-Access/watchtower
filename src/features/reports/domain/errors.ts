@@ -18,3 +18,10 @@ export class ReportNotFoundError extends ReportCatalogError {
     this.name = "ReportNotFoundError";
   }
 }
+
+export class ReportForbiddenError extends ReportCatalogError {
+  constructor(message: string) {
+    super(message);
+    this.name = "ReportForbiddenError";
+  }
+}
