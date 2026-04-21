@@ -24,10 +24,28 @@ export async function GET(req: NextRequest) {
     }
 
     if (fileKey.startsWith("https://") || fileKey.startsWith("http://")) {
-      return NextResponse.json(
-        { error: "External URLs are not supported via this endpoint" },
-        { status: 400 }
-      );
+      const allowedDomains = (process.env.ALLOWED_EXTERNAL_DOMAINS ?? "")
+        .split(",")
+        .map((d) => d.trim())
+        .filter(Boolean);
+      if (!allowedDomains.includes("*")) {
+        let hostname: string;
+        try {
+          hostname = new URL(fileKey).hostname;
+        } catch {
+          return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+        }
+        const isAllowed = allowedDomains.some(
+          (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
+        );
+        if (!isAllowed) {
+          return NextResponse.json(
+            { error: "External domain not permitted" },
+            { status: 400 }
+          );
+        }
+      }
+      return NextResponse.redirect(fileKey);
     }
 
     // Get file from Cloudflare R2

@@ -21,6 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Download, Search, FileText, Database } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { downloadFileFromR2 } from "@/utils/file-download";
@@ -49,6 +55,7 @@ const DatasetsPage = () => {
   const [selectedFormat, setSelectedFormat] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
+  const [infoDataset, setInfoDataset] = useState<any | null>(null);
 
   // Fetch datasets with filters
   const { data: datasetsData, isLoading } = trpc.getPublicDatasets.useQuery({
@@ -198,9 +205,9 @@ const DatasetsPage = () => {
               {Array.from({ length: 6 }, (_, i) => (
                 <Card
                   key={i}
-                  className="hover:shadow-xs shadow-none border-none relative p-2 md:p-6 py-10 animate-pulse"
+                  className="hover:shadow-xs shadow-none border-none relative p-2 md:p-6 animate-pulse"
                 >
-                  <CardContent className="flex flex-col justify-between h-full">
+                  <CardContent className="flex flex-col justify-between h-full py-6">
                     {/* Title and Description skeleton */}
                     <div>
                       <div className="h-6 bg-gray-200 rounded-md mb-2 w-3/4"></div>
@@ -271,9 +278,9 @@ const DatasetsPage = () => {
                 {datasetsData?.data.map((dataset: any) => (
                   <Card
                     key={dataset.id}
-                    className="hover:shadow-xs shadow-none border-none relative p-2 md:p-6 py-10"
+                    className="hover:shadow-xs shadow-none border-none relative p-2 md:p-6"
                   >
-                    <CardContent className="flex flex-col justify-between h-full">
+                    <CardContent className="flex flex-col justify-between h-full py-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <CardTitle className="text-lg mb-2 line-clamp-2 flex">
@@ -281,9 +288,6 @@ const DatasetsPage = () => {
                               {dataset.title}
                             </H4>
                           </CardTitle>
-                          <TextComponent className="">
-                            {dataset.description}
-                          </TextComponent>
                         </div>
                       </div>
                       <div>
@@ -310,6 +314,13 @@ const DatasetsPage = () => {
                               {tag}
                             </Badge>
                           ))}
+                          <button
+                            onClick={() => setInfoDataset(dataset)}
+                            className="text-muted-foreground hover:text-foreground transition-colors ml-auto"
+                            aria-label="Dataset info"
+                          >
+                            <FaRegCircleQuestion className="h-4 w-4" />
+                          </button>
                         </div>
 
                         <hr className="my-4 border-gray-200" />
@@ -467,6 +478,38 @@ const DatasetsPage = () => {
           />
         </Container>
       </section>
+
+      {/* Dataset info dialog */}
+      <Dialog open={!!infoDataset} onOpenChange={(open) => !open && setInfoDataset(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="leading-snug pr-4">
+              {infoDataset?.title}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+            <p>{infoDataset?.description}</p>
+            {infoDataset?.methodology && (
+              <div>
+                <p className="font-medium text-foreground mb-1">Methodology</p>
+                <p>{infoDataset?.methodology}</p>
+              </div>
+            )}
+            {infoDataset?.coverage && (
+              <div>
+                <p className="font-medium text-foreground mb-1">Coverage</p>
+                <p>{infoDataset?.coverage}</p>
+              </div>
+            )}
+            {infoDataset?.license && (
+              <div>
+                <p className="font-medium text-foreground mb-1">License</p>
+                <p>{infoDataset?.license}</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* About Section */}
       {/* <section className="py-16 bg-white">

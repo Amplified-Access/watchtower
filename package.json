@@ -15,7 +15,8 @@
     "seed:clean": "tsx src/scripts/seed-clean.ts",
     "seed:organizations": "tsx src/scripts/seed-organizations.ts",
     "seed:insights": "tsx src/scripts/seed-insights.ts",
-    "seed:datasets": "tsx src/scripts/seed-datasets.ts"
+    "seed:datasets": "tsx src/scripts/seed-datasets.ts",
+    "ingest:datasets": "tsx src/scripts/ingest-real-datasets.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.12",
