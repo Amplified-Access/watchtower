@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - staging
-      - deployment
+      - production
     paths-ignore:
       - "README.md"
       - "frontend/**"
