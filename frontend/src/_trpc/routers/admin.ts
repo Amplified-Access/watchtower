@@ -341,12 +341,13 @@ export const adminRouter = router({
 
   getOrganizationPendingReports: organizationProcedure
     .input(z.object({ limit: z.number().default(5) }))
-    .query(async ({ input, ctx }) => {
+    .query(async ({ ctx }) => {
       try {
         const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
         if (!orgId) return [];
-        // Pending reports filtering not yet in Go backend
-        return [];
+        const res = await incidentsApi.getPending(orgId);
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch pending reports");
+        return res.data ?? [];
       } catch (error) {
         console.error("Failed to fetch pending reports:", error);
         throw new TRPCError({
@@ -360,8 +361,9 @@ export const adminRouter = router({
     try {
       const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
       if (!orgId) return [];
-      // Analytics by type not yet in Go backend
-      return [];
+      const res = await incidentsApi.getTypeAnalytics(orgId);
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch incident types analytics");
+      return res.data ?? [];
     } catch (error) {
       console.error("Failed to fetch incident types analytics:", error);
       throw new TRPCError({

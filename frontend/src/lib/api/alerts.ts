@@ -48,6 +48,9 @@ export const alertsApi = {
   getByEmail: (email: string) =>
     api.get<AlertSubscription[]>(`/alerts?email=${encodeURIComponent(email)}`),
 
+  update: (id: string, data: Partial<Omit<AlertSubscription, "id" | "createdAt" | "updatedAt">>) =>
+    api.patch(`/alerts/${id}`, data),
+
   deactivate: (id: string) => api.post(`/alerts/${id}/deactivate`),
 
   activate: (id: string) => api.post(`/alerts/${id}/activate`),

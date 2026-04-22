@@ -123,6 +123,13 @@ export const incidentsApi = {
   getOrgReportStats: (orgId: string) =>
     api.get<IncidentStats>(`/org/incident-reports/stats?organizationId=${orgId}`),
 
+  getPending: (orgId: string) =>
+    api.get<Incident[]>(`/admin/analytics/pending?organizationId=${orgId}`),
+
+  getTypeAnalytics: (orgId: string) =>
+    api.get<{ name: string; value: number }[]>(`/admin/analytics/types?organizationId=${orgId}`),
+  };
+
   // Super admin
   getAllIncidents: (params?: ListParams) => {
     const query = new URLSearchParams();

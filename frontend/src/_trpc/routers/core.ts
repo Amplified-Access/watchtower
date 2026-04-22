@@ -4,6 +4,7 @@ import { publicProcedure, router } from "../trpc";
 import { authApi } from "@/lib/api/auth";
 import { organizationsApi } from "@/lib/api/organizations";
 import { incidentsApi } from "@/lib/api/incidents";
+import { adminApi } from "@/lib/api/admin";
 import { anonymousReportingRouter } from "./anonymous-reporting";
 import { alertSubscriptionsRouter } from "./alert-subscriptions";
 import { notificationRouter } from "./notifications";
@@ -67,14 +68,17 @@ export const coreRouter = router({
       return res.data;
     }),
 
-  getActiveFormsForWatcher: publicProcedure.query(async () => {
-    return [] as Array<{
-      id: string;
-      name: string;
-      definition: Record<string, unknown>;
-      createdAt: string;
-      updatedAt: string;
-    }>;
+  getActiveFormsForWatcher: publicProcedure.query(async ({ ctx }) => {
+    try {
+      const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+      if (!orgId) return [];
+      const res = await adminApi.getActiveFormsForWatcher(orgId);
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch forms");
+      return res.data ?? [];
+    } catch (error) {
+      console.error("Failed to fetch active forms for watcher:", error);
+      return [];
+    }
   }),
 
   anonymousReports: anonymousReportingRouter,

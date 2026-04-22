@@ -67,8 +67,10 @@ export const alertSubscriptionsRouter = router({
     .input(UpdateSubscriptionSchema)
     .mutation(async ({ input }) => {
       try {
-        // Go backend alert subscription doesn't expose update — deactivate + create
-        return { success: false, message: "Update not yet supported" };
+        const { id, ...data } = input;
+        const res = await alertsApi.update(id, data);
+        if (!res.success) throw new Error(res.error ?? "Failed to update subscription");
+        return { success: true, data: res.data };
       } catch (error) {
         console.error("Error updating alert subscription:", error);
         throw new TRPCError({
