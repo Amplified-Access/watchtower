@@ -1,0 +1,61 @@
+name: PR Tests
+
+on:
+  pull_request:
+    branches: ["main", "staging", "production"]
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+      - "dispatcher/**"
+      - "admin/**"
+      - "mobile/**"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Build
+        run: make build
+
+      - name: Run tests
+        run: make test
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          REDIS_PASSWORD: ""
+          REDIS_DB: 0
+          REDIS_URL: redis://:@localhost:6379/0
+
+      - name: Run integration tests
+        run: make itest
