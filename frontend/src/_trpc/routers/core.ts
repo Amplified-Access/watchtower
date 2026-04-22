@@ -68,7 +68,13 @@ export const coreRouter = router({
     }),
 
   getActiveFormsForWatcher: publicProcedure.query(async () => {
-    return [];
+    return [] as Array<{
+      id: string;
+      name: string;
+      definition: Record<string, unknown>;
+      createdAt: string;
+      updatedAt: string;
+    }>;
   }),
 
   anonymousReports: anonymousReportingRouter,

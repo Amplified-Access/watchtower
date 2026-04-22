@@ -39,7 +39,7 @@ export const organizationReportingRouter = router({
           audioFileKey: input.audioFileKey,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to submit report");
-        return { success: true, data: res.data };
+        return res.data;
       } catch (error) {
         console.error("Failed to submit organization incident report:", error);
         throw new TRPCError({
@@ -71,7 +71,7 @@ export const organizationReportingRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { success: true, data: res.data?.data, total: res.data?.total };
+        return { reports: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
       } catch (error) {
         console.error("Failed to fetch organization incident reports:", error);
         throw new TRPCError({
@@ -100,7 +100,7 @@ export const organizationReportingRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { success: true, data: res.data?.data, total: res.data?.total };
+        return { reports: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
       } catch (error) {
         console.error("Failed to fetch user organization incident reports:", error);
         throw new TRPCError({
@@ -116,7 +116,7 @@ export const organizationReportingRouter = router({
       if (!orgId) throw new Error("No organization ID");
       const res = await incidentsApi.getOrgReportStats(orgId);
       if (!res.success) throw new Error(res.error ?? "Failed to fetch stats");
-      return { success: true, data: res.data };
+      return res.data;
     } catch (error) {
       console.error("Failed to fetch organization incident stats:", error);
       throw new TRPCError({

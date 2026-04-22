@@ -87,7 +87,7 @@ export const superAdminRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
-        return { success: true, data: res.data?.data, total: res.data?.total };
+        return { incidents: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
       } catch (error) {
         console.error("Failed to retrieve incidents:", error);
         throw new TRPCError({
@@ -108,7 +108,7 @@ export const superAdminRouter = router({
           }
           throw new Error(res.error ?? "Failed to fetch incident");
         }
-        return { success: true, data: res.data };
+        return res.data ?? null;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
         console.error("Failed to fetch incident:", error);
@@ -176,7 +176,7 @@ export const superAdminRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch forms");
-        return { success: true, data: res.data?.data, total: res.data?.total };
+        return { forms: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
       } catch (error) {
         console.error("Failed to retrieve forms:", error);
         throw new TRPCError({
@@ -192,7 +192,7 @@ export const superAdminRouter = router({
       try {
         const res = await adminApi.getFormById(input.formId);
         if (!res.success) throw new Error(res.error ?? "Failed to fetch form");
-        return { success: true, data: res.data };
+        return res.data ?? null;
       } catch (error) {
         console.error("Failed to fetch form:", error);
         throw new TRPCError({
@@ -265,7 +265,7 @@ export const superAdminRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { success: true, data: res.data?.data, total: res.data?.total };
+        return { reports: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
       } catch (error) {
         console.error("Failed to retrieve reports:", error);
         throw new TRPCError({
@@ -279,8 +279,25 @@ export const superAdminRouter = router({
     try {
       // Go backend doesn't have a super admin dashboard stats endpoint
       return {
-        success: true,
-        data: { totalIncidents: 0, totalReports: 0, totalOrganizations: 0, totalUsers: 0 },
+        totalOrganizations: 0,
+        totalAdmins: 0,
+        totalWatchers: 0,
+        pendingApplications: 0,
+        reportsThisMonth: 0,
+        activeForms: 0,
+        criticalIncidents: 0,
+        uptimePercentage: 99.9,
+        growth: {
+          organizations: { current: 0, previous: 0, percentage: 0 },
+          admins: { current: 0, previous: 0, percentage: 0 },
+          watchers: { current: 0, previous: 0, percentage: 0 },
+        },
+        metrics: {
+          newOrganizationsThisMonth: 0,
+          newAdminsThisMonth: 0,
+          newWatchersThisMonth: 0,
+          averageReportsPerOrg: 0,
+        },
       };
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
@@ -296,7 +313,7 @@ export const superAdminRouter = router({
     .query(async ({ input }) => {
       try {
         // Not yet implemented in Go backend
-        return { success: true, data: [] };
+        return [];
       } catch (error) {
         console.error("Error fetching recent activity:", error);
         throw new TRPCError({
@@ -313,7 +330,7 @@ export const superAdminRouter = router({
         const res = await organizationsApi.getApplications();
         if (!res.success) throw new Error(res.error ?? "Failed to fetch applications");
         const pending = res.data?.filter((a) => a.status === "pending") ?? [];
-        return { success: true, data: pending };
+        return pending;
       } catch (error) {
         console.error("Error fetching pending applications:", error);
         throw new TRPCError({
@@ -329,7 +346,7 @@ export const superAdminRouter = router({
       try {
         const res = await incidentsApi.getAllIncidents({ limit: input.limit });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
-        return { success: true, data: res.data?.data ?? [] };
+        return res.data?.data ?? [];
       } catch (error) {
         console.error("Error fetching critical incidents:", error);
         throw new TRPCError({
@@ -360,7 +377,12 @@ export const superAdminRouter = router({
   getPlatformActivityTrend: superAdminProcedure.query(async () => {
     try {
       // Not yet in Go backend
-      return { success: true, data: [] };
+      return {
+        data: [],
+        currentValue: 0,
+        currentChange: 0,
+        timeframe: "7w",
+      };
     } catch (error) {
       console.error("Error fetching platform activity trend:", error);
       throw new TRPCError({

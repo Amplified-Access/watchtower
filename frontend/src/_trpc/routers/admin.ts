@@ -44,8 +44,10 @@ export const adminRouter = router({
 
   getAdminOrganization: protectedProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async () => {
-      return null;
+    .query(async ({ ctx }) => {
+      const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+      if (!orgId) return null;
+      return { organizationId: orgId, organization: null };
     }),
 
   inviteWatcher: adminProcedure
@@ -264,8 +266,8 @@ export const adminRouter = router({
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
         return {
-          data: res.data?.data ?? [],
-          total: res.data?.total ?? 0,
+          incidents: res.data?.data ?? [],
+          totalCount: res.data?.total ?? 0,
         };
       } catch (error) {
         console.error("Failed to fetch incidents:", error);
@@ -287,7 +289,7 @@ export const adminRouter = router({
           }
           throw new Error(res.error ?? "Failed to fetch incident");
         }
-        return { success: true, data: res.data };
+        return res.data ?? null;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
         console.error("Failed to fetch incident:", error);
@@ -372,10 +374,16 @@ export const adminRouter = router({
   getOrganizationWeeklyIncidentTrend: organizationProcedure.query(async ({ ctx }) => {
     try {
       const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
-      if (!orgId) return [];
+      if (!orgId) {
+        return { data: [], currentValue: 0, currentChange: 0, timeframe: "7d" };
+      }
       const res = await incidentsApi.getWeeklyTrend(orgId);
       if (!res.success) throw new Error(res.error ?? "Failed to fetch trend");
-      return res.data ?? [];
+      const points = res.data ?? [];
+      const currentValue = points.length ? points[points.length - 1].count : 0;
+      const previousValue = points.length > 1 ? points[points.length - 2].count : 0;
+      const currentChange = previousValue === 0 ? 0 : Math.round(((currentValue - previousValue) / previousValue) * 100);
+      return { data: points, currentValue, currentChange, timeframe: "7d" };
     } catch (error) {
       console.error("Failed to fetch weekly incident trend:", error);
       throw new TRPCError({
@@ -388,10 +396,33 @@ export const adminRouter = router({
   getOrganizationDashboardStats: organizationProcedure.query(async ({ ctx }) => {
     try {
       const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
-      if (!orgId) return null;
-      const res = await incidentsApi.getOrganizationStats(orgId);
+      if (!orgId) {
+        return {
+          watchers: { total: 0 },
+          forms: { total: 0, active: 0 },
+          incidents: { total: 0, open: 0 },
+          reports: { published: 0, draft: 0 },
+        };
+      }
+      const [statsRes, watchersRes, formsRes] = await Promise.all([
+        incidentsApi.getOrganizationStats(orgId),
+        adminApi.getOrganizationWatchers(orgId),
+        adminApi.getOrganizationForms(orgId),
+      ]);
+      const res = statsRes;
       if (!res.success) throw new Error(res.error ?? "Failed to fetch stats");
-      return res.data;
+      const raw = res.data;
+      const watchers = watchersRes.success ? watchersRes.data ?? [] : [];
+      const forms = formsRes.success ? formsRes.data ?? [] : [];
+      return {
+        watchers: { total: watchers.length },
+        forms: { total: forms.length, active: forms.filter((f) => f.isActive).length },
+        incidents: {
+          total: raw?.total ?? 0,
+          open: (raw?.reported ?? 0) + (raw?.investigating ?? 0),
+        },
+        reports: { published: 0, draft: 0 },
+      };
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
       throw new TRPCError({
@@ -414,6 +445,7 @@ export const adminRouter = router({
         return incidents.map((i) => ({
           id: i.id,
           type: "incident",
+          title: `Incident ${i.status}`,
           description: `Incident reported: ${i.status}`,
           timestamp: i.createdAt,
           userName: "System",
