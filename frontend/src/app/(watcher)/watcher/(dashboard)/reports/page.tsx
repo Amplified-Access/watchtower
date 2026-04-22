@@ -68,10 +68,7 @@ const page = () => {
     );
 
   // Get organization ID from the data
-  const organizationId =
-    organizationData && "organization" in organizationData
-      ? organizationData.organizationId
-      : null;
+  const organizationId = organizationData?.organizationId ?? null;
 
   // Fetch reports for the watcher's organization
   const { data: reportsData, isLoading: reportsLoading } =
@@ -90,7 +87,7 @@ const page = () => {
 
   // Filter reports to only show those created by the current watcher
   const myReports =
-    reportsData?.reports?.filter(
+    (reportsData ?? []).filter(
       (report) => report.reportedById === user?.id
     ) || [];
 
@@ -106,7 +103,7 @@ const page = () => {
       { enabled: !!organizationId }
     );
 
-  const organizationReports = orgReportsData?.reports || [];
+  const organizationReports = orgReportsData || [];
 
   const isLoading =
     userLoading || orgLoading || reportsLoading || orgReportsLoading;

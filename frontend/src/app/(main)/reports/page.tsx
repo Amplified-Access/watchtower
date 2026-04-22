@@ -346,7 +346,7 @@ export default function PublicReportsPage() {
           )}
 
           {/* Empty State */}
-          {reports && reports.length === 0 && (
+          {reports && (reports.data?.length ?? 0) === 0 && (
             <div className="text-center py-12">
               <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No reports found</h3>

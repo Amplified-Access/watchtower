@@ -72,7 +72,6 @@ const SuperAdminDatasetsPage = () => {
     refetch,
   } = trpc.getAllDatasets.useQuery({
     search: searchTerm || undefined,
-    category: selectedCategory === "all" ? undefined : selectedCategory,
     page: currentPage,
     limit: 10,
     includePrivate: true,
@@ -668,13 +667,11 @@ const SuperAdminDatasetsPage = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories?.map(
-              (category: { category: string; count: number }) => (
-              <SelectItem key={category.category} value={category.category}>
-                {category.category} ({category.count})
+            {categories?.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category}
               </SelectItem>
-              ),
-            )}
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -718,7 +715,7 @@ const SuperAdminDatasetsPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
-                    {getFormatIcon(dataset.format)}
+                    {getFormatIcon(dataset.format ?? "unknown")}
                     <div className="flex gap-1">
                       <Button
                         size="sm"

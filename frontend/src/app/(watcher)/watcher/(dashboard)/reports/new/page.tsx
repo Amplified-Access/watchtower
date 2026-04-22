@@ -39,9 +39,9 @@ const page = () => {
     );
 
   const createReportMutation = trpc.createReport.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Report created successfully!");
-      router.push(`/watcher/reports/${data.reportId}`);
+      router.push("/watcher/reports");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to create report");
@@ -205,9 +205,7 @@ const page = () => {
               <div className="bg-muted/30 rounded-lg p-4">
                 <p className="text-sm">
                   <span className="font-medium">Organization:</span>{" "}
-                  {organizationData && "organization" in organizationData
-                    ? organizationData.organization
-                    : "Your Organization"}
+                  {organizationData?.organizationId || "Your Organization"}
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
                   This report will be associated with your organization and will

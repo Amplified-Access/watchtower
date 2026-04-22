@@ -68,9 +68,7 @@ const DatasetsPage = () => {
   // Fetch categories for filter
   const { data: categories } = trpc.getDatasetCategories.useQuery();
 
-  const categoryOptions = categories?.map((c) =>
-    typeof c === "string" ? c : c.category
-  ) ?? [];
+  const categoryOptions = categories ?? [];
 
   // Mutation for incrementing download count
   const incrementDownload = trpc.incrementDatasetDownload.useMutation();

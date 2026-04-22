@@ -64,10 +64,7 @@ const page = () => {
     );
 
   // Get organization ID from the data
-  const organizationId =
-    organizationData && "organization" in organizationData
-      ? organizationData.organizationId
-      : null;
+  const organizationId = organizationData?.organizationId ?? null;
 
   // Fetch old incidents for the watcher's organization
   const { data: incidentsData, isLoading: incidentsLoading } =
