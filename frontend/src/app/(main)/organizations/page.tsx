@@ -86,7 +86,7 @@ export default function OrganizationsPage() {
       {organizationsData && (
         <div className="mb-6">
           <p className="text-sm text-muted-foreground">
-            Showing {organizationsData.organizations.length} of{" "}
+            Showing {organizationsData.data.length} of{" "}
             {organizationsData.total} organizations
           </p>
         </div>
@@ -111,7 +111,7 @@ export default function OrganizationsPage() {
             </Card>
           ))}
         </div>
-      ) : organizationsData?.organizations.length === 0 ? (
+      ) : organizationsData?.data.length === 0 ? (
         <div className="text-center py-12">
           <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">No organizations found</h3>
@@ -123,7 +123,7 @@ export default function OrganizationsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {organizationsData?.organizations.map((organization) => (
+          {organizationsData?.data.map((organization) => (
             <Card
               key={organization.id}
               className="hover:shadow-lg transition-shadow"
@@ -211,7 +211,7 @@ export default function OrganizationsPage() {
           <Button
             variant="outline"
             onClick={() => setCurrentPage((prev) => prev + 1)}
-            disabled={!organizationsData.hasMore}
+            disabled={!(organizationsData.data.length >= pageSize)}
           >
             Next
           </Button>

@@ -168,7 +168,7 @@ export default function PublicReportsPage() {
           {reports && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-12 mb-8">
-                {reports.map((report) => (
+                {(reports.data ?? []).map((report) => (
                   <Card
                     key={report.id}
                     className="hover:shadow-xs shadow-none border-none relative px-2 md:px-6 py-10"
@@ -320,7 +320,7 @@ export default function PublicReportsPage() {
               </div>
 
               {/* Pagination */}
-              {reports.length > pageSize && (
+              {(reports.data?.length ?? 0) > pageSize && (
                 <div className="flex justify-center gap-2">
                   <Button
                     variant="outline"
@@ -335,7 +335,7 @@ export default function PublicReportsPage() {
                   <Button
                     variant="outline"
                     onClick={() => setCurrentPage((p) => p + 1)}
-                    disabled={!reports || reports.length < pageSize}
+                    disabled={!reports || (reports.data?.length ?? 0) < pageSize}
                     className=""
                   >
                     Next

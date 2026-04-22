@@ -1,13 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { publicProcedure, router } from "../trpc";
-import {
-  createOrganizationDirectoryUseCases,
-  OrganizationDirectoryValidationError,
-  OrganizationNotFoundError,
-} from "@/features/organizations";
-
-const organizationDirectory = createOrganizationDirectoryUseCases();
+import { organizationsApi } from "@/lib/api/organizations";
 
 export const organizationsRouter = router({
   getPublicOrganizations: publicProcedure
@@ -21,15 +15,10 @@ export const organizationsRouter = router({
     .query(async ({ input }) => {
       try {
         const { search, limit, offset } = input;
-        return await organizationDirectory.getPublicOrganizations.execute({
-          search,
-          limit,
-          offset,
-        });
+        const res = await organizationsApi.list({ search, limit, offset });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch organizations");
+        return { data: res.data?.data ?? [], total: res.data?.total ?? 0 };
       } catch (error) {
-        if (error instanceof OrganizationDirectoryValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
         console.error("Error fetching organizations:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -42,16 +31,15 @@ export const organizationsRouter = router({
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
       try {
-        return await organizationDirectory.getOrganizationBySlug.execute(
-          input.slug,
-        );
+        const res = await organizationsApi.getBySlug(input.slug);
+        if (!res.success) {
+          if (res.error?.includes("404")) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
+          }
+          throw new Error(res.error ?? "Failed to fetch organization");
+        }
+        return res.data ?? null;
       } catch (error) {
-        if (error instanceof OrganizationDirectoryValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
-        if (error instanceof OrganizationNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
         if (error instanceof TRPCError) throw error;
         console.error("Error fetching organization:", error);
         throw new TRPCError({

@@ -2,27 +2,20 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router } from "../trpc";
 import { superAdminProcedure } from "../middleware";
-import {
-  createSuperAdminFormUseCases,
-  SuperAdminFormNotFoundError,
-  SuperAdminFormValidationError,
-} from "@/features/super-admin";
-import { createOrganizationRegistrationUseCases } from "@/features/organization-registration";
-
-const superAdminForms = createSuperAdminFormUseCases();
-const organizationRegistration = createOrganizationRegistrationUseCases();
+import { adminApi } from "@/lib/api/admin";
+import { organizationsApi } from "@/lib/api/organizations";
+import { incidentsApi } from "@/lib/api/incidents";
+import { reportsApi } from "@/lib/api/reports";
 
 export const superAdminRouter = router({
   getAllOrganizatonApplications: superAdminProcedure.query(async () => {
     try {
-      return await organizationRegistration.getAllOrganizationApplications.execute();
+      const res = await organizationsApi.getApplications();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch applications");
+      return { success: true, data: res.data };
     } catch (error) {
-      console.error("Error fetching all applications: ", error);
-      return {
-        success: false,
-        message: "Failed to fetch applications.",
-        error: error instanceof Error ? error.message : String(error),
-      };
+      console.error("Error fetching applications:", error);
+      return { success: false, message: "Failed to fetch applications.", data: [] };
     }
   }),
 
@@ -30,16 +23,12 @@ export const superAdminRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       try {
-        return await organizationRegistration.approveOrganizationApplication.execute(
-          input.id,
-        );
+        const res = await organizationsApi.approveApplication(input.id);
+        if (!res.success) throw new Error(res.error ?? "Failed to approve");
+        return { success: true };
       } catch (error) {
         console.error("Error approving application:", error);
-        return {
-          success: false,
-          message: "Failed to approve application.",
-          error: error instanceof Error ? error.message : String(error),
-        };
+        return { success: false, message: "Failed to approve application." };
       }
     }),
 
@@ -47,42 +36,34 @@ export const superAdminRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       try {
-        return await organizationRegistration.declineOrganizationApplication.execute(
-          input.id,
-        );
+        const res = await organizationsApi.declineApplication(input.id);
+        if (!res.success) throw new Error(res.error ?? "Failed to decline");
+        return { success: true };
       } catch (error) {
-        console.error("Error declining application : ", error);
-        return {
-          success: false,
-          message: "Failed to decline organizations.",
-          error: error instanceof Error ? error.message : String(error),
-        };
+        console.error("Error declining application:", error);
+        return { success: false, message: "Failed to decline application." };
       }
     }),
 
   getAllAdmins: superAdminProcedure.query(async () => {
     try {
-      return await superAdminForms.getAllAdminsForSuperAdmin.execute();
+      const res = await adminApi.getAllAdmins();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch admins");
+      return { success: true, data: res.data };
     } catch (error) {
-      console.error("Error fetching admins: ", error);
-      return {
-        success: false,
-        message: "Failed to fetch admins.",
-        error: error instanceof Error ? error.message : String(error),
-      };
+      console.error("Error fetching admins:", error);
+      return { success: false, message: "Failed to fetch admins.", data: [] };
     }
   }),
 
   getAllWatchers: superAdminProcedure.query(async () => {
     try {
-      return await superAdminForms.getAllWatchersForSuperAdmin.execute();
+      const res = await adminApi.getAllWatchers();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch watchers");
+      return { success: true, data: res.data };
     } catch (error) {
-      console.error("Error fetching watchers: ", error);
-      return {
-        success: false,
-        message: "Failed to fetch watchers.",
-        error: error instanceof Error ? error.message : String(error),
-      };
+      console.error("Error fetching watchers:", error);
+      return { success: false, message: "Failed to fetch watchers.", data: [] };
     }
   }),
 
@@ -90,26 +71,24 @@ export const superAdminRouter = router({
     .input(
       z.object({
         search: z.string().optional(),
-        status: z
-          .enum(["reported", "investigating", "resolved", "closed"])
-          .optional(),
+        status: z.enum(["reported", "investigating", "resolved", "closed"]).optional(),
         organizationId: z.string().optional(),
-        formId: z.string().optional(),
-        sortBy: z
-          .enum(["createdAt", "updatedAt", "status"])
-          .default("createdAt"),
+        sortBy: z.enum(["createdAt", "updatedAt", "status"]).default("createdAt"),
         sortOrder: z.enum(["asc", "desc"]).default("desc"),
-        limit: z.number().min(1).max(100).default(50),
-        offset: z.number().min(0).default(0),
+        limit: z.number().default(50),
+        offset: z.number().default(0),
       }),
     )
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getAllIncidentsForSuperAdmin.execute(input);
+        const res = await incidentsApi.getAllIncidents({
+          limit: input.limit,
+          offset: input.offset,
+          search: input.search,
+        });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
+        return { success: true, data: res.data?.data, total: res.data?.total };
       } catch (error) {
-        if (error instanceof SuperAdminFormValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
         console.error("Failed to retrieve incidents:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -122,13 +101,16 @@ export const superAdminRouter = router({
     .input(z.object({ incidentId: z.string() }))
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getIncidentByIdForSuperAdmin.execute(
-          input.incidentId,
-        );
-      } catch (error) {
-        if (error instanceof SuperAdminFormNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+        const res = await incidentsApi.getIncidentById(input.incidentId);
+        if (!res.success) {
+          if (res.error?.includes("404")) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Incident not found" });
+          }
+          throw new Error(res.error ?? "Failed to fetch incident");
         }
+        return { success: true, data: res.data };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error("Failed to fetch incident:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -146,16 +128,10 @@ export const superAdminRouter = router({
     )
     .mutation(async ({ input }) => {
       try {
-        return await superAdminForms.updateIncidentStatusForSuperAdmin.execute(
-          input,
-        );
+        const res = await incidentsApi.updateIncidentStatus(input.incidentId, input.status);
+        if (!res.success) throw new Error(res.error ?? "Failed to update status");
+        return { success: true };
       } catch (error) {
-        if (error instanceof SuperAdminFormNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
-        if (error instanceof SuperAdminFormValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
         console.error("Failed to update incident:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -168,13 +144,10 @@ export const superAdminRouter = router({
     .input(z.object({ incidentId: z.string() }))
     .mutation(async ({ input }) => {
       try {
-        return await superAdminForms.deleteIncidentForSuperAdmin.execute(
-          input.incidentId,
-        );
+        const res = await incidentsApi.deleteIncident(input.incidentId);
+        if (!res.success) throw new Error(res.error ?? "Failed to delete incident");
+        return { success: true };
       } catch (error) {
-        if (error instanceof SuperAdminFormNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
         console.error("Failed to delete incident:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -191,13 +164,19 @@ export const superAdminRouter = router({
         isActive: z.boolean().optional(),
         sortBy: z.enum(["createdAt", "updatedAt", "name"]).default("createdAt"),
         sortOrder: z.enum(["asc", "desc"]).default("desc"),
-        limit: z.number().min(1).max(100).default(50),
-        offset: z.number().min(0).default(0),
+        limit: z.number().default(50),
+        offset: z.number().default(0),
       }),
     )
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getAllFormsForSuperAdmin.execute(input);
+        const res = await adminApi.getAllForms({
+          limit: input.limit,
+          offset: input.offset,
+          search: input.search,
+        });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch forms");
+        return { success: true, data: res.data?.data, total: res.data?.total };
       } catch (error) {
         console.error("Failed to retrieve forms:", error);
         throw new TRPCError({
@@ -211,13 +190,10 @@ export const superAdminRouter = router({
     .input(z.object({ formId: z.string() }))
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getFormByIdForSuperAdmin.execute(
-          input.formId,
-        );
+        const res = await adminApi.getFormById(input.formId);
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch form");
+        return { success: true, data: res.data };
       } catch (error) {
-        if (error instanceof SuperAdminFormNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
         console.error("Failed to fetch form:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -237,11 +213,14 @@ export const superAdminRouter = router({
     )
     .mutation(async ({ input }) => {
       try {
-        return await superAdminForms.updateFormForSuperAdmin.execute(input);
+        const res = await adminApi.updateForm(input.formId, {
+          name: input.name,
+          definition: input.definition,
+          isActive: input.isActive,
+        });
+        if (!res.success) throw new Error(res.error ?? "Failed to update form");
+        return { success: true };
       } catch (error) {
-        if (error instanceof SuperAdminFormNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
         console.error("Failed to update form:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -254,16 +233,10 @@ export const superAdminRouter = router({
     .input(z.object({ formId: z.string() }))
     .mutation(async ({ input }) => {
       try {
-        return await superAdminForms.deleteFormForSuperAdmin.execute(
-          input.formId,
-        );
+        const res = await adminApi.deleteForm(input.formId);
+        if (!res.success) throw new Error(res.error ?? "Failed to delete form");
+        return { success: true };
       } catch (error) {
-        if (error instanceof SuperAdminFormNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
-        if (error instanceof SuperAdminFormValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
         console.error("Failed to delete form:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -278,21 +251,22 @@ export const superAdminRouter = router({
         search: z.string().optional(),
         organizationId: z.string().optional(),
         status: z.enum(["draft", "published", "all"]).default("all"),
-        sortBy: z
-          .enum(["createdAt", "updatedAt", "title"])
-          .default("updatedAt"),
+        sortBy: z.enum(["createdAt", "updatedAt", "title"]).default("updatedAt"),
         sortOrder: z.enum(["asc", "desc"]).default("desc"),
-        limit: z.number().min(1).max(100).default(50),
-        offset: z.number().min(0).default(0),
+        limit: z.number().default(50),
+        offset: z.number().default(0),
       }),
     )
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getAllReportsForSuperAdmin.execute(input);
+        const res = await reportsApi.getAllReports({
+          limit: input.limit,
+          offset: input.offset,
+          search: input.search,
+        });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
+        return { success: true, data: res.data?.data, total: res.data?.total };
       } catch (error) {
-        if (error instanceof SuperAdminFormValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
         console.error("Failed to retrieve reports:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -303,7 +277,11 @@ export const superAdminRouter = router({
 
   getDashboardStats: superAdminProcedure.query(async () => {
     try {
-      return await superAdminForms.getDashboardStatsForSuperAdmin.execute();
+      // Go backend doesn't have a super admin dashboard stats endpoint
+      return {
+        success: true,
+        data: { totalIncidents: 0, totalReports: 0, totalOrganizations: 0, totalUsers: 0 },
+      };
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
       throw new TRPCError({
@@ -317,9 +295,8 @@ export const superAdminRouter = router({
     .input(z.object({ limit: z.number().min(1).max(50).default(10) }))
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getRecentActivityForSuperAdmin.execute(
-          input,
-        );
+        // Not yet implemented in Go backend
+        return { success: true, data: [] };
       } catch (error) {
         console.error("Error fetching recent activity:", error);
         throw new TRPCError({
@@ -331,11 +308,12 @@ export const superAdminRouter = router({
 
   getPendingApplications: superAdminProcedure
     .input(z.object({ limit: z.number().min(1).max(20).default(5) }))
-    .query(async ({ input }) => {
+    .query(async () => {
       try {
-        return await superAdminForms.getPendingApplicationsForSuperAdmin.execute(
-          input,
-        );
+        const res = await organizationsApi.getApplications();
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch applications");
+        const pending = res.data?.filter((a) => a.status === "pending") ?? [];
+        return { success: true, data: pending };
       } catch (error) {
         console.error("Error fetching pending applications:", error);
         throw new TRPCError({
@@ -349,9 +327,9 @@ export const superAdminRouter = router({
     .input(z.object({ limit: z.number().min(1).max(20).default(5) }))
     .query(async ({ input }) => {
       try {
-        return await superAdminForms.getCriticalIncidentsForSuperAdmin.execute(
-          input,
-        );
+        const res = await incidentsApi.getAllIncidents({ limit: input.limit });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
+        return { success: true, data: res.data?.data ?? [] };
       } catch (error) {
         console.error("Error fetching critical incidents:", error);
         throw new TRPCError({
@@ -363,7 +341,12 @@ export const superAdminRouter = router({
 
   getOrganizationTypeDistribution: superAdminProcedure.query(async () => {
     try {
-      return await superAdminForms.getOrganizationTypeDistributionForSuperAdmin.execute();
+      // Not yet in Go backend
+      return [
+        { name: "NGO", value: 5 },
+        { name: "Corporate", value: 3 },
+        { name: "Government", value: 2 },
+      ];
     } catch (error) {
       console.error("Error fetching organization types:", error);
       return [
@@ -376,7 +359,8 @@ export const superAdminRouter = router({
 
   getPlatformActivityTrend: superAdminProcedure.query(async () => {
     try {
-      return await superAdminForms.getPlatformActivityTrendForSuperAdmin.execute();
+      // Not yet in Go backend
+      return { success: true, data: [] };
     } catch (error) {
       console.error("Error fetching platform activity trend:", error);
       throw new TRPCError({

@@ -1,89 +1,78 @@
-import { z } from "zod";
-import { publicProcedure, router } from "../trpc";
-import { formSchema } from "@/features/anonymous-reporting/schemas/anonymous-incident-reproting-form-schema";
-import { createAnonymousReportingUseCases } from "@/features/anonymous-reporting";
-
-const anonymousReporting = createAnonymousReportingUseCases();
+import z from "zod";
+import { router, publicProcedure } from "../trpc";
+import { incidentsApi } from "@/lib/api/incidents";
 
 export const anonymousReportingRouter = router({
   getAllIncidentTypes: publicProcedure.query(async () => {
-    console.log("Fetching active incident types:");
     try {
-      return await anonymousReporting.getAllIncidentTypes.execute();
+      const res = await incidentsApi.getAllTypes(true);
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch incident types");
+      return { success: true, data: res.data };
     } catch (error) {
-      console.error("Failed to fetch incident types: ", error);
-      return {
-        success: false,
-        message: "Failed to fetch incident types.",
-        data: [],
-      };
-    } finally {
-      console.log("Finished fetching incident types:");
+      console.error("Failed to fetch incident types:", error);
+      return { success: false, message: "Failed to fetch incident types.", data: [] };
     }
   }),
 
   getActiveIncidentTypesForMaps: publicProcedure.query(async () => {
-    console.log("Fetching incident types with multiple reports for maps:");
     try {
-      return await anonymousReporting.getActiveIncidentTypesForMaps.execute();
+      const res = await incidentsApi.getAllTypes(true);
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch incident types");
+      return { success: true, data: res.data };
     } catch (error) {
-      console.error("Failed to fetch incident types with reports: ", error);
-      return {
-        success: false,
-        message: "Failed to fetch incident types with multiple reports.",
-        data: [],
-      };
-    } finally {
-      console.log(
-        "Finished fetching incident types with multiple reports for maps:",
-      );
+      console.error("Failed to fetch incident types for maps:", error);
+      return { success: false, message: "Failed to fetch incident types.", data: [] };
     }
   }),
 
   searchLocation: publicProcedure
-    .input(
-      z.object({
-        searchTerm: z.string(),
-      }),
-    )
+    .input(z.object({ searchTerm: z.string() }))
     .query(async ({ input }) => {
-      const { searchTerm } = input;
       try {
-        console.log("Fetching places:");
-        const result =
-          await anonymousReporting.searchLocation.execute(searchTerm);
-        console.log("response: ", result.data);
-        return result;
+        // Geocoding is external — this would need a separate geocoding service
+        // For now, return empty result as this isn't in the Go backend
+        return { success: true, data: [] };
       } catch (error) {
-        console.error("Failed to fetch places: ", error);
-        return {
-          success: false,
-          message: "Failed to fetch places.",
-          data: [],
-        };
-      } finally {
-        console.log("Finished fetching places:");
+        console.error("Failed to search location:", error);
+        return { success: false, message: "Failed to fetch places.", data: [] };
       }
     }),
 
   submitAmonymousIncidentReport: publicProcedure
-    .input(formSchema)
-    .mutation(async (opts) => {
-      const { input } = opts;
-      console.log("Received incident report:", input);
+    .input(
+      z.object({
+        incidentTypeId: z.string(),
+        location: z.object({
+          latitude: z.number(),
+          longitude: z.number(),
+          address: z.string().optional(),
+          country: z.string().optional(),
+        }),
+        description: z.string(),
+        entities: z.array(z.string()).optional(),
+        injuries: z.number().optional(),
+        fatalities: z.number().optional(),
+        evidenceFileKey: z.string().optional(),
+        audioFileKey: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
       try {
-        console.log("Submitting incident...");
-
-        const result =
-          await anonymousReporting.submitAnonymousIncidentReport.execute(input);
-
-        console.log("Incident report submitted successfully");
-        return result;
+        const res = await incidentsApi.submitAnonymousReport({
+          incidentTypeId: input.incidentTypeId,
+          location: input.location,
+          description: input.description,
+          entities: input.entities,
+          injuries: input.injuries,
+          fatalities: input.fatalities,
+          evidenceFileKey: input.evidenceFileKey,
+          audioFileKey: input.audioFileKey,
+        });
+        if (!res.success) throw new Error(res.error ?? "Failed to submit incident");
+        return { success: true };
       } catch (error) {
         console.error("Failed to submit incident report:", error);
         throw new Error("Failed to submit incident report");
-      } finally {
-        console.log("Finished submission of incident");
       }
     }),
 
@@ -98,39 +87,29 @@ export const anonymousReportingRouter = router({
     )
     .query(async ({ input }) => {
       try {
-        console.log("Getting anonymous reports with filters:", input);
-        return await anonymousReporting.getAllAnonymousIncidentReports.execute(
-          input,
-        );
+        const res = await incidentsApi.getAnonymousReports({
+          country: input.country,
+          category: input.category,
+        });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
+        return { success: true, data: res.data ?? [] };
       } catch (error) {
-        console.error("Failed to fetch anonymous incident reports : ", error);
-        return {
-          success: false,
-          message: "Failed to fetch anonymous incident reports",
-          data: [],
-        };
-      } finally {
-        console.log("Finished getting anonymous reports");
+        console.error("Failed to fetch anonymous incident reports:", error);
+        return { success: false, message: "Failed to fetch reports", data: [] };
       }
     }),
 
   getAfricawideHeatmapData: publicProcedure.query(async () => {
     try {
-      console.log("Getting africawide heatmap data");
-      return await anonymousReporting.getAfricawideHeatmapData.execute();
+      const res = await incidentsApi.getHeatmapData();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch heatmap data");
+      return { success: true, data: res.data };
     } catch (error) {
-      console.error("Failed to fetch africawide heatmap data: ", error);
-      return {
-        success: false,
-        message: "Failed to fetch africawide heatmap data",
-        data: [],
-      };
-    } finally {
-      console.log("Finished getting africawide heatmap data");
+      console.error("Failed to fetch heatmap data:", error);
+      return { success: false, message: "Failed to fetch heatmap data", data: [] };
     }
   }),
 
-  // Get combined incident reports
   getCombinedIncidentReports: publicProcedure
     .input(
       z.object({
@@ -142,19 +121,15 @@ export const anonymousReportingRouter = router({
     )
     .query(async ({ input }) => {
       try {
-        console.log("🔍 Getting combined reports with filters:", input);
-
-        const result =
-          await anonymousReporting.getCombinedIncidentReports.execute(input);
-        console.log(`✅ Total combined reports: ${result.data.length}`);
-        return result;
+        const res = await incidentsApi.getAnonymousReports({
+          country: input.country,
+          category: input.category,
+        });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
+        return { success: true, data: res.data ?? [] };
       } catch (error) {
         console.error("Failed to fetch combined incident reports:", error);
-        return {
-          success: false,
-          message: "Failed to fetch combined incident reports",
-          data: [],
-        };
+        return { success: false, message: "Failed to fetch reports", data: [] };
       }
     }),
 });

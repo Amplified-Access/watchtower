@@ -2,14 +2,7 @@ import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { organizationProcedure } from "../middleware";
 import { publicProcedure, router } from "../trpc";
-import {
-  createReportCatalogUseCases,
-  ReportForbiddenError,
-  ReportNotFoundError,
-  ReportValidationError,
-} from "@/features/reports";
-
-const reportCatalog = createReportCatalogUseCases();
+import { reportsApi } from "@/lib/api/reports";
 
 export const reportsRouter = router({
   createReport: organizationProcedure
@@ -21,23 +14,15 @@ export const reportsRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { title, fileKey, status } = input;
       try {
-        return await reportCatalog.createReport.execute({
-          title,
-          fileKey,
-          status,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
-          },
+        const res = await reportsApi.createReport({
+          title: input.title,
+          fileKey: input.fileKey,
+          status: input.status,
         });
+        if (!res.success) throw new Error(res.error ?? "Failed to create report");
+        return res.data;
       } catch (error) {
-        if (error instanceof ReportValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
-        if (error instanceof TRPCError) throw error;
         console.error("Failed to create report:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -55,25 +40,14 @@ export const reportsRouter = router({
         offset: z.number().min(0).default(0),
       }),
     )
-    .query(async ({ input, ctx }) => {
-      const { organizationId, status, limit, offset } = input;
+    .query(async ({ input }) => {
       try {
-        return await reportCatalog.getOrganizationReports.execute({
-          organizationId,
-          status,
-          limit,
-          offset,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
-          },
-        });
+        const status = input.status === "all" ? undefined : input.status;
+        const res = await reportsApi.getOrganizationReports(input.organizationId, status);
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
+        return res.data ?? [];
       } catch (error) {
-        if (error instanceof ReportForbiddenError) {
-          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
-        }
-        console.error("Failed to fetch reports:", error);
+        console.error("Failed to fetch organization reports:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to fetch reports",
@@ -83,24 +57,17 @@ export const reportsRouter = router({
 
   getReportById: organizationProcedure
     .input(z.object({ reportId: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const { reportId } = input;
+    .query(async ({ input }) => {
       try {
-        return await reportCatalog.getReportById.execute({
-          reportId,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
-          },
-        });
+        const res = await reportsApi.getReportById(input.reportId);
+        if (!res.success) {
+          if (res.error?.includes("404")) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Report not found" });
+          }
+          throw new Error(res.error ?? "Failed to fetch report");
+        }
+        return res.data ?? null;
       } catch (error) {
-        if (error instanceof ReportNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
-        if (error instanceof ReportForbiddenError) {
-          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
-        }
         if (error instanceof TRPCError) throw error;
         console.error("Failed to fetch report:", error);
         throw new TRPCError({
@@ -118,27 +85,15 @@ export const reportsRouter = router({
         status: z.enum(["draft", "published"]).optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      const { reportId, title, status } = input;
+    .mutation(async ({ input }) => {
       try {
-        return await reportCatalog.updateReport.execute({
-          reportId,
-          title,
-          status,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
-          },
+        const res = await reportsApi.updateReport(input.reportId, {
+          title: input.title,
+          status: input.status,
         });
+        if (!res.success) throw new Error(res.error ?? "Failed to update report");
+        return res.data;
       } catch (error) {
-        if (error instanceof ReportNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
-        if (error instanceof ReportForbiddenError) {
-          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
-        }
-        if (error instanceof TRPCError) throw error;
         console.error("Failed to update report:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -149,25 +104,12 @@ export const reportsRouter = router({
 
   deleteReport: organizationProcedure
     .input(z.object({ reportId: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      const { reportId } = input;
+    .mutation(async ({ input }) => {
       try {
-        return await reportCatalog.deleteReport.execute({
-          reportId,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
-          },
-        });
+        const res = await reportsApi.deleteReport(input.reportId);
+        if (!res.success) throw new Error(res.error ?? "Failed to delete report");
+        return { success: true };
       } catch (error) {
-        if (error instanceof ReportNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
-        if (error instanceof ReportForbiddenError) {
-          throw new TRPCError({ code: "FORBIDDEN", message: error.message });
-        }
-        if (error instanceof TRPCError) throw error;
         console.error("Failed to delete report:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -185,17 +127,18 @@ export const reportsRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { limit, offset, search } = input;
       try {
-        return await reportCatalog.getPublicReports.execute({
-          limit,
-          offset,
-          search,
+        const res = await reportsApi.getPublicReports({
+          limit: input.limit,
+          offset: input.offset,
+          search: input.search,
         });
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
+        return {
+          data: res.data?.data ?? [],
+          total: res.data?.total ?? 0,
+        };
       } catch (error) {
-        if (error instanceof ReportValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
         console.error("Failed to fetch public reports:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -207,16 +150,16 @@ export const reportsRouter = router({
   getPublicReportById: publicProcedure
     .input(z.object({ reportId: z.string() }))
     .query(async ({ input }) => {
-      const { reportId } = input;
       try {
-        return await reportCatalog.getPublicReportById.execute(reportId);
+        const res = await reportsApi.getPublicReportById(input.reportId);
+        if (!res.success) {
+          if (res.error?.includes("404")) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Report not found" });
+          }
+          throw new Error(res.error ?? "Failed to fetch report");
+        }
+        return res.data ?? null;
       } catch (error) {
-        if (error instanceof ReportValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
-        if (error instanceof ReportNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
         if (error instanceof TRPCError) throw error;
         console.error("Failed to fetch public report:", error);
         throw new TRPCError({

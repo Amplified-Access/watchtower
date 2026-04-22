@@ -61,13 +61,16 @@ const DatasetsPage = () => {
   const { data: datasetsData, isLoading } = trpc.getPublicDatasets.useQuery({
     search: searchTerm || undefined,
     category: selectedCategory === "all" ? undefined : selectedCategory,
-    format: selectedFormat === "all" ? undefined : selectedFormat,
     page: currentPage,
     limit: 12,
   });
 
   // Fetch categories for filter
   const { data: categories } = trpc.getDatasetCategories.useQuery();
+
+  const categoryOptions = categories?.map((c) =>
+    typeof c === "string" ? c : c.category
+  ) ?? [];
 
   // Mutation for incrementing download count
   const incrementDownload = trpc.incrementDatasetDownload.useMutation();
@@ -152,16 +155,11 @@ const DatasetsPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categories?.map(
-                    (category: { category: string; count: number }) => (
-                      <SelectItem
-                        key={category.category}
-                        value={category.category}
-                      >
-                        {category.category} ({category.count})
-                      </SelectItem>
-                    ),
-                  )}
+                  {categoryOptions.map((category: string) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select value={selectedFormat} onValueChange={setSelectedFormat}>
@@ -377,7 +375,7 @@ const DatasetsPage = () => {
               </div>
 
               {/* Pagination */}
-              {datasetsData && datasetsData.pagination.totalPages > 1 && (
+              {datasetsData && Math.ceil(datasetsData.total / 12) > 1 && (
                 <div className="flex justify-center">
                   <Pagination>
                     <PaginationContent>
@@ -398,13 +396,13 @@ const DatasetsPage = () => {
                       </PaginationItem>
 
                       {Array.from(
-                        { length: datasetsData.pagination.totalPages },
+                        { length: Math.ceil(datasetsData.total / 12) },
                         (_, i) => i + 1,
                       )
                         .filter(
                           (page) =>
                             page === 1 ||
-                            page === datasetsData.pagination.totalPages ||
+                            page === Math.ceil(datasetsData.total / 12) ||
                             Math.abs(page - currentPage) <= 2,
                         )
                         .map((page, index, array) => {
@@ -437,13 +435,13 @@ const DatasetsPage = () => {
                           onClick={(e) => {
                             e.preventDefault();
                             if (
-                              currentPage < datasetsData.pagination.totalPages
+                              currentPage < Math.ceil(datasetsData.total / 12)
                             ) {
                               setCurrentPage(currentPage + 1);
                             }
                           }}
                           className={
-                            currentPage >= datasetsData.pagination.totalPages
+                            currentPage >= Math.ceil(datasetsData.total / 12)
                               ? "pointer-events-none opacity-50"
                               : ""
                           }

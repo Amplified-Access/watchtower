@@ -1,64 +1,44 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { createAlertSubscriptionUseCases } from "@/features/alert-subscriptions";
-import {
-  AlertSubscriptionAlreadyExistsError,
-  AlertSubscriptionNotFoundError,
-} from "@/features/alert-subscriptions/domain/errors";
+import { alertsApi } from "@/lib/api/alerts";
 
-const alertSubscriptionUseCases = createAlertSubscriptionUseCases();
-
-// Input validation schemas
 const LocationSchema = z.object({
-  name: z.string().min(1, "Location name is required"),
-  country: z.string().min(1, "Country is required"),
-  radius: z.number().min(1).max(100),
-  lat: z.number().optional(),
-  lon: z.number().optional(),
+  latitude: z.number(),
+  longitude: z.number(),
+  radius: z.number().optional(),
 });
 
 const AlertSubscriptionInputSchema = z.object({
   email: z.string().email("Invalid email address"),
-  name: z.string().min(1, "Name is required"),
+  name: z.string().optional(),
   phone: z.string().optional(),
-  incidentTypes: z
-    .array(z.string())
-    .min(1, "At least one incident type is required"),
-  locations: z
-    .array(LocationSchema)
-    .min(1, "At least one location is required"),
-  severityLevels: z
-    .array(z.enum(["low", "medium", "high", "critical"]))
-    .min(1, "At least one severity level is required"),
+  incidentTypes: z.array(z.string()).min(1),
+  locations: z.array(LocationSchema).min(1),
+  severityLevels: z.array(z.enum(["low", "medium", "high", "critical"])).min(1),
   emailNotifications: z.boolean().default(true),
   smsNotifications: z.boolean().default(false),
-  alertFrequency: z
-    .enum(["immediate", "hourly", "daily", "weekly"])
-    .default("immediate"),
+  alertFrequency: z.enum(["immediate", "hourly", "daily", "weekly"]).default("immediate"),
   preferredLanguage: z.string().default("en"),
   timezone: z.string().default("UTC"),
 });
 
 const UpdateSubscriptionSchema = AlertSubscriptionInputSchema.partial().extend({
-  id: z.string().uuid(),
+  id: z.string(),
 });
 
 export const alertSubscriptionsRouter = router({
-  // Create a new alert subscription
   create: publicProcedure
     .input(AlertSubscriptionInputSchema)
     .mutation(async ({ input }) => {
       try {
-        return await alertSubscriptionUseCases.create.execute(input);
+        const res = await alertsApi.create(input);
+        if (!res.success) throw new Error(res.error ?? "Failed to create subscription");
+        return { success: true, data: res.data };
       } catch (error) {
-        if (error instanceof AlertSubscriptionAlreadyExistsError) {
-          throw new TRPCError({
-            code: "CONFLICT",
-            message: error.message,
-          });
+        if (error instanceof Error && error.message.includes("CONFLICT")) {
+          throw new TRPCError({ code: "CONFLICT", message: error.message });
         }
-
         console.error("Error creating alert subscription:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -67,12 +47,13 @@ export const alertSubscriptionsRouter = router({
       }
     }),
 
-  // Get subscription by email
   getByEmail: publicProcedure
     .input(z.object({ email: z.string().email() }))
     .query(async ({ input }) => {
       try {
-        return await alertSubscriptionUseCases.getByEmail.execute(input.email);
+        const res = await alertsApi.getByEmail(input.email);
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch subscription");
+        return { success: true, data: res.data };
       } catch (error) {
         console.error("Error fetching subscription:", error);
         throw new TRPCError({
@@ -82,20 +63,13 @@ export const alertSubscriptionsRouter = router({
       }
     }),
 
-  // Update existing subscription
   update: publicProcedure
     .input(UpdateSubscriptionSchema)
     .mutation(async ({ input }) => {
       try {
-        return await alertSubscriptionUseCases.update.execute(input);
+        // Go backend alert subscription doesn't expose update — deactivate + create
+        return { success: false, message: "Update not yet supported" };
       } catch (error) {
-        if (error instanceof AlertSubscriptionNotFoundError) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: error.message,
-          });
-        }
-
         console.error("Error updating alert subscription:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -104,25 +78,20 @@ export const alertSubscriptionsRouter = router({
       }
     }),
 
-  // Deactivate subscription (soft delete)
   deactivate: publicProcedure
-    .input(
-      z.object({
-        email: z.string().email(),
-        unsubscribeToken: z.string().optional(), // For unsubscribe links
-      }),
-    )
+    .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
       try {
-        return await alertSubscriptionUseCases.deactivate.execute(input.email);
-      } catch (error) {
-        if (error instanceof AlertSubscriptionNotFoundError) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: error.message,
-          });
+        // Need subscription ID, not email — find by email first
+        const subRes = await alertsApi.getByEmail(input.email);
+        if (!subRes.success || !subRes.data?.length) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Subscription not found" });
         }
-
+        const res = await alertsApi.deactivate(subRes.data[0].id);
+        if (!res.success) throw new Error(res.error ?? "Failed to deactivate");
+        return { success: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error("Error deactivating subscription:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -131,32 +100,32 @@ export const alertSubscriptionsRouter = router({
       }
     }),
 
-  // Reactivate subscription
   activate: publicProcedure
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
       try {
-        return await alertSubscriptionUseCases.activate.execute(input.email);
-      } catch (error) {
-        if (error instanceof AlertSubscriptionNotFoundError) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: error.message,
-          });
+        const subRes = await alertsApi.getByEmail(input.email);
+        if (!subRes.success || !subRes.data?.length) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Subscription not found" });
         }
-
+        const res = await alertsApi.activate(subRes.data[0].id);
+        if (!res.success) throw new Error(res.error ?? "Failed to activate");
+        return { success: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error("Error activating subscription:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to reactivate subscription",
+          message: "Failed to reactivate alert subscription",
         });
       }
     }),
 
-  // Get all active subscriptions (for admin/analytics)
   getAllActive: publicProcedure.query(async () => {
     try {
-      return await alertSubscriptionUseCases.getAllActive.execute();
+      const res = await alertsApi.getAllActive();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch active subscriptions");
+      return { success: true, data: res.data };
     } catch (error) {
       console.error("Error fetching active subscriptions:", error);
       throw new TRPCError({
@@ -166,10 +135,11 @@ export const alertSubscriptionsRouter = router({
     }
   }),
 
-  // Get subscription statistics
   getStats: publicProcedure.query(async () => {
     try {
-      return await alertSubscriptionUseCases.getStats.execute();
+      const res = await alertsApi.getStats();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch subscription stats");
+      return { success: true, data: res.data };
     } catch (error) {
       console.error("Error fetching subscription stats:", error);
       throw new TRPCError({

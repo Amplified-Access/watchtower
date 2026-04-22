@@ -2,13 +2,34 @@ import { TRPCError } from "@trpc/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { publicProcedure } from "./trpc";
-import { createAuthUseCases, AuthUserNotFoundError } from "@/features/auth";
 
-const authUseCases = createAuthUseCases();
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
-/**
- * Auth middleware that checks if user is authenticated
- */
+async function extractToken(): Promise<string | null> {
+  const headersList = await headers();
+  const cookieHeader = headersList.get("cookie");
+  if (!cookieHeader) return null;
+  const cookies = Object.fromEntries(
+    cookieHeader.split(";").map((c) => {
+      const [key, ...val] = c.trim().split("=");
+      return [key, val.join("=")];
+    })
+  );
+  return cookies["better-auth.session_token"] ?? null;
+}
+
+async function getUserFromGoBackend(token: string) {
+  const res = await fetch(`${API_BASE}/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    credentials: "include",
+  });
+  if (!res.ok) return null;
+  const body = await res.json();
+  return body.data ?? null;
+}
+
 export const authMiddleware = publicProcedure.use(async ({ next }) => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -21,40 +42,29 @@ export const authMiddleware = publicProcedure.use(async ({ next }) => {
     });
   }
 
-  let fullUser;
-  try {
-    fullUser = await authUseCases.getAuthUserById.execute(session.user.id);
-  } catch (error) {
-    if (error instanceof AuthUserNotFoundError) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "User not found in database",
-      });
-    }
+  const token = await extractToken();
+  if (!token) {
     throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to verify user identity",
+      code: "UNAUTHORIZED",
+      message: "No session token found",
     });
   }
+
+  const goUser = await getUserFromGoBackend(token);
 
   return next({
     ctx: {
       session,
-      user: {
-        ...session.user,
-        role: fullUser.role,
-        organizationId: fullUser.organizationId,
-        banned: fullUser.banned,
-        banReason: fullUser.banReason,
-        banExpires: fullUser.banExpires,
+      user: goUser ?? {
+        id: session.user.id,
+        role: "",
+        organizationId: undefined,
+        banned: false,
       },
     },
   });
 });
 
-/**
- * Role-based middleware factory
- */
 export const requireRole = (allowedRoles: string[]) => {
   return authMiddleware.use(async ({ next, ctx }) => {
     if (!ctx.user.role || !allowedRoles.includes(ctx.user.role)) {
@@ -63,21 +73,13 @@ export const requireRole = (allowedRoles: string[]) => {
         message: `Access denied. Required roles: ${allowedRoles.join(", ")}`,
       });
     }
-
-    return next({
-      ctx,
-    });
+    return next({ ctx });
   });
 };
 
-/**
- * Organization membership middleware - ensures user belongs to the organization
- */
 export const requireOrganizationMembership = authMiddleware.use(
   async ({ next, ctx }) => {
-    // Cast user to include organizationId since it exists in the schema
     const user = ctx.user as typeof ctx.user & { organizationId?: string };
-
     if (!user.organizationId) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -85,7 +87,6 @@ export const requireOrganizationMembership = authMiddleware.use(
           "You must be associated with an organization to access this resource",
       });
     }
-
     return next({
       ctx: {
         ...ctx,
@@ -95,31 +96,15 @@ export const requireOrganizationMembership = authMiddleware.use(
   },
 );
 
-/**
- * Super admin only middleware
- */
 export const requireSuperAdmin = requireRole(["super-admin"]);
-
-/**
- * Admin or Super admin middleware
- */
 export const requireAdmin = requireRole(["admin", "super-admin"]);
-
-/**
- * Watcher, Admin, or Super admin middleware
- */
 export const requireWatcherOrAdmin = requireRole([
   "watcher",
   "admin",
   "super-admin",
 ]);
-
-/**
- * Any authenticated user middleware
- */
 export const requireAuth = authMiddleware;
 
-// Procedure builders with middleware applied
 export const protectedProcedure = authMiddleware;
 export const superAdminProcedure = requireSuperAdmin;
 export const adminProcedure = requireAdmin;

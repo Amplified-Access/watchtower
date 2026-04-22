@@ -2,13 +2,7 @@ import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { organizationProcedure } from "../middleware";
 import { publicProcedure, router } from "../trpc";
-import {
-  createInsightCatalogUseCases,
-  InsightNotFoundError,
-  InsightValidationError,
-} from "@/features/insights";
-
-const insightCatalog = createInsightCatalogUseCases();
+import { insightsApi } from "@/lib/api/insights";
 
 export const insightsRouter = router({
   getPublicInsights: publicProcedure
@@ -21,58 +15,33 @@ export const insightsRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { limit, offset, search, tagId } = input;
-      try {
-        return await insightCatalog.getPublicInsights.execute({
-          limit,
-          offset,
-          search,
-          tagId,
-        });
-      } catch (error) {
-        if (error instanceof InsightValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
-        console.error("Failed to fetch public insights:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch insights",
-        });
+      const { limit, offset, search } = input;
+      const res = await insightsApi.getPublicInsights({ limit, offset, search });
+      if (!res.success) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
       }
+      return res.data?.data ?? [];
     }),
 
   getPublicInsightBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
-      const { slug } = input;
-      try {
-        return await insightCatalog.getPublicInsightBySlug.execute(slug);
-      } catch (error) {
-        if (error instanceof InsightValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+      const res = await insightsApi.getPublicInsightBySlug(input.slug);
+      if (!res.success) {
+        if (res.error?.includes("404")) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Insight not found" });
         }
-        if (error instanceof InsightNotFoundError) {
-          throw new TRPCError({ code: "NOT_FOUND", message: error.message });
-        }
-        if (error instanceof TRPCError) throw error;
-        console.error("Failed to fetch public insight:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch insight",
-        });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
       }
+      return res.data ?? null;
     }),
 
   getInsightTags: publicProcedure.query(async () => {
-    try {
-      return await insightCatalog.getInsightTags.execute();
-    } catch (error) {
-      console.error("Failed to fetch insight tags:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch tags",
-      });
+    const res = await insightsApi.getTags();
+    if (!res.success) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
     }
+    return res.data ?? [];
   }),
 
   createInsight: organizationProcedure
@@ -88,42 +57,11 @@ export const insightsRouter = router({
         status: z.enum(["draft", "published"]).default("draft"),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      const {
-        title,
-        slug,
-        description,
-        content,
-        imageUrl,
-        imageAlt,
-        tagIds,
-        status,
-      } = input;
-      try {
-        return await insightCatalog.createInsight.execute({
-          title,
-          slug,
-          description,
-          content,
-          imageUrl,
-          imageAlt,
-          tagIds,
-          status,
-          actor: {
-            userId: ctx.user.id,
-            role: ctx.user.role ?? "",
-            organizationId: ctx.user.organizationId,
-          },
-        });
-      } catch (error) {
-        if (error instanceof InsightValidationError) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
-        }
-        console.error("Failed to create insight:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create insight",
-        });
+    .mutation(async ({ input }) => {
+      const res = await insightsApi.createInsight(input);
+      if (!res.success) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
       }
+      return res.data;
     }),
 });
