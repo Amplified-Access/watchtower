@@ -79,7 +79,7 @@ export const incidentsApi = {
     if (params?.search) query.set("search", params.search);
     if (params?.sort) query.set("sort", params.sort);
     if (params?.sortOrder) query.set("sortOrder", params.sortOrder);
-    return api.get<{ data: Incident[]; total: number }>(`/admin/incidents?${query}`);
+    return api.get<Incident[]>(`/admin/incidents?${query}`);
   },
 
   getIncidentById: (id: string) => api.get<Incident>(`/admin/incidents/${id}`),
@@ -117,7 +117,7 @@ export const incidentsApi = {
     const query = new URLSearchParams();
     if (params?.limit) query.set("limit", String(params.limit));
     if (params?.offset) query.set("offset", String(params.offset));
-    return api.get<{ data: unknown[]; total: number }>(`/org/incident-reports?${query}`);
+    return api.get<unknown[]>(`/org/incident-reports?${query}`);
   },
 
   getOrgReportStats: (orgId: string) =>
@@ -136,7 +136,7 @@ export const incidentsApi = {
     if (params?.offset) query.set("offset", String(params.offset));
     if (params?.search) query.set("search", params.search);
     const qs = query.toString();
-    return api.get<{ data: Incident[]; total: number }>(`/superadmin/incidents${qs ? `?${qs}` : ""}`);
+    return api.get<Incident[]>(`/superadmin/incidents${qs ? `?${qs}` : ""}`);
   },
 
   deleteIncident: (id: string) => api.delete(`/superadmin/incidents/${id}`),

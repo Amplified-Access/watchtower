@@ -21,78 +21,78 @@ const (
 )
 
 type Location struct {
-	Latitude  float64  `json:"latitude"`
-	Longitude float64  `json:"longitude"`
-	Address   *string  `json:"address,omitempty"`
-	Country   *string  `json:"country,omitempty"`
-	Name      *string  `json:"name,omitempty"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Address   *string `json:"address,omitempty"`
+	Country   *string `json:"country,omitempty"`
+	Name      *string `json:"name,omitempty"`
 }
 
 type IncidentType struct {
-	ID          string
-	Name        string
-	Description *string
-	Color       string
-	IsActive    bool
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description,omitempty"`
+	Color       string    `json:"color"`
+	IsActive    bool      `json:"isActive"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type OrganizationIncidentType struct {
-	ID             string
-	OrganizationID string
-	IncidentTypeID string
-	IsEnabled      bool
-	IncidentType   *IncidentType
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID             string        `json:"id"`
+	OrganizationID string        `json:"organizationId"`
+	IncidentTypeID string        `json:"incidentTypeId"`
+	IsEnabled      bool          `json:"isEnabled"`
+	IncidentType   *IncidentType `json:"incidentType,omitempty"`
+	CreatedAt      time.Time     `json:"createdAt"`
+	UpdatedAt      time.Time     `json:"updatedAt"`
 }
 
 type Incident struct {
-	ID               string
-	OrganizationID   string
-	FormID           string
-	ReportedByUserID string
-	Data             map[string]interface{}
-	Status           IncidentStatus
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
+	ID               string                 `json:"id"`
+	OrganizationID   string                 `json:"organizationId"`
+	FormID           string                 `json:"formId"`
+	ReportedByUserID string                 `json:"reportedByUserId"`
+	Data             map[string]interface{} `json:"data"`
+	Status           IncidentStatus         `json:"status"`
+	CreatedAt        time.Time              `json:"createdAt"`
+	UpdatedAt        time.Time              `json:"updatedAt"`
 }
 
 type AnonymousIncidentReport struct {
-	ID              string
-	IncidentTypeID  string
-	IncidentType    *IncidentType
-	Location        Location
-	Description     string
-	Entities        []string
-	Injuries        int
-	Fatalities      int
-	EvidenceFileKey *string
-	AudioFileKey    *string
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	ID              string        `json:"id"`
+	IncidentTypeID  string        `json:"incidentTypeId"`
+	IncidentType    *IncidentType `json:"incidentType,omitempty"`
+	Location        Location      `json:"location"`
+	Description     string        `json:"description"`
+	Entities        []string      `json:"entities,omitempty"`
+	Injuries        int           `json:"injuries"`
+	Fatalities      int           `json:"fatalities"`
+	EvidenceFileKey *string       `json:"evidenceFileKey,omitempty"`
+	AudioFileKey    *string       `json:"audioFileKey,omitempty"`
+	CreatedAt       time.Time     `json:"createdAt"`
+	UpdatedAt       time.Time     `json:"updatedAt"`
 }
 
 type OrganizationIncidentReport struct {
-	ID               string
-	OrganizationID   string
-	ReportedByUserID string
-	IncidentTypeID   string
-	IncidentType     *IncidentType
-	Location         Location
-	Description      string
-	Entities         []string
-	Injuries         int
-	Fatalities       int
-	EvidenceFileKey  *string
-	AudioFileKey     *string
-	Severity         Severity
-	Verified         bool
-	VerifiedAt       *time.Time
-	VerifiedByUserID *string
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
+	ID               string        `json:"id"`
+	OrganizationID   string        `json:"organizationId"`
+	ReportedByUserID string        `json:"reportedByUserId"`
+	IncidentTypeID   string        `json:"incidentTypeId"`
+	IncidentType     *IncidentType `json:"incidentType,omitempty"`
+	Location         Location      `json:"location"`
+	Description      string        `json:"description"`
+	Entities         []string      `json:"entities,omitempty"`
+	Injuries         int           `json:"injuries"`
+	Fatalities       int           `json:"fatalities"`
+	EvidenceFileKey  *string       `json:"evidenceFileKey,omitempty"`
+	AudioFileKey     *string       `json:"audioFileKey,omitempty"`
+	Severity         Severity      `json:"severity"`
+	Verified         bool          `json:"verified"`
+	VerifiedAt       *time.Time    `json:"verifiedAt,omitempty"`
+	VerifiedByUserID *string       `json:"verifiedByUserId,omitempty"`
+	CreatedAt        time.Time     `json:"createdAt"`
+	UpdatedAt        time.Time     `json:"updatedAt"`
 }
 
 type IncidentStats struct {
@@ -131,7 +131,7 @@ type PlatformStats struct {
 	ActiveForms         int     `json:"activeForms"`
 	CriticalIncidents   int     `json:"criticalIncidents"`
 	UptimePercentage    float64 `json:"uptimePercentage"`
-	Growth             struct {
+	Growth              struct {
 		Organizations GrowthMetric `json:"organizations"`
 		Admins        GrowthMetric `json:"admins"`
 		Watchers      GrowthMetric `json:"watchers"`

@@ -11,25 +11,25 @@ const (
 )
 
 type Organization struct {
-	ID           string
-	Name         string
-	Slug         string
-	Description  *string
-	Website      *string
-	Location     *string
-	ContactEmail *string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID           string    `json:"id"`
+	Name         string    `json:"name"`
+	Slug         string    `json:"slug"`
+	Description  *string   `json:"description,omitempty"`
+	Website      *string   `json:"website,omitempty"`
+	Location     *string   `json:"location,omitempty"`
+	ContactEmail *string   `json:"contactEmail,omitempty"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
 type OrganizationApplication struct {
-	ID                        int
-	OrganizationName          string
-	ApplicantName             string
-	ApplicantEmail            string
-	Website                   *string
-	CertificateOfIncorporation *string
-	Status                    ApplicationStatus
-	CreatedAt                 time.Time
-	UpdatedAt                 time.Time
+	ID                         int               `json:"id"`
+	OrganizationName           string            `json:"organizationName"`
+	ApplicantName              string            `json:"applicantName"`
+	ApplicantEmail             string            `json:"applicantEmail"`
+	Website                    *string           `json:"website,omitempty"`
+	CertificateOfIncorporation *string           `json:"certificateOfIncorporation,omitempty"`
+	Status                     ApplicationStatus `json:"status"`
+	CreatedAt                  time.Time         `json:"createdAt"`
+	UpdatedAt                  time.Time         `json:"updatedAt"`
 }

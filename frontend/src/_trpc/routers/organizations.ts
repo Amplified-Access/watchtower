@@ -17,7 +17,7 @@ export const organizationsRouter = router({
         const { search, limit, offset } = input;
         const res = await organizationsApi.list({ search, limit, offset });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch organizations");
-        return { data: res.data?.data ?? [], total: res.data?.total ?? 0 };
+        return { data: res.data ?? [], total: res.total ?? 0 };
       } catch (error) {
         console.error("Error fetching organizations:", error);
         throw new TRPCError({

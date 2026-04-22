@@ -87,7 +87,7 @@ export const superAdminRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
-        return { incidents: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
+        return { incidents: res.data ?? [], totalCount: res.total ?? 0 };
       } catch (error) {
         console.error("Failed to retrieve incidents:", error);
         throw new TRPCError({
@@ -176,7 +176,7 @@ export const superAdminRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch forms");
-        return { forms: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
+        return { forms: res.data ?? [], totalCount: res.total ?? 0 };
       } catch (error) {
         console.error("Failed to retrieve forms:", error);
         throw new TRPCError({
@@ -265,7 +265,7 @@ export const superAdminRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { reports: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
+        return { reports: res.data ?? [], totalCount: res.total ?? 0 };
       } catch (error) {
         console.error("Failed to retrieve reports:", error);
         throw new TRPCError({
@@ -349,7 +349,7 @@ export const superAdminRouter = router({
       try {
         const res = await incidentsApi.getAllIncidents({ limit: input.limit });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
-        return res.data?.data ?? [];
+        return res.data ?? [];
       } catch (error) {
         console.error("Error fetching critical incidents:", error);
         throw new TRPCError({

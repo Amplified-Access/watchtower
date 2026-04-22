@@ -10,26 +10,26 @@ const (
 )
 
 type InsightTag struct {
-	ID        string
-	Title     string
-	Slug      string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        string    `json:"id"`
+	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type Insight struct {
-	ID             string
-	Title          string
-	Slug           string
-	Description    string
-	Content        map[string]interface{}
-	AuthorID       string
-	OrganizationID *string
-	ImageURL       *string
-	ImageAlt       *string
-	Status         InsightStatus
-	PublishedAt    *time.Time
-	Tags           []InsightTag
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID             string                 `json:"id"`
+	Title          string                 `json:"title"`
+	Slug           string                 `json:"slug"`
+	Description    string                 `json:"description"`
+	Content        map[string]interface{} `json:"content"`
+	AuthorID       string                 `json:"authorId"`
+	OrganizationID *string                `json:"organizationId,omitempty"`
+	ImageURL       *string                `json:"imageUrl,omitempty"`
+	ImageAlt       *string                `json:"imageAlt,omitempty"`
+	Status         InsightStatus          `json:"status"`
+	PublishedAt    *time.Time             `json:"publishedAt,omitempty"`
+	Tags           []InsightTag           `json:"tags,omitempty"`
+	CreatedAt      time.Time              `json:"createdAt"`
+	UpdatedAt      time.Time              `json:"updatedAt"`
 }

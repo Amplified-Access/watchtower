@@ -41,7 +41,7 @@ export const organizationsApi = {
     if (params?.sort) query.set("sort", params.sort);
     if (params?.sortOrder) query.set("sortOrder", params.sortOrder);
     const qs = query.toString();
-    return api.get<{ data: Organization[]; total: number }>(`/organizations${qs ? `?${qs}` : ""}`);
+    return api.get<Organization[]>(`/organizations${qs ? `?${qs}` : ""}`);
   },
 
   getBySlug: (slug: string) => api.get<Organization>(`/organizations/${slug}`),

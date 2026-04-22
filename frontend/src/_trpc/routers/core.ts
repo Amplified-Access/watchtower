@@ -50,7 +50,7 @@ export const coreRouter = router({
     if (!res.success) {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
     }
-    return { data: res.data?.data ?? [], total: res.data?.total ?? 0 };
+    return { data: res.data ?? [], total: res.total ?? 0 };
   }),
 
   submitIncident: publicProcedure

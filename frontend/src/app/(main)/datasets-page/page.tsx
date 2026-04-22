@@ -104,8 +104,8 @@ const DatasetsPage = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  const getFormatIcon = (format: string) => {
-    switch (format.toLowerCase()) {
+  const getFormatIcon = (format: string | undefined) => {
+    switch ((format ?? "").toLowerCase()) {
       case "csv":
         return <FileText className="h-4 w-4 text-green-600" />;
       case "json":
@@ -295,7 +295,7 @@ const DatasetsPage = () => {
                               <div className="shrink-0">
                                 {getFormatIcon(dataset.format)}
                               </div>
-                              {dataset.format}
+                              {dataset.format ?? "Unknown"}
                             </div>
                             <Badge variant="secondary">
                               {dataset.category}

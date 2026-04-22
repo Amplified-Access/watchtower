@@ -85,7 +85,7 @@ export const adminApi = {
     if (params?.offset) query.set("offset", String(params.offset));
     if (params?.search) query.set("search", params.search);
     const qs = query.toString();
-    return api.get<{ data: Form[]; total: number }>(`/superadmin/forms${qs ? `?${qs}` : ""}`);
+    return api.get<Form[]>(`/superadmin/forms${qs ? `?${qs}` : ""}`);
   },
 
   getAllReports: (params?: { limit?: number; offset?: number; search?: string }) => {
@@ -94,7 +94,7 @@ export const adminApi = {
     if (params?.offset) query.set("offset", String(params.offset));
     if (params?.search) query.set("search", params.search);
     const qs = query.toString();
-    return api.get<{ data: Report[]; total: number }>(`/superadmin/reports${qs ? `?${qs}` : ""}`);
+    return api.get<Report[]>(`/superadmin/reports${qs ? `?${qs}` : ""}`);
   },
 
   getPendingApplications: () =>

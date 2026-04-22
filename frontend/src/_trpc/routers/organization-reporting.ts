@@ -71,7 +71,7 @@ export const organizationReportingRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { reports: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
+        return { reports: res.data ?? [], totalCount: res.total ?? 0 };
       } catch (error) {
         console.error("Failed to fetch organization incident reports:", error);
         throw new TRPCError({
@@ -100,7 +100,7 @@ export const organizationReportingRouter = router({
           search: input.search,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { reports: res.data?.data ?? [], totalCount: res.data?.total ?? 0 };
+        return { reports: res.data ?? [], totalCount: res.total ?? 0 };
       } catch (error) {
         console.error("Failed to fetch user organization incident reports:", error);
         throw new TRPCError({

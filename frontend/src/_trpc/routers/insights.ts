@@ -20,7 +20,7 @@ export const insightsRouter = router({
       if (!res.success) {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
       }
-      return res.data?.data ?? [];
+      return res.data ?? [];
     }),
 
   getPublicInsightBySlug: publicProcedure

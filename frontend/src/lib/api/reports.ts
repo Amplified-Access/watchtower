@@ -31,7 +31,7 @@ export const reportsApi = {
     if (params?.offset) query.set("offset", String(params.offset));
     if (params?.search) query.set("search", params.search);
     const qs = query.toString();
-    return api.get<{ data: Report[]; total: number }>(`/reports${qs ? `?${qs}` : ""}`);
+    return api.get<Report[]>(`/reports${qs ? `?${qs}` : ""}`);
   },
 
   getPublicReportById: (id: string) => api.get<Report>(`/reports/${id}`),
@@ -59,6 +59,6 @@ export const reportsApi = {
     if (params?.offset) query.set("offset", String(params.offset));
     if (params?.search) query.set("search", params.search);
     const qs = query.toString();
-    return api.get<{ data: Report[]; total: number }>(`/superadmin/reports${qs ? `?${qs}` : ""}`);
+    return api.get<Report[]>(`/superadmin/reports${qs ? `?${qs}` : ""}`);
   },
 };

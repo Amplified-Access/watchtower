@@ -43,7 +43,7 @@ export const insightsApi = {
     if (params?.search) query.set("search", params.search);
     if (tags?.length) query.set("tags", tags.join(","));
     const qs = query.toString();
-    return api.get<{ data: Insight[]; total: number }>(`/insights${qs ? `?${qs}` : ""}`);
+    return api.get<Insight[]>(`/insights${qs ? `?${qs}` : ""}`);
   },
 
   getPublicInsightBySlug: (slug: string) => api.get<Insight>(`/insights/${slug}`),

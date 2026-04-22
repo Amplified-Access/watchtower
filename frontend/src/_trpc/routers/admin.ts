@@ -266,8 +266,8 @@ export const adminRouter = router({
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
         return {
-          incidents: res.data?.data ?? [],
-          totalCount: res.data?.total ?? 0,
+          incidents: res.data ?? [],
+          totalCount: res.total ?? 0,
         };
       } catch (error) {
         console.error("Failed to fetch incidents:", error);
@@ -329,7 +329,7 @@ export const adminRouter = router({
         if (!orgId) return [];
         const res = await incidentsApi.getOrganizationIncidents(orgId, { limit: input.limit });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
-        return res.data?.data ?? [];
+        return res.data ?? [];
       } catch (error) {
         console.error("Failed to fetch recent incidents:", error);
         throw new TRPCError({
@@ -443,7 +443,7 @@ export const adminRouter = router({
         // Recent activity not yet in Go backend — combine incidents + reports
         const res = await incidentsApi.getOrganizationIncidents(orgId, { limit: input.limit });
         if (!res.success) return [];
-        const incidents = res.data?.data ?? [];
+        const incidents = res.data ?? [];
         return incidents.map((i) => ({
           id: i.id,
           type: "incident",

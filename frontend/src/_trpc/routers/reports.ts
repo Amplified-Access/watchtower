@@ -139,8 +139,8 @@ export const reportsRouter = router({
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
         return {
-          data: res.data?.data ?? [],
-          total: res.data?.total ?? 0,
+          data: res.data ?? [],
+          total: res.total ?? 0,
         };
       } catch (error) {
         console.error("Failed to fetch public reports:", error);

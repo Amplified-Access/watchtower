@@ -20,21 +20,21 @@ type LocationPreference struct {
 }
 
 type AlertSubscription struct {
-	ID                  string
-	Email               string
-	Name                *string
-	Phone               *string
-	IncidentTypes       []string
-	Locations           []LocationPreference
-	SeverityLevels      []string
-	EmailNotifications  bool
-	SMSNotifications    bool
-	AlertFrequency      AlertFrequency
-	IsActive            bool
-	PreferredLanguage   string
-	Timezone            string
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
+	ID                 string             `json:"id"`
+	Email              string             `json:"email"`
+	Name               *string            `json:"name,omitempty"`
+	Phone              *string            `json:"phone,omitempty"`
+	IncidentTypes      []string           `json:"incidentTypes,omitempty"`
+	Locations          []LocationPreference `json:"locations,omitempty"`
+	SeverityLevels     []string           `json:"severityLevels,omitempty"`
+	EmailNotifications bool               `json:"emailNotifications"`
+	SMSNotifications   bool               `json:"smsNotifications"`
+	AlertFrequency     AlertFrequency     `json:"alertFrequency"`
+	IsActive           bool               `json:"isActive"`
+	PreferredLanguage  string             `json:"preferredLanguage"`
+	Timezone           string             `json:"timezone"`
+	CreatedAt          time.Time          `json:"createdAt"`
+	UpdatedAt          time.Time          `json:"updatedAt"`
 }
 
 type AlertStats struct {
