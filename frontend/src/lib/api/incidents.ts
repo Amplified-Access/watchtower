@@ -15,6 +15,9 @@ export interface Incident {
   organizationId: string;
   formId: string;
   reportedByUserId: string;
+  formName?: string;
+  reporterEmail?: string;
+  organizationName?: string;
   data: Record<string, unknown>;
   status: "reported" | "investigating" | "resolved" | "closed";
   createdAt: string;
@@ -29,6 +32,10 @@ export interface IncidentStats {
   closed: number;
   thisWeek: number;
   lastWeek: number;
+  watchers?: { total: number };
+  forms?: { total: number; active: number };
+  incidents?: { total: number; open: number };
+  reports?: { published: number; draft: number };
 }
 
 export interface WeeklyTrendPoint {

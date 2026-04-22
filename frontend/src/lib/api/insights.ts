@@ -22,6 +22,8 @@ export interface Insight {
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
+  authorName?: string;
+  organizationName?: string;
   tags?: InsightTag[];
 }
 

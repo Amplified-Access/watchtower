@@ -4,11 +4,16 @@ export interface Report {
   id: string;
   organizationId: string;
   reportedByUserId: string;
+  reportedById?: string;
   title: string;
   fileKey: string;
   status: "draft" | "published";
   createdAt: string;
   updatedAt: string;
+  organizationName?: string;
+  organizationSlug?: string;
+  authorName?: string;
+  authorEmail?: string;
 }
 
 export interface ListParams {

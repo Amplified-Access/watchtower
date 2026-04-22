@@ -2,7 +2,6 @@ import { api } from "./client";
 import type { Incident, IncidentStats, WeeklyTrendPoint } from "./incidents";
 import type { Report } from "./reports";
 import type { Form } from "./forms";
-import type { Form } from "./forms";
 
 export interface DashboardStats {
   total: number;
