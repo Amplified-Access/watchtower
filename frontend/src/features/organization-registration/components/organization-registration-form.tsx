@@ -101,8 +101,8 @@ const OrganizationRegistrationForm = ({
       const result = await submitApplicationMutation.mutateAsync({
         ...values,
         certificateOfIncorporation: fileResponse.fileKey,
-      });
-      if (result.error) {
+      }) as { error?: string; message?: string } | null;
+      if (result?.error) {
         toast.error(result.message, {
           description: "Ensure the email hasnt been used before",
         });

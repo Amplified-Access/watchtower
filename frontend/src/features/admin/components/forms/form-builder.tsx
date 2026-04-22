@@ -71,9 +71,8 @@ const FormBuilder = ({ formId }: FormBuilderProps) => {
       } else {
         // Create new form
         const result = await saveFormMutation.mutateAsync({
-          title: formTitle,
+          name: formTitle,
           definition: questions,
-          organizationId: user.organizationId,
         });
 
         if (result.success) {

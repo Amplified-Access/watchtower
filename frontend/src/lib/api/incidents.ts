@@ -128,7 +128,6 @@ export const incidentsApi = {
 
   getTypeAnalytics: (orgId: string) =>
     api.get<{ name: string; value: number }[]>(`/admin/analytics/types?organizationId=${orgId}`),
-  };
 
   // Super admin
   getAllIncidents: (params?: ListParams) => {

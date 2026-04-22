@@ -45,7 +45,11 @@ export const reportsRouter = router({
         const status = input.status === "all" ? undefined : input.status;
         const res = await reportsApi.getOrganizationReports(input.organizationId, status);
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return res.data ?? [];
+        const reports = res.data ?? [];
+        return {
+          reports,
+          totalCount: reports.length, // Go backend doesn't return total for this specific endpoint yet
+        };
       } catch (error) {
         console.error("Failed to fetch organization reports:", error);
         throw new TRPCError({

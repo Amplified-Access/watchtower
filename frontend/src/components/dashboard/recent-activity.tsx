@@ -12,10 +12,11 @@ interface ActivityItem {
   title: string;
   description: string;
   timestamp: string;
-  type: "incident" | "report" | "form" | "application" | "admin" | "watcher";
+  type: string; // Changed to string to match backend
   status?: string;
   href?: string;
 }
+
 
 interface RecentActivityProps {
   activities: ActivityItem[];

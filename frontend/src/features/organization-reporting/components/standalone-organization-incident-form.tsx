@@ -153,10 +153,19 @@ const StandaloneOrganizationIncidentForm: React.FC<
   // Submit handler
   const onSubmit = (data: OrganizationIncidentFormData) => {
     // console.log("Executing......");
-    submitReport.mutate(data);
+    const submissionData = {
+      ...data,
+      location: {
+        latitude: data.location.lat,
+        longitude: data.location.lon,
+        address: data.location.admin1,
+        country: data.location.country,
+      },
+    };
+    submitReport.mutate(submissionData as any);
   };
 
-  const incidentTypes = incidentTypesData?.data || [];
+  const incidentTypes = incidentTypesData || [];
 
   return (
     <Card className="shadow-none rounded-md">

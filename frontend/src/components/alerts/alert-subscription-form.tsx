@@ -196,8 +196,20 @@ const AlertSubscriptionForm: React.FC = () => {
 
   // Submit mutation
   const createSubscription = trpc.alertSubscriptions.create.useMutation({
-    onSuccess: (data) => {
-      toast.success(data.message);
+    onSuccess: (data: any) => {
+      toast.success(data.message || "Subscription created successfully");
+      form.reset();
+      setSelectedLocation(null);
+      setLocationSearch("");
+    },
+    onError: (error) => {
+      toast.error(error.message || t("subscribeFailed"));
+    },
+  });
+
+  const updateSubscription = trpc.alertSubscriptions.update.useMutation({
+    onSuccess: (data: any) => {
+      toast.success(data.message || "Subscription updated successfully");
       form.reset();
       setSelectedLocation(null);
       setLocationSearch("");

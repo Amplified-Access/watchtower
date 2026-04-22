@@ -136,8 +136,8 @@ const IncidentTypesContent = () => {
     return <PageLoader />;
   }
 
-  const organizationIncidentTypes = orgIncidentTypesData?.data || [];
-  const availableIncidentTypes = availableIncidentTypesData?.data || [];
+  const organizationIncidentTypes = orgIncidentTypesData || [];
+  const availableIncidentTypes = availableIncidentTypesData || [];
 
   // Enhanced filter function with multiple search criteria
   const filterIncidentTypes = (types: any[], searchTerm: string) => {

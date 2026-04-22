@@ -170,9 +170,14 @@ export default function WatcherDashboardContent() {
           {/* Recent Activity - spans 2 columns */}
           <div className="lg:col-span-2">
             <RecentActivity
-              activities={recentActivity}
-              title="My Recent Activity"
+              activities={(recentActivity || []).map((a) => ({
+                ...a,
+                title: a.description,
+                type: a.type as any,
+              }))}
+              title="Your Recent Activity"
             />
+
           </div>
 
           {/* Quick Actions */}

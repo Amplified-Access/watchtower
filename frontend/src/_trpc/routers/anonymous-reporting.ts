@@ -2,6 +2,17 @@ import z from "zod";
 import { router, publicProcedure } from "../trpc";
 import { incidentsApi } from "@/lib/api/incidents";
 
+export interface CombinedIncidentReport {
+  lat: string | number;
+  lon: string | number;
+  totalReports: number | string;
+  totalInjuries: number | string;
+  totalFatalities: number | string;
+  displayName: string;
+  incidentTypeColor?: string;
+  incidentTypeDescriptions?: string;
+}
+
 export const anonymousReportingRouter = router({
   getAllIncidentTypes: publicProcedure.query(async () => {
     try {
@@ -126,10 +137,10 @@ export const anonymousReportingRouter = router({
           category: input.category,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { success: true, data: res.data ?? [] };
+        return { success: true, data: (res.data ?? []) as CombinedIncidentReport[] };
       } catch (error) {
         console.error("Failed to fetch combined incident reports:", error);
-        return { success: false, message: "Failed to fetch reports", data: [] };
+        return { success: false, message: "Failed to fetch reports", data: [] as CombinedIncidentReport[] };
       }
     }),
 });

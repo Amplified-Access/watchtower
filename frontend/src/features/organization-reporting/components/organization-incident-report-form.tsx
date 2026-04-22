@@ -192,7 +192,16 @@ const OrganizationIncidentReportForm: React.FC<
   const onSubmit = (data: OrganizationIncidentFormData) => {
     console.log("🚀 Form submission data:", data);
     console.log("📍 Location data:", data.location);
-    submitReport.mutate(data);
+    const submissionData = {
+      ...data,
+      location: {
+        latitude: data.location.lat,
+        longitude: data.location.lon,
+        address: data.location.admin1,
+        country: data.location.country,
+      },
+    };
+    submitReport.mutate(submissionData as any);
   };
 
   // Reset form when dialog closes
@@ -205,7 +214,7 @@ const OrganizationIncidentReportForm: React.FC<
     }
   }, [isOpen, form]);
 
-  const incidentTypes = incidentTypesData?.data || [];
+  const incidentTypes = incidentTypesData || [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

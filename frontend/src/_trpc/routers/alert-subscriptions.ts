@@ -4,8 +4,8 @@ import { TRPCError } from "@trpc/server";
 import { alertsApi } from "@/lib/api/alerts";
 
 const LocationSchema = z.object({
-  latitude: z.number(),
-  longitude: z.number(),
+  lat: z.number(),
+  lon: z.number(),
   radius: z.number().optional(),
 });
 
@@ -32,33 +32,22 @@ export const alertSubscriptionsRouter = router({
     .input(AlertSubscriptionInputSchema)
     .mutation(async ({ input }) => {
       try {
-        const res = await alertsApi.create(input);
+        const mappedData = {
+          ...input,
+          locations: input.locations.map((loc) => ({
+            latitude: loc.lat,
+            longitude: loc.lon,
+            radius: loc.radius,
+          })),
+        };
+        const res = await alertsApi.create(mappedData as any);
         if (!res.success) throw new Error(res.error ?? "Failed to create subscription");
-        return { success: true, data: res.data };
+        return { success: true, message: "Subscription created successfully" };
       } catch (error) {
-        if (error instanceof Error && error.message.includes("CONFLICT")) {
-          throw new TRPCError({ code: "CONFLICT", message: error.message });
-        }
         console.error("Error creating alert subscription:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create alert subscription",
-        });
-      }
-    }),
-
-  getByEmail: publicProcedure
-    .input(z.object({ email: z.string().email() }))
-    .query(async ({ input }) => {
-      try {
-        const res = await alertsApi.getByEmail(input.email);
-        if (!res.success) throw new Error(res.error ?? "Failed to fetch subscription");
-        return { success: true, data: res.data };
-      } catch (error) {
-        console.error("Error fetching subscription:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch subscription",
+          message: "Failed to subscribe to alerts",
         });
       }
     }),
@@ -68,9 +57,17 @@ export const alertSubscriptionsRouter = router({
     .mutation(async ({ input }) => {
       try {
         const { id, ...data } = input;
-        const res = await alertsApi.update(id, data);
+        const mappedData = {
+          ...data,
+          locations: data.locations?.map((loc) => ({
+            latitude: loc.lat,
+            longitude: loc.lon,
+            radius: loc.radius,
+          })),
+        };
+        const res = await alertsApi.update(id, mappedData as any);
         if (!res.success) throw new Error(res.error ?? "Failed to update subscription");
-        return { success: true, data: res.data };
+        return { success: true, message: "Subscription updated successfully" };
       } catch (error) {
         console.error("Error updating alert subscription:", error);
         throw new TRPCError({
@@ -84,7 +81,6 @@ export const alertSubscriptionsRouter = router({
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
       try {
-        // Need subscription ID, not email — find by email first
         const subRes = await alertsApi.getByEmail(input.email);
         if (!subRes.success || !subRes.data?.length) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Subscription not found" });

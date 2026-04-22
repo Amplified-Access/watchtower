@@ -47,9 +47,9 @@ interface Form {
   name: string;
   definition: any;
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  incidentCount: number;
+  createdAt: string;
+  updatedAt: string;
+  incidentCount?: number;
 }
 
 const FormsContent = () => {

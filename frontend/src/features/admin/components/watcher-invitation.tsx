@@ -52,7 +52,6 @@ const WatcherInvitation = () => {
           : null;
       const result = await submitInviteMutation.mutateAsync({
         ...values,
-        organizationId: organization || "",
       });
       if ("error" in result && result.error) {
         toast.error(result.message);

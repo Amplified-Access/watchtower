@@ -163,9 +163,14 @@ export default function AdminDashboardContent() {
           {/* Recent Activity - spans 2 columns */}
           <div className="lg:col-span-2">
             <RecentActivity
-              activities={recentActivity}
-              title="Recent Organization Activity"
+              activities={(recentActivity || []).map((a) => ({
+                ...a,
+                title: a.description,
+                type: a.type as any,
+              }))}
+              title="Organization Recent Activity"
             />
+
           </div>
 
           {/* Organization Overview */}
@@ -208,13 +213,21 @@ export default function AdminDashboardContent() {
         <div className="grid gap-6 lg:grid-cols-2">
           <QuickOverview
             title="Recent Incidents"
-            items={recentIncidents}
+            items={recentIncidents.map((i) => ({
+              ...i,
+              title: `Incident ${i.id.slice(0, 8)}`,
+              date: i.createdAt,
+            }))}
             emptyMessage="No recent incidents"
             viewAllHref="/admin/incidents"
           />
           <QuickOverview
             title="Pending Reports"
-            items={pendingReports}
+            items={pendingReports.map((r) => ({
+              ...r,
+              title: r.formName || `Report ${r.id.slice(0, 8)}`,
+              date: r.createdAt,
+            }))}
             emptyMessage="No pending reports"
             viewAllHref="/admin/reports"
           />
@@ -228,7 +241,10 @@ export default function AdminDashboardContent() {
           />
           <RechartsLineChart
             title="Weekly Incident Trend"
-            data={weeklyTrendData?.data || []}
+            data={(weeklyTrendData?.data || []).map((d) => ({
+              period: d.week,
+              value: d.count,
+            }))}
             currentValue={weeklyTrendData?.currentValue || 0}
             currentChange={weeklyTrendData?.currentChange || 0}
             timeframe={weeklyTrendData?.timeframe || "7d"}

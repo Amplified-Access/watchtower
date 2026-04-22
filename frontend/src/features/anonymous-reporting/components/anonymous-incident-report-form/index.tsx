@@ -321,6 +321,17 @@ const AnonymousIncidentReportForm = () => {
     // Prepare the submission data with enhanced details
     const submissionData = {
       ...values,
+      incidentTypeId: values.category,
+      location: {
+        latitude: Number(values.location.lat),
+        longitude: Number(values.location.lon),
+        address: values.location.display_name,
+        country: values.location.display_name?.split(",").pop()?.trim(),
+      },
+
+
+
+
       evidenceFileKey,
       audioFileKey,
       categoryDetails: {
@@ -339,7 +350,7 @@ const AnonymousIncidentReportForm = () => {
     };
 
     try {
-      submitMutation.mutate(submissionData);
+      submitMutation.mutate(submissionData as any);
       submitMutation.isSuccess && toast.success(t("reportSuccess"));
     } catch (error) {
       toast.error(t("submitError"));

@@ -59,14 +59,8 @@ export const CreateIncidentTypeDialog = ({
 
   const createIncidentTypeMutation =
     trpc.createIncidentTypeForOrganization.useMutation({
-      onSuccess: (result) => {
-        if (result.isExisting) {
-          toast.success("Existing incident type enabled for your organization");
-        } else {
-          toast.success(
-            "New incident type created and enabled for your organization"
-          );
-        }
+      onSuccess: () => {
+        toast.success("Incident type created successfully");
         form.reset();
         onSuccess();
       },

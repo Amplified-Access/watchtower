@@ -87,7 +87,7 @@ const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
         field?.required === true || field?.required === "on",
     );
 
-    for (const [fieldKey, field] of requiredFields) {
+    for (const [fieldKey, field] of requiredFields as [string, any][]) {
       if (
         !formData[fieldKey] ||
         (typeof formData[fieldKey] === "string" &&

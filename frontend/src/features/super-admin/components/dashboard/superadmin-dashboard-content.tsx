@@ -307,7 +307,10 @@ export default function SuperAdminDashboardContent() {
           {/* Recent Activity - spans 2 columns */}
           <div className="lg:col-span-2">
             <RecentActivity
-              activities={recentActivity || []}
+              activities={(recentActivity || []).map((a) => ({
+                ...a,
+                title: a.description,
+              }))}
               title="Recent Platform Activity"
             />
           </div>
@@ -403,14 +406,23 @@ export default function SuperAdminDashboardContent() {
         <div className="grid gap-6 lg:grid-cols-2">
           <QuickOverview
             title="Pending Applications"
-            items={pendingApplications || []}
+            items={(pendingApplications || []).map((a) => ({
+              ...a,
+              id: String(a.id),
+              title: (a as any).organizationName || "New Application",
+              date: (a as any).createdAt,
+            }))}
             emptyMessage="No pending applications"
             viewAllHref="/superadmin/applications"
             enableActions={true}
           />
           <QuickOverview
             title="Critical Incidents"
-            items={criticalIncidents || []}
+            items={(criticalIncidents || []).map((i) => ({
+              ...i,
+              title: `Incident ${i.id.slice(0, 8)}`,
+              date: i.createdAt,
+            }))}
             emptyMessage="No critical incidents"
             viewAllHref="/superadmin/incidents"
           />
@@ -424,7 +436,10 @@ export default function SuperAdminDashboardContent() {
           />
           <RechartsLineChart
             title="Platform Activity Trend"
-            data={activityTrend?.data || []}
+            data={(activityTrend?.data || []).map((d: any) => ({
+              period: d.week || d.period,
+              value: d.count || d.value,
+            }))}
             currentValue={activityTrend?.currentValue || 0}
             currentChange={activityTrend?.currentChange || 0}
             timeframe={activityTrend?.timeframe || "7w"}

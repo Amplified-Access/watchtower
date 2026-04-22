@@ -87,8 +87,8 @@ const page = () => {
 
   // Filter reports to only show those created by the current watcher
   const myReports =
-    (reportsData ?? []).filter(
-      (report) => report.reportedById === user?.id
+    (reportsData && "reports" in reportsData ? reportsData.reports : []).filter(
+      (report: any) => report.reportedById === user?.id
     ) || [];
 
   // Also get all published reports from the organization (readable by watcher)
@@ -103,7 +103,8 @@ const page = () => {
       { enabled: !!organizationId }
     );
 
-  const organizationReports = orgReportsData || [];
+  const organizationReports =
+    orgReportsData && "reports" in orgReportsData ? orgReportsData.reports : [];
 
   const isLoading =
     userLoading || orgLoading || reportsLoading || orgReportsLoading;

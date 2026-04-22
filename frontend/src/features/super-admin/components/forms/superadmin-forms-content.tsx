@@ -361,7 +361,7 @@ const SuperAdminFormsContent = () => {
                         <span className="font-medium">
                           {form.incidentCount}
                         </span>
-                        {form.incidentCount > 0 && (
+                        {(form.incidentCount ?? 0) > 0 && (
                           <Link
                             href={`/superadmin/incidents?formId=${form.id}`}
                             className="text-blue-600 hover:text-blue-800 text-xs"
@@ -437,7 +437,7 @@ const SuperAdminFormsContent = () => {
                                   This action cannot be undone. This will
                                   permanently delete the form "{form.name}" and
                                   remove all associated data.
-                                  {form.incidentCount > 0 && (
+                                  {(form.incidentCount ?? 0) > 0 && (
                                     <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
                                       <strong>Warning:</strong> This form has{" "}
                                       {form.incidentCount} associated incident
@@ -452,7 +452,7 @@ const SuperAdminFormsContent = () => {
                                 <AlertDialogAction
                                   onClick={() => handleDeleteForm(form.id)}
                                   className="bg-red-600 hover:bg-red-700"
-                                  disabled={form.incidentCount > 0}
+                                  disabled={(form.incidentCount ?? 0) > 0}
                                 >
                                   Delete
                                 </AlertDialogAction>
