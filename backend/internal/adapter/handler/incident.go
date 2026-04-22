@@ -197,7 +197,6 @@ func (h *IncidentHandler) GetPendingIncidents(c *gin.Context) {
 }
 
 func (h *IncidentHandler) GetIncidentTypeAnalytics(c *gin.Context) {
-	user := middleware.CurrentUser(c)
 	// Placeholder: In a real app, this would query incident counts grouped by type
 	analytics := []gin.H{}
 	presenter.OK(c, analytics)

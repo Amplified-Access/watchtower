@@ -64,6 +64,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		// Alert subscriptions
 		pub.POST("/alerts", s.alertHandler.Create)
 		pub.GET("/alerts", s.alertHandler.GetByEmail)
+		pub.PATCH("/alerts/:id", s.alertHandler.Update)
 		pub.POST("/alerts/:id/deactivate", s.alertHandler.Deactivate)
 		pub.POST("/alerts/:id/activate", s.alertHandler.Activate)
 	}
@@ -106,6 +107,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 			admin.GET("/analytics/stats", s.incidentHandler.GetOrganizationStats)
 			admin.GET("/analytics/trend", s.incidentHandler.GetWeeklyTrend)
+			admin.GET("/analytics/pending", s.incidentHandler.GetPendingIncidents)
+			admin.GET("/analytics/types", s.incidentHandler.GetIncidentTypeAnalytics)
 			admin.GET("/dashboard", s.adminHandler.GetDashboardStats)
 
 			admin.GET("/reports", s.reportHandler.GetOrganizationReports)

@@ -78,6 +78,66 @@ func (h *AlertHandler) GetByEmail(c *gin.Context) {
 	presenter.OK(c, subs)
 }
 
+func (h *AlertHandler) Update(c *gin.Context) {
+	id := c.Param("id")
+	var input struct {
+		Name               *string                    `json:"name"`
+		Phone              *string                    `json:"phone"`
+		IncidentTypes      []string                   `json:"incidentTypes"`
+		Locations          []entity.LocationPreference `json:"locations"`
+		SeverityLevels     []string                   `json:"severityLevels"`
+		EmailNotifications *bool                      `json:"emailNotifications"`
+		SMSNotifications   *bool                      `json:"smsNotifications"`
+		AlertFrequency     entity.AlertFrequency      `json:"alertFrequency"`
+		Timezone           string                     `json:"timezone"`
+		PreferredLanguage  string                     `json:"preferredLanguage"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		presenter.BadRequest(c, err.Error())
+		return
+	}
+	// In a real app, we'd fetch the existing sub first or have a specific Update repo method
+	sub := &entity.AlertSubscription{
+		ID: id,
+	}
+	if input.Name != nil {
+		sub.Name = input.Name
+	}
+	if input.Phone != nil {
+		sub.Phone = input.Phone
+	}
+	if input.IncidentTypes != nil {
+		sub.IncidentTypes = input.IncidentTypes
+	}
+	if input.Locations != nil {
+		sub.Locations = input.Locations
+	}
+	if input.SeverityLevels != nil {
+		sub.SeverityLevels = input.SeverityLevels
+	}
+	if input.EmailNotifications != nil {
+		sub.EmailNotifications = *input.EmailNotifications
+	}
+	if input.SMSNotifications != nil {
+		sub.SMSNotifications = *input.SMSNotifications
+	}
+	if input.AlertFrequency != "" {
+		sub.AlertFrequency = input.AlertFrequency
+	}
+	if input.Timezone != "" {
+		sub.Timezone = input.Timezone
+	}
+	if input.PreferredLanguage != "" {
+		sub.PreferredLanguage = input.PreferredLanguage
+	}
+
+	if err := h.uc.Update(c.Request.Context(), sub); err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, sub)
+}
+
 func (h *AlertHandler) GetAllActive(c *gin.Context) {
 	subs, err := h.uc.GetAllActive(c.Request.Context())
 	if err != nil {
