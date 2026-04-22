@@ -23,8 +23,8 @@ export const datasetsRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
       }
       return {
-        data: res.data?.data ?? [],
-        total: res.data?.total ?? 0,
+        data: res.data ?? [],
+        total: res.total ?? 0,
       };
     }),
 
@@ -106,8 +106,8 @@ export const datasetsRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
       }
       return {
-        data: res.data?.data ?? [],
-        total: res.data?.total ?? 0,
+        data: res.data ?? [],
+        total: res.total ?? 0,
       };
     }),
 

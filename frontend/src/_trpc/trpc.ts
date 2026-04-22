@@ -1,5 +1,4 @@
 // src/server/trpc.ts
-import { db } from "@/db";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";

@@ -89,7 +89,7 @@ const FormsContent = () => {
 
   if (userLoading || formsLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-100">
         <Loader size="32" />
       </div>
     );
@@ -125,7 +125,7 @@ const FormsContent = () => {
           {/* New Form Card */}
           <Link href="/admin/forms/new">
             <Card className="border-dashed rounded-md border-2 hover:border-primary/50 transition-colors cursor-pointer group shadow-none">
-              <CardContent className="flex flex-col items-center justify-center p-6 min-h-[200px]">
+              <CardContent className="flex flex-col items-center justify-center p-6 min-h-50">
                 <Plus className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors" />
                 <p className="text-muted-foreground group-hover:text-primary transition-colors mt-2">
                   Create New Form

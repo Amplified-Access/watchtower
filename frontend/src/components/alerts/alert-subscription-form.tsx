@@ -391,7 +391,7 @@ const AlertSubscriptionForm: React.FC = () => {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-full max-w-[625px] p-0">
+                      <PopoverContent className="w-full max-w-156.25 p-0">
                         <Command>
                           <CommandInput
                             placeholder={t("searchIncidentTypes")}
@@ -494,7 +494,7 @@ const AlertSubscriptionForm: React.FC = () => {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[305px] p-0" align="start">
+                      <PopoverContent className="w-76.25 p-0" align="start">
                         <Command shouldFilter={false}>
                           <CommandInput
                             placeholder={t("searchLocation")}
@@ -597,7 +597,7 @@ const AlertSubscriptionForm: React.FC = () => {
                           asChild
                           className="hover:cursor-pointer"
                         >
-                          <FaRegCircleQuestion className="h-[12px] w-[12px] text-gray-500" />
+                          <FaRegCircleQuestion className="h-3 w-3 text-gray-500" />
                         </PopoverTrigger>
                         <PopoverContent className="max-w-xs">
                           <FormDescription>

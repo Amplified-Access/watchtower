@@ -260,7 +260,7 @@ const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
 
   if (userLoading || formLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-100">
         <Loader size="32" />
       </div>
     );
@@ -343,7 +343,7 @@ const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
           <Button
             type="submit"
             disabled={isSubmitting || fieldEntries.length === 0}
-            className="min-w-[120px]"
+            className="min-w-30"
           >
             {isSubmitting ? (
               <Loader size="16" />

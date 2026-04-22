@@ -40,7 +40,7 @@ export const datasetsApi = {
     if (params?.search) query.set("search", params.search);
     if (category) query.set("category", category);
     const qs = query.toString();
-    return api.get<{ data: Dataset[]; total: number }>(`/datasets${qs ? `?${qs}` : ""}`);
+    return api.get<Dataset[]>(`/datasets${qs ? `?${qs}` : ""}`);
   },
 
   getDatasetById: (id: string) => api.get<Dataset>(`/datasets/${id}`),
@@ -56,7 +56,7 @@ export const datasetsApi = {
     if (params?.offset) query.set("offset", String(params.offset));
     if (params?.search) query.set("search", params.search);
     const qs = query.toString();
-    return api.get<{ data: Dataset[]; total: number }>(`/superadmin/datasets${qs ? `?${qs}` : ""}`);
+    return api.get<Dataset[]>(`/superadmin/datasets${qs ? `?${qs}` : ""}`);
   },
 
   createDataset: (data: {
