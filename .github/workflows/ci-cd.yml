@@ -7,15 +7,7 @@ on:
       - deployment
     paths-ignore:
       - "README.md"
-      - "docs/**"
-      - "akil_web/**"
-      - "akil_mobile/**"
-      - "akil_telegram/**"
-      - "scheduled-email-sender/**"
-      - "demo1/**"
       - "frontend/**"
-      - "package-lock.json"
-      - "package.json"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
