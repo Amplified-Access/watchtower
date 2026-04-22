@@ -3,8 +3,8 @@ name: Test and Deploy Backend to Railway
 on:
   push:
     branches:
-      - backend-staging
-      - backend-deployment
+      - staging
+      - deployment
     paths-ignore:
       - "README.md"
       - "docs/**"
@@ -71,4 +71,4 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
-          railway up --service akil-backend-production --environment production --path-as-root ./backend
+          railway up --service watchtower-backend --environment production --path-as-root ./backend
