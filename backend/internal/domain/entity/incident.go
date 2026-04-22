@@ -116,6 +116,34 @@ type HeatmapPoint struct {
 	Weight    float64 `json:"weight"`
 }
 
+type GrowthMetric struct {
+	Current    int     `json:"current"`
+	Previous   int     `json:"previous"`
+	Percentage float64 `json:"percentage"`
+}
+
+type PlatformStats struct {
+	TotalOrganizations  int     `json:"totalOrganizations"`
+	TotalAdmins         int     `json:"totalAdmins"`
+	TotalWatchers       int     `json:"totalWatchers"`
+	PendingApplications int     `json:"pendingApplications"`
+	ReportsThisMonth    int     `json:"reportsThisMonth"`
+	ActiveForms         int     `json:"activeForms"`
+	CriticalIncidents   int     `json:"criticalIncidents"`
+	UptimePercentage    float64 `json:"uptimePercentage"`
+	Growth             struct {
+		Organizations GrowthMetric `json:"organizations"`
+		Admins        GrowthMetric `json:"admins"`
+		Watchers      GrowthMetric `json:"watchers"`
+	} `json:"growth"`
+	Metrics struct {
+		NewOrganizationsThisMonth int     `json:"newOrganizationsThisMonth"`
+		NewAdminsThisMonth        int     `json:"newAdminsThisMonth"`
+		NewWatchersThisMonth      int     `json:"newWatchersThisMonth"`
+		AverageReportsPerOrg      float64 `json:"averageReportsPerOrg"`
+	} `json:"metrics"`
+}
+
 type ActivityItem struct {
 	ID          string    `json:"id"`
 	Type        string    `json:"type"`

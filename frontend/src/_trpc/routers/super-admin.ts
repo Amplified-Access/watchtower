@@ -277,26 +277,28 @@ export const superAdminRouter = router({
 
   getDashboardStats: superAdminProcedure.query(async () => {
     try {
-      // Go backend doesn't have a super admin dashboard stats endpoint
+      const res = await adminApi.getPlatformStats();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch platform stats");
+      const data = res.data;
       return {
-        totalOrganizations: 0,
-        totalAdmins: 0,
-        totalWatchers: 0,
-        pendingApplications: 0,
-        reportsThisMonth: 0,
-        activeForms: 0,
-        criticalIncidents: 0,
-        uptimePercentage: 99.9,
+        totalOrganizations: data?.totalOrganizations ?? 0,
+        totalAdmins: data?.totalAdmins ?? 0,
+        totalWatchers: data?.totalWatchers ?? 0,
+        pendingApplications: data?.pendingApplications ?? 0,
+        reportsThisMonth: data?.reportsThisMonth ?? 0,
+        activeForms: data?.activeForms ?? 0,
+        criticalIncidents: data?.criticalIncidents ?? 0,
+        uptimePercentage: data?.uptimePercentage ?? 99.9,
         growth: {
-          organizations: { current: 0, previous: 0, percentage: 0 },
-          admins: { current: 0, previous: 0, percentage: 0 },
-          watchers: { current: 0, previous: 0, percentage: 0 },
+          organizations: data?.growth?.organizations ?? { current: 0, previous: 0, percentage: 0 },
+          admins: data?.growth?.admins ?? { current: 0, previous: 0, percentage: 0 },
+          watchers: data?.growth?.watchers ?? { current: 0, previous: 0, percentage: 0 },
         },
         metrics: {
-          newOrganizationsThisMonth: 0,
-          newAdminsThisMonth: 0,
-          newWatchersThisMonth: 0,
-          averageReportsPerOrg: 0,
+          newOrganizationsThisMonth: data?.metrics?.newOrganizationsThisMonth ?? 0,
+          newAdminsThisMonth: data?.metrics?.newAdminsThisMonth ?? 0,
+          newWatchersThisMonth: data?.metrics?.newWatchersThisMonth ?? 0,
+          averageReportsPerOrg: data?.metrics?.averageReportsPerOrg ?? 0,
         },
       };
     } catch (error) {
@@ -312,8 +314,9 @@ export const superAdminRouter = router({
     .input(z.object({ limit: z.number().min(1).max(50).default(10) }))
     .query(async ({ input }) => {
       try {
-        // Not yet implemented in Go backend
-        return [];
+        const res = await adminApi.getRecentActivity(input.limit);
+        if (!res.success) throw new Error(res.error ?? "Failed to fetch activity");
+        return res.data ?? [];
       } catch (error) {
         console.error("Error fetching recent activity:", error);
         throw new TRPCError({

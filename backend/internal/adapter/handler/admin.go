@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 
 	"backend/internal/adapter/middleware"
@@ -149,4 +152,24 @@ func (h *AdminHandler) GetAllFormsForSuperAdmin(c *gin.Context) {
 		return
 	}
 	presenter.OKList(c, forms, total)
+}
+
+func (h *AdminHandler) GetPlatformStats(c *gin.Context) {
+	stats, err := h.uc.GetPlatformStats(c.Request.Context())
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, stats)
+}
+
+func (h *AdminHandler) GetRecentActivity(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "10")
+	limit, _ := strconv.Atoi(limitStr)
+	activity, err := h.uc.GetRecentActivity(c.Request.Context(), limit)
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, activity)
 }

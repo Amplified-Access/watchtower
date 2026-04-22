@@ -70,3 +70,17 @@ func (uc *UseCase) GetWeeklyTrend(ctx context.Context, orgID string) ([]*entity.
 func (uc *UseCase) GetAllFormsForSuperAdmin(ctx context.Context, params entity.ListParams) ([]*entity.Form, int, error) {
 	return uc.formRepo.FindAllForSuperAdmin(ctx, params)
 }
+
+func (uc *UseCase) GetPlatformStats(ctx context.Context) (*entity.PlatformStats, error) {
+	// In a real implementation, this would aggregate from userRepo, incidentRepo, organizationRepo, etc.
+	// For now, return a placeholder to satisfy the frontend migration.
+	stats := &entity.PlatformStats{
+		UptimePercentage: 99.9,
+	}
+	return stats, nil
+}
+
+func (uc *UseCase) GetRecentActivity(ctx context.Context, limit int) ([]*entity.ActivityItem, error) {
+	// This would fetch recent events from an audit log or multiple tables.
+	return []*entity.ActivityItem{}, nil
+}

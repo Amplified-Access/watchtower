@@ -186,6 +186,23 @@ func (h *IncidentHandler) GetWeeklyTrend(c *gin.Context) {
 	presenter.OK(c, trend)
 }
 
+func (h *IncidentHandler) GetPendingIncidents(c *gin.Context) {
+	user := middleware.CurrentUser(c)
+	incidents, err := h.uc.GetPendingIncidents(c.Request.Context(), *user.OrganizationID)
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, incidents)
+}
+
+func (h *IncidentHandler) GetIncidentTypeAnalytics(c *gin.Context) {
+	user := middleware.CurrentUser(c)
+	// Placeholder: In a real app, this would query incident counts grouped by type
+	analytics := []gin.H{}
+	presenter.OK(c, analytics)
+}
+
 func (h *IncidentHandler) SubmitOrgReport(c *gin.Context) {
 	user := middleware.CurrentUser(c)
 	var input struct {

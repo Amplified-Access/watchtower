@@ -145,6 +145,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 			superAdmin.GET("/alerts/active", s.alertHandler.GetAllActive)
 			superAdmin.GET("/alerts/stats", s.alertHandler.GetStats)
+
+			superAdmin.GET("/dashboard/stats", s.adminHandler.GetPlatformStats)
+			superAdmin.GET("/dashboard/activity", s.adminHandler.GetRecentActivity)
 		}
 	}
 

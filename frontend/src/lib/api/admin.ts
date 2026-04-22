@@ -99,4 +99,9 @@ export const adminApi = {
 
   getPendingApplications: () =>
     api.get<unknown[]>("/superadmin/applications"),
+
+  getPlatformStats: () => api.get<any>("/superadmin/dashboard/stats"),
+
+  getRecentActivity: (limit?: number) =>
+    api.get<ActivityItem[]>(`/superadmin/dashboard/activity${limit ? `?limit=${limit}` : ""}`),
 };
