@@ -1,6 +1,6 @@
 # Watchtower
 
-Watchtower is an incident monitoring and reporting platform built for civil society organizations. It enables structured reporting of security incidents, real-time alerting, geolocation-based mapping, and AI-assisted analysis — with support for multiple languages and role-based access control
+Watchtower is an incident monitoring and reporting platform built for civil society organizations. It enables structured reporting of security incidents, real-time alerting, geolocation-based mapping, and AI-assisted analysis — with support for multiple languages and role-based access control.
 
 ## Features
 
