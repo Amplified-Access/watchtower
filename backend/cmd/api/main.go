@@ -1,3 +1,18 @@
+// Package main is the entry point for the Watchtower API.
+//
+//	@title			Watchtower API
+//	@version		1.0
+//	@description	Amplified Access Watchtower — incident reporting and monitoring platform API.
+//
+//	@contact.name	Amplified Access
+//
+//	@host		localhost:8080
+//	@BasePath	/api/v1
+//
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Bearer token obtained from authentication. Format: "Bearer <token>"
 package main
 
 import (
@@ -9,6 +24,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "backend/docs"
 	"backend/internal/server"
 )
 

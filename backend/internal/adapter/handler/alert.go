@@ -16,6 +16,18 @@ func NewAlertHandler(uc *alertusecase.UseCase) *AlertHandler {
 	return &AlertHandler{uc: uc}
 }
 
+// Create godoc
+//
+//	@Summary		Create alert subscription
+//	@Description	Subscribes an email address to incident alerts for specified types and locations
+//	@Tags			Alerts
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		object{email=string,name=string,phone=string,incidentTypes=[]string,locations=[]object,severityLevels=[]string,emailNotifications=bool,smsNotifications=bool,alertFrequency=string,timezone=string,preferredLanguage=string}	true	"Subscription payload"
+//	@Success		201		{object}	presenter.Response
+//	@Failure		400		{object}	presenter.Response
+//	@Failure		500		{object}	presenter.Response
+//	@Router			/alerts [post]
 func (h *AlertHandler) Create(c *gin.Context) {
 	var input struct {
 		Email              string                     `json:"email" binding:"required,email"`
@@ -64,6 +76,17 @@ func (h *AlertHandler) Create(c *gin.Context) {
 	presenter.Created(c, sub)
 }
 
+// GetByEmail godoc
+//
+//	@Summary		Get subscriptions by email
+//	@Description	Returns all alert subscriptions for the given email address
+//	@Tags			Alerts
+//	@Produce		json
+//	@Param			email	query		string	true	"Subscriber email address"
+//	@Success		200		{object}	presenter.Response
+//	@Failure		400		{object}	presenter.Response
+//	@Failure		500		{object}	presenter.Response
+//	@Router			/alerts [get]
 func (h *AlertHandler) GetByEmail(c *gin.Context) {
 	email := c.Query("email")
 	if email == "" {
@@ -78,6 +101,19 @@ func (h *AlertHandler) GetByEmail(c *gin.Context) {
 	presenter.OK(c, subs)
 }
 
+// Update godoc
+//
+//	@Summary		Update alert subscription
+//	@Description	Updates preferences for an existing alert subscription
+//	@Tags			Alerts
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string																																																																							true	"Subscription ID"
+//	@Param			body	body		object{name=string,phone=string,incidentTypes=[]string,locations=[]object,severityLevels=[]string,emailNotifications=bool,smsNotifications=bool,alertFrequency=string,timezone=string,preferredLanguage=string}	true	"Fields to update"
+//	@Success		200		{object}	presenter.Response
+//	@Failure		400		{object}	presenter.Response
+//	@Failure		500		{object}	presenter.Response
+//	@Router			/alerts/{id} [patch]
 func (h *AlertHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 	var input struct {
@@ -138,6 +174,18 @@ func (h *AlertHandler) Update(c *gin.Context) {
 	presenter.OK(c, sub)
 }
 
+// GetAllActive godoc
+//
+//	@Summary		List all active alert subscriptions
+//	@Description	Returns every active subscription across the platform (super admin only)
+//	@Tags			Super Admin – Alerts
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	presenter.Response
+//	@Failure		401	{object}	presenter.Response
+//	@Failure		403	{object}	presenter.Response
+//	@Failure		500	{object}	presenter.Response
+//	@Router			/superadmin/alerts/active [get]
 func (h *AlertHandler) GetAllActive(c *gin.Context) {
 	subs, err := h.uc.GetAllActive(c.Request.Context())
 	if err != nil {
@@ -147,6 +195,18 @@ func (h *AlertHandler) GetAllActive(c *gin.Context) {
 	presenter.OK(c, subs)
 }
 
+// GetStats godoc
+//
+//	@Summary		Get alert subscription statistics
+//	@Description	Returns aggregate statistics for all alert subscriptions (super admin only)
+//	@Tags			Super Admin – Alerts
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	presenter.Response
+//	@Failure		401	{object}	presenter.Response
+//	@Failure		403	{object}	presenter.Response
+//	@Failure		500	{object}	presenter.Response
+//	@Router			/superadmin/alerts/stats [get]
 func (h *AlertHandler) GetStats(c *gin.Context) {
 	stats, err := h.uc.GetStats(c.Request.Context())
 	if err != nil {
@@ -156,6 +216,17 @@ func (h *AlertHandler) GetStats(c *gin.Context) {
 	presenter.OK(c, stats)
 }
 
+// Deactivate godoc
+//
+//	@Summary		Deactivate alert subscription
+//	@Description	Pauses alert delivery for the given subscription
+//	@Tags			Alerts
+//	@Produce		json
+//	@Param			id	path		string	true	"Subscription ID"
+//	@Success		200	{object}	presenter.Response
+//	@Failure		404	{object}	presenter.Response
+//	@Failure		500	{object}	presenter.Response
+//	@Router			/alerts/{id}/deactivate [post]
 func (h *AlertHandler) Deactivate(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.uc.Deactivate(c.Request.Context(), id); err != nil {
@@ -165,6 +236,17 @@ func (h *AlertHandler) Deactivate(c *gin.Context) {
 	presenter.OK(c, gin.H{"message": "subscription deactivated"})
 }
 
+// Activate godoc
+//
+//	@Summary		Activate alert subscription
+//	@Description	Resumes alert delivery for a previously deactivated subscription
+//	@Tags			Alerts
+//	@Produce		json
+//	@Param			id	path		string	true	"Subscription ID"
+//	@Success		200	{object}	presenter.Response
+//	@Failure		404	{object}	presenter.Response
+//	@Failure		500	{object}	presenter.Response
+//	@Router			/alerts/{id}/activate [post]
 func (h *AlertHandler) Activate(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.uc.Activate(c.Request.Context(), id); err != nil {
