@@ -46,4 +46,9 @@ watch:
 		Write-Output 'Watching...'; \
 	}"
 
-.PHONY: all build run test clean watch docker-run docker-down itest
+# Generate Swagger docs
+swagger:
+	@echo "Generating Swagger docs..."
+	@swag init -g cmd/api/main.go --parseDependency --parseInternal
+
+.PHONY: all build run test clean watch docker-run docker-down itest swagger
