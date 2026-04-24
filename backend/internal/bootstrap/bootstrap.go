@@ -24,11 +24,7 @@ func Run() *Services {
 	printBanner()
 
 	svc := &Services{}
-
-	step("Logger", func() error {
-		svc.Logger = logger.New()
-		return nil
-	})
+	svc.Logger = logger.New()
 
 	step("Database", func() error {
 		db, err := pgClient.New()
