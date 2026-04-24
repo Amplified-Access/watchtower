@@ -15,7 +15,8 @@ import (
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.Recovery(), middleware.Logger())
 
 	allowedOrigins := []string{"http://localhost:3000"}
 	if raw := os.Getenv("ALLOWED_ORIGINS"); raw != "" {
@@ -174,5 +175,9 @@ func (s *Server) HelloWorldHandler(c *gin.Context) {
 }
 
 func (s *Server) healthHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, s.db.Health())
+	health := map[string]any{
+		"db":    s.db.Health(),
+		"redis": s.redis.Health(),
+	}
+	c.JSON(http.StatusOK, health)
 }

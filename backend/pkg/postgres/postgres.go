@@ -1,4 +1,4 @@
-package database
+package postgres
 
 import (
 	"context"
@@ -12,22 +12,21 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-// Service represents a service that interacts with a database.
 type Service interface {
+	DB() *sql.DB
 	Health() map[string]string
 	Close() error
-	DB() *sql.DB
 }
 
 type service struct {
 	db *sql.DB
 }
 
-var dbInstance *service
+var instance *service
 
 func New() (Service, error) {
-	if dbInstance != nil {
-		return dbInstance, nil
+	if instance != nil {
+		return instance, nil
 	}
 
 	databaseURL := os.Getenv("DATABASE_URL")
@@ -44,8 +43,8 @@ func New() (Service, error) {
 	db.SetMaxIdleConns(25)
 	db.SetConnMaxLifetime(5 * time.Minute)
 
-	dbInstance = &service{db: db}
-	return dbInstance, nil
+	instance = &service{db: db}
+	return instance, nil
 }
 
 func (s *service) DB() *sql.DB {

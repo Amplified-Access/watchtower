@@ -11,7 +11,6 @@ import (
 
 	"backend/internal/adapter/handler"
 	pgRepo "backend/internal/adapter/repository/postgres"
-	"backend/internal/database"
 	adminuc "backend/internal/usecase/admin"
 	alertuc "backend/internal/usecase/alert"
 	datasetuuc "backend/internal/usecase/dataset"
@@ -20,11 +19,14 @@ import (
 	orguc "backend/internal/usecase/organization"
 	reportuc "backend/internal/usecase/report"
 	useruc "backend/internal/usecase/user"
+	pgClient "backend/pkg/postgres"
+	redisClient "backend/pkg/redis"
 )
 
 type Server struct {
-	port int
-	db   database.Service
+	port  int
+	db    pgClient.Service
+	redis redisClient.Service
 
 	orgHandler      *handler.OrganizationHandler
 	userHandler     *handler.UserHandler
@@ -37,13 +39,12 @@ type Server struct {
 	userUseCase     *useruc.UseCase
 }
 
-func NewServer() *http.Server {
+func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	if port == 0 {
 		port = 8080
 	}
 
-	dbSvc := database.New()
 	sqlDB := dbSvc.DB()
 
 	// Repositories
@@ -75,6 +76,7 @@ func NewServer() *http.Server {
 	newServer := &Server{
 		port:            port,
 		db:              dbSvc,
+		redis:           redisSvc,
 		userHandler:     handler.NewUserHandler(userUC),
 		orgHandler:      handler.NewOrganizationHandler(orgUC),
 		incidentHandler: handler.NewIncidentHandler(incidentUC),
