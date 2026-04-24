@@ -57,7 +57,9 @@ export const adminRouter = router({
       z.object({
         email: z.string().email(),
         name: z.string(),
-        role: z.string().optional(),
+        role: z
+          .enum(["admin", "super-admin", "independent-reporter", "watcher"])
+          .optional(),
       }),
     )
     .mutation(async ({ input }) => {
