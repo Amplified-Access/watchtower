@@ -23,9 +23,9 @@ const Container = ({
       className={cn(
         `${
           size == "lg"
-            ? "max-w-[1440px]"
+            ? "max-w-360"
             : size == "sm"
-            ? "max-w-[1280px]"
+            ? "max-w-7xl"
             : size == "xs"
             ? "max-w-6xl"
             : size == "text"
