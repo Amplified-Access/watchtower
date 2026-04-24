@@ -1,6 +1,6 @@
 import Container from "@/components/common/container";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { GeneralSignInForm } from "@/features/auth/components/general-sign-in-form";
+import { buttonVariants } from "@/components/ui/button";
+import { GeneralForgotPasswordForm } from "@/features/auth/components/general-forgot-password-form";
 import { cn } from "@/lib/utils";
 import { Home } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +19,7 @@ const page = () => {
       </Link>
       <Container className="grid place-items-center min-h-dvh py-12">
         <div className="max-w-96 w-full">
-          <GeneralSignInForm />
+          <GeneralForgotPasswordForm />
         </div>
       </Container>
     </section>

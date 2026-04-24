@@ -19,6 +19,7 @@ import (
 	orguc "backend/internal/usecase/organization"
 	reportuc "backend/internal/usecase/report"
 	useruc "backend/internal/usecase/user"
+	emailSvc "backend/pkg/email"
 	pgClient "backend/pkg/postgres"
 	redisClient "backend/pkg/redis"
 )
@@ -36,6 +37,7 @@ type Server struct {
 	datasetHandler  *handler.DatasetHandler
 	alertHandler    *handler.AlertHandler
 	adminHandler    *handler.AdminHandler
+	emailHandler    *handler.EmailHandler
 	userUseCase     *useruc.UseCase
 }
 
@@ -72,6 +74,9 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	alertUC := alertuc.New(alertRepo)
 	adminUC := adminuc.New(userRepo, incidentRepo, formRepo)
 
+	// Email service
+	mailSvc := emailSvc.New()
+
 	// Handlers
 	newServer := &Server{
 		port:            port,
@@ -85,6 +90,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 		datasetHandler:  handler.NewDatasetHandler(datasetUC),
 		alertHandler:    handler.NewAlertHandler(alertUC),
 		adminHandler:    handler.NewAdminHandler(adminUC),
+		emailHandler:    handler.NewEmailHandler(mailSvc),
 		userUseCase:     userUC,
 	}
 

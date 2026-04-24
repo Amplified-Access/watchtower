@@ -150,9 +150,9 @@ const PasswordReset = ({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="shadow-none rounded-lg py-6">
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold">
+          <CardTitle className="text-2xl font-semibold font-title">
             Set a new password
           </CardTitle>
         </CardHeader>
