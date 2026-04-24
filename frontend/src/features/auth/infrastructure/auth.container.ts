@@ -1,7 +1,7 @@
 import { SendEmailUseCase } from "../application/use-cases/send-email";
 import { SendTestEmailUseCase } from "../application/use-cases/send-test-email";
 import type { EmailSender } from "../domain/email-sender";
-import { ResendEmailSender } from "./email/resend-email-sender";
+import { BackendEmailSender } from "./email/backend-email-sender";
 
 export interface AuthUseCases {
   sendEmail: SendEmailUseCase;
@@ -9,7 +9,7 @@ export interface AuthUseCases {
 }
 
 export const createAuthUseCases = (
-  emailSender: EmailSender = new ResendEmailSender(),
+  emailSender: EmailSender = new BackendEmailSender(),
 ): AuthUseCases => {
   return {
     sendEmail: new SendEmailUseCase(emailSender),

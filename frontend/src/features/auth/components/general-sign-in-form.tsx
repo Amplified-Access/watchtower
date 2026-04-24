@@ -21,6 +21,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
+import Link from "next/link";
 
 export function GeneralSignInForm({
   className,
@@ -157,6 +158,14 @@ export function GeneralSignInForm({
                     </FormItem>
                   )}
                 />
+                <div className="text-right -mt-3">
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
                 <div className="flex flex-col gap-3">
                   <Button
                     disabled={isSignedIn || isSigningIn}

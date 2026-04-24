@@ -19,21 +19,10 @@ import { Button } from "@/components/ui/button";
 import Loader from "@/components/common/loader";
 import { Check } from "lucide-react";
 import { trpc } from "@/_trpc/client";
-import { authClient } from "@/lib/auth-client";
-import { SendEmail } from "@/features/auth/server";
 
 const WatcherInvitation = () => {
   const [isInviting, setIsInviting] = useState<boolean>(false);
   const [hasInvited, setHasInvited] = useState<boolean>(false);
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
-  } = authClient.useSession();
-  const adminOrg = trpc.getAdminOrganization.useQuery({
-    userId: session?.user.id || "",
-  });
   const form = useForm<z.infer<typeof watcherIvitationSchema>>({
     resolver: zodResolver(watcherIvitationSchema as any),
     defaultValues: {
@@ -46,27 +35,17 @@ const WatcherInvitation = () => {
   async function onSubmit(values: z.infer<typeof watcherIvitationSchema>) {
     setIsInviting(true);
     try {
-      const organization =
-        adminOrg.data && "organization" in adminOrg.data
-          ? adminOrg.data.organizationId
-          : null;
-      const result = await submitInviteMutation.mutateAsync({
-        ...values,
-      });
-      if ("error" in result && result.error) {
-        toast.error(result.message);
-        return;
-      }
+      await submitInviteMutation.mutateAsync({ ...values });
+      setHasInvited(true);
+      toast.success(`Invite sent to ${values.email}`);
+      form.reset();
+      setTimeout(() => setHasInvited(false), 2000);
     } catch (error) {
       console.error(error);
       toast.error("Failed to invite watcher");
     } finally {
       setIsInviting(false);
-      setTimeout(() => {
-        setHasInvited(false);
-      }, 1000);
     }
-    console.log(values);
   }
 
   return (

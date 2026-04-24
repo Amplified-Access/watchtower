@@ -80,6 +80,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 		pub.PATCH("/alerts/:id", s.alertHandler.Update)
 		pub.POST("/alerts/:id/deactivate", s.alertHandler.Deactivate)
 		pub.POST("/alerts/:id/activate", s.alertHandler.Activate)
+
+		// Internal email (protected by X-Internal-Token header)
+		pub.POST("/email/send", s.emailHandler.Send)
 	}
 
 	// ── Authenticated routes ───────────────────────────────────────

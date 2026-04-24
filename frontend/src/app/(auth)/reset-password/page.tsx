@@ -17,7 +17,7 @@ const page = () => {
       >
         <Home />
       </Link>
-      <Container className="grid place-items-center h-full min-h-[100dvh]">
+      <Container className="grid place-items-center min-h-dvh py-12">
         <div className="w-96">
           <GeneralPasswordReset />
         </div>

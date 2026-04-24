@@ -5,6 +5,7 @@ import * as schema from "../db/schemas/auth";
 import { admin as adminPlugin } from "better-auth/plugins";
 import { ac, roles } from "./permissions";
 import { SendEmail } from "@/features/auth/server";
+import { inviteEmail, passwordResetEmail } from "@/features/auth/templates/email-templates";
 
 export const auth = betterAuth({
   trustedOrigins: [
@@ -18,12 +19,11 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    sendResetPassword: async ({ user, url, token }, request) => {
-      await SendEmail({
-        to: user.email,
-        subject: "Set password",
-        text: `Click the link to give your new account a password: ${url}`,
-      });
+    sendResetPassword: async ({ user, url }, request) => {
+      const template = url.includes("invite=1")
+        ? inviteEmail(url)
+        : passwordResetEmail(url);
+      await SendEmail({ to: user.email, ...template });
     },
     // onPasswordReset: async ({ user }, request) => {
     //   // your logic here

@@ -12,6 +12,10 @@ export const signInFormSchema = z.object({
   }),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.email({ message: "must be valid" }).min(2).max(50),
+});
+
 export const passwordResetSchema = z
   .object({
     password: z.string().min(8, {

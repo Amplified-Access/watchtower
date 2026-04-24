@@ -9,6 +9,8 @@ import {
 import { adminApi } from "@/lib/api/admin";
 import { incidentsApi } from "@/lib/api/incidents";
 import { api } from "@/lib/api/client";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const adminRouter = router({
   saveFormDefinition: protectedProcedure
@@ -59,13 +61,35 @@ export const adminRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      try {
-        // Watcher invitation not yet implemented in Go backend
-        return { success: false, message: "Watcher invitation not yet available" };
-      } catch (error) {
-        console.error("Error inviting watcher:", error);
-        return { success: false, message: "Failed to invite watcher." };
+      const requestHeaders = await headers();
+
+      // Create the user account via better-auth admin plugin
+      const created = await auth.api.createUser({
+        body: {
+          name: input.name,
+          email: input.email,
+          password: crypto.randomUUID(), // placeholder — user sets their own via invite link
+          role: input.role ?? "watcher",
+        },
+        headers: requestHeaders,
+      });
+
+      if (!created?.user) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create user account",
+        });
       }
+
+      // Trigger sendResetPassword callback with invite marker so the right template is used
+      await auth.api.requestPasswordReset({
+        body: {
+          email: input.email,
+          redirectTo: "/reset-password?invite=1",
+        },
+      });
+
+      return { success: true };
     }),
 
   resetUserPassword: adminProcedure
