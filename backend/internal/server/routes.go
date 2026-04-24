@@ -15,7 +15,8 @@ import (
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.Recovery(), middleware.Logger())
 
 	allowedOrigins := []string{"http://localhost:3000"}
 	if raw := os.Getenv("ALLOWED_ORIGINS"); raw != "" {

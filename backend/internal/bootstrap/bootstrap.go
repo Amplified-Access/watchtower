@@ -2,19 +2,22 @@ package bootstrap
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 
-	"backend/internal/database"
+	"backend/pkg/logger"
+	pgClient "backend/pkg/postgres"
 	redisClient "backend/pkg/redis"
 )
 
 type Services struct {
-	DB    database.Service
-	Redis redisClient.Service
+	Logger *slog.Logger
+	DB     pgClient.Service
+	Redis  redisClient.Service
 }
 
 func Run() *Services {
@@ -22,8 +25,13 @@ func Run() *Services {
 
 	svc := &Services{}
 
+	step("Logger", func() error {
+		svc.Logger = logger.New()
+		return nil
+	})
+
 	step("Database", func() error {
-		db, err := database.New()
+		db, err := pgClient.New()
 		if err != nil {
 			return err
 		}
@@ -46,7 +54,7 @@ func Run() *Services {
 }
 
 func step(name string, fn func() error) {
-	fmt.Printf("  ♻️   %s connecting...\n", name)
+	fmt.Printf("  ♻️   %s initializing...\n", name)
 	start := time.Now()
 	if err := fn(); err != nil {
 		fmt.Printf("  ❌  %s failed: %v\n\n", name, err)
