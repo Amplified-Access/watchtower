@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -43,19 +44,26 @@ func (s *Server) RegisterRoutes() http.Handler {
 	superAdminMW := middleware.RequireRole(entity.RoleSuperAdmin)
 	orgMW := middleware.RequireOrganization()
 
+	// Rate limiter instances
+	rdb := s.redis.Client()
+	publicLimiter := middleware.RateLimit(rdb, 60, time.Minute, middleware.PublicIPKey)
+	strictLimiter := middleware.RateLimit(rdb, 10, time.Minute, middleware.StrictIPKey)
+	authLimiter := middleware.RateLimit(rdb, 200, time.Minute, middleware.AuthUserKey)
+
 	// ── Public routes ──────────────────────────────────────────────
 	pub := r.Group("/api/v1")
+	pub.Use(publicLimiter)
 	{
 		// Organizations
 		pub.GET("/organizations", s.orgHandler.GetAll)
 		pub.GET("/organizations/:slug", s.orgHandler.GetBySlug)
-		pub.POST("/organizations/apply", s.orgHandler.SubmitApplication)
+		pub.POST("/organizations/apply", strictLimiter, s.orgHandler.SubmitApplication)
 
 		// Incident types
 		pub.GET("/incident-types", s.incidentHandler.GetAllTypes)
 
 		// Anonymous incident reports
-		pub.POST("/incidents/anonymous", s.incidentHandler.SubmitAnonymousReport)
+		pub.POST("/incidents/anonymous", strictLimiter, s.incidentHandler.SubmitAnonymousReport)
 		pub.GET("/incidents/anonymous", s.incidentHandler.GetAnonymousReports)
 		pub.GET("/incidents/heatmap", s.incidentHandler.GetHeatmapData)
 
@@ -75,7 +83,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		pub.POST("/datasets/:id/download", s.datasetHandler.IncrementDownload)
 
 		// Alert subscriptions
-		pub.POST("/alerts", s.alertHandler.Create)
+		pub.POST("/alerts", strictLimiter, s.alertHandler.Create)
 		pub.GET("/alerts", s.alertHandler.GetByEmail)
 		pub.PATCH("/alerts/:id", s.alertHandler.Update)
 		pub.POST("/alerts/:id/deactivate", s.alertHandler.Deactivate)
@@ -87,6 +95,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// ── Authenticated routes ───────────────────────────────────────
 	auth := r.Group("/api/v1", authMW)
+	auth.Use(authLimiter)
 	{
 		auth.GET("/me", s.userHandler.GetCurrentUser)
 
