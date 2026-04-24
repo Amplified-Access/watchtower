@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -26,19 +25,19 @@ type service struct {
 
 var dbInstance *service
 
-func New() Service {
+func New() (Service, error) {
 	if dbInstance != nil {
-		return dbInstance
+		return dbInstance, nil
 	}
 
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
-		log.Fatal("DATABASE_URL environment variable is not set")
+		return nil, fmt.Errorf("DATABASE_URL environment variable is not set")
 	}
 
 	db, err := sql.Open("pgx", databaseURL)
 	if err != nil {
-		log.Fatalf("failed to open database: %v", err)
+		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
 	db.SetMaxOpenConns(25)
@@ -46,7 +45,7 @@ func New() Service {
 	db.SetConnMaxLifetime(5 * time.Minute)
 
 	dbInstance = &service{db: db}
-	return dbInstance
+	return dbInstance, nil
 }
 
 func (s *service) DB() *sql.DB {

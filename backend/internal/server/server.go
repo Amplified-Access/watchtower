@@ -20,11 +20,13 @@ import (
 	orguc "backend/internal/usecase/organization"
 	reportuc "backend/internal/usecase/report"
 	useruc "backend/internal/usecase/user"
+	redisClient "backend/pkg/redis"
 )
 
 type Server struct {
-	port int
-	db   database.Service
+	port  int
+	db    database.Service
+	redis redisClient.Service
 
 	orgHandler      *handler.OrganizationHandler
 	userHandler     *handler.UserHandler
@@ -37,13 +39,12 @@ type Server struct {
 	userUseCase     *useruc.UseCase
 }
 
-func NewServer() *http.Server {
+func NewServer(dbSvc database.Service, redisSvc redisClient.Service) *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	if port == 0 {
 		port = 8080
 	}
 
-	dbSvc := database.New()
 	sqlDB := dbSvc.DB()
 
 	// Repositories
@@ -75,6 +76,7 @@ func NewServer() *http.Server {
 	newServer := &Server{
 		port:            port,
 		db:              dbSvc,
+		redis:           redisSvc,
 		userHandler:     handler.NewUserHandler(userUC),
 		orgHandler:      handler.NewOrganizationHandler(orgUC),
 		incidentHandler: handler.NewIncidentHandler(incidentUC),

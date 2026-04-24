@@ -174,5 +174,9 @@ func (s *Server) HelloWorldHandler(c *gin.Context) {
 }
 
 func (s *Server) healthHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, s.db.Health())
+	health := map[string]any{
+		"db":    s.db.Health(),
+		"redis": s.redis.Health(),
+	}
+	c.JSON(http.StatusOK, health)
 }

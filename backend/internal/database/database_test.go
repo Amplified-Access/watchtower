@@ -66,8 +66,11 @@ func TestMain(m *testing.M) {
 }
 
 func TestNew(t *testing.T) {
-	dbInstance = nil // reset singleton
-	srv := New()
+	dbInstance = nil
+	srv, err := New()
+	if err != nil {
+		t.Fatalf("New() returned error: %v", err)
+	}
 	if srv == nil {
 		t.Fatal("New() returned nil")
 	}
@@ -75,7 +78,10 @@ func TestNew(t *testing.T) {
 
 func TestHealth(t *testing.T) {
 	dbInstance = nil
-	srv := New()
+	srv, err := New()
+	if err != nil {
+		t.Fatalf("New() returned error: %v", err)
+	}
 
 	stats := srv.Health()
 
@@ -94,7 +100,10 @@ func TestHealth(t *testing.T) {
 
 func TestClose(t *testing.T) {
 	dbInstance = nil
-	srv := New()
+	srv, err := New()
+	if err != nil {
+		t.Fatalf("New() returned error: %v", err)
+	}
 
 	if srv.Close() != nil {
 		t.Fatalf("expected Close() to return nil")
