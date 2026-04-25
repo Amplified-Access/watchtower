@@ -124,7 +124,7 @@ const DatasetsPage = () => {
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
         <Container size="xs" className="">
           <TextComponent className="text-sm ">
-            Discover comprenensive datasets - freely available for research,
+            Discover comprehensive datasets - freely available for research,
             analysis and community use.
           </TextComponent>
         </Container>

@@ -8,20 +8,26 @@ import (
 )
 
 type UseCase struct {
-	userRepo    repository.UserRepository
+	userRepo     repository.UserRepository
 	incidentRepo repository.IncidentRepository
-	formRepo    repository.FormRepository
+	formRepo     repository.FormRepository
+	orgRepo      repository.OrganizationRepository
+	appRepo      repository.OrganizationApplicationRepository
 }
 
 func New(
 	userRepo repository.UserRepository,
 	incidentRepo repository.IncidentRepository,
 	formRepo repository.FormRepository,
+	orgRepo repository.OrganizationRepository,
+	appRepo repository.OrganizationApplicationRepository,
 ) *UseCase {
 	return &UseCase{
-		userRepo:    userRepo,
+		userRepo:     userRepo,
 		incidentRepo: incidentRepo,
-		formRepo:    formRepo,
+		formRepo:     formRepo,
+		orgRepo:      orgRepo,
+		appRepo:      appRepo,
 	}
 }
 
@@ -72,12 +78,58 @@ func (uc *UseCase) GetAllFormsForSuperAdmin(ctx context.Context, params entity.L
 }
 
 func (uc *UseCase) GetPlatformStats(ctx context.Context) (*entity.PlatformStats, error) {
-	// In a real implementation, this would aggregate from userRepo, incidentRepo, organizationRepo, etc.
-	// For now, return a placeholder to satisfy the frontend migration.
-	stats := &entity.PlatformStats{
-		UptimePercentage: 99.9,
+	_, orgTotal, err := uc.orgRepo.FindAll(ctx, entity.ListParams{Limit: 1})
+	if err != nil {
+		return nil, err
 	}
-	return stats, nil
+
+	roleAdmin := entity.RoleAdmin
+	admins, err := uc.userRepo.FindAll(ctx, &roleAdmin)
+	if err != nil {
+		return nil, err
+	}
+	roleSuperAdmin := entity.RoleSuperAdmin
+	superAdmins, err := uc.userRepo.FindAll(ctx, &roleSuperAdmin)
+	if err != nil {
+		return nil, err
+	}
+
+	roleWatcher := entity.RoleWatcher
+	watchers, err := uc.userRepo.FindAll(ctx, &roleWatcher)
+	if err != nil {
+		return nil, err
+	}
+
+	apps, err := uc.appRepo.FindAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	pending := 0
+	for _, a := range apps {
+		if a.Status == entity.ApplicationPending {
+			pending++
+		}
+	}
+
+	forms, _, err := uc.formRepo.FindAllForSuperAdmin(ctx, entity.ListParams{Limit: 1000})
+	if err != nil {
+		return nil, err
+	}
+	activeForms := 0
+	for _, f := range forms {
+		if f.IsActive {
+			activeForms++
+		}
+	}
+
+	return &entity.PlatformStats{
+		TotalOrganizations:  orgTotal,
+		TotalAdmins:         len(admins) + len(superAdmins),
+		TotalWatchers:       len(watchers),
+		PendingApplications: pending,
+		ActiveForms:         activeForms,
+		UptimePercentage:    99.9,
+	}, nil
 }
 
 func (uc *UseCase) GetRecentActivity(ctx context.Context, limit int) ([]*entity.ActivityItem, error) {

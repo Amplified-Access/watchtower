@@ -334,7 +334,7 @@ func (r *AnonymousIncidentReportRepository) FindAll(ctx context.Context, country
 		idx++
 	}
 	if category != nil {
-		q += fmt.Sprintf(" AND incident_type_id = $%d", idx)
+		q += fmt.Sprintf(" AND incident_type_id = (SELECT id FROM incident_types WHERE name = $%d LIMIT 1)", idx)
 		args = append(args, *category)
 	}
 	q += " ORDER BY created_at DESC"
@@ -369,12 +369,16 @@ func (r *AnonymousIncidentReportRepository) Create(ctx context.Context, report *
 	if err != nil {
 		return err
 	}
+	entitiesJSON, err := json.Marshal(report.Entities)
+	if err != nil {
+		return err
+	}
 	now := time.Now()
 	_, err = r.db.ExecContext(ctx,
 		`INSERT INTO anonymous_incident_reports
 		(id, incident_type_id, location, description, entities, injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-		report.ID, report.IncidentTypeID, locJSON, report.Description, report.Entities,
+		report.ID, report.IncidentTypeID, locJSON, report.Description, string(entitiesJSON),
 		report.Injuries, report.Fatalities, report.EvidenceFileKey, report.AudioFileKey, now, now)
 	return err
 }
@@ -405,13 +409,16 @@ func scanAnonReports(rows *sql.Rows) ([]*entity.AnonymousIncidentReport, error) 
 	for rows.Next() {
 		var r entity.AnonymousIncidentReport
 		var locJSON []byte
-		var evidKey, audKey sql.NullString
-		if err := rows.Scan(&r.ID, &r.IncidentTypeID, &locJSON, &r.Description, &r.Entities,
+		var entitiesStr, evidKey, audKey sql.NullString
+		if err := rows.Scan(&r.ID, &r.IncidentTypeID, &locJSON, &r.Description, &entitiesStr,
 			&r.Injuries, &r.Fatalities, &evidKey, &audKey, &r.CreatedAt, &r.UpdatedAt); err != nil {
 			return nil, err
 		}
 		if err := json.Unmarshal(locJSON, &r.Location); err != nil {
 			return nil, err
+		}
+		if entitiesStr.Valid && entitiesStr.String != "" {
+			_ = json.Unmarshal([]byte(entitiesStr.String), &r.Entities)
 		}
 		if evidKey.Valid {
 			r.EvidenceFileKey = &evidKey.String
@@ -497,6 +504,10 @@ func (r *OrganizationIncidentReportRepository) Create(ctx context.Context, repor
 	if err != nil {
 		return err
 	}
+	entitiesJSON, err := json.Marshal(report.Entities)
+	if err != nil {
+		return err
+	}
 	now := time.Now()
 	_, err = r.db.ExecContext(ctx,
 		`INSERT INTO organization_incident_reports
@@ -504,7 +515,7 @@ func (r *OrganizationIncidentReportRepository) Create(ctx context.Context, repor
 		injuries, fatalities, evidence_file_key, audio_file_key, severity, verified, created_at, updated_at)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
 		report.ID, report.OrganizationID, report.ReportedByUserID, report.IncidentTypeID, locJSON,
-		report.Description, report.Entities, report.Injuries, report.Fatalities,
+		report.Description, string(entitiesJSON), report.Injuries, report.Fatalities,
 		report.EvidenceFileKey, report.AudioFileKey, string(report.Severity), report.Verified, now, now)
 	return err
 }
@@ -525,16 +536,19 @@ func scanOrgReports(rows *sql.Rows) ([]*entity.OrganizationIncidentReport, error
 	for rows.Next() {
 		var r entity.OrganizationIncidentReport
 		var locJSON []byte
-		var evidKey, audKey, verifiedByID sql.NullString
+		var entitiesStr, evidKey, audKey, verifiedByID sql.NullString
 		var verifiedAt sql.NullTime
 		if err := rows.Scan(&r.ID, &r.OrganizationID, &r.ReportedByUserID, &r.IncidentTypeID, &locJSON,
-			&r.Description, &r.Entities, &r.Injuries, &r.Fatalities,
+			&r.Description, &entitiesStr, &r.Injuries, &r.Fatalities,
 			&evidKey, &audKey, &r.Severity, &r.Verified,
 			&verifiedAt, &verifiedByID, &r.CreatedAt, &r.UpdatedAt); err != nil {
 			return nil, err
 		}
 		if err := json.Unmarshal(locJSON, &r.Location); err != nil {
 			return nil, err
+		}
+		if entitiesStr.Valid && entitiesStr.String != "" {
+			_ = json.Unmarshal([]byte(entitiesStr.String), &r.Entities)
 		}
 		if evidKey.Valid {
 			r.EvidenceFileKey = &evidKey.String

@@ -1,21 +1,17 @@
 import { TRPCError } from "@trpc/server";
 import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { publicProcedure } from "./trpc";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 async function extractToken(): Promise<string | null> {
-  const headersList = await headers();
-  const cookieHeader = headersList.get("cookie");
-  if (!cookieHeader) return null;
-  const cookies = Object.fromEntries(
-    cookieHeader.split(";").map((c) => {
-      const [key, ...val] = c.trim().split("=");
-      return [key, val.join("=")];
-    })
-  );
-  return cookies["better-auth.session_token"] ?? null;
+  try {
+    const store = await cookies();
+    return store.get("better-auth.session_token")?.value ?? null;
+  } catch {
+    return null;
+  }
 }
 
 async function getUserFromGoBackend(token: string) {
