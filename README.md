@@ -104,12 +104,24 @@ This project uses [Husky](https://typicode.github.io/husky/) to enforce quality 
 
 All checks must pass for the commit to proceed.
 
-### CI/CD
+### CI/CD and Branching
 
-GitHub Actions pipelines run on pushes to `staging` and `production` branches:
+All work is merged into `main` via pull requests. The `staging` and `production` branches are then rebased from `main` to promote changes:
 
-- Backend tests run via `go test ./...` and deploy to Railway.
-- Frontend deploys to Vercel.
+```
+feature-branch → main (via PR)
+main → staging  (rebase to promote to staging)
+main → production (rebase to promote to production)
+```
+
+Both services have dedicated environments on their respective platforms:
+
+| Service  | Platform | Staging                    | Production                    |
+|----------|----------|----------------------------|-------------------------------|
+| Backend  | Railway  | Deploys on push to `staging` | Deploys on push to `production` |
+| Frontend | Vercel   | Deploys on push to `staging` | Deploys on push to `production` |
+
+The GitHub Actions pipeline runs `go test ./...` before every backend deploy.
 
 ## License
 
