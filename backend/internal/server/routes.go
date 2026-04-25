@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -17,7 +18,7 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.New()
-	r.Use(gin.Recovery(), middleware.Logger())
+	r.Use(sentrygin.New(sentrygin.Options{Repanic: true}), gin.Recovery(), middleware.Logger())
 
 	allowedOrigins := []string{"http://localhost:3000"}
 	if raw := os.Getenv("ALLOWED_ORIGINS"); raw != "" {

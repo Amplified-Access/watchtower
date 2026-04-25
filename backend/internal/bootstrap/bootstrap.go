@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 
@@ -43,6 +44,16 @@ func Run() *Services {
 		svc.Redis = r
 		return nil
 	})
+
+	if dsn := os.Getenv("SENTRY_DSN"); dsn != "" {
+		step("Sentry", func() error {
+			return sentry.Init(sentry.ClientOptions{
+				Dsn:              dsn,
+				Environment:      os.Getenv("APP_ENV"),
+				TracesSampleRate: 1.0,
+			})
+		})
+	}
 
 	gin.SetMode(gin.ReleaseMode)
 
