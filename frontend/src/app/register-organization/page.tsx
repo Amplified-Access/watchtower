@@ -7,7 +7,7 @@ import Link from "next/link";
 import React from "react";
 import BackButton from "./back-button";
 
-const page = () => {
+const Page = () => {
   return (
     <section className="py-3  h-[100vh] flex flex-col justify-center">
       <Container className=" lg:px-4 " size="sm">
@@ -47,4 +47,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

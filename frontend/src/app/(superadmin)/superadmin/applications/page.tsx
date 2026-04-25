@@ -1,7 +1,7 @@
 import Container from "@/components/common/container";
 import ApplicationsContent from "@/features/super-admin/components/applications/applications-content";
 
-const page = () => {
+const Page = () => {
   return (
     <section>
       <Container size="lg">
@@ -13,4 +13,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

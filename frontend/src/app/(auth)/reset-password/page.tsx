@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Home } from "lucide-react";
 import Link from "next/link";
 
-const page = () => {
+const Page = () => {
   return (
     <section className="">
       <Link
@@ -26,4 +26,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

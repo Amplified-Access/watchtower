@@ -1,6 +1,6 @@
 import AdminSignUpForm from "@/features/super-admin/components/auth/temp-sign-up";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <AdminSignUpForm />
@@ -8,4 +8,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

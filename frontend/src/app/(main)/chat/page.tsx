@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
-const page = () => {
+const Page = () => {
   const [customQuestion, setCustomQuestion] = useState("");
   const [isListening, setIsListening] = useState(false);
   const router = useRouter();
@@ -307,4 +307,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

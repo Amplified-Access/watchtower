@@ -48,7 +48,7 @@ const AddField = ({ questions, setQuestions }: any) => {
     const newQuestion: Record<string, any> = {};
 
     // Get form values
-    for (let [key, value] of formData.entries()) {
+    for (const [key, value] of formData.entries()) {
       if (value) {
         // Only add non-empty values
         newQuestion[key] = value;

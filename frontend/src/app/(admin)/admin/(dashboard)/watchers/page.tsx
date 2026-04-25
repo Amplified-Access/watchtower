@@ -2,7 +2,7 @@ import Container from "@/components/common/container";
 import WatcherInvitation from "@/features/admin/components/watcher-invitation";
 import OrganizationWatchersContent from "@/features/admin/components/watchers/organization-watchers-content";
 
-const page = () => {
+const Page = () => {
   return (
     <section>
       <Container size="sm">
@@ -15,4 +15,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

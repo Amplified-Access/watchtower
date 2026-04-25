@@ -55,7 +55,7 @@ const statusColors = {
   published: "border-green-200 text-green-700 bg-green-50",
 };
 
-const page = () => {
+const Page = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -407,4 +407,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

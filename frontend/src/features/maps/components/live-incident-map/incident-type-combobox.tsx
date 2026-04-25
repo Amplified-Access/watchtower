@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/command";
 import { useQueryState } from "nuqs";
 
-const IncidentTypeCombobox = ({}: {}) => {
+const IncidentTypeCombobox = () => {
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useQueryState("category");
   const incidentCategories =

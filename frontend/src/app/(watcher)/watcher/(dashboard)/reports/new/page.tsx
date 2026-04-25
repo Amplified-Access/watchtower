@@ -22,7 +22,7 @@ import { FileText, ArrowLeft, Upload, Save, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const { user, isLoading: userLoading } = useExtendedSession();
 
@@ -245,4 +245,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

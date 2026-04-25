@@ -1,7 +1,7 @@
 import Container from "@/components/common/container";
 import FormsContent from "@/features/admin/components/forms/forms-content";
 
-const page = () => {
+const Page = () => {
   return (
     <div className="p-6">
       <Container size="free">
@@ -11,4 +11,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

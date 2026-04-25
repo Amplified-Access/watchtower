@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import LiveIncidentMap from "@/features/maps/components/live-incident-map";
 import Loader from "@/components/common/loader";
 
-const page = async () => {
+const Page = async () => {
   return (
     <section>
       <Suspense
@@ -18,4 +18,4 @@ const page = async () => {
   );
 };
 
-export default page;
+export default Page;

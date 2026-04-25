@@ -1,7 +1,7 @@
 import Container from "@/components/common/container";
 import OrganizationsContent from "@/features/super-admin/components/organizations/organizations-content";
 
-const page = () => {
+const Page = () => {
   return (
     <section>
       <Container>
@@ -13,4 +13,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -1,6 +1,6 @@
 import Container from "@/components/common/container";
 
-const page = () => {
+const Page = () => {
   return (
     <section>
       <Container>profile</Container>
@@ -8,4 +8,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

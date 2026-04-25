@@ -1,7 +1,7 @@
 import Container from "@/components/common/container";
 import WatchersContent from "@/features/super-admin/components/watchers/watchers-content";
 
-const page = () => {
+const Page = () => {
   return (
     <div className="pt-2">
       <Container size="lg">
@@ -11,4 +11,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
