@@ -48,10 +48,12 @@ func Error(c *gin.Context, err error) {
 		case errors.Is(domainErr.Err, domainerrors.ErrBadRequest):
 			c.JSON(http.StatusBadRequest, Response{Success: false, Error: domainErr.Error()})
 		default:
+			_ = c.Error(err)
 			c.JSON(http.StatusInternalServerError, Response{Success: false, Error: "internal server error"})
 		}
 		return
 	}
+	_ = c.Error(err)
 	c.JSON(http.StatusInternalServerError, Response{Success: false, Error: "internal server error"})
 }
 
