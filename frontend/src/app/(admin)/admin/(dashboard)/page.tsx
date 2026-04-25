@@ -1,7 +1,7 @@
 import AdminDashboardContent from "@/features/admin/components/admin-dashboard/admin-dashboard-content";
 
-const page = () => {
+const Page = () => {
   return <AdminDashboardContent />;
 };
 
-export default page;
+export default Page;

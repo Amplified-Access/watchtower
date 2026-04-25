@@ -51,7 +51,7 @@ type IncidentStatusFilter =
   | "resolved"
   | "closed";
 
-const page = () => {
+const Page = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<IncidentStatusFilter>("all");
@@ -386,4 +386,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

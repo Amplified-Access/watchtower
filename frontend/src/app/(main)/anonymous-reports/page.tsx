@@ -7,7 +7,7 @@ import TextComponent from "@/components/common/text-component";
 import AnonymousIncidentReportForm from "@/features/anonymous-reporting/components/anonymous-incident-report-form";
 import { useTranslations } from "next-intl";
 
-const page = () => {
+const Page = () => {
   const t = useTranslations("AnonymousReporting");
 
   return (
@@ -44,4 +44,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

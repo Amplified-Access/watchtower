@@ -1,7 +1,7 @@
 import Container from "@/components/common/container";
 import WatcherSignUpForm from "@/features/watcher/components/auth/watcher-sign-up-form";
 
-const page = () => {
+const Page = () => {
   return (
     <section className="">
       <Container className="grid place-items-center h-full min-h-[100dvh]">
@@ -13,4 +13,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -27,7 +27,7 @@ const statusColors = {
   closed: "border-gray-200 text-gray-700 bg-gray-50",
 };
 
-const page = () => {
+const Page = () => {
   const params = useParams();
   const incidentId = params.id as string;
 
@@ -298,4 +298,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

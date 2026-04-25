@@ -24,7 +24,7 @@ export function Conversation() {
       // Start the conversation with your agent
       await conversation.startSession({
         agentId: 'agent_4001k3jyeawcf8z9cs2f5aqvjx25', // Replace with your agent ID
-        // @ts-ignore
+        // @ts-expect-error userd is not in the type definitions yet
         userd: "YOUR_CUSTOMER_USER_ID", // Optional field for tracking your end user IDs
       });
     } catch (error) {

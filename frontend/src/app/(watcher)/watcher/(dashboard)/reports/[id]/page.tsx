@@ -25,7 +25,7 @@ const statusColors = {
   published: "border-green-200 text-green-700 bg-green-50",
 };
 
-const page = () => {
+const Page = () => {
   const params = useParams();
   const reportId = params.id as string;
 
@@ -298,4 +298,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

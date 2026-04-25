@@ -12,7 +12,7 @@ import CallToAction from "@/components/common/call-to-action";
 import { ArrowRight, MoveRight } from "lucide-react";
 import DynamicThematicMaps from "@/features/maps/components/dynamic-thematic-maps";
 
-const page = () => {
+const Page = () => {
   return (
     <>
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
@@ -92,4 +92,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
