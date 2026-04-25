@@ -232,7 +232,7 @@ export default function PublicReportsPage() {
                                       <div className="space-y-2">
                                         {selectedOrganization.location && (
                                           <div className="flex items-center text-sm">
-                                            <MapPin className="h-4 w-4 mr-2 text-muted-foreground flex-shrink-0" />
+                                            <MapPin className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
                                             <span>
                                               {selectedOrganization.location}
                                             </span>
@@ -241,7 +241,7 @@ export default function PublicReportsPage() {
 
                                         {selectedOrganization.website && (
                                           <div className="flex items-center text-sm">
-                                            <Globe className="h-4 w-4 mr-2 text-muted-foreground flex-shrink-0" />
+                                            <Globe className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
                                             <a
                                               href={`https://${selectedOrganization.website.replace(
                                                 /^https?:\/\//,
@@ -260,7 +260,7 @@ export default function PublicReportsPage() {
                                         )}
 
                                         <div className="flex items-center text-sm text-muted-foreground">
-                                          <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                                          <Calendar className="h-4 w-4 mr-2 shrink-0" />
                                           <span>
                                             Member since{" "}
                                             {new Date(
