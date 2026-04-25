@@ -327,7 +327,6 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
                           </div>
 
                           <Fragment>
-                            {/* @ts-expect-error incidentTypeDescriptions not in type */}
                             {report.incidentTypeDescriptions && (
                               <div className="space-y-1">
                                 <h4 className="text-xs font-medium text-gray-700 mb-1">
