@@ -106,7 +106,7 @@ const AddField = ({ questions, setQuestions }: any) => {
             <Plus className="shrink-0 " size={16} />
           </span>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[700px]">
+        <DialogContent className="sm:max-w-175">
           <form onSubmit={handleSubmit}>
             <DialogHeader className="mb-4">
               <DialogTitle>Add a field</DialogTitle>
@@ -114,7 +114,7 @@ const AddField = ({ questions, setQuestions }: any) => {
             <div className="grid gap-4">
               <div className="flex justify-between">
                 <Select value={fieldType} onValueChange={setFieldType}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-45">
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
                   <SelectContent>

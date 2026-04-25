@@ -73,7 +73,7 @@ const IncidentTypeCombobox = () => {
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full max-w-[500px] p-0">
+      <PopoverContent className="w-full max-w-125 p-0">
         <Command>
           <CommandInput placeholder="Search Category..." className="h-9" />
           <CommandList>
