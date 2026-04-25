@@ -76,7 +76,7 @@ export default function LanguageSelector({
             <Globe className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-2">
+        <PopoverContent className="w-50 p-2">
           <div className="space-y-1">
             {languages.map((lang) => (
               <Button
@@ -117,7 +117,7 @@ export default function LanguageSelector({
           <Globe className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-2">
+      <PopoverContent className="w-50 p-2">
         <div className="space-y-1">
           {languages.map((lang) => (
             <Button

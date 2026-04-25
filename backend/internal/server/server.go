@@ -10,6 +10,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 
 	"backend/internal/adapter/handler"
+	cacheRepo "backend/internal/adapter/repository/cache"
 	pgRepo "backend/internal/adapter/repository/postgres"
 	adminuc "backend/internal/usecase/admin"
 	alertuc "backend/internal/usecase/alert"
@@ -48,21 +49,24 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	}
 
 	sqlDB := dbSvc.DB()
+	rdb := redisSvc.Client()
 
-	// Repositories
+	// Repositories (raw postgres)
 	userRepo := pgRepo.NewUserRepository(sqlDB)
-	sessionRepo := pgRepo.NewSessionRepository(sqlDB)
-	orgRepo := pgRepo.NewOrganizationRepository(sqlDB)
 	appRepo := pgRepo.NewOrganizationApplicationRepository(sqlDB)
-	incidentTypeRepo := pgRepo.NewIncidentTypeRepository(sqlDB)
-	incidentRepo := pgRepo.NewIncidentRepository(sqlDB)
-	anonReportRepo := pgRepo.NewAnonymousIncidentReportRepository(sqlDB)
 	orgReportRepo := pgRepo.NewOrganizationIncidentReportRepository(sqlDB)
-	formRepo := pgRepo.NewFormRepository(sqlDB)
 	reportRepo := pgRepo.NewReportRepository(sqlDB)
-	insightRepo := pgRepo.NewInsightRepository(sqlDB)
-	datasetRepo := pgRepo.NewDatasetRepository(sqlDB)
 	alertRepo := pgRepo.NewAlertSubscriptionRepository(sqlDB)
+
+	// Repositories (cache-wrapped)
+	sessionRepo := cacheRepo.NewCachedSessionRepository(rdb, pgRepo.NewSessionRepository(sqlDB))
+	orgRepo := cacheRepo.NewCachedOrganizationRepository(rdb, pgRepo.NewOrganizationRepository(sqlDB))
+	formRepo := cacheRepo.NewCachedFormRepository(rdb, pgRepo.NewFormRepository(sqlDB))
+	incidentTypeRepo := cacheRepo.NewCachedIncidentTypeRepository(rdb, pgRepo.NewIncidentTypeRepository(sqlDB))
+	incidentRepo := cacheRepo.NewCachedIncidentRepository(rdb, pgRepo.NewIncidentRepository(sqlDB))
+	anonReportRepo := cacheRepo.NewCachedAnonymousReportRepository(rdb, pgRepo.NewAnonymousIncidentReportRepository(sqlDB))
+	insightRepo := cacheRepo.NewCachedInsightRepository(rdb, pgRepo.NewInsightRepository(sqlDB))
+	datasetRepo := cacheRepo.NewCachedDatasetRepository(rdb, pgRepo.NewDatasetRepository(sqlDB))
 
 	// Use cases
 	userUC := useruc.New(userRepo, sessionRepo)
