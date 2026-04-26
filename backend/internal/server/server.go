@@ -14,6 +14,7 @@ import (
 	pgRepo "backend/internal/adapter/repository/postgres"
 	adminuc "backend/internal/usecase/admin"
 	alertuc "backend/internal/usecase/alert"
+	authuc "backend/internal/usecase/auth"
 	datasetuuc "backend/internal/usecase/dataset"
 	incidentuc "backend/internal/usecase/incident"
 	insightuc "backend/internal/usecase/insight"
@@ -39,6 +40,7 @@ type Server struct {
 	alertHandler    *handler.AlertHandler
 	adminHandler    *handler.AdminHandler
 	emailHandler    *handler.EmailHandler
+	authHandler     *handler.AuthHandler
 	userUseCase     *useruc.UseCase
 }
 
@@ -53,6 +55,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 
 	// Repositories (raw postgres)
 	userRepo := pgRepo.NewUserRepository(sqlDB)
+	authRepo := pgRepo.NewAuthRepository(sqlDB)
 	appRepo := pgRepo.NewOrganizationApplicationRepository(sqlDB)
 	orgReportRepo := pgRepo.NewOrganizationIncidentReportRepository(sqlDB)
 	reportRepo := pgRepo.NewReportRepository(sqlDB)
@@ -68,8 +71,12 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	insightRepo := cacheRepo.NewCachedInsightRepository(rdb, pgRepo.NewInsightRepository(sqlDB))
 	datasetRepo := cacheRepo.NewCachedDatasetRepository(rdb, pgRepo.NewDatasetRepository(sqlDB))
 
+	// Email service
+	mailSvc := emailSvc.New()
+
 	// Use cases
 	userUC := useruc.New(userRepo, sessionRepo)
+	authUC := authuc.New(userRepo, authRepo, mailSvc)
 	orgUC := orguc.New(orgRepo, appRepo)
 	incidentUC := incidentuc.New(incidentRepo, incidentTypeRepo, anonReportRepo, orgReportRepo)
 	reportUC := reportuc.New(reportRepo)
@@ -77,9 +84,6 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	datasetUC := datasetuuc.New(datasetRepo)
 	alertUC := alertuc.New(alertRepo)
 	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo)
-
-	// Email service
-	mailSvc := emailSvc.New()
 
 	// Handlers
 	newServer := &Server{
@@ -95,6 +99,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 		alertHandler:    handler.NewAlertHandler(alertUC),
 		adminHandler:    handler.NewAdminHandler(adminUC),
 		emailHandler:    handler.NewEmailHandler(mailSvc),
+		authHandler:     handler.NewAuthHandler(authUC),
 		userUseCase:     userUC,
 	}
 

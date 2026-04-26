@@ -24,6 +24,8 @@ func (m *mockSessionRepo) FindUserByToken(_ context.Context, _ string) (*entity.
 	return m.user, m.err
 }
 
+func (m *mockSessionRepo) DeleteSession(_ context.Context, _ string) error { return nil }
+
 type mockUserRepo struct {
 	user         *entity.User
 	users        []*entity.User

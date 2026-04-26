@@ -1,5 +1,5 @@
 "use client";
-import { authClient } from "@/lib/auth-client";
+import { useExtendedSession } from "@/hooks/use-extended-session";
 import { trpc } from "@/_trpc/client";
 import {
   Breadcrumb,
@@ -14,21 +14,20 @@ import { useEffect } from "react";
 const AdminBreadcrumb = () => {
   const updateOrganization = useStore((state: any) => state.updateOrganization);
 
-  const { data: session, isPending, error, refetch } = authClient.useSession();
+  const { user, isLoading: isPending } = useExtendedSession();
 
-  // Only run the query when session.user.id is available
   const adminOrg = trpc.getAdminOrganization.useQuery(
-    { userId: session?.user?.id ?? "" },
-    { enabled: !!session?.user?.id }
+    { userId: user?.id ?? "" },
+    { enabled: !!user?.id }
   );
 
   useEffect(() => {
-    if (adminOrg.data !== undefined && session?.user) {
+    if (adminOrg.data !== undefined && user) {
       updateOrganization(adminOrg.data ?? null);
     }
-  }, [adminOrg.data, session, updateOrganization]);
+  }, [adminOrg.data, user, updateOrganization]);
 
-  if (error || adminOrg.error) {
+  if (adminOrg.error) {
     toast.error("Failed to load organization data.");
     return <div>Error loading organization.</div>;
   }
@@ -39,7 +38,7 @@ const AdminBreadcrumb = () => {
         <BreadcrumbItem>
           <BreadcrumbPage className="line-clamp-1 flex">
             Admin -{" "}
-            {isPending || adminOrg.isLoading ? (
+            {(isPending || adminOrg.isLoading) ? (
               <p className="bg-muted-foreground/10 w-20 p-2 rounded-md animate-pulse ms-2" />
             ) : "organization" in (adminOrg?.data ?? {}) ? (
               (adminOrg.data as { organization: string | null }).organization

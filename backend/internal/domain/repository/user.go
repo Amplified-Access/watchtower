@@ -17,4 +17,5 @@ type UserRepository interface {
 type SessionRepository interface {
 	FindByToken(ctx context.Context, token string) (*entity.Session, error)
 	FindUserByToken(ctx context.Context, token string) (*entity.User, error)
+	DeleteSession(ctx context.Context, token string) error
 }

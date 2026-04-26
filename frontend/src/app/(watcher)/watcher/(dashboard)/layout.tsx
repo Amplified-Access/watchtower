@@ -14,21 +14,8 @@ import {
 import { AppSidebar } from "@/features/watcher/components/watcher-dashboard/app-sidebar";
 import RouteGuard from "@/components/auth/route-guard";
 import UserButton from "@/features/auth/components/user-button";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
-  } = authClient.useSession();
-  // console.log(session);
-  if (!session || !(session.user.role == "watcher")) {
-    router.push("/sign-in");
-  }
   return (
     <RouteGuard
       allowedRoles={["watcher", "admin", "super-admin"]}
@@ -54,9 +41,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
-            {/* <div className="ml-auto px-3">
-              <NavActions />
-            </div> */}
             <UserButton />
           </header>
           {children}

@@ -64,7 +64,7 @@
     "drizzle-orm": "^0.44.3",
     "drizzle-zod": "^0.8.3",
     "embla-carousel-react": "^8.6.0",
-    "import-in-the-middle": "^2.0.6",
+    "import-in-the-middle": "^3.0.1",
     "loaders.css": "^0.1.2",
     "lucide-react": "^0.487.0",
     "mapbox-gl": "^3.14.0",
@@ -98,6 +98,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@opentelemetry/instrumentation": "^0.215.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -118,5 +119,11 @@
   },
   "overrides": {
     "react-is": "^19.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@opentelemetry/instrumentation": "0.215.0",
+      "import-in-the-middle": "3.0.1"
+    }
   }
 }

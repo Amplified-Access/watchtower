@@ -92,6 +92,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 		// Internal email (protected by X-Internal-Token header)
 		pub.POST("/email/send", s.emailHandler.Send)
+
+		// Auth — email/password
+		pub.POST("/auth/login", strictLimiter, s.authHandler.Login)
+		pub.POST("/auth/register", strictLimiter, s.authHandler.Register)
+		pub.POST("/auth/logout", s.authHandler.Logout)
+		pub.POST("/auth/forgot-password", strictLimiter, s.authHandler.ForgotPassword)
+		pub.POST("/auth/reset-password", strictLimiter, s.authHandler.ResetPassword)
 	}
 
 	// ── Authenticated routes ───────────────────────────────────────

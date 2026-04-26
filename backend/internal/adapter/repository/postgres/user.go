@@ -73,10 +73,11 @@ func scanUser(row *sql.Row) (*entity.User, error) {
 	var banReason sql.NullString
 	var banExpires sql.NullTime
 	var image sql.NullString
+	var banned sql.NullBool
 	err := row.Scan(
 		&u.ID, &u.Name, &u.Email, &u.EmailVerified, &image,
 		&u.CreatedAt, &u.UpdatedAt,
-		&roleStr, &u.Banned, &banReason, &banExpires, &orgID,
+		&roleStr, &banned, &banReason, &banExpires, &orgID,
 	)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -84,6 +85,7 @@ func scanUser(row *sql.Row) (*entity.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	u.Banned = banned.Bool
 	if roleStr.Valid {
 		u.Role = entity.UserRole(roleStr.String)
 	}
@@ -109,14 +111,16 @@ func scanUsers(rows *sql.Rows) ([]*entity.User, error) {
 		var roleStr sql.NullString
 		var orgID, banReason, image sql.NullString
 		var banExpires sql.NullTime
+		var banned sql.NullBool
 		err := rows.Scan(
 			&u.ID, &u.Name, &u.Email, &u.EmailVerified, &image,
 			&u.CreatedAt, &u.UpdatedAt,
-			&roleStr, &u.Banned, &banReason, &banExpires, &orgID,
+			&roleStr, &banned, &banReason, &banExpires, &orgID,
 		)
 		if err != nil {
 			return nil, err
 		}
+		u.Banned = banned.Bool
 		if roleStr.Valid {
 			u.Role = entity.UserRole(roleStr.String)
 		}
@@ -170,6 +174,11 @@ func (r *SessionRepository) FindByToken(ctx context.Context, token string) (*ent
 		s.ImpersonatedBy = &impBy.String
 	}
 	return &s, nil
+}
+
+func (r *SessionRepository) DeleteSession(ctx context.Context, token string) error {
+	_, err := r.db.ExecContext(ctx, `DELETE FROM session WHERE token=$1`, token)
+	return err
 }
 
 func (r *SessionRepository) FindUserByToken(ctx context.Context, token string) (*entity.User, error) {
