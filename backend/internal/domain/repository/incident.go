@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"backend/internal/domain/entity"
 )
@@ -27,6 +28,8 @@ type IncidentRepository interface {
 	GetWeeklyTrend(ctx context.Context, orgID string) ([]*entity.WeeklyTrendPoint, error)
 	GetRecent(ctx context.Context, orgID string, limit int) ([]*entity.Incident, error)
 	GetPending(ctx context.Context, orgID string) ([]*entity.Incident, error)
+	CountAllSince(ctx context.Context, since time.Time) (int, error)
+	GetPlatformWeeklyTrend(ctx context.Context) ([]*entity.WeeklyTrendPoint, error)
 }
 
 type AnonymousIncidentReportRepository interface {
@@ -34,6 +37,7 @@ type AnonymousIncidentReportRepository interface {
 	FindByID(ctx context.Context, id string) (*entity.AnonymousIncidentReport, error)
 	Create(ctx context.Context, report *entity.AnonymousIncidentReport) error
 	GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error)
+	GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error)
 }
 
 type OrganizationIncidentReportRepository interface {
@@ -42,4 +46,5 @@ type OrganizationIncidentReportRepository interface {
 	FindByID(ctx context.Context, id string) (*entity.OrganizationIncidentReport, error)
 	Create(ctx context.Context, report *entity.OrganizationIncidentReport) error
 	GetStats(ctx context.Context, orgID string) (*entity.IncidentStats, error)
+	CountCritical(ctx context.Context) (int, error)
 }

@@ -10,26 +10,12 @@ import { AppSidebar } from "@/features/admin/components/admin-dashboard/app-side
 import UserButton from "@/features/auth/components/user-button";
 import RouteGuard from "@/components/auth/route-guard";
 import { ReactNode } from "react";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 
 interface Props {
   children: ReactNode;
 }
 
 const Layout = ({ children }: Props) => {
-  const router = useRouter();
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
-  } = authClient.useSession();
-  // console.log(session);
-  if (!session || !(session.user.role == "admin")) {
-    router.push("/sign-in");
-  }
-
   return (
     <RouteGuard
       allowedRoles={["admin", "super-admin"]}
@@ -48,9 +34,6 @@ const Layout = ({ children }: Props) => {
               <AdminBreadcrumb />
               <UserButton />
             </div>
-            {/* <div className="ml-auto px-3">
-              <NavActions />
-            </div> */}
           </header>
           <div className="flex-1 flex flex-col min-h-0">{children}</div>
         </SidebarInset>

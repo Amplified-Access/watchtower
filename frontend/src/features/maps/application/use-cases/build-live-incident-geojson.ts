@@ -14,7 +14,7 @@ export const buildLiveIncidentGeoJson = (
   }
 
   const features = reports
-    .filter((report) => report.lat && report.lon)
+    .filter((report) => report.lat != null && report.lon != null)
     .map((report) => ({
       type: "Feature" as const,
       geometry: {

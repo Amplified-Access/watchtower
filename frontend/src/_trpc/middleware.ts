@@ -1,21 +1,16 @@
 import { TRPCError } from "@trpc/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { publicProcedure } from "./trpc";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 async function extractToken(): Promise<string | null> {
-  const headersList = await headers();
-  const cookieHeader = headersList.get("cookie");
-  if (!cookieHeader) return null;
-  const cookies = Object.fromEntries(
-    cookieHeader.split(";").map((c) => {
-      const [key, ...val] = c.trim().split("=");
-      return [key, val.join("=")];
-    })
-  );
-  return cookies["better-auth.session_token"] ?? null;
+  try {
+    const store = await cookies();
+    return store.get("better-auth.session_token")?.value ?? null;
+  } catch {
+    return null;
+  }
 }
 
 async function getUserFromGoBackend(token: string) {
@@ -23,7 +18,6 @@ async function getUserFromGoBackend(token: string) {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    credentials: "include",
   });
   if (!res.ok) return null;
   const body = await res.json();
@@ -31,17 +25,6 @@ async function getUserFromGoBackend(token: string) {
 }
 
 export const authMiddleware = publicProcedure.use(async ({ next }) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "You must be logged in to access this resource",
-    });
-  }
-
   const token = await extractToken();
   if (!token) {
     throw new TRPCError({
@@ -51,16 +34,16 @@ export const authMiddleware = publicProcedure.use(async ({ next }) => {
   }
 
   const goUser = await getUserFromGoBackend(token);
+  if (!goUser) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Invalid or expired session",
+    });
+  }
 
   return next({
     ctx: {
-      session,
-      user: goUser ?? {
-        id: session.user.id,
-        role: "",
-        organizationId: undefined,
-        banned: false,
-      },
+      user: goUser,
     },
   });
 });

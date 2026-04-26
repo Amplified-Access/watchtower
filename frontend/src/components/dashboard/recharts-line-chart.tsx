@@ -82,11 +82,11 @@ export function RechartsLineChart({
       </div>
       <CardContent className="ps-0 ">
         {data.length === 0 ? (
-          <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+          <div className="h-50 flex items-center justify-center text-muted-foreground">
             No data available
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[200px] w-full ">
+          <ChartContainer config={chartConfig} className="h-50 w-full ">
             <LineChart
               accessibilityLayer
               data={data}

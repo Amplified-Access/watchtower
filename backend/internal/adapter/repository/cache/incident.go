@@ -11,6 +11,8 @@ import (
 	"backend/internal/domain/repository"
 )
 
+const platformTrendTTL = 1 * time.Hour
+
 const (
 	incidentStatsTTL   = 5 * time.Minute
 	incidentTrendTTL   = 1 * time.Hour
@@ -99,6 +101,23 @@ func (r *CachedIncidentRepository) GetPending(ctx context.Context, orgID string)
 		return result, err
 	}
 	cacheSet(ctx, r.rdb, key, result, incidentPendingTTL)
+	return result, nil
+}
+
+func (r *CachedIncidentRepository) CountAllSince(ctx context.Context, since time.Time) (int, error) {
+	return r.repo.CountAllSince(ctx, since)
+}
+
+func (r *CachedIncidentRepository) GetPlatformWeeklyTrend(ctx context.Context) ([]*entity.WeeklyTrendPoint, error) {
+	const key = "inc:platform:trend"
+	if cached, ok := cacheGet[[]*entity.WeeklyTrendPoint](ctx, r.rdb, key); ok {
+		return cached, nil
+	}
+	result, err := r.repo.GetPlatformWeeklyTrend(ctx)
+	if err != nil || result == nil {
+		return result, err
+	}
+	cacheSet(ctx, r.rdb, key, result, platformTrendTTL)
 	return result, nil
 }
 

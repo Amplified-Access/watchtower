@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { signInFormSchema } from "../schemas";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Loader from "@/components/common/loader";
 import {
   Form,
@@ -18,100 +18,66 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import Link from "next/link";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
+
+function roleRedirectPath(role: string): string {
+  switch (role) {
+    case "super-admin":
+      return "/superadmin";
+    case "admin":
+      return "/admin";
+    case "watcher":
+      return "/watcher";
+    case "independent-reporter":
+      return "/independent-reporter";
+    default:
+      return "/";
+  }
+}
 
 export function GeneralSignInForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [isSignedIn, setIsSigninedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
+
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema as any),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
-  const router = useRouter();
-  const session = authClient.useSession();
 
   async function onSubmit(values: z.infer<typeof signInFormSchema>) {
     setIsSigningIn(true);
     try {
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-      // toast.success("Not yet implemented");
-      const { data, error } = await authClient.signIn.email(
-        {
-          /**
-           * The user email
-           */
-          email: values.email,
-          /**
-           * The user password
-           */
-          password: values.password,
-          /**
-           * A URL to redirect to after the user verifies their email (optional)
-           */
-          /**
-           * remember the user session after the browser is closed.
-           * @default true
-           */
-          rememberMe: false,
-        },
-        {
-          onRequest: (ctx) => {
-            setIsSigningIn(true);
-          },
-          onSuccess: (ctx) => {
-            console.log("Successfully signed in");
-            setIsSigninedIn(true);
-            setInterval(() => {
-              setIsRedirecting(true);
-            }, 500);
-          },
-          onError: (ctx) => {
-            // display the error message
-            toast.error(ctx.error.message);
-          },
-        },
-      );
-      console.log(data?.user);
-    } catch (error) {
-      toast.error("Sign in failed");
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: values.email, password: values.password }),
+      });
+
+      const body = await res.json();
+
+      if (!res.ok) {
+        toast.error(body?.error ?? "Sign in failed");
+        return;
+      }
+
+      setIsSignedIn(true);
+      const role: string = body?.data?.user?.role ?? "";
+      setTimeout(() => {
+        window.location.href = roleRedirectPath(role);
+      }, 400);
+    } catch {
+      toast.error("Sign in failed. Please try again.");
     } finally {
       setIsSigningIn(false);
-      // setTimeout(() => {
-      //   setIsSigninedIn(false);
-      // }, 1000);
     }
-    console.log(values);
   }
-  const user = session?.data?.user;
-
-  useEffect(() => {
-    // We only want to run this after the session has finished loading
-    if (session.isPending) {
-      return;
-    }
-    // Check if the user is authenticated and has a role
-    if (user && user.role) {
-      if (user.role === "super-admin") {
-        router.push("/superadmin");
-      } else if (user.role === "admin") {
-        router.push("/admin");
-      } else if (user.role === "watcher") {
-        router.push("/watcher");
-      } else if (user.role === "independent-reporter") {
-        router.push("/independent-reporter"); // Corrected to use a specific path
-      }
-    }
-  }, [session.isPending, user, router]);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -174,8 +140,6 @@ export function GeneralSignInForm({
                   >
                     {isSigningIn ? (
                       <Loader />
-                    ) : isRedirecting ? (
-                      <span className="text-sm">Redirecting...</span>
                     ) : isSignedIn ? (
                       <Check />
                     ) : (

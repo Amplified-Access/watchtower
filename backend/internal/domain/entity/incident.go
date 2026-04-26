@@ -110,6 +110,11 @@ type WeeklyTrendPoint struct {
 	Count int    `json:"count"`
 }
 
+type TypeCount struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
 type HeatmapPoint struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`

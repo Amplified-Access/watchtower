@@ -148,8 +148,8 @@ export default function SuperAdminDashboardContent() {
                 <div className="ml-auto h-7 w-32 bg-muted rounded-lg animate-pulse" />
               </CardHeader>
               <CardContent className="flex flex-1 justify-center pb-0">
-                <div className="mx-auto aspect-square w-full max-w-[300px] flex items-center justify-center">
-                  <div className="h-[250px] w-[250px] bg-muted rounded-full animate-pulse" />
+                <div className="mx-auto aspect-square w-full max-w-75 flex items-center justify-center">
+                  <div className="h-62.5 w-62.5 bg-muted rounded-full animate-pulse" />
                 </div>
               </CardContent>
             </Card>
@@ -168,7 +168,7 @@ export default function SuperAdminDashboardContent() {
                     <div className="h-4 w-12 bg-muted rounded-md animate-pulse" />
                   </div>
                 </div>
-                <div className="h-[200px] w-full bg-muted rounded-md animate-pulse" />
+                <div className="h-50 w-full bg-muted rounded-md animate-pulse" />
                 <div className="mt-4 h-3 w-64 bg-muted rounded-md animate-pulse" />
               </CardContent>
             </Card>
@@ -431,7 +431,7 @@ export default function SuperAdminDashboardContent() {
         {/* Analytics Section */}
         <div className="grid gap-6 lg:grid-cols-2">
           <RechartsPieChart
-            title="Organizations by Type"
+            title="Reports by Incident Type"
             data={organizationTypes || []}
           />
           <RechartsLineChart

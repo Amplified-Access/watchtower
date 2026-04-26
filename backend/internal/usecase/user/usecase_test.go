@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"backend/internal/domain/entity"
 	domainerrors "backend/internal/domain/errors"
@@ -23,6 +24,8 @@ func (m *mockSessionRepo) FindByToken(_ context.Context, _ string) (*entity.Sess
 func (m *mockSessionRepo) FindUserByToken(_ context.Context, _ string) (*entity.User, error) {
 	return m.user, m.err
 }
+
+func (m *mockSessionRepo) DeleteSession(_ context.Context, _ string) error { return nil }
 
 type mockUserRepo struct {
 	user         *entity.User
@@ -44,6 +47,9 @@ func (m *mockUserRepo) FindAll(_ context.Context, role *entity.UserRole) ([]*ent
 	return m.users, m.err
 }
 
+func (m *mockUserRepo) CountByRoleSince(_ context.Context, _ entity.UserRole, _ time.Time) (int, error) {
+	return 0, nil
+}
 func (m *mockUserRepo) Update(_ context.Context, _ *entity.User) error { return m.err }
 func (m *mockUserRepo) Delete(_ context.Context, _ string) error       { return m.err }
 

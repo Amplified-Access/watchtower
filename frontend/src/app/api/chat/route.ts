@@ -27,6 +27,7 @@ Swahili (Kiswahili): Widely spoken across Kenya, Tanzania, Uganda, Rwanda, and t
 Luganda: The most widely spoken language in Uganda, particularly in the central region
 Amharic: The official working language of Ethiopia
 Kinyarwanda: The national language of Rwanda
+Kikuyu (Gikuyu): A Bantu language spoken primarily by the Kikuyu people of central Kenya
 Punjabi: Widely spoken in Pakistan and India, particularly in Punjab regions
 Urdu: The national language of Pakistan and widely spoken in India
 

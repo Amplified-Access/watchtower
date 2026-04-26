@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"backend/internal/domain/entity"
 	domainerrors "backend/internal/domain/errors"
@@ -27,8 +28,9 @@ func (m *mockOrgRepo) FindByID(_ context.Context, _ string) (*entity.Organizatio
 func (m *mockOrgRepo) FindBySlug(_ context.Context, _ string) (*entity.Organization, error) {
 	return m.org, m.err
 }
-func (m *mockOrgRepo) Create(_ context.Context, _ *entity.Organization) error { return m.err }
-func (m *mockOrgRepo) Update(_ context.Context, _ *entity.Organization) error { return m.err }
+func (m *mockOrgRepo) CountCreatedSince(_ context.Context, _ time.Time) (int, error) { return 0, nil }
+func (m *mockOrgRepo) Create(_ context.Context, _ *entity.Organization) error         { return m.err }
+func (m *mockOrgRepo) Update(_ context.Context, _ *entity.Organization) error         { return m.err }
 
 type mockAppRepo struct {
 	app            *entity.OrganizationApplication

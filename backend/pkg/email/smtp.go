@@ -35,7 +35,6 @@ func New() *SMTPService {
 
 func (s *SMTPService) Send(to, subject, text string, html *string) error {
 	addr := net.JoinHostPort(s.host, s.port)
-
 	var body string
 	if html != nil && *html != "" {
 		body = s.buildMultipart(to, subject, text, *html)

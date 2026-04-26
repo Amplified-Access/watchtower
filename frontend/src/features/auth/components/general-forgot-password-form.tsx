@@ -18,9 +18,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { authClient } from "@/lib/auth-client";
 import { Check } from "lucide-react";
 import Link from "next/link";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 export function GeneralForgotPasswordForm({
   className,
@@ -37,14 +38,18 @@ export function GeneralForgotPasswordForm({
   async function onSubmit(values: z.infer<typeof forgotPasswordSchema>) {
     setIsSending(true);
     try {
-      const { error } = await authClient.requestPasswordReset({
-        email: values.email,
-        redirectTo: "/reset-password",
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: values.email }),
       });
-      if (error) {
-        toast.error(error.message);
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        toast.error(body?.error ?? "Something went wrong. Please try again.");
         return;
       }
+
       setIsSent(true);
       toast.success("Reset link sent — check your inbox");
     } catch {

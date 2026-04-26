@@ -49,6 +49,11 @@ func (r *CachedSessionRepository) FindUserByToken(ctx context.Context, token str
 	return result, nil
 }
 
+func (r *CachedSessionRepository) DeleteSession(ctx context.Context, token string) error {
+	r.InvalidateToken(ctx, token)
+	return r.repo.DeleteSession(ctx, token)
+}
+
 // InvalidateToken removes all cached data for a session token (call on logout or user updates).
 func (r *CachedSessionRepository) InvalidateToken(ctx context.Context, token string) {
 	cacheDel(ctx, r.rdb,

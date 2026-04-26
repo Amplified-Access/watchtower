@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { passwordResetSchema } from "../schemas";
 import { toast } from "sonner";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import Loader from "@/components/common/loader";
 import {
   Form,
@@ -18,9 +18,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { authClient } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 const PasswordReset = ({
   className,
@@ -31,85 +32,46 @@ const PasswordReset = ({
 
   const form = useForm<z.infer<typeof passwordResetSchema>>({
     resolver: zodResolver(passwordResetSchema as any),
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: { password: "", confirmPassword: "" },
   });
+
   const router = useRouter();
-  const session = authClient.useSession();
-
   const params = useSearchParams();
-
   const token = params.get("token");
   const error = params.get("error");
 
   async function onSubmit(values: z.infer<typeof passwordResetSchema>) {
-    setIsResetting(true);
-
     if (!token) {
       toast.error("Invalid password reset link. No token found.");
-      setIsResetting(false);
       return;
     }
 
+    setIsResetting(true);
     try {
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-      // toast.success("Not yet implemented");
-      const { data, error } = await authClient.resetPassword(
-        {
-          newPassword: values.password,
-          token: token || undefined,
-        },
-        {
-          onRequest: (ctx) => {
-            setIsResetting(true);
-          },
-          onSuccess: (ctx) => {
-            console.log("Successfully reset password");
-            setIsReset(true);
-          },
-          onError: (ctx) => {
-            // display the error message
-            toast.error(ctx.error.message);
-          },
-        }
-      );
-      if (error) {
-        throw new Error("Failed to reset password");
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, password: values.password }),
+      });
+
+      const body = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        toast.error(body?.error ?? "Failed to reset password");
+        return;
       }
-      console.log(data);
-    } catch (error) {
-      toast.error("Sign in failed");
-    } finally {
-      setIsResetting(false);
+
+      setIsReset(true);
       setTimeout(() => {
-        setIsReset(false);
         router.push("/sign-in");
       }, 1000);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsResetting(false);
     }
-    console.log(values);
   }
-  //   const user = session?.data?.user;
 
-  //   useEffect(() => {
-  //     // We only want to run this after the session has finished loading
-  //     if (session.isPending) {
-  //       return;
-  //     }
-  //     // Check if the user is authenticated and has a role
-  //     if (user && user.role) {
-  //       if (user.role === "super-admin") {
-  //         router.push("/superadmin");
-  //       } else if (user.role === "admin") {
-  //         router.push("/admin");
-  //       } else if (user.role === "watcher") {
-  //         router.push("/watcher");
-  //       } else if (user.role === "independent-reporter") {
-  //         router.push("/independent-reporter"); // Corrected to use a specific path
-  //       }
-  //     }
-  //   }, [session.isPending, user, router]);
   if (!token) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -120,7 +82,7 @@ const PasswordReset = ({
             </h1>
             <p className="text-gray-700">
               You cannot reset your own password. Please request your
-              organization's administrator to initialize a password reset.
+              organization&apos;s administrator to initialize a password reset.
             </p>
           </CardContent>
         </Card>
@@ -139,7 +101,7 @@ const PasswordReset = ({
           </CardHeader>
           <CardContent>
             <p className="text-gray-700">
-              This link has expired. Please contact your organization's
+              This link has expired. Please contact your organization&apos;s
               administrator for a new invitation.
             </p>
           </CardContent>
@@ -202,15 +164,6 @@ const PasswordReset = ({
                   </Button>
                 </div>
               </div>
-              {/* <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a
-                  href="/register-organization"
-                  className="underline underline-offset-4"
-                >
-                  Register organization
-                </a>
-              </div> */}
             </form>
           </Form>
         </CardContent>

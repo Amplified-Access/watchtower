@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
 import { useExtendedSession } from "@/hooks/use-extended-session";
 import Loader from "@/components/common/loader";
 
@@ -20,24 +19,17 @@ export default function RouteGuard({
   fallbackPath = "/sign-in",
 }: RouteGuardProps) {
   const router = useRouter();
-  const { data: session, isPending: sessionPending } = authClient.useSession();
-  const { user, isLoading: userLoading } = useExtendedSession();
+  const { user, hasSession, isLoading } = useExtendedSession();
 
   useEffect(() => {
-    if (sessionPending || userLoading) return; // Still loading
+    if (isLoading) return;
 
-    // No session, redirect to sign in
-    if (!session) {
+    if (!hasSession) {
       router.push(fallbackPath);
       return;
     }
 
-    // Check role requirements
-    if (
-      allowedRoles.length > 0 &&
-      (!user?.role || !allowedRoles.includes(user.role))
-    ) {
-      // Redirect based on user's actual role
+    if (allowedRoles.length > 0 && (!user?.role || !allowedRoles.includes(user.role))) {
       switch (user?.role) {
         case "super-admin":
           router.push("/superadmin");
@@ -57,24 +49,13 @@ export default function RouteGuard({
       return;
     }
 
-    // Check organization requirement
     if (requireOrganization && !user?.organizationId) {
       router.push("/no-organization");
       return;
     }
-  }, [
-    session,
-    sessionPending,
-    user,
-    userLoading,
-    router,
-    allowedRoles,
-    requireOrganization,
-    fallbackPath,
-  ]);
+  }, [hasSession, user, isLoading, router, allowedRoles, requireOrganization, fallbackPath]);
 
-  // Show loading while checking auth
-  if (sessionPending || userLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader size="32" />
@@ -82,8 +63,7 @@ export default function RouteGuard({
     );
   }
 
-  // Show loading if no session (while redirecting)
-  if (!session) {
+  if (!hasSession) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader size="32" />
@@ -91,11 +71,7 @@ export default function RouteGuard({
     );
   }
 
-  // Check role authorization
-  if (
-    allowedRoles.length > 0 &&
-    (!user?.role || !allowedRoles.includes(user.role))
-  ) {
+  if (allowedRoles.length > 0 && (!user?.role || !allowedRoles.includes(user.role))) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader size="32" />
@@ -103,7 +79,6 @@ export default function RouteGuard({
     );
   }
 
-  // Check organization requirement
   if (requireOrganization && !user?.organizationId) {
     return (
       <div className="flex items-center justify-center min-h-screen">

@@ -104,4 +104,10 @@ export const adminApi = {
 
   getRecentActivity: (limit?: number) =>
     api.get<ActivityItem[]>(`/superadmin/dashboard/activity${limit ? `?limit=${limit}` : ""}`),
+
+  getPlatformActivityTrend: () =>
+    api.get<{ week: string; count: number }[]>("/superadmin/dashboard/trend"),
+
+  getPlatformReportsByType: () =>
+    api.get<{ name: string; count: number }[]>("/superadmin/dashboard/report-types"),
 };

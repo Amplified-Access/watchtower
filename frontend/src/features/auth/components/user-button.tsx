@@ -15,28 +15,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { authClient } from "@/lib/auth-client";
+import { useExtendedSession } from "@/hooks/use-extended-session";
 import Loader from "@/components/common/loader";
-import { useRouter } from "next/navigation";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 const UserButton = () => {
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
-  } = authClient.useSession();
-
-  const router = useRouter();
+  const { user, isLoading: isPending } = useExtendedSession();
 
   const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/sign-in"); // redirect to login page
-        },
-      },
-    });
+    try {
+      await fetch(`${API_BASE}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } finally {
+      window.location.href = "/sign-in";
+    }
   };
 
   return (
@@ -49,7 +44,7 @@ const UserButton = () => {
               <Loader />
             ) : (
               (() => {
-                const name = session?.user.name || "";
+                const name = user?.name || "";
                 const words = name.trim().split(/\s+/);
                 if (words.length >= 2) {
                   return (words[0][0] + words[1][0]).toUpperCase();

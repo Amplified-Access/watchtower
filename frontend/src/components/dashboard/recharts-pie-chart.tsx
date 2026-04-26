@@ -108,7 +108,7 @@ export function RechartsPieChart({
           <CardTitle className="text-lg font-title">{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+          <div className="h-75 flex items-center justify-center text-muted-foreground">
             No data available
           </div>
         </CardContent>
@@ -131,7 +131,7 @@ export function RechartsPieChart({
         {types.length > 1 && (
           <Select value={activeType} onValueChange={setActiveType}>
             <SelectTrigger
-              className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
+              className="ml-auto h-7 w-32.5 rounded-lg pl-2.5"
               aria-label="Select organization type"
             >
               <SelectValue placeholder="Select type" />
@@ -167,7 +167,7 @@ export function RechartsPieChart({
         <ChartContainer
           id={id}
           config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[300px] "
+          className="mx-auto aspect-square w-full max-w-75 "
         >
           <PieChart>
             <ChartTooltip

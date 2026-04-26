@@ -79,9 +79,17 @@ async function request<T>(
 }
 
 async function getToken(): Promise<string | null> {
-  if (typeof document === "undefined") return null;
-  const cookies = document.cookie.split(";");
-  for (const cookie of cookies) {
+  if (typeof document === "undefined") {
+    try {
+      const { cookies } = await import("next/headers");
+      const store = await cookies();
+      return store.get("better-auth.session_token")?.value ?? null;
+    } catch {
+      return null;
+    }
+  }
+  const cookieList = document.cookie.split(";");
+  for (const cookie of cookieList) {
     const [key, val] = cookie.trim().split("=");
     if (key === "better-auth.session_token") return decodeURIComponent(val ?? "");
   }
