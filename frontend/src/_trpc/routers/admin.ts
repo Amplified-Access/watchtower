@@ -8,6 +8,8 @@ import {
 } from "../middleware";
 import { adminApi } from "@/lib/api/admin";
 import { incidentsApi } from "@/lib/api/incidents";
+import { organizationsApi } from "@/lib/api/organizations";
+import { reportsApi } from "@/lib/api/reports";
 import { api } from "@/lib/api/client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -49,7 +51,12 @@ export const adminRouter = router({
     .query(async ({ ctx }) => {
       const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
       if (!orgId) return null;
-      return { organizationId: orgId, organization: null };
+      try {
+        const res = await organizationsApi.getById(orgId);
+        return { organizationId: orgId, organization: res.success ? res.data?.name ?? null : null };
+      } catch {
+        return { organizationId: orgId, organization: null };
+      }
     }),
 
   inviteWatcher: adminProcedure
@@ -432,16 +439,18 @@ export const adminRouter = router({
           reports: { published: 0, draft: 0 },
         };
       }
-      const [statsRes, watchersRes, formsRes] = await Promise.all([
+      const [statsRes, watchersRes, formsRes, reportsRes] = await Promise.all([
         incidentsApi.getOrganizationStats(orgId),
         adminApi.getOrganizationWatchers(orgId),
         adminApi.getOrganizationForms(orgId),
+        reportsApi.getOrganizationReports(orgId),
       ]);
       const res = statsRes;
       if (!res.success) throw new Error(res.error ?? "Failed to fetch stats");
       const raw = res.data;
       const watchers = watchersRes.success ? watchersRes.data ?? [] : [];
       const forms = formsRes.success ? formsRes.data ?? [] : [];
+      const reports = reportsRes.success ? reportsRes.data ?? [] : [];
       return {
         watchers: { total: watchers.length },
         forms: { total: forms.length, active: forms.filter((f) => f.isActive).length },
@@ -449,7 +458,10 @@ export const adminRouter = router({
           total: raw?.total ?? 0,
           open: (raw?.reported ?? 0) + (raw?.investigating ?? 0),
         },
-        reports: { published: 0, draft: 0 },
+        reports: {
+          published: reports.filter((r) => r.status === "published").length,
+          draft: reports.filter((r) => r.status === "draft").length,
+        },
       };
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);

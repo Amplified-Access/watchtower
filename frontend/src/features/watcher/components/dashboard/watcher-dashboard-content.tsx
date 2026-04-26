@@ -37,7 +37,7 @@ export default function WatcherDashboardContent() {
   // Fetch real dashboard statistics
   const { data: dashboardStats, isLoading: statsLoading } =
     trpc.getOrganizationDashboardStats.useQuery(undefined, {
-      enabled: !!user?.id,
+      enabled: !!user?.organizationId,
     });
 
   // Fetch real recent activity
@@ -253,22 +253,21 @@ export default function WatcherDashboardContent() {
         <div className="w-full">
           <RechartsLineChart
             title="My Activity This Week"
-            data={[
-              {
-                period: "Mon",
-                value: recentActivity.filter(
-                  (a) => a.type === "incident" || a.type === "report",
-                ).length,
-              },
-              { period: "Tue", value: Math.floor(Math.random() * 6) + 1 },
-              { period: "Wed", value: Math.floor(Math.random() * 6) + 1 },
-              { period: "Thu", value: Math.floor(Math.random() * 6) + 1 },
-              { period: "Fri", value: Math.floor(Math.random() * 6) + 1 },
-              { period: "Sat", value: Math.floor(Math.random() * 3) },
-              { period: "Sun", value: Math.floor(Math.random() * 3) },
-            ]}
+            data={(() => {
+              const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+              const counts: Record<string, number> = { Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0 };
+              const now = new Date();
+              const weekStart = new Date(now);
+              weekStart.setDate(now.getDate() - now.getDay());
+              weekStart.setHours(0, 0, 0, 0);
+              recentActivity.forEach((a) => {
+                const d = new Date(a.timestamp);
+                if (d >= weekStart) counts[days[d.getDay()]]++;
+              });
+              return days.map((d) => ({ period: d, value: counts[d] }));
+            })()}
             currentValue={recentActivity.length}
-            currentChange={+15.2}
+            currentChange={0}
             timeframe="7d"
           />
         </div>

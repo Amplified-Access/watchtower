@@ -33,6 +33,8 @@ export interface ListParams {
 }
 
 export const organizationsApi = {
+  getById: (id: string) => api.get<Organization>(`/admin/organization`),
+
   list: (params?: ListParams) => {
     const query = new URLSearchParams();
     if (params?.limit) query.set("limit", String(params.limit));
