@@ -120,6 +120,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		// Admin: organization management
 		admin := auth.Group("/admin", adminMW, orgMW)
 		{
+			admin.GET("/organization", s.adminHandler.GetCurrentOrganization)
 			admin.GET("/forms", s.adminHandler.GetOrganizationForms)
 			admin.POST("/forms", s.adminHandler.SaveForm)
 			admin.GET("/forms/:id", s.adminHandler.GetFormByID)
@@ -184,6 +185,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 			superAdmin.GET("/dashboard/stats", s.adminHandler.GetPlatformStats)
 			superAdmin.GET("/dashboard/activity", s.adminHandler.GetRecentActivity)
+			superAdmin.GET("/dashboard/trend", s.adminHandler.GetPlatformActivityTrend)
+			superAdmin.GET("/dashboard/report-types", s.adminHandler.GetPlatformReportsByType)
 		}
 	}
 

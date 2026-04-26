@@ -361,29 +361,29 @@ export const superAdminRouter = router({
 
   getOrganizationTypeDistribution: superAdminProcedure.query(async () => {
     try {
-      // Not yet in Go backend
-      return [
-        { name: "NGO", value: 5 },
-        { name: "Corporate", value: 3 },
-        { name: "Government", value: 2 },
-      ];
+      const res = await adminApi.getPlatformReportsByType();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch report types");
+      return (res.data ?? []).map((d) => ({ name: d.name, value: d.count }));
     } catch (error) {
-      console.error("Error fetching organization types:", error);
-      return [
-        { name: "NGO", value: 5 },
-        { name: "Corporate", value: 3 },
-        { name: "Government", value: 2 },
-      ];
+      console.error("Error fetching report type distribution:", error);
+      return [] as { name: string; value: number }[];
     }
   }),
 
   getPlatformActivityTrend: superAdminProcedure.query(async () => {
     try {
-      // Not yet in Go backend
+      const res = await adminApi.getPlatformActivityTrend();
+      if (!res.success) throw new Error(res.error ?? "Failed to fetch trend");
+      const points = res.data ?? [];
+      const currentValue = points.length > 0 ? points[points.length - 1].count : 0;
+      const previousValue = points.length > 1 ? points[points.length - 2].count : 0;
+      const currentChange = previousValue > 0
+        ? Math.round((currentValue - previousValue) / previousValue * 100)
+        : 0;
       return {
-        data: [],
-        currentValue: 0,
-        currentChange: 0,
+        data: points,
+        currentValue,
+        currentChange,
         timeframe: "7w",
       };
     } catch (error) {

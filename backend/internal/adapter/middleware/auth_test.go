@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -35,11 +36,12 @@ func (m *mockSessionRepo) DeleteSession(_ context.Context, _ string) error { ret
 
 type mockUserRepo struct{}
 
-func (m *mockUserRepo) FindByID(_ context.Context, _ string) (*entity.User, error)          { return nil, nil }
-func (m *mockUserRepo) FindByEmail(_ context.Context, _ string) (*entity.User, error)       { return nil, nil }
-func (m *mockUserRepo) FindAll(_ context.Context, _ *entity.UserRole) ([]*entity.User, error) { return nil, nil }
-func (m *mockUserRepo) Update(_ context.Context, _ *entity.User) error                      { return nil }
-func (m *mockUserRepo) Delete(_ context.Context, _ string) error                             { return nil }
+func (m *mockUserRepo) FindByID(_ context.Context, _ string) (*entity.User, error)            { return nil, nil }
+func (m *mockUserRepo) FindByEmail(_ context.Context, _ string) (*entity.User, error)         { return nil, nil }
+func (m *mockUserRepo) FindAll(_ context.Context, _ *entity.UserRole) ([]*entity.User, error)  { return nil, nil }
+func (m *mockUserRepo) CountByRoleSince(_ context.Context, _ entity.UserRole, _ time.Time) (int, error) { return 0, nil }
+func (m *mockUserRepo) Update(_ context.Context, _ *entity.User) error                        { return nil }
+func (m *mockUserRepo) Delete(_ context.Context, _ string) error                              { return nil }
 
 func newUseCase(user *entity.User, sessionErr error) *userusecase.UseCase {
 	return userusecase.New(&mockUserRepo{}, &mockSessionRepo{user: user, err: sessionErr})

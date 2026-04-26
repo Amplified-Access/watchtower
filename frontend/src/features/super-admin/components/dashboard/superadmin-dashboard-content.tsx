@@ -431,7 +431,7 @@ export default function SuperAdminDashboardContent() {
         {/* Analytics Section */}
         <div className="grid gap-6 lg:grid-cols-2">
           <RechartsPieChart
-            title="Organizations by Type"
+            title="Reports by Incident Type"
             data={organizationTypes || []}
           />
           <RechartsLineChart

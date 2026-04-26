@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"backend/internal/domain/entity"
 	domainerrors "backend/internal/domain/errors"
@@ -46,6 +47,9 @@ func (m *mockUserRepo) FindAll(_ context.Context, role *entity.UserRole) ([]*ent
 	return m.users, m.err
 }
 
+func (m *mockUserRepo) CountByRoleSince(_ context.Context, _ entity.UserRole, _ time.Time) (int, error) {
+	return 0, nil
+}
 func (m *mockUserRepo) Update(_ context.Context, _ *entity.User) error { return m.err }
 func (m *mockUserRepo) Delete(_ context.Context, _ string) error       { return m.err }
 

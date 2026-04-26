@@ -53,3 +53,16 @@ func (r *CachedAnonymousReportRepository) GetHeatmapData(ctx context.Context) ([
 	cacheSet(ctx, r.rdb, keyAnonHeatmap, result, heatmapTTL)
 	return result, nil
 }
+
+func (r *CachedAnonymousReportRepository) GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error) {
+	const key = "anon:type-dist"
+	if cached, ok := cacheGet[[]*entity.TypeCount](ctx, r.rdb, key); ok {
+		return cached, nil
+	}
+	result, err := r.repo.GetTypeDistribution(ctx)
+	if err != nil || result == nil {
+		return result, err
+	}
+	cacheSet(ctx, r.rdb, key, result, 30*time.Minute)
+	return result, nil
+}

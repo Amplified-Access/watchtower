@@ -299,6 +299,39 @@ func (r *IncidentRepository) GetPending(ctx context.Context, orgID string) ([]*e
 	return scanIncidents(rows)
 }
 
+func (r *IncidentRepository) CountAllSince(ctx context.Context, since time.Time) (int, error) {
+	var count int
+	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM incidents WHERE created_at >= $1`, since).Scan(&count)
+	return count, err
+}
+
+func (r *IncidentRepository) GetPlatformWeeklyTrend(ctx context.Context) ([]*entity.WeeklyTrendPoint, error) {
+	const q = `
+		SELECT TO_CHAR(DATE_TRUNC('week', created_at), 'YYYY-MM-DD') AS week, COUNT(*) AS count
+		FROM (
+			SELECT created_at FROM incidents WHERE created_at >= NOW() - INTERVAL '7 weeks'
+			UNION ALL
+			SELECT created_at FROM organization_incident_reports WHERE created_at >= NOW() - INTERVAL '7 weeks'
+			UNION ALL
+			SELECT created_at FROM anonymous_incident_reports WHERE created_at >= NOW() - INTERVAL '7 weeks'
+		) combined
+		GROUP BY week ORDER BY week ASC`
+	rows, err := r.db.QueryContext(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var points []*entity.WeeklyTrendPoint
+	for rows.Next() {
+		p := &entity.WeeklyTrendPoint{}
+		if err := rows.Scan(&p.Week, &p.Count); err != nil {
+			return nil, err
+		}
+		points = append(points, p)
+	}
+	return points, rows.Err()
+}
+
 func scanIncidents(rows *sql.Rows) ([]*entity.Incident, error) {
 	var incidents []*entity.Incident
 	for rows.Next() {
@@ -381,6 +414,28 @@ func (r *AnonymousIncidentReportRepository) Create(ctx context.Context, report *
 		report.ID, report.IncidentTypeID, locJSON, report.Description, string(entitiesJSON),
 		report.Injuries, report.Fatalities, report.EvidenceFileKey, report.AudioFileKey, now, now)
 	return err
+}
+
+func (r *AnonymousIncidentReportRepository) GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error) {
+	const q = `
+		SELECT it.name, COUNT(*) AS count
+		FROM anonymous_incident_reports air
+		JOIN incident_types it ON it.id = air.incident_type_id
+		GROUP BY it.name ORDER BY count DESC`
+	rows, err := r.db.QueryContext(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*entity.TypeCount
+	for rows.Next() {
+		tc := &entity.TypeCount{}
+		if err := rows.Scan(&tc.Name, &tc.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, tc)
+	}
+	return items, rows.Err()
 }
 
 func (r *AnonymousIncidentReportRepository) GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error) {
@@ -529,6 +584,12 @@ func (r *OrganizationIncidentReportRepository) GetStats(ctx context.Context, org
 	var s entity.IncidentStats
 	err := r.db.QueryRowContext(ctx, q, orgID).Scan(&s.Total, &s.ThisWeek, &s.LastWeek)
 	return &s, err
+}
+
+func (r *OrganizationIncidentReportRepository) CountCritical(ctx context.Context) (int, error) {
+	var count int
+	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM organization_incident_reports WHERE severity='critical'`).Scan(&count)
+	return count, err
 }
 
 func scanOrgReports(rows *sql.Rows) ([]*entity.OrganizationIncidentReport, error) {

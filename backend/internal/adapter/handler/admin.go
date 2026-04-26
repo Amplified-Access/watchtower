@@ -310,3 +310,47 @@ func (h *AdminHandler) GetRecentActivity(c *gin.Context) {
 	}
 	presenter.OK(c, activity)
 }
+
+// GetPlatformActivityTrend godoc
+//
+//	@Summary		Get platform activity trend
+//	@Description	Returns weekly incident counts over the past 7 weeks (super admin only)
+//	@Tags			Super Admin – Dashboard
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	presenter.Response
+//	@Failure		401	{object}	presenter.Response
+//	@Failure		403	{object}	presenter.Response
+//	@Failure		500	{object}	presenter.Response
+//	@Router			/superadmin/dashboard/trend [get]
+func (h *AdminHandler) GetPlatformActivityTrend(c *gin.Context) {
+	trend, err := h.uc.GetPlatformActivityTrend(c.Request.Context())
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, trend)
+}
+
+func (h *AdminHandler) GetPlatformReportsByType(c *gin.Context) {
+	dist, err := h.uc.GetPlatformReportsByType(c.Request.Context())
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, dist)
+}
+
+func (h *AdminHandler) GetCurrentOrganization(c *gin.Context) {
+	user := middleware.CurrentUser(c)
+	if user.OrganizationID == nil {
+		presenter.BadRequest(c, "no organization")
+		return
+	}
+	org, err := h.uc.GetOrganizationByID(c.Request.Context(), *user.OrganizationID)
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, org)
+}

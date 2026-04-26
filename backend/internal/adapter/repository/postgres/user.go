@@ -61,6 +61,12 @@ func (r *UserRepository) Update(ctx context.Context, u *entity.User) error {
 	return err
 }
 
+func (r *UserRepository) CountByRoleSince(ctx context.Context, role entity.UserRole, since time.Time) (int, error) {
+	var count int
+	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM "user" WHERE role=$1 AND created_at >= $2`, string(role), since).Scan(&count)
+	return count, err
+}
+
 func (r *UserRepository) Delete(ctx context.Context, id string) error {
 	_, err := r.db.ExecContext(ctx, `DELETE FROM "user" WHERE id=$1`, id)
 	return err

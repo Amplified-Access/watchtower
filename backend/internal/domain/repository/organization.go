@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"backend/internal/domain/entity"
 )
@@ -10,6 +11,7 @@ type OrganizationRepository interface {
 	FindAll(ctx context.Context, params entity.ListParams) ([]*entity.Organization, int, error)
 	FindByID(ctx context.Context, id string) (*entity.Organization, error)
 	FindBySlug(ctx context.Context, slug string) (*entity.Organization, error)
+	CountCreatedSince(ctx context.Context, since time.Time) (int, error)
 	Create(ctx context.Context, org *entity.Organization) error
 	Update(ctx context.Context, org *entity.Organization) error
 }

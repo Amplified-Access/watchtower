@@ -54,6 +54,10 @@ func (r *CachedOrganizationRepository) FindBySlug(ctx context.Context, slug stri
 	return result, nil
 }
 
+func (r *CachedOrganizationRepository) CountCreatedSince(ctx context.Context, since time.Time) (int, error) {
+	return r.repo.CountCreatedSince(ctx, since)
+}
+
 func (r *CachedOrganizationRepository) Create(ctx context.Context, org *entity.Organization) error {
 	return r.repo.Create(ctx, org)
 }

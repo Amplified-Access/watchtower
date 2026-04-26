@@ -83,7 +83,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	insightUC := insightuc.New(insightRepo)
 	datasetUC := datasetuuc.New(datasetRepo)
 	alertUC := alertuc.New(alertRepo)
-	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo)
+	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo, orgReportRepo, anonReportRepo)
 
 	// Handlers
 	newServer := &Server{

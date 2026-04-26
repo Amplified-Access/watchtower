@@ -67,6 +67,12 @@ func (r *OrganizationRepository) FindBySlug(ctx context.Context, slug string) (*
 	return scanOrganization(row)
 }
 
+func (r *OrganizationRepository) CountCreatedSince(ctx context.Context, since time.Time) (int, error) {
+	var count int
+	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM organizations WHERE created_at >= $1`, since).Scan(&count)
+	return count, err
+}
+
 func (r *OrganizationRepository) Create(ctx context.Context, org *entity.Organization) error {
 	const q = `INSERT INTO organizations (id, name, slug, description, website, location, contact_email, created_at, updated_at)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`
