@@ -122,11 +122,19 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 
 func setSessionCookie(c *gin.Context, token string) {
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie(sessionCookieName, token, sessionMaxAge, "/", "", os.Getenv("ENV") == "production", true)
+	cookieDomain := os.Getenv("COOKIE_DOMAIN")
+	if cookieDomain == "" && os.Getenv("ENV") == "production" {
+		cookieDomain = ".thewatchtower.tech"
+	}
+	c.SetCookie(sessionCookieName, token, sessionMaxAge, "/", cookieDomain, os.Getenv("ENV") == "production", true)
 }
 
 func clearSessionCookie(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie(sessionCookieName, "", -1, "/", "", os.Getenv("ENV") == "production", true)
+	cookieDomain := os.Getenv("COOKIE_DOMAIN")
+	if cookieDomain == "" && os.Getenv("ENV") == "production" {
+		cookieDomain = ".thewatchtower.tech"
+	}
+	c.SetCookie(sessionCookieName, "", -1, "/", cookieDomain, os.Getenv("ENV") == "production", true)
 }
 
