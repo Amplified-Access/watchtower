@@ -257,8 +257,8 @@ const SuperAdminIncidentsContent = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All organizations</SelectItem>
-                {Array.isArray(organizations) &&
-                  organizations.map((org) => (
+                {organizations?.data && Array.isArray(organizations.data) &&
+                  organizations.data.map((org: any) => (
                     <SelectItem key={org.id} value={org.id}>
                       {org.name}
                     </SelectItem>

@@ -1,11 +1,13 @@
 package entity
 
 type ListParams struct {
-	Limit     int
-	Offset    int
-	Search    string
-	Sort      string
-	SortOrder string
+	Limit          int
+	Offset        int
+	Search        string
+	Sort          string
+	SortOrder     string
+	Status       string
+	Organization string
 }
 
 type PaginatedResult[T any] struct {

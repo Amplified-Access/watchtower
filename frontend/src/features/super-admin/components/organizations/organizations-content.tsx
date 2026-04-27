@@ -27,13 +27,13 @@ const OrganizationsContent = () => {
             <DataTable
               columns={columns}
               data={
-                Array.isArray(data)
-                  ? data.map((item) => ({
+                data?.data && Array.isArray(data.data)
+                  ? data.data.map((item: any) => ({
                       id: parseInt(item.id),
                       organizationName: item.name,
                       date:
                         "date" in item
-                          ? (item as any).date
+                          ? item.date
                           : item.createdAt
                           ? new Date(item.createdAt).toLocaleDateString()
                           : "",

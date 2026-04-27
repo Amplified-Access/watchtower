@@ -316,6 +316,10 @@ func (h *IncidentHandler) GetAllIncidents(c *gin.Context) {
 //	@Router			/admin/analytics/stats [get]
 func (h *IncidentHandler) GetOrganizationStats(c *gin.Context) {
 	user := middleware.CurrentUser(c)
+	if user.OrganizationID == nil {
+		presenter.BadRequest(c, "user not associated with an organization")
+		return
+	}
 	stats, err := h.uc.GetOrganizationStats(c.Request.Context(), *user.OrganizationID)
 	if err != nil {
 		presenter.Error(c, err)

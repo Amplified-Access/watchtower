@@ -55,11 +55,31 @@ func (m *mockAppRepo) UpdateStatus(_ context.Context, id int, status entity.Appl
 	return m.err
 }
 
+type mockUserRepo struct {
+	user *entity.User
+	err  error
+}
+
+func (m *mockUserRepo) FindByID(_ context.Context, _ string) (*entity.User, error) {
+	return m.user, m.err
+}
+func (m *mockUserRepo) FindByEmail(_ context.Context, _ string) (*entity.User, error) {
+	return m.user, m.err
+}
+func (m *mockUserRepo) FindAll(_ context.Context, _ *entity.UserRole) ([]*entity.User, error) {
+	return nil, m.err
+}
+func (m *mockUserRepo) CountByRoleSince(_ context.Context, _ entity.UserRole, _ time.Time) (int, error) {
+	return 0, m.err
+}
+func (m *mockUserRepo) Update(_ context.Context, _ *entity.User) error   { return m.err }
+func (m *mockUserRepo) Delete(_ context.Context, _ string) error          { return m.err }
+
 // ─── GetBySlug ───────────────────────────────────────────────────────────────
 
 func TestGetBySlug_Found(t *testing.T) {
 	org := &entity.Organization{ID: "org1", Slug: "test-org"}
-	uc := New(&mockOrgRepo{org: org}, &mockAppRepo{})
+	uc := New(&mockOrgRepo{org: org}, &mockAppRepo{}, &mockUserRepo{})
 
 	got, err := uc.GetBySlug(context.Background(), "test-org")
 	if err != nil {
@@ -71,7 +91,7 @@ func TestGetBySlug_Found(t *testing.T) {
 }
 
 func TestGetBySlug_NilOrg_ReturnsNotFound(t *testing.T) {
-	uc := New(&mockOrgRepo{org: nil}, &mockAppRepo{})
+	uc := New(&mockOrgRepo{org: nil}, &mockAppRepo{}, &mockUserRepo{})
 
 	_, err := uc.GetBySlug(context.Background(), "missing")
 	if err == nil {
@@ -84,7 +104,7 @@ func TestGetBySlug_NilOrg_ReturnsNotFound(t *testing.T) {
 
 func TestGetBySlug_RepoError_Propagates(t *testing.T) {
 	repoErr := errors.New("db error")
-	uc := New(&mockOrgRepo{err: repoErr}, &mockAppRepo{})
+	uc := New(&mockOrgRepo{err: repoErr}, &mockAppRepo{}, &mockUserRepo{})
 
 	_, err := uc.GetBySlug(context.Background(), "org1")
 	if !errors.Is(err, repoErr) {
@@ -97,7 +117,7 @@ func TestGetBySlug_RepoError_Propagates(t *testing.T) {
 func TestApproveApplication_Success(t *testing.T) {
 	app := &entity.OrganizationApplication{ID: 1, Status: entity.ApplicationPending}
 	appRepo := &mockAppRepo{app: app}
-	uc := New(&mockOrgRepo{}, appRepo)
+	uc := New(&mockOrgRepo{}, appRepo, &mockUserRepo{})
 
 	if err := uc.ApproveApplication(context.Background(), 1); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -111,7 +131,7 @@ func TestApproveApplication_Success(t *testing.T) {
 }
 
 func TestApproveApplication_NotFound(t *testing.T) {
-	uc := New(&mockOrgRepo{}, &mockAppRepo{app: nil})
+	uc := New(&mockOrgRepo{}, &mockAppRepo{app: nil}, &mockUserRepo{})
 
 	err := uc.ApproveApplication(context.Background(), 99)
 	if err == nil {
@@ -124,7 +144,7 @@ func TestApproveApplication_NotFound(t *testing.T) {
 
 func TestApproveApplication_AlreadyApproved_ReturnsBadRequest(t *testing.T) {
 	app := &entity.OrganizationApplication{ID: 2, Status: entity.ApplicationApproved}
-	uc := New(&mockOrgRepo{}, &mockAppRepo{app: app})
+	uc := New(&mockOrgRepo{}, &mockAppRepo{app: app}, &mockUserRepo{})
 
 	err := uc.ApproveApplication(context.Background(), 2)
 	if err == nil {
@@ -137,7 +157,7 @@ func TestApproveApplication_AlreadyApproved_ReturnsBadRequest(t *testing.T) {
 
 func TestApproveApplication_AlreadyDeclined_ReturnsBadRequest(t *testing.T) {
 	app := &entity.OrganizationApplication{ID: 3, Status: entity.ApplicationDeclined}
-	uc := New(&mockOrgRepo{}, &mockAppRepo{app: app})
+	uc := New(&mockOrgRepo{}, &mockAppRepo{app: app}, &mockUserRepo{})
 
 	err := uc.ApproveApplication(context.Background(), 3)
 	if !errors.Is(err, domainerrors.ErrBadRequest) {
@@ -150,7 +170,7 @@ func TestApproveApplication_AlreadyDeclined_ReturnsBadRequest(t *testing.T) {
 func TestDeclineApplication_Success(t *testing.T) {
 	app := &entity.OrganizationApplication{ID: 4, Status: entity.ApplicationPending}
 	appRepo := &mockAppRepo{app: app}
-	uc := New(&mockOrgRepo{}, appRepo)
+	uc := New(&mockOrgRepo{}, appRepo, &mockUserRepo{})
 
 	if err := uc.DeclineApplication(context.Background(), 4); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -161,7 +181,7 @@ func TestDeclineApplication_Success(t *testing.T) {
 }
 
 func TestDeclineApplication_NotFound(t *testing.T) {
-	uc := New(&mockOrgRepo{}, &mockAppRepo{app: nil})
+	uc := New(&mockOrgRepo{}, &mockAppRepo{app: nil}, &mockUserRepo{})
 
 	err := uc.DeclineApplication(context.Background(), 99)
 	if !errors.Is(err, domainerrors.ErrNotFound) {
@@ -173,7 +193,7 @@ func TestDeclineApplication_NotFound(t *testing.T) {
 
 func TestGetAll_ReturnsOrgsAndTotal(t *testing.T) {
 	orgs := []*entity.Organization{{ID: "o1"}, {ID: "o2"}}
-	uc := New(&mockOrgRepo{orgs: orgs, total: 2}, &mockAppRepo{})
+	uc := New(&mockOrgRepo{orgs: orgs, total: 2}, &mockAppRepo{}, &mockUserRepo{})
 
 	got, total, err := uc.GetAll(context.Background(), entity.ListParams{Limit: 10})
 	if err != nil {
@@ -191,7 +211,7 @@ func TestGetAll_ReturnsOrgsAndTotal(t *testing.T) {
 
 func TestSubmitApplication_CallsCreate(t *testing.T) {
 	appRepo := &mockAppRepo{}
-	uc := New(&mockOrgRepo{}, appRepo)
+	uc := New(&mockOrgRepo{}, appRepo, &mockUserRepo{})
 	app := &entity.OrganizationApplication{OrganizationName: "ACME", ApplicantEmail: "a@b.com"}
 
 	if err := uc.SubmitApplication(context.Background(), app); err != nil {

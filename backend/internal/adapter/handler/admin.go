@@ -221,6 +221,10 @@ func (h *AdminHandler) DeleteForm(c *gin.Context) {
 //	@Router			/admin/dashboard [get]
 func (h *AdminHandler) GetDashboardStats(c *gin.Context) {
 	user := middleware.CurrentUser(c)
+	if user.OrganizationID == nil {
+		presenter.BadRequest(c, "user not associated with an organization")
+		return
+	}
 	stats, err := h.uc.GetDashboardStats(c.Request.Context(), *user.OrganizationID)
 	if err != nil {
 		presenter.Error(c, err)

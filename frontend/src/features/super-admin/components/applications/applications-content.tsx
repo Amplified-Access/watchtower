@@ -26,8 +26,8 @@ const ApplicationsContent = () => {
           <DataTable
             columns={columns}
             data={
-              Array.isArray(data)
-                ? data.map((item) => ({
+              data?.data && Array.isArray(data.data)
+                ? data.data.map((item: any) => ({
                     ...item,
                     website: item.website ?? "",
                     certificateOfIncorporation:
@@ -35,7 +35,7 @@ const ApplicationsContent = () => {
                     status: item.status as "pending" | "approved" | "rejected",
                     date:
                       "date" in item
-                        ? (item as any).date
+                        ? item.date
                         : item.createdAt
                         ? new Date(item.createdAt).toLocaleDateString()
                         : "",

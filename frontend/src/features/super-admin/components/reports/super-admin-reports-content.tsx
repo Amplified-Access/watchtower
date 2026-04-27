@@ -191,8 +191,8 @@ const SuperAdminReportsContent = () => {
 
   const reports = reportsData?.reports || [];
   const totalCount = reportsData?.totalCount || 0;
-  const organizations = Array.isArray(organizationsData)
-    ? organizationsData
+  const organizations = organizationsData?.data && Array.isArray(organizationsData.data)
+    ? organizationsData.data
     : [];
 
   return (

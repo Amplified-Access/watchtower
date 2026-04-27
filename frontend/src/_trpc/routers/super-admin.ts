@@ -85,6 +85,10 @@ export const superAdminRouter = router({
           limit: input.limit,
           offset: input.offset,
           search: input.search,
+          status: input.status,
+          organizationId: input.organizationId,
+          sort: input.sortBy,
+          sortOrder: input.sortOrder,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
         return { incidents: res.data ?? [], totalCount: res.total ?? 0 };

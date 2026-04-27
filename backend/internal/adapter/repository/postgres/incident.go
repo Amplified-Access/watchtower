@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -191,8 +192,18 @@ func (r *IncidentRepository) FindAllForSuperAdmin(ctx context.Context, params en
 	args := []interface{}{}
 	idx := 1
 	if params.Search != "" {
-		where += fmt.Sprintf(" AND status ILIKE $%d", idx)
+		where += fmt.Sprintf(" AND ( CAST(data AS TEXT) ILIKE $%d)", idx)
 		args = append(args, "%"+params.Search+"%")
+		idx++
+	}
+	if params.Status != "" {
+		where += fmt.Sprintf(" AND status = $%d", idx)
+		args = append(args, params.Status)
+		idx++
+	}
+	if params.Organization != "" {
+		where += fmt.Sprintf(" AND organization_id = $%d", idx)
+		args = append(args, params.Organization)
 		idx++
 	}
 	var total int
@@ -200,8 +211,19 @@ func (r *IncidentRepository) FindAllForSuperAdmin(ctx context.Context, params en
 		return nil, 0, err
 	}
 	args = append(args, params.Limit, params.Offset)
-	q := fmt.Sprintf(`SELECT id, organization_id, form_id, reported_by_user_id, data, status, created_at, updated_at
-		FROM incidents WHERE %s ORDER BY created_at DESC LIMIT $%d OFFSET $%d`, where, idx, idx+1)
+	sortCol := "i.created_at"
+	if params.Sort != "" {
+		sortCol = "i." + params.Sort
+	}
+	sortOrder := "DESC"
+	if params.SortOrder != "" {
+		sortOrder = strings.ToUpper(params.SortOrder)
+	}
+	q := fmt.Sprintf(`SELECT i.id, i.organization_id, i.form_id, i.reported_by_user_id, i.data, i.status, i.created_at, i.updated_at, o.name as organization_name, f.name as form_name
+		FROM incidents i
+		LEFT JOIN organizations o ON i.organization_id = o.id
+		LEFT JOIN forms f ON i.form_id = f.id
+		WHERE `+where+` ORDER BY %s %s LIMIT $%d OFFSET $%d`, sortCol, sortOrder, idx, idx+1)
 	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, 0, err
@@ -242,13 +264,13 @@ func (r *IncidentRepository) Delete(ctx context.Context, id string) error {
 func (r *IncidentRepository) GetStats(ctx context.Context, orgID string) (*entity.IncidentStats, error) {
 	const q = `
 		SELECT
-			COUNT(*) AS total,
-			SUM(CASE WHEN status='reported' THEN 1 ELSE 0 END) AS reported,
-			SUM(CASE WHEN status='investigating' THEN 1 ELSE 0 END) AS investigating,
-			SUM(CASE WHEN status='resolved' THEN 1 ELSE 0 END) AS resolved,
-			SUM(CASE WHEN status='closed' THEN 1 ELSE 0 END) AS closed,
-			SUM(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 ELSE 0 END) AS this_week,
-			SUM(CASE WHEN created_at >= NOW() - INTERVAL '14 days' AND created_at < NOW() - INTERVAL '7 days' THEN 1 ELSE 0 END) AS last_week
+			COALESCE(COUNT(*), 0) AS total,
+			COALESCE(SUM(CASE WHEN status='reported' THEN 1 ELSE 0 END), 0) AS reported,
+			COALESCE(SUM(CASE WHEN status='investigating' THEN 1 ELSE 0 END), 0) AS investigating,
+			COALESCE(SUM(CASE WHEN status='resolved' THEN 1 ELSE 0 END), 0) AS resolved,
+			COALESCE(SUM(CASE WHEN status='closed' THEN 1 ELSE 0 END), 0) AS closed,
+			COALESCE(SUM(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 ELSE 0 END), 0) AS this_week,
+			COALESCE(SUM(CASE WHEN created_at >= NOW() - INTERVAL '14 days' AND created_at < NOW() - INTERVAL '7 days' THEN 1 ELSE 0 END), 0) AS last_week
 		FROM incidents WHERE organization_id=$1`
 	var s entity.IncidentStats
 	err := r.db.QueryRowContext(ctx, q, orgID).Scan(&s.Total, &s.Reported, &s.Investigating, &s.Resolved, &s.Closed, &s.ThisWeek, &s.LastWeek)
@@ -337,11 +359,18 @@ func scanIncidents(rows *sql.Rows) ([]*entity.Incident, error) {
 	for rows.Next() {
 		var i entity.Incident
 		var dataJSON []byte
-		if err := rows.Scan(&i.ID, &i.OrganizationID, &i.FormID, &i.ReportedByUserID, &dataJSON, &i.Status, &i.CreatedAt, &i.UpdatedAt); err != nil {
+		var orgName, formName sql.NullString
+		if err := rows.Scan(&i.ID, &i.OrganizationID, &i.FormID, &i.ReportedByUserID, &dataJSON, &i.Status, &i.CreatedAt, &i.UpdatedAt, &orgName, &formName); err != nil {
 			return nil, err
 		}
 		if err := json.Unmarshal(dataJSON, &i.Data); err != nil {
 			return nil, err
+		}
+		if orgName.Valid {
+			i.OrganizationName = &orgName.String
+		}
+		if formName.Valid {
+			i.FormName = &formName.String
 		}
 		incidents = append(incidents, &i)
 	}
