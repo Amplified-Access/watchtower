@@ -18,6 +18,7 @@ async function getUserFromGoBackend(token: string) {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    credentials: "include",
   });
   if (!res.ok) return null;
   const body = await res.json();

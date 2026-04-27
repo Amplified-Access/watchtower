@@ -77,7 +77,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	// Use cases
 	userUC := useruc.New(userRepo, sessionRepo)
 	authUC := authuc.New(userRepo, authRepo, mailSvc)
-	orgUC := orguc.New(orgRepo, appRepo)
+	orgUC := orguc.New(orgRepo, appRepo, userRepo)
 	incidentUC := incidentuc.New(incidentRepo, incidentTypeRepo, anonReportRepo, orgReportRepo)
 	reportUC := reportuc.New(reportRepo)
 	insightUC := insightuc.New(insightRepo)

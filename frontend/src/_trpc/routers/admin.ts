@@ -117,7 +117,7 @@ export const adminRouter = router({
 
   getOrganizationIncidentTypes: organizationProcedure.query(async ({ ctx }) => {
     try {
-      const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+      const orgId = (ctx as { organizationId?: string }).organizationId;
       if (!orgId) return [];
       const res = await incidentsApi.getTypesByOrganization(orgId);
       if (!res.success) throw new Error(res.error ?? "Failed to fetch types");
@@ -133,7 +133,7 @@ export const adminRouter = router({
 
   getAvailableIncidentTypes: organizationProcedure.query(async ({ ctx }) => {
     try {
-      const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+      const orgId = (ctx as { organizationId?: string }).organizationId;
       if (!orgId) return [];
       const res = await incidentsApi.getAvailableTypes(orgId);
       if (!res.success) throw new Error(res.error ?? "Failed to fetch types");
@@ -392,7 +392,7 @@ export const adminRouter = router({
 
   getOrganizationIncidentTypesAnalytics: organizationProcedure.query(async ({ ctx }) => {
     try {
-      const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+      const orgId = (ctx as { organizationId?: string }).organizationId;
       if (!orgId) return [];
       const res = await incidentsApi.getTypeAnalytics(orgId);
       if (!res.success) throw new Error(res.error ?? "Failed to fetch incident types analytics");
@@ -408,7 +408,7 @@ export const adminRouter = router({
 
   getOrganizationWeeklyIncidentTrend: organizationProcedure.query(async ({ ctx }) => {
     try {
-      const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+      const orgId = (ctx as { organizationId?: string }).organizationId;
       if (!orgId) {
         return { data: [], currentValue: 0, currentChange: 0, timeframe: "7d" };
       }
@@ -430,7 +430,7 @@ export const adminRouter = router({
 
   getOrganizationDashboardStats: organizationProcedure.query(async ({ ctx }) => {
     try {
-      const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+      const orgId = (ctx as { organizationId?: string }).organizationId;
       if (!orgId) {
         return {
           watchers: { total: 0 },
@@ -439,36 +439,37 @@ export const adminRouter = router({
           reports: { published: 0, draft: 0 },
         };
       }
-      const [statsRes, watchersRes, formsRes, reportsRes] = await Promise.all([
+      const [statsRes, watchersRes, formsRes, reportsRes] = await Promise.allSettled([
         incidentsApi.getOrganizationStats(orgId),
         adminApi.getOrganizationWatchers(orgId),
         adminApi.getOrganizationForms(orgId),
         reportsApi.getOrganizationReports(orgId),
       ]);
-      const res = statsRes;
-      if (!res.success) throw new Error(res.error ?? "Failed to fetch stats");
-      const raw = res.data;
-      const watchers = watchersRes.success ? watchersRes.data ?? [] : [];
-      const forms = formsRes.success ? formsRes.data ?? [] : [];
-      const reports = reportsRes.success ? reportsRes.data ?? [] : [];
+      const statsResult = statsRes.status === "fulfilled" ? statsRes.value : null;
+      const watchersResult = watchersRes.status === "fulfilled" && watchersRes.value.success ? watchersRes.value.data ?? [] : [];
+      const formsResult = formsRes.status === "fulfilled" && formsRes.value.success ? formsRes.value.data ?? [] : [];
+      const reportsResult = reportsRes.status === "fulfilled" && reportsRes.value.success ? reportsRes.value.data ?? [] : [];
+      const raw = statsResult?.success ? statsResult.data : null;
       return {
-        watchers: { total: watchers.length },
-        forms: { total: forms.length, active: forms.filter((f) => f.isActive).length },
+        watchers: { total: watchersResult.length },
+        forms: { total: formsResult.length, active: formsResult.filter((f: any) => f.isActive).length },
         incidents: {
           total: raw?.total ?? 0,
           open: (raw?.reported ?? 0) + (raw?.investigating ?? 0),
         },
         reports: {
-          published: reports.filter((r) => r.status === "published").length,
-          draft: reports.filter((r) => r.status === "draft").length,
+          published: reportsResult.filter((r: any) => r.status === "published").length,
+          draft: reportsResult.filter((r: any) => r.status === "draft").length,
         },
       };
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch dashboard stats",
-      });
+      return {
+        watchers: { total: 0 },
+        forms: { total: 0, active: 0 },
+        incidents: { total: 0, open: 0 },
+        reports: { published: 0, draft: 0 },
+      };
     }
   }),
 
@@ -476,7 +477,7 @@ export const adminRouter = router({
     .input(z.object({ limit: z.number().default(10) }))
     .query(async ({ input, ctx }) => {
       try {
-        const orgId = (ctx as { user?: { organizationId?: string } }).user?.organizationId;
+        const orgId = (ctx as { organizationId?: string }).organizationId;
         if (!orgId) return [];
         // Recent activity not yet in Go backend — combine incidents + reports
         const res = await incidentsApi.getOrganizationIncidents(orgId, { limit: input.limit });

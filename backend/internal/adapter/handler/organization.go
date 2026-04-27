@@ -186,10 +186,12 @@ func parseListParams(c *gin.Context) entity.ListParams {
 		limit = 20
 	}
 	return entity.ListParams{
-		Limit:     limit,
-		Offset:    offset,
-		Search:    c.Query("search"),
-		Sort:      c.DefaultQuery("sort", "created_at"),
-		SortOrder: c.DefaultQuery("sortOrder", "desc"),
+		Limit:          limit,
+		Offset:        offset,
+		Search:        c.Query("search"),
+		Sort:          c.DefaultQuery("sort", "created_at"),
+		SortOrder:     c.DefaultQuery("sortOrder", "desc"),
+		Status:        c.Query("status"),
+		Organization: c.Query("organizationId"),
 	}
 }

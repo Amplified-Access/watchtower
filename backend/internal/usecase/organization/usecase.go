@@ -2,6 +2,9 @@ package organizationusecase
 
 import (
 	"context"
+	"strings"
+
+	"github.com/google/uuid"
 
 	"backend/internal/domain/entity"
 	domainerrors "backend/internal/domain/errors"
@@ -11,13 +14,15 @@ import (
 type UseCase struct {
 	orgRepo repository.OrganizationRepository
 	appRepo repository.OrganizationApplicationRepository
+	userRepo repository.UserRepository
 }
 
 func New(
 	orgRepo repository.OrganizationRepository,
 	appRepo repository.OrganizationApplicationRepository,
+	userRepo repository.UserRepository,
 ) *UseCase {
-	return &UseCase{orgRepo: orgRepo, appRepo: appRepo}
+	return &UseCase{orgRepo: orgRepo, appRepo: appRepo, userRepo: userRepo}
 }
 
 func (uc *UseCase) GetAll(ctx context.Context, params entity.ListParams) ([]*entity.Organization, int, error) {
@@ -54,7 +59,40 @@ func (uc *UseCase) ApproveApplication(ctx context.Context, id int) error {
 	if app.Status != entity.ApplicationPending {
 		return domainerrors.NewBadRequest("application is not pending")
 	}
+
+	org := &entity.Organization{
+		ID:           uuid.New().String(),
+		Name:         app.OrganizationName,
+		Slug:         generateSlug(app.OrganizationName),
+		Website:      app.Website,
+		ContactEmail: &app.ApplicantEmail,
+	}
+	if err := uc.orgRepo.Create(ctx, org); err != nil {
+		return err
+	}
+
+	user, err := uc.userRepo.FindByEmail(ctx, app.ApplicantEmail)
+	if err == nil && user != nil {
+		user.OrganizationID = &org.ID
+		user.Role = entity.RoleAdmin
+		if err := uc.userRepo.Update(ctx, user); err != nil {
+			return err
+		}
+	}
+
 	return uc.appRepo.UpdateStatus(ctx, id, entity.ApplicationApproved)
+}
+
+func generateSlug(name string) string {
+	slug := strings.ToLower(name)
+	slug = strings.ReplaceAll(slug, " ", "-")
+	slug = strings.Map(func(r rune) rune {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '-' {
+			return r
+		}
+		return -1
+	}, slug)
+	return slug
 }
 
 func (uc *UseCase) DeclineApplication(ctx context.Context, id int) error {

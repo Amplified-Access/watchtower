@@ -26,8 +26,8 @@ const WatchersContent = () => {
           <DataTable
             columns={columns}
             data={
-              Array.isArray(data)
-                ? data.map((item) => ({
+              data?.data && Array.isArray(data.data)
+                ? data.data.map((item: any) => ({
                     ...item,
                     organization: item.organization ?? "",
                   }))

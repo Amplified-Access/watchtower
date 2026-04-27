@@ -57,6 +57,9 @@ type Incident struct {
 	Status           IncidentStatus         `json:"status"`
 	CreatedAt        time.Time              `json:"createdAt"`
 	UpdatedAt        time.Time              `json:"updatedAt"`
+	OrganizationName *string               `json:"organizationName,omitempty"`
+	FormName         *string               `json:"formName,omitempty"`
+	ReporterEmail    *string               `json:"reporterEmail,omitempty"`
 }
 
 type AnonymousIncidentReport struct {
