@@ -79,7 +79,7 @@ const Header = () => {
         >
           <Link href={"/datasets-page"}>{t("datasets")}</Link>
           <Link href={"/maps"}>{t("maps")}</Link>
-          <Link href={"/reports"}>{t("reports")}</Link>
+          {/* <Link href={"/reports"}>{t("reports")}</Link> */}
           <Link href={"/chat"}>{t("chat")}</Link>
           <Link href={"/alerts"}>{t("alerts")}</Link>
           {/* <Link href={"/organizations"}>{t("organizations")}</Link> */}
