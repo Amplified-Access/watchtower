@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://thewatchtower.tech/security
+    about: Do not open a public issue for security vulnerabilities. Please follow the responsible disclosure process.
+  - name: Code of Conduct
+    url: https://thewatchtower.tech/code-of-conduct
+    about: Questions or concerns about community behavior.
