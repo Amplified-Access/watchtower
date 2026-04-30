@@ -1,24 +1,33 @@
-# Security Policy
+<!-- BEGIN AMPLIFIEDACCESS SECURITY.MD V0.0.1 BLOCK -->
 
-Full details are available at [thewatchtower.tech/security](https://thewatchtower.tech/security).
+## Security
+
+AmplifiedAccess takes the security of our software products and services seriously, which includes all source code repositories managed through our GitHub organizations, including [Amplified-Access](https://github.com/Amplified-Access).
+
+If you believe you have found a security vulnerability in any AmplifiedAccess-owned repository, please report it to us as described below.
 
 ## Reporting Security Issues
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them directly to our team at [noble@amplifiedaccess.org](mailto:noble@amplifiedaccess.org).
+Instead, please report them directly to our team by emailing:
 
-Please include as much of the following information as possible to help us better understand the nature and scope of the issue:
+- [noble@amplifiedaccess.org](mailto:noble@amplifiedaccess.org)
+- [aziz@amplifiedaccess.org](mailto:aziz@amplifiedaccess.org)
 
-- Type of issue (e.g. SQL injection, cross-site scripting, authentication bypass, etc.)
-- Full paths of source file(s) related to the manifestation of the issue
-- The location of the affected source code (branch, commit, or direct URL)
-- Any special configuration required to reproduce the issue
-- Step-by-step instructions to reproduce the issue
-- Proof-of-concept or exploit code (if possible)
-- Impact of the issue, including how an attacker might exploit it
+You should receive a response within 48 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Additional information can be found at [thewatchtower.tech/security](https://thewatchtower.tech/security).
 
-You should receive a response within 48 hours. If you do not, please follow up via email to ensure we received your original message.
+Please include the requested information listed below (as much as you can provide) to help us better understand the nature and scope of the possible issue:
+
+  * Type of issue (e.g. buffer overflow, SQL injection, cross-site scripting, etc.)
+  * Full paths of source file(s) related to the manifestation of the issue
+  * The location of the affected source code (tag/branch/commit or direct URL)
+  * Any special configuration required to reproduce the issue
+  * Step-by-step instructions to reproduce the issue
+  * Proof-of-concept or exploit code (if possible)
+  * Impact of the issue, including how an attacker might exploit the issue
+
+This information will help us triage your report more quickly.
 
 ## Preferred Languages
 
@@ -26,4 +35,6 @@ We prefer all communications to be in English.
 
 ## Policy
 
-AmplifiedAccess follows the principle of [Coordinated Vulnerability Disclosure](https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure). We ask that you give us reasonable time to investigate and address a reported issue before any public disclosure.
+AmplifiedAccess follows the principle of [Coordinated Vulnerability Disclosure](https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure).
+
+<!-- END AMPLIFIEDACCESS SECURITY.MD BLOCK -->
