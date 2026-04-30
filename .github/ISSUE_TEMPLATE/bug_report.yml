@@ -1,0 +1,92 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in Watchtower
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much detail as you can so we can reproduce and fix it quickly.
+
+        > **Security vulnerabilities** should be reported privately. See [SECURITY.md](../SECURITY.md).
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the platform is affected?
+      options:
+        - Backend (API / Go)
+        - Frontend (Next.js / UI)
+        - Authentication
+        - Incident reporting
+        - Alerts & notifications
+        - Maps & geolocation
+        - AI insights
+        - Internationalization / translations
+        - CI/CD / deployment
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: When I do X, Y happens instead of Z.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps that reliably trigger the bug.
+      placeholder: |
+        1. Go to '...'
+        2. Click '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Fill in what is relevant.
+      value: |
+        - OS:
+        - Browser (if frontend):
+        - Go version (if backend):
+        - Node version (if frontend):
+        - Deployment (local / staging / production):
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or screenshots
+      description: Paste error output, stack traces, or attach screenshots. This is automatically formatted as code.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this is not a duplicate
+          required: true
+        - label: This is not a security vulnerability (I will email the team instead)
+          required: true

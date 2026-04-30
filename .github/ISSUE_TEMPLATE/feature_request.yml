@@ -1,0 +1,71 @@
+name: Feature Request
+description: Suggest a new feature or improvement for Watchtower
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping make Watchtower better for civil society organizations around the world.
+        Please describe your idea clearly so the team can evaluate and prioritize it.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the platform would this affect?
+      options:
+        - Incident reporting
+        - Alerts & notifications
+        - Maps & geolocation
+        - AI insights & analysis
+        - Role-based access / permissions
+        - Internationalization / translations
+        - API / integrations
+        - Admin dashboard
+        - Mobile
+        - CI/CD / infrastructure
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What are you trying to do, and why is it hard or impossible today?
+      placeholder: As a [Watcher / Admin / organization], I want to... because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe what you'd like to see built. Include mockups or examples if you have them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Have you tried workarounds? Are there other approaches that could solve this?
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that would help — related issues, external references, deployment context, etc.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this has not already been requested
+          required: true
