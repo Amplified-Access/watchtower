@@ -1,5 +1,7 @@
 # Security Policy
 
+Full details are available at [thewatchtower.tech/security](https://thewatchtower.tech/security).
+
 ## Reporting Security Issues
 
 **Please do not report security vulnerabilities through public GitHub issues.**
