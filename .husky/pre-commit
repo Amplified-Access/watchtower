@@ -20,7 +20,7 @@ echo "Backend: vet"
 
 echo ""
 echo "Backend: tests (unit only — integration tests run in CI)"
-(cd backend && go test $(go list ./... | grep -v 'internal/database' | grep -v 'pkg/postgres')) || exit 1
+(cd backend && { _pkgs=$(go list ./... | grep -v 'internal/database' | grep -v 'pkg/postgres'); [ -z "$_pkgs" ] || go test $_pkgs; }) || exit 1
 
 echo ""
 echo "Backend: build"

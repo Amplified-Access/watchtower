@@ -36,7 +36,7 @@ const data: GeoJSON.FeatureCollection = {
   features: incidents.map((i) => ({
     type: "Feature",
     geometry: { type: "Point", coordinates: [i.longitude, i.latitude] },
-    properties: { name: i.title, severity: i.severity, type: i.type },
+    properties: { name: i.title, description: i.description, severity: i.severity, type: i.type },
   })),
 }
 ```

@@ -275,22 +275,6 @@ The project ships a `.claude/settings.json` with the team's preferred configurat
       "Edit(backend/.env*)",
       "Write(backend/.env*)"
     ]
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "shell": "powershell",
-            "command": "...",
-            "timeout": 30,
-            "statusMessage": "Linting..."
-          }
-        ]
-      }
-    ]
   }
 }
 ```
