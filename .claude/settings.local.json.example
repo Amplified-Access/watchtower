@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$f = ([Console]::In.ReadToEnd() | ConvertFrom-Json).tool_input.file_path; if (-not $f) { exit 0 }; if ($f -match '\\.(ts|tsx|js|jsx)$') { Push-Location frontend; pnpm exec eslint --fix \"$f\" 2>$null; Pop-Location } elseif ($f -match '\\.go$') { gofmt -w \"$f\" 2>$null }",
+            "timeout": 30,
+            "statusMessage": "Linting..."
+          }
+        ]
+      }
+    ]
+  }
+}

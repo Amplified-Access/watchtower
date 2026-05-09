@@ -19,8 +19,8 @@ echo "Backend: vet"
 (cd backend && go vet ./...) || exit 1
 
 echo ""
-echo "Backend: tests"
-(cd backend && go test ./...) || exit 1
+echo "Backend: tests (unit only — integration tests run in CI)"
+(cd backend && { _pkgs=$(go list ./... | grep -v 'internal/database' | grep -v 'pkg/postgres'); [ -z "$_pkgs" ] || go test $_pkgs; }) || exit 1
 
 echo ""
 echo "Backend: build"

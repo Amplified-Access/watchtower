@@ -9,6 +9,7 @@ Architecture guides and reference docs for the Watchtower frontend.
 | [CLEAN_ARCHITECTURE_MIGRATION.md](./CLEAN_ARCHITECTURE_MIGRATION.md) | Clean Architecture guide: folder patterns, migration checklist, composition root examples, and per-feature migration status |
 | [TRPC.md](./TRPC.md) | tRPC setup: transport, context, auth middleware, procedure types, error handling, composition root |
 | [SCRIPTS.md](./SCRIPTS.md) | All pnpm scripts explained (dev, build, test, coverage, lint) |
+| [DYNAMIC_MAP.md](./DYNAMIC_MAP.md) | Dynamic map component: implementation approaches, data shape, customisation |
 
 ## Architecture Overview
 
