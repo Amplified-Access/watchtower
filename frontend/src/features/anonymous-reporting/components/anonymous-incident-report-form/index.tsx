@@ -385,12 +385,17 @@ const AnonymousIncidentReportForm = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  size="icon"
                   disabled={isPending}
-                  className="h-9 w-9"
+                  className="h-9 gap-2 px-3"
                   aria-label={t("formLanguage")}
                 >
-                  <Globe className="h-4 w-4" />
+                  <Globe className="h-4 w-4 shrink-0" />
+                  <span className="text-sm">
+                    {(() => {
+                      const lang = languages.find((l) => l.code === currentLocale);
+                      return lang ? lang.name : "Language";
+                    })()}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-50 p-2">

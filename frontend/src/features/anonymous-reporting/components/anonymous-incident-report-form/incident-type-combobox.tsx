@@ -75,7 +75,7 @@ const IncidentTypeCombobox = ({
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-full max-w-[500px] p-0">
+            <PopoverContent className="w-full max-w-125 p-0">
               <Command>
                 <CommandInput
                   placeholder={t("searchCategory")}
