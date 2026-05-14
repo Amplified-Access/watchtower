@@ -84,14 +84,16 @@ Weekly data refresh (`go run cmd/refresh/main.go`). Inserts 5–10 anonymous inc
 
 ### Scheduling on Railway
 
-To keep the "past week" map filter populated in the deployed app, add a Railway Cron Job service:
+The `watchtower-refresh-cron` service is already provisioned in the Railway production environment. It is deployed automatically by the `Deploy Refresh Cron` step in `.github/workflows/ci-cd.yml` on every push to `production`.
 
 | Setting | Value |
 |---|---|
-| Start command | `go run ./cmd/refresh/main.go` |
-| Root directory | `backend` |
+| Build command | `go build -o /app/refresh ./cmd/refresh` |
+| Start command | `/app/refresh` |
 | Schedule | `0 0 * * 0` (every Sunday at midnight UTC) |
 | Environment | `DATABASE_URL` — same value as the main API service |
+
+The service compiles to a static binary at deploy time so the Go toolchain is not needed at runtime. A manual run can be triggered from the Railway dashboard to verify the first deploy.
 
 ## Documentation
 

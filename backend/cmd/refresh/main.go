@@ -16,6 +16,8 @@ import (
 	"github.com/google/uuid"
 )
 
+const emptyEntitiesJSON = "[]"
+
 // location mirrors entity.Location — stored as JSON in the DB.
 type location struct {
 	Latitude  float64 `json:"latitude"`
@@ -53,7 +55,14 @@ func main() {
 	}
 	defer db.Close()
 
-	ctx := context.Background()
+	pingCtx, pingCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer pingCancel()
+	if err := db.PingContext(pingCtx); err != nil {
+		log.Fatalf("ping db: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
 
 	typeIDs, err := activeIncidentTypeIDs(ctx, db)
 	if err != nil {
@@ -89,10 +98,16 @@ func activeIncidentTypeIDs(ctx context.Context, db *sql.DB) ([]string, error) {
 
 // insertWeeklyReports inserts 5–10 anonymous reports spread across the last 7 days.
 // It has no "skip if exists" guard — safe to run on a schedule.
+// All inserts run in a single transaction so a partial failure leaves no orphaned rows.
 func insertWeeklyReports(ctx context.Context, db *sql.DB, typeIDs []string) (int, error) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback() //nolint:errcheck
+
 	now := time.Now()
 	numReports := 5 + rand.Intn(6) // 5–10
-	entities, _ := json.Marshal([]string{})
 	inserted := 0
 
 	for i := range numReports {
@@ -103,21 +118,25 @@ func insertWeeklyReports(ctx context.Context, db *sql.DB, typeIDs []string) (int
 
 		locJSON, err := json.Marshal(loc)
 		if err != nil {
-			return inserted, fmt.Errorf("marshal location: %w", err)
+			return 0, fmt.Errorf("marshal location: %w", err)
 		}
 
-		_, err = db.ExecContext(ctx,
+		_, err = tx.ExecContext(ctx,
 			`INSERT INTO anonymous_incident_reports
 			 (id, incident_type_id, location, description, entities, injuries, fatalities, created_at, updated_at)
 			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 			uuid.NewString(), typeID, string(locJSON),
 			fmt.Sprintf("Weekly refresh report #%d — %s", i+1, loc.Name),
-			string(entities), 0, 0, createdAt, createdAt,
+			emptyEntitiesJSON, 0, 0, createdAt, createdAt,
 		)
 		if err != nil {
-			return inserted, fmt.Errorf("insert report %d: %w", i+1, err)
+			return 0, fmt.Errorf("insert report %d: %w", i+1, err)
 		}
 		inserted++
+	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, fmt.Errorf("commit tx: %w", err)
 	}
 	return inserted, nil
 }
