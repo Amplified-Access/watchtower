@@ -16,7 +16,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const emptyEntitiesJSON = "[]"
+const emptyEntities = "{}" // PostgreSQL text[] literal for an empty array
 
 // location mirrors entity.Location — stored as JSON in the DB.
 type location struct {
@@ -127,7 +127,7 @@ func insertWeeklyReports(ctx context.Context, db *sql.DB, typeIDs []string) (int
 			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 			uuid.NewString(), typeID, string(locJSON),
 			fmt.Sprintf("Weekly refresh report #%d — %s", i+1, loc.Name),
-			emptyEntitiesJSON, 0, 0, createdAt, createdAt,
+			emptyEntities, 0, 0, createdAt, createdAt,
 		)
 		if err != nil {
 			return 0, fmt.Errorf("insert report %d: %w", i+1, err)

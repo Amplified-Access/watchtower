@@ -149,15 +149,13 @@ func seedAnonymousReports(ctx context.Context, db *sql.DB) error {
 				"longitude": loc.lng,
 				"country":   "Ghana",
 			})
-			entitiesJSON, _ := json.Marshal([]string{})
-
 			_, err := db.ExecContext(ctx,
 				`INSERT INTO anonymous_incident_reports
 				(id, incident_type_id, location, description, entities, injuries, fatalities, created_at, updated_at)
 				VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
 				uuid.NewString(), typeID, locJSON,
 				fmt.Sprintf("Sample incident report #%d", count+1),
-				string(entitiesJSON), 0, 0, createdAt, createdAt)
+				"{}", 0, 0, createdAt, createdAt)
 			if err != nil {
 				return fmt.Errorf("insert anon report: %w", err)
 			}
@@ -206,7 +204,6 @@ func seedOrgReports(ctx context.Context, db *sql.DB) error {
 
 	severities := []string{"low", "medium", "high", "critical"}
 	locJSON, _ := json.Marshal(map[string]any{"latitude": 5.6037, "longitude": -0.187, "country": "Ghana"})
-	entitiesJSON, _ := json.Marshal([]string{})
 	now := time.Now()
 	inserted := 0
 	for i := 0; i < 15; i++ {
@@ -221,7 +218,7 @@ func seedOrgReports(ctx context.Context, db *sql.DB) error {
 			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,false,$11,$12)`,
 			uuid.NewString(), orgID, userID, typeID, locJSON,
 			fmt.Sprintf("Sample org report #%d", i+1),
-			string(entitiesJSON), 0, 0, sev, createdAt, createdAt)
+			"{}", 0, 0, sev, createdAt, createdAt)
 		if err != nil {
 			return fmt.Errorf("insert org report: %w", err)
 		}
