@@ -145,6 +145,7 @@
     "searchLocation": "Search location...",
     "noCategoryFound": "No category found",
     "formLanguage": "Form Language",
+    "selectLanguage": "Select your language",
     "validationTypeRequired": "Incident type is required",
     "validationLocationRequired": "Location is required",
     "validationDescriptionRequired": "Description is required",

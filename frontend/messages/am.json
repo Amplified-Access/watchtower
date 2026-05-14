@@ -145,6 +145,7 @@
     "searchLocation": "ቦታ ይፈልጉ...",
     "noCategoryFound": "ምንም ምድብ አልተገኘም",
     "formLanguage": "የቅጽ ቋንቋ",
+    "selectLanguage": "ቋንቋዎን ይምረጡ",
     "validationTypeRequired": "የክስተት አይነት ያስፈልጋል",
     "validationLocationRequired": "ቦታ ያስፈልጋል",
     "validationDescriptionRequired": "መግለጫ ያስፈልጋል",

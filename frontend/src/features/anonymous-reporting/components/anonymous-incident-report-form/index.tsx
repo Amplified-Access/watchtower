@@ -31,7 +31,7 @@ import IncidentTypeCombobox from "./incident-type-combobox";
 import IncidentLocationCombobox from "./incident-location-combobox";
 import { MultiSelect } from "@/components/ui/muliple-select";
 import { trpc } from "@/_trpc/client";
-import { Mic, Square, Play, Trash2, Pause, Globe, Check } from "lucide-react";
+import { Mic, Square, Play, Trash2, Pause, Globe, Check, ArrowRight } from "lucide-react";
 import EvidenceUpload from "./evidence-upload";
 import { setLocaleCookie } from "@/lib/actions/set-locale";
 import { useTranslations } from "next-intl";
@@ -377,6 +377,10 @@ const AnonymousIncidentReportForm = () => {
         >
           {/* Language Selector */}
           <div className="flex items-center justify-end border-b pb-6 mb-4">
+            <span className="flex items-center gap-1 text-sm text-muted-foreground mr-3">
+              {t("selectLanguage")}
+              <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+            </span>
             <Popover
               open={languagePopoverOpen}
               onOpenChange={setLanguagePopoverOpen}

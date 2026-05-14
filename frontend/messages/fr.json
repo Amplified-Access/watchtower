@@ -145,6 +145,7 @@
     "searchLocation": "Rechercher un emplacement...",
     "noCategoryFound": "Aucune catégorie trouvée",
     "formLanguage": "Langue du formulaire",
+    "selectLanguage": "Sélectionnez votre langue",
     "validationTypeRequired": "Le type d'incident est requis",
     "validationLocationRequired": "L'emplacement est requis",
     "validationDescriptionRequired": "La description est requise",
