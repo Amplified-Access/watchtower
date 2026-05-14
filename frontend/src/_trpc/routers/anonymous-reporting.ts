@@ -177,8 +177,11 @@ export const anonymousReportingRouter = router({
         const res = await incidentsApi.getAnonymousReports({
           country: input.country,
           category: input.category,
+          timeframe: input.timeframe,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
+
+        const search = input.search?.trim().toLowerCase();
 
         const combined: CombinedIncidentReport[] = (
           (res.data ?? []) as RawAnonymousReport[]
@@ -211,7 +214,14 @@ export const anonymousReportingRouter = router({
               incidentTypeDescriptions: r.description,
             };
           })
-          .filter((r) => r.lat != null && r.lon != null) as CombinedIncidentReport[];
+          .filter((r) => r.lat != null && r.lon != null)
+          .filter((r) => {
+            if (!search) return true;
+            return (
+              r.displayName?.toLowerCase().includes(search) ||
+              r.incidentTypeDescriptions?.toLowerCase().includes(search)
+            );
+          }) as CombinedIncidentReport[];
 
         return { success: true, data: combined };
       } catch (error) {

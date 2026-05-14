@@ -2,6 +2,7 @@ package incidentusecase
 
 import (
 	"context"
+	"time"
 
 	"backend/internal/domain/entity"
 	domainerrors "backend/internal/domain/errors"
@@ -104,8 +105,8 @@ func (uc *UseCase) SubmitAnonymousReport(ctx context.Context, report *entity.Ano
 	return uc.anonRepo.Create(ctx, report)
 }
 
-func (uc *UseCase) GetAnonymousReports(ctx context.Context, country, category *string) ([]*entity.AnonymousIncidentReport, error) {
-	return uc.anonRepo.FindAll(ctx, country, category)
+func (uc *UseCase) GetAnonymousReports(ctx context.Context, country, category *string, since *time.Time) ([]*entity.AnonymousIncidentReport, error) {
+	return uc.anonRepo.FindAll(ctx, country, category, since)
 }
 
 func (uc *UseCase) GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error) {

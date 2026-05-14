@@ -33,7 +33,7 @@ type IncidentRepository interface {
 }
 
 type AnonymousIncidentReportRepository interface {
-	FindAll(ctx context.Context, country, category *string) ([]*entity.AnonymousIncidentReport, error)
+	FindAll(ctx context.Context, country, category *string, since *time.Time) ([]*entity.AnonymousIncidentReport, error)
 	FindByID(ctx context.Context, id string) (*entity.AnonymousIncidentReport, error)
 	Create(ctx context.Context, report *entity.AnonymousIncidentReport) error
 	GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error)

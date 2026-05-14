@@ -26,8 +26,8 @@ func NewCachedAnonymousReportRepository(rdb *redis.Client, repo repository.Anony
 	return &CachedAnonymousReportRepository{rdb: rdb, repo: repo}
 }
 
-func (r *CachedAnonymousReportRepository) FindAll(ctx context.Context, country, category *string) ([]*entity.AnonymousIncidentReport, error) {
-	return r.repo.FindAll(ctx, country, category)
+func (r *CachedAnonymousReportRepository) FindAll(ctx context.Context, country, category *string, since *time.Time) ([]*entity.AnonymousIncidentReport, error) {
+	return r.repo.FindAll(ctx, country, category, since)
 }
 
 func (r *CachedAnonymousReportRepository) FindByID(ctx context.Context, id string) (*entity.AnonymousIncidentReport, error) {

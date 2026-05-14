@@ -385,7 +385,7 @@ func NewAnonymousIncidentReportRepository(db *sql.DB) *AnonymousIncidentReportRe
 	return &AnonymousIncidentReportRepository{db: db}
 }
 
-func (r *AnonymousIncidentReportRepository) FindAll(ctx context.Context, country, category *string) ([]*entity.AnonymousIncidentReport, error) {
+func (r *AnonymousIncidentReportRepository) FindAll(ctx context.Context, country, category *string, since *time.Time) ([]*entity.AnonymousIncidentReport, error) {
 	q := `SELECT id, incident_type_id, location, description, entities, injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at
 		FROM anonymous_incident_reports WHERE 1=1`
 	args := []interface{}{}
@@ -398,6 +398,11 @@ func (r *AnonymousIncidentReportRepository) FindAll(ctx context.Context, country
 	if category != nil {
 		q += fmt.Sprintf(" AND incident_type_id = (SELECT id FROM incident_types WHERE name = $%d LIMIT 1)", idx)
 		args = append(args, *category)
+		idx++
+	}
+	if since != nil {
+		q += fmt.Sprintf(" AND created_at >= $%d", idx)
+		args = append(args, *since)
 	}
 	q += " ORDER BY created_at DESC"
 	rows, err := r.db.QueryContext(ctx, q, args...)

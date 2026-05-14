@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 
 	"backend/internal/adapter/middleware"
@@ -84,17 +86,20 @@ func (h *IncidentHandler) SubmitAnonymousReport(c *gin.Context) {
 // GetAnonymousReports godoc
 //
 //	@Summary		List anonymous incident reports
-//	@Description	Returns anonymous incident reports, optionally filtered by country and category
+//	@Description	Returns anonymous incident reports, optionally filtered by country, category, and timeframe
 //	@Tags			Incidents
 //	@Produce		json
-//	@Param			country		query		string	false	"Filter by country code"
-//	@Param			category	query		string	false	"Filter by incident category"
+//	@Param			country		query		string	false	"Filter by country name"
+//	@Param			category	query		string	false	"Filter by incident type name"
+//	@Param			timeframe	query		string	false	"Time window: week, month, or year"
 //	@Success		200			{object}	presenter.Response
 //	@Failure		500			{object}	presenter.Response
 //	@Router			/incidents/anonymous [get]
 func (h *IncidentHandler) GetAnonymousReports(c *gin.Context) {
 	country := c.Query("country")
 	category := c.Query("category")
+	timeframe := c.Query("timeframe")
+
 	var countryPtr, categoryPtr *string
 	if country != "" {
 		countryPtr = &country
@@ -102,7 +107,22 @@ func (h *IncidentHandler) GetAnonymousReports(c *gin.Context) {
 	if category != "" {
 		categoryPtr = &category
 	}
-	reports, err := h.uc.GetAnonymousReports(c.Request.Context(), countryPtr, categoryPtr)
+
+	var since *time.Time
+	now := time.Now()
+	switch timeframe {
+	case "week":
+		t := now.AddDate(0, 0, -7)
+		since = &t
+	case "month":
+		t := now.AddDate(0, -1, 0)
+		since = &t
+	case "year":
+		t := now.AddDate(-1, 0, 0)
+		since = &t
+	}
+
+	reports, err := h.uc.GetAnonymousReports(c.Request.Context(), countryPtr, categoryPtr, since)
 	if err != nil {
 		presenter.Error(c, err)
 		return

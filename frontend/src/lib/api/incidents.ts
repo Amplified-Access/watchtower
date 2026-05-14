@@ -159,10 +159,11 @@ export const incidentsApi = {
     audioFileKey?: string;
   }) => api.post("/incidents/anonymous", data),
 
-  getAnonymousReports: (params?: { country?: string; category?: string }) => {
+  getAnonymousReports: (params?: { country?: string; category?: string; timeframe?: string }) => {
     const query = new URLSearchParams();
     if (params?.country) query.set("country", params.country);
     if (params?.category) query.set("category", params.category);
+    if (params?.timeframe) query.set("timeframe", params.timeframe);
     const qs = query.toString();
     return api.get<unknown[]>(`/incidents/anonymous${qs ? `?${qs}` : ""}`);
   },
