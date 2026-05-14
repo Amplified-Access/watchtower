@@ -47,6 +47,13 @@ jobs:
         run: |
           railway up --service watchtower-backend-staging --environment staging --path-as-root ./backend
 
+      - name: Deploy Refresh Cron (Staging)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+        run: |
+          railway up --service watchtower-refresh-cron-staging --environment staging --path-as-root ./backend
+
   deploy-production:
     needs: test
     if: github.ref == 'refs/heads/production'
@@ -64,3 +71,10 @@ jobs:
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           railway up --service watchtower-backend --environment production --path-as-root ./backend
+
+      - name: Deploy Refresh Cron
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+        run: |
+          railway up --service watchtower-refresh-cron --environment production --path-as-root ./backend

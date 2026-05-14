@@ -66,6 +66,35 @@ make itest
 
 Runs database integration tests only (`go test ./internal/database -v`). Requires the database container to be running.
 
+## Database seeding
+
+```bash
+make seed
+```
+
+One-time seed for a fresh database (`go run cmd/seed/main.go`). Inserts incident types and a backfill of anonymous + org reports spread across the last 7 weeks. Each table is skipped if it already has rows, so this is safe to re-run but will not add new data after the first run.
+
+```bash
+make refresh
+```
+
+Weekly data refresh (`go run cmd/refresh/main.go`). Inserts 5–10 anonymous incident reports dated within the last 7 days. Unlike `seed`, it has no skip-if-exists guard and is designed to run on a repeating schedule.
+
+**Locations** are spread across the app's supported countries: Kenya (Nairobi, Mombasa, Kisumu), Uganda (Kampala, Fort Portal), Tanzania (Dar es Salaam, Arusha), Ethiopia (Addis Ababa, Bahir Dar), Rwanda (Kigali), and Pakistan (Karachi, Lahore, Islamabad).
+
+### Scheduling on Railway
+
+The `watchtower-refresh-cron` service is already provisioned in the Railway production environment. It is deployed automatically by the `Deploy Refresh Cron` step in `.github/workflows/ci-cd.yml` on every push to `production`.
+
+| Setting | Value |
+|---|---|
+| Build command | `go build -o /app/refresh ./cmd/refresh` |
+| Start command | `/app/refresh` |
+| Schedule | `0 0 * * 0` (every Sunday at midnight UTC) |
+| Environment | `DATABASE_URL` — same value as the main API service |
+
+The service compiles to a static binary at deploy time so the Go toolchain is not needed at runtime. A manual run can be triggered from the Railway dashboard to verify the first deploy.
+
 ## Documentation
 
 ```bash

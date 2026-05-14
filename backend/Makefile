@@ -46,9 +46,19 @@ watch:
 		Write-Output 'Watching...'; \
 	}"
 
+# Seed initial data (one-time, skips if rows exist)
+seed:
+	@echo "Seeding..."
+	@go run cmd/seed/main.go
+
+# Refresh weekly incident reports (safe to run on a schedule)
+refresh:
+	@echo "Refreshing weekly reports..."
+	@go run cmd/refresh/main.go
+
 # Generate Swagger docs
 swagger:
 	@echo "Generating Swagger docs..."
 	@swag init -g cmd/api/main.go --parseDependency --parseInternal
 
-.PHONY: all build run test clean watch docker-run docker-down itest swagger
+.PHONY: all build run test clean watch docker-run docker-down itest swagger seed refresh
