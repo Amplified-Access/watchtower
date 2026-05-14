@@ -66,6 +66,33 @@ make itest
 
 Runs database integration tests only (`go test ./internal/database -v`). Requires the database container to be running.
 
+## Database seeding
+
+```bash
+make seed
+```
+
+One-time seed for a fresh database (`go run cmd/seed/main.go`). Inserts incident types and a backfill of anonymous + org reports spread across the last 7 weeks. Each table is skipped if it already has rows, so this is safe to re-run but will not add new data after the first run.
+
+```bash
+make refresh
+```
+
+Weekly data refresh (`go run cmd/refresh/main.go`). Inserts 5–10 anonymous incident reports dated within the last 7 days. Unlike `seed`, it has no skip-if-exists guard and is designed to run on a repeating schedule.
+
+**Locations** are spread across the app's supported countries: Kenya (Nairobi, Mombasa, Kisumu), Uganda (Kampala, Fort Portal), Tanzania (Dar es Salaam, Arusha), Ethiopia (Addis Ababa, Bahir Dar), Rwanda (Kigali), and Pakistan (Karachi, Lahore, Islamabad).
+
+### Scheduling on Railway
+
+To keep the "past week" map filter populated in the deployed app, add a Railway Cron Job service:
+
+| Setting | Value |
+|---|---|
+| Start command | `go run ./cmd/refresh/main.go` |
+| Root directory | `backend` |
+| Schedule | `0 0 * * 0` (every Sunday at midnight UTC) |
+| Environment | `DATABASE_URL` — same value as the main API service |
+
 ## Documentation
 
 ```bash

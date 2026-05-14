@@ -69,7 +69,20 @@ make test         # unit tests
 make itest        # integration tests (requires Docker for Postgres)
 make watch        # live reload with air
 make swagger      # regenerate Swagger docs after changing annotations
+make seed         # one-time DB seed (skips tables that already have rows)
+make refresh      # insert a fresh batch of weekly anonymous reports (safe to re-run)
 ```
+
+### Weekly data refresh (Railway cron)
+`cmd/refresh/main.go` inserts 5–10 anonymous incident reports dated within the last 7 days.
+It has no skip-if-exists guard — running it weekly keeps the "past week" map filter populated.
+Locations are spread across the supported countries: Kenya, Uganda, Tanzania, Ethiopia, Rwanda, Pakistan.
+
+To schedule on Railway:
+1. Add a new **Cron Job** service pointing at the same repo.
+2. Set the start command to `go run ./cmd/refresh/main.go` (run from `backend/`).
+3. Set the schedule to `0 0 * * 0` (every Sunday at midnight UTC).
+4. Add the `DATABASE_URL` environment variable (same value as the main API service).
 
 ### Frontend (run from `frontend/`)
 ```
