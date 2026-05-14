@@ -64,3 +64,10 @@ jobs:
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           railway up --service watchtower-backend --environment production --path-as-root ./backend
+
+      - name: Deploy Refresh Cron
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+        run: |
+          railway up --service watchtower-refresh-cron --environment production --path-as-root ./backend
