@@ -466,8 +466,8 @@ const DatasetsPage = () => {
                 link: "/maps",
               },
               button2: {
-                title: "Reports",
-                link: "/reports",
+                title: "Chat",
+                link: "/chat",
               },
             }}
             color="primary"
