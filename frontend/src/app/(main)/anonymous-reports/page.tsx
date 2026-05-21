@@ -12,13 +12,11 @@ const Page = () => {
 
   return (
     <section className="mt-20 pt-20">
-      <Container
-        size="sm"
-        className="flex flex-col-reverse lg:flex-row gap-8 lg:gap-16"
-      >
-        <div className="w-full lg:max-w-[50%] pe-0 lg:pe-20">
-          <HeadingTwo className="mb-8">{t("pageTitle")}</HeadingTwo>
-          <TextComponent className="mb-20">{t("pageIntro")}</TextComponent>
+      <Container size="xs" className="flex flex-col gap-8">
+        <HeadingTwo className="mb-2">{t("pageTitle")}</HeadingTwo>
+        <TextComponent className="mb-4 max-w-2xl">{t("pageIntro")}</TextComponent>
+        <AnonymousIncidentReportForm />
+        <div className="mt-8">
           <H4 className="">{t("termsTitle")}</H4>{" "}
           <TextComponent>
             <p className="italic py-4">{t("termsIntro")}</p>
@@ -35,9 +33,6 @@ const Page = () => {
               </li>
             </ul>
           </TextComponent>
-        </div>
-        <div className="w-full lg:max-w-[50%]">
-          <AnonymousIncidentReportForm />
         </div>
       </Container>
     </section>

@@ -369,7 +369,7 @@ const AnonymousIncidentReportForm = () => {
   }
 
   return (
-    <div>
+    <div className="max-w-3xl">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
