@@ -17,7 +17,7 @@ const Page = () => {
           <HeadingTwo className="mb-8">{t("pageTitle")}</HeadingTwo>
           <AnonymousIncidentReportForm />
         </div>
-        <div className="pe-0 lg:pe-20">
+        <div className="">
           <TextComponent className="mb-8 lg:pt-[72px]">{t("pageIntro")}</TextComponent>
           <H4 className="">{t("termsTitle")}</H4>{" "}
           <TextComponent>
