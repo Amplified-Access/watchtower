@@ -12,11 +12,13 @@ const Page = () => {
 
   return (
     <section className="mt-20 pt-20">
-      <Container size="xs" className="flex flex-col gap-8">
-        <HeadingTwo className="mb-2">{t("pageTitle")}</HeadingTwo>
-        <TextComponent className="mb-4 max-w-2xl">{t("pageIntro")}</TextComponent>
-        <AnonymousIncidentReportForm />
-        <div className="mt-8">
+      <Container size="xs" className="flex flex-col-reverse lg:flex-row gap-8 lg:gap-16">
+        <div className="w-full lg:max-w-[60%]">
+          <HeadingTwo className="mb-8">{t("pageTitle")}</HeadingTwo>
+          <AnonymousIncidentReportForm />
+        </div>
+        <div className="w-full lg:max-w-[40%] pe-0 lg:pe-20">
+          <TextComponent className="mb-8 lg:pt-[72px]">{t("pageIntro")}</TextComponent>
           <H4 className="">{t("termsTitle")}</H4>{" "}
           <TextComponent>
             <p className="italic py-4">{t("termsIntro")}</p>
