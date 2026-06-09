@@ -84,7 +84,7 @@ export function GeneralSignInForm({
       <Card className="shadow-none rounded-lg py-6">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold font-title">
-            Sign in to WatchTower
+            Sign in
           </CardTitle>
         </CardHeader>
         <CardContent>

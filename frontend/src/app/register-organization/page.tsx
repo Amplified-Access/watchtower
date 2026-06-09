@@ -26,7 +26,7 @@ const Page = () => {
             />
             <div>
               <h1 className="text-3xl text-muted font-semibold font-title max-w-96 leading-tight pb-4">
-                Report incidents Stay protected
+                Report incidents. <br />Be heard!
               </h1>
               <TextComponent className="max-w-lg text-muted/70">
                 Submit an application to WatchTower to begin reporting and

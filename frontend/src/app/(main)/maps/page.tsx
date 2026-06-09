@@ -18,8 +18,7 @@ const Page = () => {
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
         <Container size="xs" className="">
           <TextComponent className="text-sm ">
-            Navigate interactive maps - openly available for monitoring,
-            research, documentation and community insights.
+            Navigate our live interactive maps to explore community-reported issues across locations and over time.
           </TextComponent>
         </Container>
       </section>

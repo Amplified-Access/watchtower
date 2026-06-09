@@ -84,7 +84,7 @@ const OrganizationRegistrationForm = ({
   };
 
   const onSubmit = async (
-    values: z.infer<typeof organizationApplicationSchema>
+    values: z.infer<typeof organizationApplicationSchema>,
   ) => {
     // console.log(file);
 
@@ -98,10 +98,10 @@ const OrganizationRegistrationForm = ({
     }
 
     try {
-      const result = await submitApplicationMutation.mutateAsync({
+      const result = (await submitApplicationMutation.mutateAsync({
         ...values,
         certificateOfIncorporation: fileResponse.fileKey,
-      }) as { error?: string; message?: string } | null;
+      })) as { error?: string; message?: string } | null;
       if (result?.error) {
         toast.error(result.message, {
           description: "Ensure the email hasnt been used before",
@@ -118,7 +118,7 @@ const OrganizationRegistrationForm = ({
       console.error("Error submitting application:", error);
       // Display error message
       toast.error(
-        `Submission failed: ${error.message || "An unknown error occurred."}`
+        `Submission failed: ${error.message || "An unknown error occurred."}`,
       ); // Using alert for simplicity
     } finally {
       setIsLoading(false);
@@ -129,13 +129,12 @@ const OrganizationRegistrationForm = ({
     <div
       className={cn(
         "w-full max-w-lg px-10 flex flex-col gap-4 rounded-2xl ",
-        className
+        className,
       )}
       {...props}
     >
-      
       <h1 className="text-3xl font-semibold font-title w-full leading-tight">
-        Start reporting
+        Register organization
       </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -224,7 +223,7 @@ const OrganizationRegistrationForm = ({
               className="w-full font-medium mt-4"
               disabled={isLoading}
             >
-              {isLoading ? <Loader /> : "Register Organization"}
+              {isLoading ? <Loader /> : "Submit"}
             </Button>
           </div>
         </form>

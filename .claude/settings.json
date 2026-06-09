@@ -16,13 +16,6 @@
       "Bash(git log *)",
       "Bash(git diff*)"
     ],
-    "deny": [
-      "Edit(.env*)",
-      "Write(.env*)",
-      "Edit(frontend/.env*)",
-      "Write(frontend/.env*)",
-      "Edit(backend/.env*)",
-      "Write(backend/.env*)"
-    ]
+    "deny": []
   }
 }

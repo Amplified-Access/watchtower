@@ -12,15 +12,15 @@ const Page = () => {
 
   return (
     <section className="mt-20 pt-20">
-      <Container size="xs" className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-16">
+      <Container size="xs" className="grid grid-cols-1 lg:grid-cols-[4fr_2fr] gap-8 lg:gap-16">
         <div>
           <HeadingTwo className="mb-8">{t("pageTitle")}</HeadingTwo>
           <AnonymousIncidentReportForm />
         </div>
         <div className="">
-          <TextComponent className="mb-8 lg:pt-[72px]">{t("pageIntro")}</TextComponent>
-          <H4 className="">{t("termsTitle")}</H4>{" "}
-          <TextComponent>
+          <TextComponent className="mb-8 lg:pt-[72px] text-sm md:text-sm">{t("pageIntro")}</TextComponent>
+          <H4 className="text-sm font-semibold text-dark/60">{t("termsTitle")}</H4>{" "}
+          <TextComponent className="text-xs md:text-xs text-dark/50">
             <p className="italic py-4">{t("termsIntro")}</p>
             <ul className="list-disc ps-6 mb-6">
               <li>{t("term1")}</li>
