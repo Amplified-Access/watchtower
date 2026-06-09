@@ -165,9 +165,8 @@ const Page = () => {
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
         <Container size="xs" className="">
           <TextComponent className="text-sm ">
-            Connect with Esi, our AI assistant, in your language, by text or
-            voice to explore our platform, understand our data, and see how we
-            can support your work.
+            Connect with Esi, our AI assistant, in your language through text or
+            voice to explore our platform and understand the issues that matter to you.
           </TextComponent>
         </Container>
       </section>

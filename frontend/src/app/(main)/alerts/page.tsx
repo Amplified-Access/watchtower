@@ -14,7 +14,7 @@ const AlertsPage = () => {
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
         <Container size="xs" className="">
           <TextComponent className="text-sm ">
-            {t("pageDescription")}
+            Never miss what matters. Get timely alerts on issues, risksand developments that matter to you and your community.
           </TextComponent>
         </Container>
       </section>
@@ -25,7 +25,7 @@ const AlertsPage = () => {
           </div>
         </Container>
       </section>
-      <section className="pb-20 pt-10">
+      {/* <section className="pb-20 pt-10">
         <Container size="xs">
           <CallToAction
             color="primary"
@@ -44,7 +44,7 @@ const AlertsPage = () => {
             }}
           />
         </Container>
-      </section>
+      </section> */}
     </>
   );
 };

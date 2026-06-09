@@ -72,15 +72,15 @@ const Page = () => {
             callToAction={{
               title: "Dig deeper",
               description:
-                "Report new incidents directly or dive into detailed reports to understand the full context behind these locations.",
+                "Ask questions through our chat assistant or sign up for timely alerts and updates to stay informed on emerging issues or trends.",
               variant: "secondary",
               button1: {
-                title: "Start reporting",
-                link: "",
+                title: "Chat with Esi",
+                link: "/chat",
               },
               button2: {
-                title: "Explore Reports",
-                link: "/reports",
+                title: "Signup for alerts",
+                link: "/alerts",
               },
             }}
             color="primary"
