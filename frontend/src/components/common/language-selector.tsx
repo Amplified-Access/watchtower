@@ -18,6 +18,7 @@ interface LanguageSelectorProps {
 
 const languages = [
   { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "fr", name: "Français", flag: "🇫🇷" },
   { code: "sw", name: "Kiswahili", flag: "🇰🇪" },
   { code: "lg", name: "Luganda", flag: "🇺🇬" },
   { code: "rw", name: "Kinyarwanda", flag: "🇷🇼" },

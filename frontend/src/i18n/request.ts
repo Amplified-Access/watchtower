@@ -4,6 +4,7 @@ import { getRequestConfig } from "next-intl/server";
 // Define all supported locales
 export const locales = [
   "en",
+  "fr",
   "sw",
   "lg",
   "rw",

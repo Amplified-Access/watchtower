@@ -139,7 +139,7 @@ const Page = () => {
                   alt=""
                   width={500}
                   height={500}
-                  className="absolute inset-0 w-full h-full object-cover opacity-15"
+                  className="absolute inset-0 w-full h-full object-cover opacity-30"
                 />
                 <div className="absolute inset-6 rounded-full border border-white/10" />
                 <div className="absolute inset-12 rounded-full border border-white/15" />
