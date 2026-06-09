@@ -38,10 +38,10 @@ const MobileNavigation = ({ scrolled }: { scrolled: boolean }) => {
         <div className="grid gap-4 px-8 pt-8">
           <SheetClose asChild>
             <Link
-              href={"/datasets-page"}
+              href={"/about"}
               className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
-              {t("datasets")}
+              About
             </Link>
           </SheetClose>
           <SheetClose asChild>

@@ -6,7 +6,7 @@ const footerLinks = {
   platform: {
     heading: "Platform",
     links: [
-      { label: "About", href: "/datasets-page" },
+      { label: "About", href: "/about" },
       { label: "Maps", href: "/maps" },
       { label: "Chat", href: "/chat" },
       { label: "Alerts", href: "/alerts" },
@@ -24,7 +24,7 @@ const footerLinks = {
 
 const Footer = () => {
   return (
-    <footer className="bg-dark text-white">
+    <footer className="bg-primary text-white">
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-16 md:pb-20">
         <div className="flex flex-col md:flex-row md:justify-between gap-12 md:gap-8">
           {/* Brand column */}

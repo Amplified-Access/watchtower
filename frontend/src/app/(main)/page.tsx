@@ -124,14 +124,16 @@ const Page = () => {
           <div className="text-center mb-14 md:mb-20">
             <HeadingTwo className="text-center">{t("howItWorks")}</HeadingTwo>
             <TextComponent className="mt-4 max-w-2xl mx-auto text-center">
-              From a single report to system-wide change, here is how WatchTower is enabling communities to make their voices heard and drive meaningful change.
+              From a single report to system-wide change, here is how WatchTower
+              is enabling communities to make their voices heard and drive
+              meaningful change.
             </TextComponent>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
             {/* Visual */}
             <div className="flex justify-center">
-              <div className="relative size-72 md:size-80 rounded-full bg-dark overflow-hidden flex items-center justify-center">
+              <div className="relative size-72 md:size-80 rounded-full bg-primary overflow-hidden flex items-center justify-center">
                 <Image
                   src="/topographic.svg"
                   alt=""
@@ -201,36 +203,38 @@ const Page = () => {
           />
         </Container>
       </section> */}
-      <section className="py-16 md:py-20 bg-primary">
+      <section className="py-16 md:py-20">
         <Container size="xs">
-          <div className="text-center mb-10 md:mb-14">
-            <h2 className="text-3xl md:text-4xl font-semibold font-title text-white leading-tight">
-              Our impact
-            </h2>
-            <p className="mt-3 text-white/70 max-w-2xl mx-auto">
-              Explore how communities are making their voices heard, shaping
-              decisions and driving action.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {[
-              { value: "6", label: "Countries" },
-              { value: "9", label: "Languages" },
-              { value: "22", label: "Deployments" },
-              { value: "2,000+", label: "Weekly users" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-white/10 border border-white/20 rounded-2xl py-8 px-4 flex aspect-square justify-center flex-col items-center text-center"
-              >
-                <span className="text-4xl md:text-5xl font-semibold font-title text-white">
-                  {stat.value}
-                </span>
-                <span className="mt-2 text-sm font-medium text-white/70 font-title tracking-wide">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
+          <div className="bg-primary rounded-3xl py-16 px-16">
+            <div className="text-center mb-10 md:mb-14 ">
+              <h2 className="text-3xl md:text-4xl font-semibold font-title text-white leading-tight">
+                Our impact
+              </h2>
+              <p className="mt-3 text-white/70 max-w-2xl mx-auto">
+                Explore how communities are making their voices heard, shaping
+                decisions and driving action.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {[
+                { value: "6", label: "Countries" },
+                { value: "9", label: "Languages" },
+                { value: "22", label: "Deployments" },
+                { value: "2,000+", label: "Weekly users" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-white/10 border border-white/20 rounded-2xl py-8 px-4 flex aspect-square justify-center flex-col items-center text-center"
+                >
+                  <span className="text-4xl md:text-5xl font-semibold font-title text-white">
+                    {stat.value}
+                  </span>
+                  <span className="mt-2 text-sm font-medium text-white/70 font-title tracking-wide">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </Container>
       </section>
