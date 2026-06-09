@@ -80,9 +80,10 @@ const DynamicThematicMaps = () => {
                     </div>
                   </div>
                   <HeadingFour className="mt-4 font-medium transition-colors duration-200">
-                    {incidentType.name
-                      .replace(/_/g, " ")
-                      .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    {(() => {
+                      const s = incidentType.name.replace(/_/g, " ").toLowerCase();
+                      return s.charAt(0).toUpperCase() + s.slice(1);
+                    })()}
                   </HeadingFour>
                 </Link>
               </div>

@@ -18,7 +18,8 @@ const Page = () => {
           <AnonymousIncidentReportForm />
         </div>
         <div className="">
-          <TextComponent className="mb-8 lg:pt-[72px] text-sm md:text-sm">{t("pageIntro")}</TextComponent>
+          <TextComponent className="mb-8 lg:pt-[72px] text-sm md:text-sm">            
+            Your voice matters! Use this secure and anonymous form to report an incident which helps to strengthen accountability and action.</TextComponent>
           <H4 className="text-sm font-semibold text-dark/60">{t("termsTitle")}</H4>{" "}
           <TextComponent className="text-xs md:text-xs text-dark/50">
             <p className="italic py-4">{t("termsIntro")}</p>

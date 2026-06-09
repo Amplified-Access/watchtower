@@ -1,6 +1,6 @@
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-export const incidentTypes = pgTable("incident_type", {
+export const incidentTypes = pgTable("incident_types", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
