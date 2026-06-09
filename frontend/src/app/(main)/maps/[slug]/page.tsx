@@ -24,8 +24,8 @@ const toSentenceCase = (name: string) => {
 const DynamicMapPage = async ({ params }: DynamicMapPageProps) => {
   const { slug } = await params;
 
-  const types = await incidentsApi.getAllTypes(true);
-  const incidentType = types.find((t) => generateSlug(t.name) === slug);
+  const { data: types } = await incidentsApi.getAllTypes(true);
+  const incidentType = (types ?? []).find((t) => generateSlug(t.name) === slug);
 
   if (!incidentType) {
     notFound();
@@ -59,8 +59,8 @@ export default DynamicMapPage;
 
 export async function generateStaticParams() {
   try {
-    const types = await incidentsApi.getAllTypes(true);
-    return types.map((t) => ({ slug: generateSlug(t.name) }));
+    const { data: types } = await incidentsApi.getAllTypes(true);
+    return (types ?? []).map((t) => ({ slug: generateSlug(t.name) }));
   } catch {
     return [];
   }

@@ -113,10 +113,8 @@ const Page = () => {
               <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
                 Our Objective
               </h1>
-              <TextComponent className="max-w-xl">
-                To empower communities to report civic incidents in their own
-                languages so that everyone can participate in civic
-                accountability.
+              <TextComponent className="max-w-3xl">
+                To ensure that every person has the power to report civic incidents in the language they speak, so that no voice goes unheard and everybody can participate in holding those responsible to account.
               </TextComponent>
             </div>
             {/* <Link
