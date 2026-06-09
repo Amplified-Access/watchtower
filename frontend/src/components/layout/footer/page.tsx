@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/logo";
 import { Mail } from "lucide-react";
+import TextComponent from "@/components/common/text-component";
 
 const footerLinks = {
   platform: {
@@ -16,8 +17,10 @@ const footerLinks = {
   contact: {
     heading: "Contact us",
     links: [
-      { label: "hello@amplifiedaccess.org", href: "mailto:hello@amplifiedaccess.org" },
-    
+      {
+        label: "hello@amplifiedaccess.org",
+        href: "mailto:hello@amplifiedaccess.org",
+      },
     ],
   },
 };
@@ -29,29 +32,21 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row md:justify-between gap-12 md:gap-8">
           {/* Brand column */}
           <div className="flex flex-col gap-4 max-w-xs">
-            <Logo color="primary" className="h-8 w-auto" />
-            <p className="text-white/60 text-sm leading-relaxed mt-1">
+            <div>
+              <Logo color="primary" className="w-52" />
+            </div>
+            <TextComponent className="text-white mt-1 text-sm md:text-base">
               Empowering communities to report civic incidents in their own
-              language, so everyone can participate in civic life and public accountability.
-            </p>
-            <p className="text-white/40 text-xs mt-1">
-              Designed, developed and maintained by{" "}
-              <a
-                href="https://amplifiedaccess.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-white/70 transition-colors"
-              >
-                Amplified Access
-              </a>
-            </p>
+              language, so everyone can participate in civic life and public
+              accountability.
+            </TextComponent>
           </div>
 
           {/* Links group — Platform + Contact bundled to the right */}
           <div className="flex gap-12 md:gap-16 shrink-0">
             {/* Platform */}
             <div className="flex flex-col gap-4">
-              <h3 className="font-title font-semibold text-sm text-white/40">
+              <h3 className="font-title font-semibold text-sm text-white">
                 {footerLinks.platform.heading}
               </h3>
               <ul className="flex flex-col gap-2">
@@ -59,7 +54,7 @@ const Footer = () => {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/70 hover:text-white transition-colors"
+                      className="text-sm text-white hover:opacity-70 transition-opacity"
                     >
                       {link.label}
                     </Link>
@@ -70,7 +65,7 @@ const Footer = () => {
 
             {/* Contact */}
             <div className="flex flex-col gap-4">
-              <h3 className="font-title font-semibold text-sm text-white/40">
+              <h3 className="font-title font-semibold text-sm text-white">
                 {footerLinks.contact.heading}
               </h3>
               <ul className="flex flex-col gap-2">
@@ -78,7 +73,7 @@ const Footer = () => {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+                      className="flex items-center gap-2 text-sm text-white hover:opacity-70 transition-opacity"
                     >
                       {link.href.startsWith("mailto:") && (
                         <Mail size={14} className="shrink-0" />
@@ -95,16 +90,39 @@ const Footer = () => {
 
       {/* Bottom bar */}
       <div className="border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
-          <span>© 2026 Amplified Access. All rights reserved.</span>
+        <div className="max-w-6xl mx-auto px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-white">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <span>© 2026 Amplified Access. All rights reserved.</span>
+            {/* <span className="hidden sm:inline text-white/30">·</span>
+            <span>
+              Designed and built by{" "}
+              <a
+                href="https://amplifiedaccess.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:opacity-70 transition-opacity"
+              >
+                Amplified Access
+              </a> */}
+            {/* </span> */}
+          </div>
           <div className="flex items-center gap-4">
-            <Link href="/privacy-policy" className="hover:text-white/70 transition-colors">
+            <Link
+              href="/privacy-policy"
+              className="hover:opacity-70 transition-opacity"
+            >
               Privacy
             </Link>
-            <Link href="/terms-of-service" className="hover:text-white/70 transition-colors">
+            <Link
+              href="/terms-of-service"
+              className="hover:opacity-70 transition-opacity"
+            >
               Terms
             </Link>
-            <Link href="/cookie-policy" className="hover:text-white/70 transition-colors">
+            <Link
+              href="/cookie-policy"
+              className="hover:opacity-70 transition-opacity"
+            >
               Cookies
             </Link>
           </div>

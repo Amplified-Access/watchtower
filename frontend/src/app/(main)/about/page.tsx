@@ -13,7 +13,12 @@ import { buttonVariants } from "@/components/ui/button";
 import { ClipboardList } from "@/components/animate-ui/icons/clipboard-list";
 import { Loader } from "@/components/animate-ui/icons/loader";
 import { Blocks } from "@/components/animate-ui/icons/blocks";
-import { MoveRight, Globe, Target, Users } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const StepCard = ({
   icon: Icon,
@@ -43,34 +48,16 @@ const StepCard = ({
         <h4 className="font-title font-semibold text-dark text-base md:text-lg mb-2">
           {title}
         </h4>
-        <p className="text-sm text-dark/60 leading-relaxed">{description}</p>
+        <p className="text-dark/60 leading-relaxed">{description}</p>
       </div>
     </div>
   );
 };
 
-const GoalCard = ({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  title: string;
-  description: string;
-}) => (
-  <div className="flex flex-col gap-4 p-6 rounded-2xl border border-dark/10 bg-white hover:shadow-sm transition-shadow">
-    <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
-      <Icon size={18} className="text-primary" />
-    </div>
-    <h3 className="font-title font-semibold text-dark text-lg">{title}</h3>
-    <p className="text-sm text-dark/60 leading-relaxed">{description}</p>
-  </div>
-);
-
 const languages = [
   { name: "English", region: "Global", code: "en" },
   { name: "Amharic", region: "Ethiopia", code: "am" },
-  { name: "French", region: "West & Central Africa", code: "fr" },
+  { name: "French", region: "Global", code: "fr" },
   { name: "Kikuyu", region: "Kenya", code: "ki" },
   { name: "Luganda", region: "Uganda", code: "lg" },
   { name: "Punjabi", region: "South Asia", code: "pa" },
@@ -93,25 +80,60 @@ const Page = () => {
           className="w-full object-cover h-full absolute top-0 -z-1 opacity-20"
         />
         <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
-        <div className="py-40 2xl:py-48">
-          <Container className="pt-16 flex flex-col gap-6 text-center items-center">
-            <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm">
-              About WatchTower
-            </p>
-            <h1 className="text-4xl md:text-5xl font-semibold font-title leading-tight max-w-2xl">
-              Building tools for civic accountability
+        <div className="pt-32 pb-28">
+          <Container className="pt-32 flex flex-col gap-6 text-center items-center">
+            <h1 className="text-5xl font-semibold font-title leading-tight max-w-3xl">
+              About the platform
             </h1>
-            <TextComponent className="max-w-2xl">
-              We believe everyone deserves a voice in their community, regardless
-              of the language they speak. WatchTower bridges that gap — turning
-              local reports into meaningful change.
+            <TextComponent className="max-w-4xl md:text-xl">
+              WatchTower is a community-centered civic intelligence platform
+              that uses AI and local language technologies to enable people to
+              report incidents, risks and rights violations in their own
+              languages and transforms these reports into actionable insights
+              for accountability and response
             </TextComponent>
+            {/* <Link
+              href="/anonymous-reports"
+              className={cn(
+                buttonVariants({ variant: "default", size: "lg" }),
+                "font-title font-medium",
+              )}
+            >
+              Submit a report
+            </Link> */}
+          </Container>
+        </div>
+      </section>
+      {/* Hero */}
+      <section className="relative">
+        <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
+        <div className="pb-32 pt-20">
+          <Container size="xs">
+            <div className="py-32 flex flex-col gap-6 text-center items-center bg-white border rounded-3xl">
+              <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
+                Our Objective
+              </h1>
+              <TextComponent className="max-w-xl">
+                To empower communities to report civic incidents in their own
+                languages so that everyone can participate in civic
+                accountability.
+              </TextComponent>
+            </div>
+            {/* <Link
+              href="/anonymous-reports"
+              className={cn(
+                buttonVariants({ variant: "default", size: "lg" }),
+                "font-title font-medium",
+              )}
+            >
+              Submit a report
+            </Link> */}
           </Container>
         </div>
       </section>
 
-      {/* Our Mission */}
-      <section className="py-16 md:py-24 bg-dark text-background">
+      {/* Mission
+      <section className="py-20 md:py-32 bg-dark text-background">
         <Container size="text" className="text-center flex flex-col gap-6">
           <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm">
             Our Mission
@@ -122,67 +144,28 @@ const Page = () => {
           </h2>
           <p className="text-background/65 text-lg max-w-2xl mx-auto leading-relaxed">
             Across Africa and beyond, critical civic events go unreported simply
-            because reporting tools don't speak people's languages. WatchTower
-            removes that barrier so that everyone can participate in public
-            accountability.
+            because reporting tools do not speak people&apos;s languages.
+            WatchTower removes that barrier so that everyone can participate in
+            public accountability.
           </p>
         </Container>
-      </section>
-
-      {/* What We're Trying to Achieve */}
-      <section className="py-16 md:py-24">
-        <Container size="xs">
-          <div className="text-center mb-12">
-            <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm mb-4">
-              What We&apos;re Trying to Achieve
-            </p>
-            <HeadingTwo className="text-center">
-              Three goals, one platform
-            </HeadingTwo>
-            <TextComponent className="mt-4 max-w-2xl mx-auto text-center">
-              Every feature we build serves one of these three purposes.
-            </TextComponent>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <GoalCard
-              icon={Globe}
-              title="Accessible reporting"
-              description="Make it possible for anyone to submit a civic incident report in the language they're most comfortable with — no translation required."
-            />
-            <GoalCard
-              icon={Target}
-              title="Transparent accountability"
-              description="Surface patterns, trends, and hotspots from ground-level reports so communities, journalists, and organisations can build evidence-based cases."
-            />
-            <GoalCard
-              icon={Users}
-              title="Community-led change"
-              description="Put verified data in the hands of the communities it belongs to, so they can advocate for themselves and hold decision-makers accountable."
-            />
-          </div>
-        </Container>
-      </section>
+      </section> */}
 
       {/* How It Works */}
-      <section className="py-16 md:py-24 bg-background">
+      <section className="pb-20 md:pb-32 isolate">
         <Container size="xs">
           <div className="text-center mb-14 md:mb-20">
-            <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm mb-4">
-              How It Works
-            </p>
-            <HeadingTwo className="text-center">
-              From a single report to system-wide change
-            </HeadingTwo>
+            <HeadingTwo className="text-center">How this works</HeadingTwo>
             <TextComponent className="mt-4 max-w-2xl mx-auto text-center">
-              Here is how WatchTower enables communities to make their voices
-              heard and drive meaningful change.
+              From a single report to system-wide change, here is how WatchTower
+              is enabling communities to make their voices heard and drive
+              meaningful change.
             </TextComponent>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            {/* Visual */}
             <div className="flex justify-center">
-              <div className="relative size-72 md:size-80 rounded-full bg-dark overflow-hidden flex items-center justify-center">
+              <div className="relative size-72 md:size-80 rounded-full bg-primary overflow-hidden flex items-center justify-center">
                 <Image
                   src="/topographic.svg"
                   alt=""
@@ -205,26 +188,29 @@ const Page = () => {
               </div>
             </div>
 
-            {/* Steps */}
             <div className="relative">
               <div className="absolute left-5 top-5 bottom-16 w-px bg-dark/15" />
+              <div
+                className="hidden md:block absolute top-1/2 -translate-y-1/2 h-px bg-dark/15"
+                style={{ right: "calc(100% - 1.25rem)", width: "11rem" }}
+              />
               <StepCard
                 icon={ClipboardList}
                 part="Step 1"
-                title="Report"
-                description="Anyone with a phone or computer can submit a civic incident report directly in their own language — from election irregularities to infrastructure failures and rights violations."
+                title="Enable reporting"
+                description="We provide technology to facilitate individuals and communities to report community issues or rights violations directly from their phone or computer in a language they speak."
               />
               <StepCard
                 icon={Loader}
                 part="Step 2"
-                title="Analyse"
-                description="We process and verify every report, mapping incidents and surfacing patterns that would otherwise go unnoticed. Raw information becomes clear, structured intelligence."
+                title="Understand trends"
+                description="We process and verify every report, mapping incidents and surfacing patterns that would otherwise go unnoticed. Raw information becomes clear, structured intelligence that tells a bigger story."
               />
               <StepCard
                 icon={Blocks}
                 part="Step 3"
-                title="Act"
-                description="Communities, organisations, and institutions access these insights to build cases, hold the right people accountable, and push for meaningful change backed by real evidence."
+                title="Drive action"
+                description="Communities, organizations and institutions access these insights to build cases, hold the right people accountable, and push for meaningful change, backed by real evidence from the ground."
               />
             </div>
           </div>
@@ -232,93 +218,230 @@ const Page = () => {
       </section>
 
       {/* Languages */}
-      <section className="py-16 md:py-24 bg-primary">
+      <section className="pb-20 md:pb-32">
         <Container size="xs">
-          <div className="text-center mb-12">
-            <p className="text-white/60 font-title font-semibold uppercase tracking-widest text-sm mb-4">
-              Languages Available
-            </p>
-            <h2 className="font-title font-semibold text-3xl md:text-4xl text-white leading-tight">
-              Speak your language
-            </h2>
-            <p className="mt-4 text-white/70 max-w-2xl mx-auto">
-              WatchTower currently supports {languages.length} languages — with
-              more added as we expand into new communities.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-            {languages.map((lang) => (
-              <div
-                key={lang.code}
-                className="bg-white/10 border border-white/20 rounded-xl p-4 flex flex-col gap-1 text-center hover:bg-white/20 transition-colors"
-              >
-                <span className="font-title font-semibold text-white text-sm">
-                  {lang.name}
-                </span>
-                <span className="text-white/55 text-xs">{lang.region}</span>
-              </div>
-            ))}
+          <div className="rounded-3xl bg-primary p-16">
+            <div className="text-center mb-12">
+              {/* <p className="text-white/60 font-title font-semibold uppercase tracking-widest text-sm mb-4">
+                Languages Available
+              </p> */}
+              <h2 className="font-title font-semibold text-3xl md:text-4xl text-white leading-tight">
+                Supported languages{" "}
+              </h2>
+              <TextComponent className="text-white/60 mt-4 max-w-3xl mx-auto text-center">
+                WatchTower currently supports {languages.length} languages
+                enabling more community voices to participate, be heard and
+                contribute to public accountability in the language that feels
+                most natural to them.
+              </TextComponent>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              {languages.map((lang) => (
+                <div
+                  key={lang.code}
+                  className="bg-white/10 border border-white/20 rounded-xl p-4 flex flex-col gap-1 text-center hover:bg-white/15 transition-colors"
+                >
+                  <span className="font-title font-semibold text-white text-sm">
+                    {lang.name}
+                  </span>
+                  <span className="text-white/55 text-xs">{lang.region}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </Container>
       </section>
 
-      {/* Map */}
-      <section className="py-16 md:py-24">
+      {/* Impact */}
+      <section className="pb-20 md:pb-32">
         <Container size="xs">
-          <div className="text-center mb-10">
-            <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm mb-4">
-              Where We Operate
-            </p>
-            <HeadingTwo className="text-center">
-              Incidents mapped in real time
-            </HeadingTwo>
-            <TextComponent className="mt-4 max-w-2xl mx-auto text-center">
-              Explore community-reported issues across locations as they happen
-              — all on a single interactive map.
-            </TextComponent>
-          </div>
-          <Link href="/maps/live-incident-map" className="group block">
-            <div className="relative rounded-2xl overflow-hidden border border-dark/10">
-              <Image
-                src="/images/live-incident-map.png"
-                alt="Live incident map"
-                width={1200}
-                height={700}
-                className="w-full object-cover aspect-video"
-                draggable={false}
-              />
-              <div className="absolute inset-0 bg-dark/30 group-hover:bg-dark/20 transition-colors flex items-center justify-center">
-                <span
-                  className={cn(
-                    buttonVariants({ variant: "secondary", size: "lg" }),
-                    "font-title font-medium gap-2 pointer-events-none",
-                  )}
-                >
-                  View live map
-                  <MoveRight size={16} />
-                </span>
-              </div>
+          <div className="bg-white border rounded-3xl py-16 px-8 md:px-16">
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-3xl md:text-4xl font-semibold font-title leading-tight">
+                Our impact
+              </h2>
+              <TextComponent className="mt-3 max-w-xl mx-auto text-center">
+                Explore how communities are making their voices heard, shaping
+                decisions and driving action.
+              </TextComponent>
             </div>
-          </Link>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {[
+                { value: "6", label: "Countries" },
+                { value: "10", label: "Languages" },
+                { value: "22", label: "Deployments" },
+                { value: "2,000+", label: "Weekly users" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-gray-500/10 border border-white/20 rounded-2xl py-8 px-4 flex aspect-square justify-center flex-col items-center text-center"
+                >
+                  <span className="text-4xl md:text-5xl font-semibold font-title text-dark">
+                    {stat.value}
+                  </span>
+                  <span className="mt-2 text-sm font-medium text-dark/70 font-title tracking-wide">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* The Organisation */}
+      {/* <section className="py-20 md:py-32">
+        <Container size="xs">
+          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+            <div>
+              <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm mb-4">
+                The Organisation
+              </p>
+              <HeadingTwo>
+                Accountable, transparent, and mission-driven
+              </HeadingTwo>
+              <TextComponent className="mt-6">
+                WatchTower is a product of Amplified Access, a registered
+                nonprofit dedicated to building technology that expands civic
+                participation in underserved communities.
+              </TextComponent>
+              <Link
+                href="https://amplifiedaccess.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 mt-6 text-sm font-title font-medium text-primary hover:opacity-70 transition-opacity"
+              >
+                amplifiedaccess.org
+              </Link>
+            </div>
+
+            <div className="flex flex-col divide-y divide-dark/10">
+              {[
+                {
+                  icon: Building2,
+                  label: "Legal status",
+                  value: "Registered nonprofit, United States",
+                },
+                {
+                  icon: Globe,
+                  label: "Operating since",
+                  value: "2022",
+                },
+                {
+                  icon: FileText,
+                  label: "Annual filings",
+                  value: "Form 990 available on request",
+                },
+                {
+                  icon: Users,
+                  label: "Leadership",
+                  value: "Noble and Aziz, Co-founders at Amplified Access",
+                },
+              ].map(({ icon: Icon, label, value }) => (
+                <div
+                  key={label}
+                  className="flex items-start gap-4 py-5 first:pt-0 last:pb-0"
+                >
+                  <div className="size-9 shrink-0 rounded-full border border-dark/10 flex items-center justify-center mt-0.5">
+                    <Icon size={15} className="text-dark/50" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-title uppercase tracking-widest text-dark/40 mb-1">
+                      {label}
+                    </p>
+                    <p className="text-dark font-medium text-sm">{value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section> */}
+
+      {/* Your Safety */}
+      <section className="pb-20 md:pb-32 text-background">
+        <Container size="xs">
+          <div className="bg-primary p-10 md:p-16 rounded-3xl">
+            <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+              <div>
+                <h2 className="font-title font-semibold text-3xl md:text-4xl text-background leading-snug">
+                  Your data belongs to you
+                </h2>
+                <TextComponent className="text-white/60 mt-4">
+                  We know that speaking up can carry risk. Here is how
+                  WatchTower is built to protect you.
+                </TextComponent>
+              </div>
+
+              <Accordion type="single" collapsible className="w-full">
+                {[
+                  {
+                    value: "identity",
+                    question:
+                      "Is my identity protected when I submit a report?",
+                    answer:
+                      "You never need to provide your name, phone number, or any identifying information to file a report. Anonymous is the default, not the exception.",
+                  },
+                  {
+                    value: "account",
+                    question: "Do I need to create an account?",
+                    answer:
+                      "There is no profile to create and no login to track. You arrive, you report, you leave. Nothing ties you back to your submission.",
+                  },
+                  {
+                    value: "encryption",
+                    question: "Can my submission be traced back to me?",
+                    answer:
+                      "All submissions are encrypted from the moment you send them. Your report cannot be intercepted or traced back to you in transit.",
+                  },
+                  {
+                    value: "visibility",
+                    question: "Who can see my report?",
+                    answer:
+                      "Reports are reviewed only by verified WatchTower administrators. Your submission is never shared publicly with any identifying information attached.",
+                  },
+                  {
+                    value: "device",
+                    question: "Can I report from a shared or public device?",
+                    answer:
+                      "Yes. WatchTower does not store session data or cookies tied to your submission. Reporting from a shared device does not put you at risk.",
+                  },
+                ].map(({ value, question, answer }) => (
+                  <AccordionItem
+                    key={value}
+                    value={value}
+                    className="border-white/15"
+                  >
+                    <AccordionTrigger className="font-title font-medium text-background text-base hover:no-underline hover:text-background/80 [&>svg]:text-background/40 py-5">
+                      {question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-background/60 leading-relaxed pb-5">
+                      {answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </div>
         </Container>
       </section>
 
       {/* CTA */}
-      <section className="pb-20">
+      <section className="pb-20 md:pb-24">
         <Container size="xs">
           <CallToAction
             callToAction={{
-              title: "Get in touch",
+              title: "Ready to report?",
               description:
-                "Have a question, want to partner with us, or just want to learn more about what WatchTower can do for your community? We'd love to hear from you.",
+                "Submit a civic incident report in your language. No account needed, no personal information required.",
               variant: "secondary",
               button1: {
-                title: "Email us",
-                link: "mailto:hello@amplifiedaccess.org",
-              },
-              button2: {
                 title: "Submit a report",
                 link: "/anonymous-reports",
+              },
+              button2: {
+                title: "View the live map",
+                link: "/maps/live-incident-map",
               },
             }}
             color="white"

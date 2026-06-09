@@ -14,7 +14,7 @@ const AlertsPage = () => {
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
         <Container size="xs" className="">
           <TextComponent className="text-sm ">
-            Never miss what matters. Get timely alerts on issues, risksand developments that matter to you and your community.
+            Never miss what matters. Get timely alerts on issues, risks and developments that matter to you and your community.
           </TextComponent>
         </Container>
       </section>
