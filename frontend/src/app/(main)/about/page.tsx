@@ -277,7 +277,7 @@ const Page = () => {
                   key={stat.label}
                   className="bg-gray-500/10 border border-white/20 rounded-2xl py-8 px-4 flex aspect-square justify-center flex-col items-center text-center"
                 >
-                  <span className="text-3xl md:text-5xl font-semibold font-title text-dark">
+                  <span className="text-3xl md:text-4xl font-semibold font-title text-dark">
                     {stat.value}
                   </span>
                   <span className="mt-2 text-sm font-medium text-dark/70 font-title tracking-wide">
