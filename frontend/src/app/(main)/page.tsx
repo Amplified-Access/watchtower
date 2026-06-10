@@ -218,7 +218,7 @@ const Page = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {[
                 { value: "6", label: "Countries" },
-                { value: "9", label: "Languages" },
+                { value: "10", label: "Languages" },
                 { value: "22", label: "Deployments" },
                 { value: "2,000+", label: "Weekly users" },
               ].map((stat) => (
