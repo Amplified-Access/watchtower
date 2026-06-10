@@ -88,7 +88,7 @@ const Page = () => {
               languages they speak so that everyone can participate in civic
               life and public accountability.
             </TextComponent>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-4">
               <Link
                 href={"/anonymous-reports"}
                 className={cn(
@@ -205,7 +205,7 @@ const Page = () => {
       </section> */}
       <section className="py-16 md:py-20">
         <Container size="xs">
-          <div className="bg-primary rounded-3xl py-16 px-16">
+          <div className="bg-primary rounded-3xl py-8 md:py-16 px-4 md:px-16">
             <div className="text-center mb-10 md:mb-14 ">
               <h2 className="text-3xl md:text-4xl font-semibold font-title text-white leading-tight">
                 Our impact
@@ -226,7 +226,7 @@ const Page = () => {
                   key={stat.label}
                   className="bg-white/10 border border-white/20 rounded-2xl py-8 px-4 flex aspect-square justify-center flex-col items-center text-center"
                 >
-                  <span className="text-4xl md:text-5xl font-semibold font-title text-white">
+                  <span className="text-4xl md:text-4xl font-semibold font-title text-white">
                     {stat.value}
                   </span>
                   <span className="mt-2 text-sm font-medium text-white/70 font-title tracking-wide">

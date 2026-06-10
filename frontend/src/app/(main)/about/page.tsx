@@ -82,7 +82,7 @@ const Page = () => {
         <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
         <div className="pt-32 pb-28">
           <Container className="pt-32 flex flex-col gap-6 text-center items-center">
-            <h1 className="text-5xl font-semibold font-title leading-tight max-w-3xl">
+            <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
               About the platform
             </h1>
             <TextComponent className="max-w-4xl md:text-xl">
@@ -109,12 +109,15 @@ const Page = () => {
         <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
         <div className="pb-32 pt-20">
           <Container size="xs">
-            <div className="py-32 flex flex-col gap-6 text-center items-center bg-white border rounded-3xl">
+            <div className="py-32 flex flex-col gap-6 text-center items-center bg-white border rounded-3xl p-6">
               <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
                 Our Objective
               </h1>
               <TextComponent className="max-w-3xl">
-                To ensure that every person has the power to report civic incidents in the language they speak, so that no voice goes unheard and everybody can participate in holding those responsible to account.
+                To ensure that every person has the power to report civic
+                incidents in the language they speak, so that no voice goes
+                unheard and everybody can participate in holding those
+                responsible to account.
               </TextComponent>
             </div>
             {/* <Link
@@ -218,7 +221,7 @@ const Page = () => {
       {/* Languages */}
       <section className="pb-20 md:pb-32">
         <Container size="xs">
-          <div className="rounded-3xl bg-primary p-16">
+          <div className="rounded-3xl bg-primary p-8 md:p-16">
             <div className="text-center mb-12">
               {/* <p className="text-white/60 font-title font-semibold uppercase tracking-widest text-sm mb-4">
                 Languages Available
@@ -253,7 +256,7 @@ const Page = () => {
       {/* Impact */}
       <section className="pb-20 md:pb-32">
         <Container size="xs">
-          <div className="bg-white border rounded-3xl py-16 px-8 md:px-16">
+          <div className="bg-white border rounded-3xl pt-8 pb-4 md:py-16 px-4 md:px-16">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-semibold font-title leading-tight">
                 Our impact
@@ -274,7 +277,7 @@ const Page = () => {
                   key={stat.label}
                   className="bg-gray-500/10 border border-white/20 rounded-2xl py-8 px-4 flex aspect-square justify-center flex-col items-center text-center"
                 >
-                  <span className="text-4xl md:text-5xl font-semibold font-title text-dark">
+                  <span className="text-3xl md:text-5xl font-semibold font-title text-dark">
                     {stat.value}
                   </span>
                   <span className="mt-2 text-sm font-medium text-dark/70 font-title tracking-wide">
@@ -410,10 +413,10 @@ const Page = () => {
                     value={value}
                     className="border-white/15"
                   >
-                    <AccordionTrigger className="font-title font-medium text-background text-base hover:no-underline hover:text-background/80 [&>svg]:text-background/40 py-5">
+                    <AccordionTrigger className="font-title text-background text-base hover:no-underline hover:text-background/80 [&>svg]:text-background/40 py-5">
                       {question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-background/60 leading-relaxed pb-5">
+                    <AccordionContent className="text-background/60 leading-relaxed font-normal text-base pb-5">
                       {answer}
                     </AccordionContent>
                   </AccordionItem>
