@@ -158,7 +158,7 @@ const Page = () => {
 
             {/* Steps timeline */}
             <div className="relative">
-              <div className="absolute left-5 top-5 bottom-16 w-px bg-dark/15" />
+              <div className="absolute left-5 top-5 bottom-24 w-px bg-dark/15" />
               <div
                 className="hidden md:block absolute top-1/2 -translate-y-1/2 h-px bg-dark/15"
                 style={{ right: "calc(100% - 1.25rem)", width: "11rem" }}

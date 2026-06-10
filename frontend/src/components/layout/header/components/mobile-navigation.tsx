@@ -54,18 +54,18 @@ const MobileNavigation = ({ scrolled }: { scrolled: boolean }) => {
           </SheetClose>
           <SheetClose asChild>
             <Link
-              href={"/reports"}
-              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
-            >
-              {t("reports")}
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link
               href={"/chat"}
               className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
               {t("chat")}
+            </Link>
+          </SheetClose>
+          <SheetClose asChild>
+            <Link
+              href={"/alerts"}
+              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
+            >
+              {t("alerts")}
             </Link>
           </SheetClose>
         </div>
