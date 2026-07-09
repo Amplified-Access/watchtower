@@ -77,7 +77,7 @@ const Page = () => {
             <h1 className="text-4xl font-semibold max-w-xl  font-title leading-tight">
               <span className="block">
                 {/* {t("heroTitleLine1")} */}
-                Report civic incidents in your language. Be heard!
+                Report in your language. Be heard!
               </span>
               {/* <span className="block">{t("heroTitleLine2")}</span> */}
             </h1>
