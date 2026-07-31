@@ -25,22 +25,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "next-intl";
 
-function formatRelativeTime(date: string | Date) {
+function formatRelativeTime(
+  date: string | Date,
+  t: ReturnType<typeof useTranslations>,
+) {
   const now = new Date();
   const target = new Date(date);
   const diffMs = now.getTime() - target.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-  return `${Math.floor(diffDays / 365)} years ago`;
+  if (diffDays === 0) return t("timeToday");
+  if (diffDays === 1) return t("timeYesterday");
+  if (diffDays < 7) return t("timeDaysAgo", { count: diffDays });
+  if (diffDays < 30)
+    return t("timeWeeksAgo", { count: Math.floor(diffDays / 7) });
+  if (diffDays < 365)
+    return t("timeMonthsAgo", { count: Math.floor(diffDays / 30) });
+  return t("timeYearsAgo", { count: Math.floor(diffDays / 365) });
 }
 
 export default function InsightsPage() {
+  const t = useTranslations("Insights");
+  const tCommon = useTranslations("Common");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(0);
@@ -76,12 +84,9 @@ export default function InsightsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          Insights & Learnings
+          {t("pageTitle")}
         </h1>
-        <p className="text-muted-foreground">
-          Stay informed with the latest insights on civic technology, digital
-          rights, and social change initiatives across the region.
-        </p>
+        <p className="text-muted-foreground">{t("pageDescription")}</p>
       </div>
 
       {/* Search and Filter */}
@@ -92,13 +97,13 @@ export default function InsightsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Search insights by title..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
-              <Button type="submit">Search</Button>
+              <Button type="submit">{tCommon("search")}</Button>
             </form>
           </CardContent>
         </Card>
@@ -106,13 +111,15 @@ export default function InsightsPage() {
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Filter by Category</label>
+              <label className="text-sm font-medium">
+                {t("filterByCategory")}
+              </label>
               <Select value={selectedTag} onValueChange={handleTagFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All categories" />
+                  <SelectValue placeholder={t("allCategories")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All categories</SelectItem>
+                  <SelectItem value="all">{t("allCategories")}</SelectItem>
                   {tags?.map((tag) => (
                     <SelectItem key={tag.id} value={tag.id}>
                       {tag.title}
@@ -134,7 +141,7 @@ export default function InsightsPage() {
               <div>
                 <p className="text-2xl font-bold">{insights?.length || 0}</p>
                 <p className="text-xs text-muted-foreground">
-                  Current insights
+                  {t("statCurrentInsights")}
                 </p>
               </div>
             </div>
@@ -147,7 +154,9 @@ export default function InsightsPage() {
               <Tag className="h-8 w-8 text-primary" />
               <div>
                 <p className="text-2xl font-bold">{tags?.length || 0}</p>
-                <p className="text-xs text-muted-foreground">Categories</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("statCategories")}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -158,9 +167,9 @@ export default function InsightsPage() {
             <div className="flex items-center space-x-2">
               <AlertCircle className="h-8 w-8 text-primary" />
               <div>
-                <p className="text-2xl font-bold">Live</p>
+                <p className="text-2xl font-bold">{t("statLive")}</p>
                 <p className="text-xs text-muted-foreground">
-                  Real-time updates
+                  {t("statRealTimeUpdates")}
                 </p>
               </div>
             </div>
@@ -196,7 +205,7 @@ export default function InsightsPage() {
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
               <AlertCircle className="h-12 w-12 mx-auto mb-4" />
-              <p>Failed to load insights. Please try again later.</p>
+              <p>{t("errorLoading")}</p>
             </div>
           </CardContent>
         </Card>
@@ -247,7 +256,8 @@ export default function InsightsPage() {
                         <div className="flex items-center text-xs text-muted-foreground">
                           <Calendar className="h-3 w-3 mr-1" />
                           {formatRelativeTime(
-                            insight.publishedAt || insight.createdAt
+                            insight.publishedAt || insight.createdAt,
+                            t,
                           )}
                         </div>
                       </div>
@@ -264,7 +274,7 @@ export default function InsightsPage() {
                     className="w-full"
                   >
                     <Eye className="h-4 w-4 mr-2" />
-                    Read More
+                    {t("readMore")}
                   </Button>
                 </CardContent>
               </Card>
@@ -278,17 +288,17 @@ export default function InsightsPage() {
               onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
               disabled={currentPage === 0}
             >
-              Previous
+              {t("previous")}
             </Button>
             <span className="flex items-center px-4 text-sm text-muted-foreground">
-              Page {currentPage + 1}
+              {t("page", { number: currentPage + 1 })}
             </span>
             <Button
               variant="outline"
               onClick={() => setCurrentPage((p) => p + 1)}
               disabled={!insights || insights.length < pageSize}
             >
-              Next
+              {t("next")}
             </Button>
           </div>
         </>
@@ -300,11 +310,11 @@ export default function InsightsPage() {
           <CardContent className="pt-6">
             <div className="text-center py-8">
               <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No insights found</h3>
+              <h3 className="text-lg font-semibold mb-2">{t("emptyTitle")}</h3>
               <p className="text-muted-foreground">
                 {searchTerm || selectedTag
-                  ? "No insights match your search criteria."
-                  : "There are no published insights available at this time."}
+                  ? t("emptyNoMatch")
+                  : t("emptyNoInsights")}
               </p>
               {(searchTerm || selectedTag) && (
                 <Button
@@ -316,7 +326,7 @@ export default function InsightsPage() {
                   }}
                   className="mt-4"
                 >
-                  Clear filters
+                  {t("clearFilters")}
                 </Button>
               )}
             </div>

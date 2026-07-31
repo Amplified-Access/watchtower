@@ -75,18 +75,10 @@ const Page = () => {
           <Container className="pt-16 flex flex-col gap-8  h-full justify-center text-center items-center">
             {/* <HealthCheck /> */}
             <h1 className="text-4xl font-semibold max-w-xl  font-title leading-tight">
-              <span className="block">
-                {/* {t("heroTitleLine1")} */}
-                Report in your language. Be heard!
-              </span>
-              {/* <span className="block">{t("heroTitleLine2")}</span> */}
+              <span className="block">{t("heroTitleLine1")}</span>
             </h1>
             <TextComponent className="max-w-3xl">
-              {/* {t("heroDescription")} */}
-              When communities can speak up, things change. Watchtower enables
-              people to report local issues and rights violations in the
-              languages they speak so that everyone can participate in civic
-              life and public accountability.
+              {t("heroDescription")}
             </TextComponent>
             <div className="flex flex-col md:flex-row items-center gap-4">
               <Link
@@ -99,8 +91,7 @@ const Page = () => {
                   "font-title font-medium",
                 )}
               >
-                {/* {t("startReporting")} */}
-                Submit a report
+                {t("startReporting")}
               </Link>
               <Link
                 href={"/sign-in"}
@@ -112,8 +103,7 @@ const Page = () => {
                   "font-title font-medium",
                 )}
               >
-                {/* {t("viewMaps")} */}
-                Create a deployment
+                {t("viewMaps")}
               </Link>
             </div>
           </Container>
@@ -124,9 +114,7 @@ const Page = () => {
           <div className="text-center mb-14 md:mb-20">
             <HeadingTwo className="text-center">{t("howItWorks")}</HeadingTwo>
             <TextComponent className="mt-4 max-w-2xl mx-auto text-center">
-              From a single report to system-wide change, here is how WatchTower
-              is enabling communities to make their voices heard and drive
-              meaningful change.
+              {t("howItWorksDescription")}
             </TextComponent>
           </div>
 
@@ -165,22 +153,21 @@ const Page = () => {
               />
               <StepCard
                 icon={ClipboardList}
-                part="Step 1"
-                // title={t("step1Title")}
-                title="Enable reporting"
-                description="We provide technology to facilitate individuals and communities to report community issues or rights violations directly from their phone or cumputer in a language they speak."
+                part={t("stepLabel", { number: 1 })}
+                title={t("step1Title")}
+                description={t("step1Description")}
               />
               <StepCard
                 icon={Loader}
-                part="Step 2"
-                title={"Understand trends"}
-                description="We process and verify every report, mapping incidents and surfacing patterns that would otherwise go unnoticed. Raw information becomes clear, structured intelligence that tells a bigger story."
+                part={t("stepLabel", { number: 2 })}
+                title={t("step2Title")}
+                description={t("step2Description")}
               />
               <StepCard
                 icon={Blocks}
-                part="Step 3"
-                title={"Drive action"}
-                description="Communities, organizations and institutions access these insights to build cases, hold the right people accountable, and push for meaningful change, backed by real evidence from the ground."
+                part={t("stepLabel", { number: 3 })}
+                title={t("step3Title")}
+                description={t("step3Description")}
               />
             </div>
           </div>
@@ -208,19 +195,18 @@ const Page = () => {
           <div className="bg-primary rounded-3xl py-8 md:py-16 px-4 md:px-16">
             <div className="text-center mb-10 md:mb-14 ">
               <h2 className="text-3xl md:text-4xl font-semibold font-title text-white leading-tight">
-                Our impact
+                {t("impactTitle")}
               </h2>
               <p className="mt-3 text-white/70 max-w-2xl mx-auto">
-                Explore how communities are making their voices heard, shaping
-                decisions and driving action.
+                {t("impactDescription")}
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {[
-                { value: "6", label: "Countries" },
-                { value: "10", label: "Languages" },
-                { value: "22", label: "Deployments" },
-                { value: "2,000+", label: "Weekly users" },
+                { value: "6", label: t("statCountries") },
+                { value: "10", label: t("statLanguages") },
+                { value: "22", label: t("statDeployments") },
+                { value: "2,000+", label: t("statWeeklyUsers") },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -246,11 +232,11 @@ const Page = () => {
               description: t("ctaDescription"),
               variant: "secondary",
               button1: {
-                title: "Submit a report",
+                title: t("ctaButton1"),
                 link: "/anonymous-reports",
               },
               button2: {
-                title: "Create a deployment",
+                title: t("ctaButton2"),
                 link: "/maps",
               },
             }}

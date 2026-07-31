@@ -1,31 +1,37 @@
+"use client";
+
 import Link from "next/link";
 import Logo from "@/components/logo";
 import { Mail } from "lucide-react";
 import TextComponent from "@/components/common/text-component";
-
-const footerLinks = {
-  platform: {
-    heading: "Platform",
-    links: [
-      { label: "About", href: "/about" },
-      { label: "Maps", href: "/maps" },
-      { label: "Chat", href: "/chat" },
-      { label: "Alerts", href: "/alerts" },
-      // { label: "Submit a report", href: "/anonymous-reports" },
-    ],
-  },
-  contact: {
-    heading: "Contact us",
-    links: [
-      {
-        label: "hello@amplifiedaccess.org",
-        href: "mailto:hello@amplifiedaccess.org",
-      },
-    ],
-  },
-};
+import { useTranslations } from "next-intl";
 
 const Footer = () => {
+  const t = useTranslations("Footer");
+  const tNav = useTranslations("Navigation");
+
+  const footerLinks = {
+    platform: {
+      heading: t("platform"),
+      links: [
+        { label: tNav("about"), href: "/about" },
+        { label: tNav("maps"), href: "/maps" },
+        { label: tNav("chat"), href: "/chat" },
+        { label: tNav("alerts"), href: "/alerts" },
+        // { label: "Submit a report", href: "/anonymous-reports" },
+      ],
+    },
+    contact: {
+      heading: t("contactUs"),
+      links: [
+        {
+          label: "hello@amplifiedaccess.org",
+          href: "mailto:hello@amplifiedaccess.org",
+        },
+      ],
+    },
+  };
+
   return (
     <footer className="bg-primary text-white">
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-16 md:pb-20">
@@ -36,9 +42,7 @@ const Footer = () => {
               <Logo color="primary" className="w-52" />
             </div>
             <TextComponent className="text-white mt-1 text-sm md:text-base">
-              Empowering communities to report civic incidents in their own
-              language, so everyone can participate in civic life and public
-              accountability.
+              {t("brandDescription")}
             </TextComponent>
           </div>
 
@@ -92,7 +96,7 @@ const Footer = () => {
       <div className="border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-white">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-            <span>© 2026 Amplified Access. All rights reserved.</span>
+            <span>{t("copyright", { year: new Date().getFullYear() })}</span>
             {/* <span className="hidden sm:inline text-white/30">·</span>
             <span>
               Designed and built by{" "}
@@ -111,19 +115,19 @@ const Footer = () => {
               href="/privacy-policy"
               className="hover:opacity-70 transition-opacity"
             >
-              Privacy
+              {t("privacy")}
             </Link>
             <Link
               href="/terms-of-service"
               className="hover:opacity-70 transition-opacity"
             >
-              Terms
+              {t("terms")}
             </Link>
             <Link
               href="/cookie-policy"
               className="hover:opacity-70 transition-opacity"
             >
-              Cookies
+              {t("cookies")}
             </Link>
           </div>
         </div>

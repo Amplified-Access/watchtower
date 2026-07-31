@@ -77,7 +77,7 @@ const Header = () => {
                 : ""
           }`}
         >
-          <Link href={"/about"}>About</Link>
+          <Link href={"/about"}>{t("about")}</Link>
           <Link href={"/maps"}>{t("maps")}</Link>
           {/* <Link href={"/reports"}>{t("reports")}</Link> */}
           <Link href={"/chat"}>{t("chat")}</Link>

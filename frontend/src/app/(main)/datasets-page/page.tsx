@@ -48,8 +48,11 @@ import {
 } from "@/components/ui/popover";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import CallToAction from "@/components/common/call-to-action";
+import { useTranslations } from "next-intl";
 
 const DatasetsPage = () => {
+  const t = useTranslations("Datasets");
+  const tNav = useTranslations("Navigation");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedFormat, setSelectedFormat] = useState<string>("all");
@@ -82,10 +85,10 @@ const DatasetsPage = () => {
       // Download the file
       await downloadFileFromR2(dataset.fileKey, dataset.fileName);
 
-      toast.success(`Downloaded ${dataset.fileName}`);
+      toast.success(t("downloadSuccess", { fileName: dataset.fileName }));
     } catch (error) {
       console.error("Download failed:", error);
-      toast.error("Download failed. Please try again.");
+      toast.error(t("downloadError"));
     } finally {
       setIsDownloading(null);
     }
@@ -124,8 +127,7 @@ const DatasetsPage = () => {
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
         <Container size="xs" className="">
           <TextComponent className="text-sm ">
-            Discover comprehensive datasets - freely available for research,
-            analysis and community use.
+            {t("browseDescription")}
           </TextComponent>
         </Container>
       </section>
@@ -136,7 +138,7 @@ const DatasetsPage = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 " />
                 <Input
-                  placeholder="Search datasets..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="pl-10 bg-white placeholder:text-md shadow-none rounded-full"
@@ -149,10 +151,10 @@ const DatasetsPage = () => {
                 onValueChange={setSelectedCategory}
               >
                 <SelectTrigger className="w-full md:w-48 bg-white shadow-none text-muted-foreground">
-                  <SelectValue placeholder="All Categories" />
+                  <SelectValue placeholder={t("allCategories")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="all">{t("allCategories")}</SelectItem>
                   {categoryOptions.map((category: string) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -162,10 +164,10 @@ const DatasetsPage = () => {
               </Select>
               <Select value={selectedFormat} onValueChange={setSelectedFormat}>
                 <SelectTrigger className="w-full md:w-40 bg-white shadow-none text-muted-foreground">
-                  <SelectValue placeholder="All Formats" className="" />
+                  <SelectValue placeholder={t("allFormats")} className="" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Formats</SelectItem>
+                  <SelectItem value="all">{t("allFormats")}</SelectItem>
                   <SelectItem value="CSV">CSV</SelectItem>
                   <SelectItem value="JSON">JSON</SelectItem>
                   <SelectItem value="Excel">Excel</SelectItem>
@@ -185,7 +187,7 @@ const DatasetsPage = () => {
                   setCurrentPage(1);
                 }}
               >
-                Clear Filters
+                {t("clearFilters")}
               </Button>
             )}
           </div>
@@ -262,10 +264,10 @@ const DatasetsPage = () => {
             <div className="text-center py-12">
               <Database className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <HeadingThree className="text-gray-600 mb-2">
-                No datasets found
+                {t("emptyTitle")}
               </HeadingThree>
               <TextComponent className="text-gray-500">
-                Try adjusting your search terms or filters.
+                {t("emptyDescription")}
               </TextComponent>
             </div>
           ) : (
@@ -295,7 +297,7 @@ const DatasetsPage = () => {
                               <div className="shrink-0">
                                 {getFormatIcon(dataset.format)}
                               </div>
-                              {dataset.format ?? "Unknown"}
+                              {dataset.format ?? t("unknownFormat")}
                             </div>
                             <Badge variant="secondary">
                               {dataset.category}
@@ -313,7 +315,7 @@ const DatasetsPage = () => {
                           <button
                             onClick={() => setInfoDataset(dataset)}
                             className="text-muted-foreground hover:text-foreground transition-colors ml-auto"
-                            aria-label="Dataset info"
+                            aria-label={t("datasetInfoLabel")}
                           >
                             <FaRegCircleQuestion className="h-4 w-4" />
                           </button>
@@ -322,8 +324,16 @@ const DatasetsPage = () => {
                         <hr className="my-4 border-gray-200" />
 
                         <div className="flex justify-between text-sm text-gray-600">
-                          <span>Size: {formatFileSize(dataset.fileSize)}</span>
-                          <span>{dataset.downloadCount} downloads</span>
+                          <span>
+                            {t("sizeLabel", {
+                              size: formatFileSize(dataset.fileSize),
+                            })}
+                          </span>
+                          <span>
+                            {t("downloadsCount", {
+                              count: dataset.downloadCount,
+                            })}
+                          </span>
                         </div>
 
                         <hr className="my-4 border-gray-200" />
@@ -331,7 +341,9 @@ const DatasetsPage = () => {
                         {dataset.source && (
                           <>
                             <div className="text-sm text-gray-600">
-                              <span className="font-medium">Source:</span>{" "}
+                              <span className="font-medium">
+                                {t("sourceLabel")}
+                              </span>{" "}
                               {dataset.source}
                             </div>
                             <hr className="my-4 border-gray-200" />
@@ -364,7 +376,9 @@ const DatasetsPage = () => {
                           ) : (
                             <Download className="mr-2 h-4 w-4" />
                           )}
-                          {isDownloading === dataset.id ? "" : "Download"}
+                          {isDownloading === dataset.id
+                            ? ""
+                            : t("downloadButton")}
                         </Button>
                       </div>
                     </CardContent>
@@ -457,16 +471,15 @@ const DatasetsPage = () => {
         <Container size="xs" className="">
           <CallToAction
             callToAction={{
-              title: "Keep exploring",
-              description:
-                "Dive deeper into incident patterns with our interactive maps or browse comprehensive reports across different regions and themes.",
+              title: t("ctaTitle"),
+              description: t("ctaDescription"),
               variant: "secondary",
               button1: {
-                title: "Maps",
+                title: tNav("maps"),
                 link: "/maps",
               },
               button2: {
-                title: "Chat",
+                title: tNav("chat"),
                 link: "/chat",
               },
             }}
@@ -490,19 +503,25 @@ const DatasetsPage = () => {
             <p>{infoDataset?.description}</p>
             {infoDataset?.methodology && (
               <div>
-                <p className="font-medium text-foreground mb-1">Methodology</p>
+                <p className="font-medium text-foreground mb-1">
+                  {t("methodology")}
+                </p>
                 <p>{infoDataset?.methodology}</p>
               </div>
             )}
             {infoDataset?.coverage && (
               <div>
-                <p className="font-medium text-foreground mb-1">Coverage</p>
+                <p className="font-medium text-foreground mb-1">
+                  {t("coverage")}
+                </p>
                 <p>{infoDataset?.coverage}</p>
               </div>
             )}
             {infoDataset?.license && (
               <div>
-                <p className="font-medium text-foreground mb-1">License</p>
+                <p className="font-medium text-foreground mb-1">
+                  {t("license")}
+                </p>
                 <p>{infoDataset?.license}</p>
               </div>
             )}

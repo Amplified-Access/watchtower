@@ -1,17 +1,22 @@
+"use client";
+
 import Image from "next/image";
 import Container from "./common/container";
 import H4 from "./common/heading-four";
 import { InfiniteSlider } from "./ui/infinite-slider";
 import { ProgressiveBlur } from "./ui/progressive-blur";
+import { useTranslations } from "next-intl";
 
 export default function LogoCloud() {
+  const t = useTranslations("LogoCloud");
+
   return (
     <section className="bg-background overflow-hidden py-10">
       <Container size="lg" className="group relative lg:px-0">
         <div className="flex flex-col items-center md:flex-row">
           <div className="md:max-w-44 shrink-0 md:border-r md:pr-6">
             <H4 className="text-3xl md:text-lg text-center md:text-left pt-8 pb-4">
-              Powering the best teams
+              {t("heading")}
             </H4>
           </div>
           <div className="relative py-6 max-w-4xl mx-auto w-full">

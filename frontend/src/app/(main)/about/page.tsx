@@ -19,6 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useTranslations } from "next-intl";
 
 const StepCard = ({
   icon: Icon,
@@ -54,20 +55,23 @@ const StepCard = ({
   );
 };
 
-const languages = [
-  { name: "English", region: "Global", code: "en" },
-  { name: "Amharic", region: "Ethiopia", code: "am" },
-  { name: "French", region: "Global", code: "fr" },
-  { name: "Kikuyu", region: "Kenya", code: "ki" },
-  { name: "Luganda", region: "Uganda", code: "lg" },
-  { name: "Punjabi", region: "South Asia", code: "pa" },
-  { name: "Kinyarwanda", region: "Rwanda", code: "rw" },
-  { name: "Sukuma", region: "Tanzania", code: "suk" },
-  { name: "Swahili", region: "East Africa", code: "sw" },
-  { name: "Urdu", region: "Pakistan", code: "ur" },
-];
-
 const Page = () => {
+  const t = useTranslations("About");
+  const tHome = useTranslations("Home");
+
+  const languages = [
+    { name: t("langEnglish"), region: t("regionGlobal"), code: "en" },
+    { name: t("langAmharic"), region: t("regionEthiopia"), code: "am" },
+    { name: t("langFrench"), region: t("regionGlobal"), code: "fr" },
+    { name: t("langKikuyu"), region: t("regionKenya"), code: "ki" },
+    { name: t("langLuganda"), region: t("regionUganda"), code: "lg" },
+    { name: t("langPunjabi"), region: t("regionSouthAsia"), code: "pa" },
+    { name: t("langKinyarwanda"), region: t("regionRwanda"), code: "rw" },
+    { name: t("langSukuma"), region: t("regionTanzania"), code: "suk" },
+    { name: t("langSwahili"), region: t("regionEastAfrica"), code: "sw" },
+    { name: t("langUrdu"), region: t("regionPakistan"), code: "ur" },
+  ];
+
   return (
     <>
       {/* Hero */}
@@ -83,14 +87,10 @@ const Page = () => {
         <div className="pt-32 pb-28">
           <Container className="pt-32 flex flex-col gap-6 text-center items-center">
             <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
-              About the platform
+              {t("heroTitle")}
             </h1>
             <TextComponent className="max-w-4xl md:text-xl">
-              WatchTower is a community-centered civic intelligence platform
-              that uses AI and local language technologies to enable people to
-              report incidents, risks and rights violations in their own
-              languages and transforms these reports into actionable insights
-              for accountability and response
+              {t("heroDescription")}
             </TextComponent>
             {/* <Link
               href="/anonymous-reports"
@@ -111,13 +111,10 @@ const Page = () => {
           <Container size="xs">
             <div className="py-32 flex flex-col gap-6 text-center items-center bg-white border rounded-3xl p-6">
               <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
-                Our Objective
+                {t("objectiveTitle")}
               </h1>
               <TextComponent className="max-w-3xl">
-                To ensure that every person has the power to report civic
-                incidents in the language they speak, so that no voice goes
-                unheard and everybody can participate in holding those
-                responsible to account.
+                {t("objectiveDescription")}
               </TextComponent>
             </div>
             {/* <Link
@@ -156,11 +153,11 @@ const Page = () => {
       <section className="pb-20 md:pb-32 isolate">
         <Container size="xs">
           <div className="text-center mb-14 md:mb-20">
-            <HeadingTwo className="text-center">How this works</HeadingTwo>
+            <HeadingTwo className="text-center">
+              {tHome("howItWorks")}
+            </HeadingTwo>
             <TextComponent className="mt-4 max-w-2xl mx-auto text-center">
-              From a single report to system-wide change, here is how WatchTower
-              is enabling communities to make their voices heard and drive
-              meaningful change.
+              {tHome("howItWorksDescription")}
             </TextComponent>
           </div>
 
@@ -197,21 +194,21 @@ const Page = () => {
               />
               <StepCard
                 icon={ClipboardList}
-                part="Step 1"
-                title="Enable reporting"
-                description="We provide technology to facilitate individuals and communities to report community issues or rights violations directly from their phone or computer in a language they speak."
+                part={tHome("stepLabel", { number: 1 })}
+                title={tHome("step1Title")}
+                description={tHome("step1Description")}
               />
               <StepCard
                 icon={Loader}
-                part="Step 2"
-                title="Understand trends"
-                description="We process and verify every report, mapping incidents and surfacing patterns that would otherwise go unnoticed. Raw information becomes clear, structured intelligence that tells a bigger story."
+                part={tHome("stepLabel", { number: 2 })}
+                title={tHome("step2Title")}
+                description={tHome("step2Description")}
               />
               <StepCard
                 icon={Blocks}
-                part="Step 3"
-                title="Drive action"
-                description="Communities, organizations and institutions access these insights to build cases, hold the right people accountable, and push for meaningful change, backed by real evidence from the ground."
+                part={tHome("stepLabel", { number: 3 })}
+                title={tHome("step3Title")}
+                description={tHome("step3Description")}
               />
             </div>
           </div>
@@ -227,13 +224,10 @@ const Page = () => {
                 Languages Available
               </p> */}
               <h2 className="font-title font-semibold text-3xl md:text-4xl text-white leading-tight">
-                Supported languages{" "}
+                {t("languagesTitle")}
               </h2>
               <TextComponent className="text-white/60 mt-4 max-w-3xl mx-auto text-center">
-                WatchTower currently supports {languages.length} languages
-                enabling more community voices to participate, be heard and
-                contribute to public accountability in the language that feels
-                most natural to them.
+                {t("languagesDescription", { count: languages.length })}
               </TextComponent>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -259,19 +253,18 @@ const Page = () => {
           <div className="bg-white border rounded-3xl pt-8 pb-4 md:py-16 px-4 md:px-16">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-3xl md:text-4xl font-semibold font-title leading-tight">
-                Our impact
+                {tHome("impactTitle")}
               </h2>
               <TextComponent className="mt-3 max-w-xl mx-auto text-center">
-                Explore how communities are making their voices heard, shaping
-                decisions and driving action.
+                {tHome("impactDescription")}
               </TextComponent>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {[
-                { value: "6", label: "Countries" },
-                { value: "10", label: "Languages" },
-                { value: "22", label: "Deployments" },
-                { value: "2,000+", label: "Weekly users" },
+                { value: "6", label: tHome("statCountries") },
+                { value: "10", label: tHome("statLanguages") },
+                { value: "22", label: tHome("statDeployments") },
+                { value: "2,000+", label: tHome("statWeeklyUsers") },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -366,11 +359,10 @@ const Page = () => {
             <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
               <div>
                 <h2 className="font-title font-semibold text-3xl md:text-4xl text-background leading-snug">
-                  Your data belongs to you
+                  {t("safetyTitle")}
                 </h2>
                 <TextComponent className="text-white/60 mt-4">
-                  We know that speaking up can carry risk. Here is how
-                  WatchTower is built to protect you.
+                  {t("safetyDescription")}
                 </TextComponent>
               </div>
 
@@ -378,34 +370,28 @@ const Page = () => {
                 {[
                   {
                     value: "identity",
-                    question:
-                      "Is my identity protected when I submit a report?",
-                    answer:
-                      "You never need to provide your name, phone number, or any identifying information to file a report. Anonymous is the default, not the exception.",
+                    question: t("faqIdentityQuestion"),
+                    answer: t("faqIdentityAnswer"),
                   },
                   {
                     value: "account",
-                    question: "Do I need to create an account?",
-                    answer:
-                      "There is no profile to create and no login to track. You arrive, you report, you leave. Nothing ties you back to your submission.",
+                    question: t("faqAccountQuestion"),
+                    answer: t("faqAccountAnswer"),
                   },
                   {
                     value: "encryption",
-                    question: "Can my submission be traced back to me?",
-                    answer:
-                      "All submissions are encrypted from the moment you send them. Your report cannot be intercepted or traced back to you in transit.",
+                    question: t("faqEncryptionQuestion"),
+                    answer: t("faqEncryptionAnswer"),
                   },
                   {
                     value: "visibility",
-                    question: "Who can see my report?",
-                    answer:
-                      "Reports are reviewed only by verified WatchTower administrators. Your submission is never shared publicly with any identifying information attached.",
+                    question: t("faqVisibilityQuestion"),
+                    answer: t("faqVisibilityAnswer"),
                   },
                   {
                     value: "device",
-                    question: "Can I report from a shared or public device?",
-                    answer:
-                      "Yes. WatchTower does not store session data or cookies tied to your submission. Reporting from a shared device does not put you at risk.",
+                    question: t("faqDeviceQuestion"),
+                    answer: t("faqDeviceAnswer"),
                   },
                 ].map(({ value, question, answer }) => (
                   <AccordionItem
@@ -432,16 +418,15 @@ const Page = () => {
         <Container size="xs">
           <CallToAction
             callToAction={{
-              title: "Ready to report?",
-              description:
-                "Submit a civic incident report in your language. No account needed, no personal information required.",
+              title: t("ctaTitle"),
+              description: t("ctaDescription"),
               variant: "secondary",
               button1: {
-                title: "Submit a report",
+                title: t("ctaButton1"),
                 link: "/anonymous-reports",
               },
               button2: {
-                title: "View the live map",
+                title: t("ctaButton2"),
                 link: "/maps/live-incident-map",
               },
             }}

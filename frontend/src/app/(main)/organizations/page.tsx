@@ -14,8 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Search, MapPin, Globe, Mail, Building2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function OrganizationsPage() {
+  const t = useTranslations("Organizations");
+  const tNav = useTranslations("Navigation");
+  const tCommon = useTranslations("Common");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 12;
@@ -40,10 +44,10 @@ export default function OrganizationsPage() {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-2">Error</h1>
-          <p className="text-muted-foreground">
-            Failed to load organizations. Please try again later.
-          </p>
+          <h1 className="text-2xl font-bold text-red-600 mb-2">
+            {t("errorTitle")}
+          </h1>
+          <p className="text-muted-foreground">{t("errorLoading")}</p>
         </div>
       </div>
     );
@@ -54,12 +58,9 @@ export default function OrganizationsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          Organizations
+          {tNav("organizations")}
         </h1>
-        <p className="text-muted-foreground">
-          Discover and connect with organizations making a difference in civic
-          technology and digital rights across the region.
-        </p>
+        <p className="text-muted-foreground">{t("pageDescription")}</p>
       </div>
 
       {/* Search */}
@@ -70,13 +71,13 @@ export default function OrganizationsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Search organizations..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
-              <Button type="submit">Search</Button>
+              <Button type="submit">{tCommon("search")}</Button>
             </form>
           </CardContent>
         </Card>
@@ -86,8 +87,10 @@ export default function OrganizationsPage() {
       {organizationsData && (
         <div className="mb-6">
           <p className="text-sm text-muted-foreground">
-            Showing {organizationsData.data.length} of{" "}
-            {organizationsData.total} organizations
+            {t("resultsSummary", {
+              shown: organizationsData.data.length,
+              total: organizationsData.total,
+            })}
           </p>
         </div>
       )}
@@ -114,11 +117,9 @@ export default function OrganizationsPage() {
       ) : organizationsData?.data.length === 0 ? (
         <div className="text-center py-12">
           <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No organizations found</h3>
+          <h3 className="text-lg font-semibold mb-2">{t("emptyTitle")}</h3>
           <p className="text-muted-foreground">
-            {searchTerm
-              ? "Try adjusting your search criteria."
-              : "No organizations are currently registered."}
+            {searchTerm ? t("emptyNoMatch") : t("emptyNoOrganizations")}
           </p>
         </div>
       ) : (
@@ -183,7 +184,7 @@ export default function OrganizationsPage() {
                   <div className="pt-2">
                     <Link href={`/organizations/${organization.slug}`}>
                       <Button variant="outline" className="w-full">
-                        View Details
+                        {t("viewDetails")}
                       </Button>
                     </Link>
                   </div>
@@ -202,18 +203,20 @@ export default function OrganizationsPage() {
             onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
             disabled={currentPage === 0}
           >
-            Previous
+            {t("previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            Page {currentPage + 1} of{" "}
-            {Math.ceil(organizationsData.total / pageSize)}
+            {t("pageOf", {
+              current: currentPage + 1,
+              total: Math.ceil(organizationsData.total / pageSize),
+            })}
           </span>
           <Button
             variant="outline"
             onClick={() => setCurrentPage((prev) => prev + 1)}
             disabled={!(organizationsData.data.length >= pageSize)}
           >
-            Next
+            {t("next")}
           </Button>
         </div>
       )}

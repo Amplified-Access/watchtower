@@ -28,22 +28,31 @@ import H4 from "@/components/common/heading-four";
 import Loader from "@/components/common/loader";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import CallToAction from "@/components/common/call-to-action";
+import { useTranslations } from "next-intl";
 
-function formatRelativeTime(date: string | Date) {
+function formatRelativeTime(
+  date: string | Date,
+  t: ReturnType<typeof useTranslations>,
+) {
   const now = new Date();
   const target = new Date(date);
   const diffMs = now.getTime() - target.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-  return `${Math.floor(diffDays / 365)} years ago`;
+  if (diffDays === 0) return t("timeToday");
+  if (diffDays === 1) return t("timeYesterday");
+  if (diffDays < 7) return t("timeDaysAgo", { count: diffDays });
+  if (diffDays < 30)
+    return t("timeWeeksAgo", { count: Math.floor(diffDays / 7) });
+  if (diffDays < 365)
+    return t("timeMonthsAgo", { count: Math.floor(diffDays / 30) });
+  return t("timeYearsAgo", { count: Math.floor(diffDays / 365) });
 }
 
 export default function PublicReportsPage() {
+  const t = useTranslations("Reports");
+  const tInsights = useTranslations("Insights");
+  const tCommon = useTranslations("Common");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedOrgSlug, setSelectedOrgSlug] = useState<string | null>(null);
@@ -81,9 +90,7 @@ export default function PublicReportsPage() {
       <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white">
         <Container size="xs" className="">
           <TextComponent className="text-sm">
-            Browse in-depth reports and verified experiences shared by our
-            partner organizations to inform decisions and strengthen
-            communities.
+            {t("browseDescription")}
           </TextComponent>
         </Container>
       </section>
@@ -97,7 +104,7 @@ export default function PublicReportsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Search reports by title..."
+                placeholder={t("searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white placeholder:text-sm shadow-none rounded-full"
@@ -159,9 +166,7 @@ export default function PublicReportsPage() {
           {error && (
             <div className="text-center py-12">
               <FileText className="h-16 w-16 text-red-400 mx-auto mb-4" />
-              <p className="text-red-600">
-                Failed to load reports. Please try again later.
-              </p>
+              <p className="text-red-600">{t("errorLoading")}</p>
             </div>
           )}
           {/* Reports Grid */}
@@ -208,7 +213,9 @@ export default function PublicReportsPage() {
                                 <DialogContent className="max-w-md">
                                   <DialogHeader>
                                     <DialogTitle>
-                                      About {report.organizationName}
+                                      {t("aboutOrganization", {
+                                        name: report.organizationName,
+                                      })}
                                     </DialogTitle>
                                   </DialogHeader>
 
@@ -216,7 +223,7 @@ export default function PublicReportsPage() {
                                     <div className="flex items-center justify-center py-8">
                                       <Loader className="h-6 w-6" />
                                       <span className="ml-2 text-sm text-muted-foreground">
-                                        Loading organization details...
+                                        {t("loadingOrganizationDetails")}
                                       </span>
                                     </div>
                                   ) : selectedOrganization ? (
@@ -262,17 +269,18 @@ export default function PublicReportsPage() {
                                         <div className="flex items-center text-sm text-muted-foreground">
                                           <Calendar className="h-4 w-4 mr-2 shrink-0" />
                                           <span>
-                                            Member since{" "}
-                                            {new Date(
-                                              selectedOrganization.createdAt,
-                                            ).toLocaleDateString()}
+                                            {t("memberSince", {
+                                              date: new Date(
+                                                selectedOrganization.createdAt,
+                                              ).toLocaleDateString(),
+                                            })}
                                           </span>
                                         </div>
                                       </div>
                                     </div>
                                   ) : (
                                     <p className="text-sm text-muted-foreground">
-                                      Organization information not available.
+                                      {t("organizationInfoUnavailable")}
                                     </p>
                                   )}
                                 </DialogContent>
@@ -286,8 +294,10 @@ export default function PublicReportsPage() {
                         {report.authorName && (
                           <>
                             <div className="text-sm text-gray-600">
-                              <span className="font-medium">Author:</span> By{" "}
-                              {report.authorName}
+                              <span className="font-medium">
+                                {t("authorLabel")}
+                              </span>{" "}
+                              {t("authorBy", { name: report.authorName })}
                             </div>
                             <hr className="my-4 border-gray-200" />
                           </>
@@ -296,9 +306,14 @@ export default function PublicReportsPage() {
                         <div className="flex justify-between items-center text-sm text-gray-500">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
-                            <span>Published</span>
+                            <span>{t("published")}</span>
                           </div>
-                          <span>{formatRelativeTime(report.createdAt)}</span>
+                          <span>
+                            {formatRelativeTime(
+                              report.createdAt,
+                              tInsights,
+                            )}
+                          </span>
                         </div>
 
                         <hr className="my-4 border-gray-200" />
@@ -311,7 +326,7 @@ export default function PublicReportsPage() {
                           variant={"outline"}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download PDF
+                          {t("downloadPdf")}
                         </Button>
                       </div>
                     </CardContent>
@@ -327,10 +342,10 @@ export default function PublicReportsPage() {
                     onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
                     disabled={currentPage === 0}
                   >
-                    Previous
+                    {t("previous")}
                   </Button>
                   <span className="flex items-center px-4 text-sm text-muted-foreground">
-                    Page {currentPage + 1}
+                    {t("page", { number: currentPage + 1 })}
                   </span>
                   <Button
                     variant="outline"
@@ -338,7 +353,7 @@ export default function PublicReportsPage() {
                     disabled={!reports || (reports.data?.length ?? 0) < pageSize}
                     className=""
                   >
-                    Next
+                    {t("next")}
                   </Button>
                 </div>
               )}
@@ -349,11 +364,11 @@ export default function PublicReportsPage() {
           {reports && (reports.data?.length ?? 0) === 0 && (
             <div className="text-center py-12">
               <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No reports found</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {t("emptyTitle")}
+              </h3>
               <p className="text-gray-500">
-                {searchTerm
-                  ? "Try adjusting your search terms."
-                  : "There are no published reports available at this time."}
+                {searchTerm ? t("emptyNoMatch") : t("emptyNoReports")}
               </p>
             </div>
           )}
@@ -363,16 +378,15 @@ export default function PublicReportsPage() {
         <Container size="xs">
           <CallToAction
             callToAction={{
-              title: "Get involved",
-              description:
-                "Start reporting incidents to help strengthen community accountability, or explore how these incidents cluster geographically across regions.",
+              title: t("ctaTitle"),
+              description: t("ctaDescription"),
               variant: "secondary",
               button1: {
-                title: "Explore maps",
+                title: t("ctaButton1"),
                 link: "/maps",
               },
               button2: {
-                title: "Sign in",
+                title: tCommon("signIn"),
                 link: "/sign-in",
               },
             }}
