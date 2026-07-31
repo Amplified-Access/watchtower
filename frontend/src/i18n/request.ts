@@ -13,6 +13,9 @@ export const locales = [
   "ur",
   "ki",
   "suk",
+  "luo",
+  "om",
+  "din",
 ] as const;
 export const defaultLocale = "en";
 

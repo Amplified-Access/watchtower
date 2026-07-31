@@ -27,6 +27,9 @@ const languages = [
   { code: "ur", name: "اردو", flag: "🇵🇰" },
   { code: "ki", name: "Kikuyu", flag: "🇰🇪" },
   { code: "suk", name: "Sukuma", flag: "🇹🇿" },
+  { code: "luo", name: "Dholuo", flag: "🇰🇪" },
+  { code: "om", name: "Afaan Oromoo", flag: "🇪🇹" },
+  { code: "din", name: "Thuɔŋjäŋ", flag: "🇸🇸" },
 ];
 
 function getCurrentLocale() {

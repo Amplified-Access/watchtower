@@ -70,6 +70,9 @@ const Page = () => {
     { name: t("langSukuma"), region: t("regionTanzania"), code: "suk" },
     { name: t("langSwahili"), region: t("regionEastAfrica"), code: "sw" },
     { name: t("langUrdu"), region: t("regionPakistan"), code: "ur" },
+    { name: t("langLuo"), region: t("regionKenya"), code: "luo" },
+    { name: t("langOromo"), region: t("regionEthiopia"), code: "om" },
+    { name: t("langDinka"), region: t("regionSouthSudan"), code: "din" },
   ];
 
   return (
@@ -262,7 +265,7 @@ const Page = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {[
                 { value: "6", label: tHome("statCountries") },
-                { value: "10", label: tHome("statLanguages") },
+                { value: "13", label: tHome("statLanguages") },
                 { value: "22", label: tHome("statDeployments") },
                 { value: "2,000+", label: tHome("statWeeklyUsers") },
               ].map((stat) => (
