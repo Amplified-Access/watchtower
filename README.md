@@ -62,6 +62,21 @@ watchtower/
 - Node.js 20+ with pnpm
 - Docker (for local database)
 
+### Quickstart
+
+A root `Makefile` wraps the per-service commands below so you don't have to
+juggle two directories:
+
+```bash
+make setup   # first-run: checks prerequisites, installs deps, copies env files, starts Postgres
+make dev     # runs Postgres, the Go backend (hot-reload), and the frontend together
+```
+
+Run `make help`-style discovery via `make -n <target>`, or see the
+[Makefile](./Makefile) for the full list (`test`, `build`, `lint`,
+`deploy-staging`, `deploy-prod`, and per-service variants like
+`test-backend`/`test-frontend`).
+
 ### Backend
 
 ```bash
@@ -113,6 +128,12 @@ feature-branch → main (via PR)
 main → staging  (rebase to promote to staging)
 main → production (rebase to promote to production)
 ```
+
+`make deploy-staging` / `make deploy-prod` automate this: they rebase the
+target branch onto `main` and force-push (with lease) to trigger the
+platform deploys below. The script refuses to run with a dirty working tree
+and prompts for confirmation before pushing (set `CONFIRM=yes` to skip the
+prompt in CI/scripted use).
 
 Both services have dedicated environments on their respective platforms:
 

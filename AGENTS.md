@@ -61,6 +61,16 @@ An agent that skips reading docs and writes code based on assumptions will event
 
 ## Commands
 
+### Root Makefile (run from the repo root)
+```
+make setup           # first-run: prereq checks, installs deps, copies env files, starts Postgres
+make dev              # Postgres + Go backend (hot-reload) + frontend, all in one terminal
+make test / build / lint            # both services
+make test-backend / test-frontend   # (also build-*, lint-*)
+make deploy-staging / deploy-prod   # rebase staging/production onto main, force-push-with-lease
+```
+Thin wrapper around the per-service commands below — see `Makefile` and `scripts/` at the repo root.
+
 ### Backend (run from `backend/`)
 ```
 make build        # compile
