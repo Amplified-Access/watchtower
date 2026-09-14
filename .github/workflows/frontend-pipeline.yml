@@ -1,17 +1,17 @@
-name: Frontend CI
+name: Frontend Pipeline
 
 on:
   pull_request:
     branches: [main, staging, production]
     paths:
       - "frontend/**"
-      - ".github/workflows/frontend-ci.yml"
+      - ".github/workflows/frontend-pipeline.yml"
 
 permissions:
   contents: read
 
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
 
     defaults:

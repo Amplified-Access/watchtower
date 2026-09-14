@@ -174,7 +174,7 @@ src/
 
 Two path-scoped pipelines, each only runs when its area changed:
 - **`backend-pipeline.yml`** — PRs to `main`/`staging`/`production` touching `backend/**`: `go vet` + `make build` + `make test` (Redis sidecar) + `make itest`. Pushes to `staging`/`production` re-run the same job, then deploy to Railway on success.
-- **`frontend-ci.yml`** — PRs touching `frontend/**`: `pnpm lint` + `pnpm test` + `pnpm build`. No deploy job — Vercel deploys from its own git integration on push to `staging`/`production`.
+- **`frontend-pipeline.yml`** — PRs touching `frontend/**`: `pnpm lint` + `pnpm test` + `pnpm build`. No deploy job yet — Vercel deploys from its own git integration on push to `staging`/`production` — but named/structured to match `backend-pipeline.yml` in case one's added later.
 
 `staging` auto-syncs from `main` on every push (`sync-staging.yml`); `production` is promoted deliberately via `make deploy-prod`.
 
