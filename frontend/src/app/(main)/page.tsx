@@ -344,11 +344,7 @@ const Page = () => {
             </div>
           </Container>
       </section>
-      <section className="  py-10 [zoom:var(--viewport-scale)]">
-        <Container size="xs">
-          <LogoCloud />
-        </Container>
-      </section>
+      <LogoCloud />
       <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
         <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
           <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
