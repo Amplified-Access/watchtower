@@ -1,18 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Container from "@/components/common/container";
 import HeadingTwo from "@/components/common/heading-two";
 import TextComponent from "@/components/common/text-component";
-import CallToAction from "@/components/common/call-to-action";
 import Footer from "@/components/layout/footer/page";
+import LanguageMarquee from "@/components/common/language-marquee";
 import { buttonVariants } from "@/components/ui/button";
-import { ClipboardList } from "@/components/animate-ui/icons/clipboard-list";
-import { Loader } from "@/components/animate-ui/icons/loader";
-import { Blocks } from "@/components/animate-ui/icons/blocks";
+import { ChevronRight, Minus, Plus } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -21,43 +18,10 @@ import {
 } from "@/components/ui/accordion";
 import { useTranslations } from "next-intl";
 
-const StepCard = ({
-  icon: Icon,
-  part,
-  title,
-  description,
-}: {
-  icon: React.ComponentType<{ animate?: boolean; size?: number }>;
-  part: string;
-  title: string;
-  description: string;
-}) => {
-  const [animate, setAnimate] = useState(false);
-  return (
-    <div
-      className="relative flex gap-5 pb-10 last:pb-0 group"
-      onMouseEnter={() => setAnimate(true)}
-      onMouseLeave={() => setAnimate(false)}
-    >
-      <div className="size-10 shrink-0 rounded-full bg-background border border-dark/20 group-hover:border-primary group-hover:bg-primary/5 flex items-center justify-center z-10 mt-1 transition-colors duration-200">
-        <Icon animate={animate} size={18} />
-      </div>
-      <div className="pt-1">
-        <p className="text-xs font-title uppercase tracking-widest text-dark/40 mb-1">
-          {part}
-        </p>
-        <h4 className="font-title font-semibold text-dark text-base md:text-lg mb-2">
-          {title}
-        </h4>
-        <p className="text-dark/60 leading-relaxed">{description}</p>
-      </div>
-    </div>
-  );
-};
-
 const Page = () => {
   const t = useTranslations("About");
   const tHome = useTranslations("Home");
+  const tNav = useTranslations("Navigation");
 
   const languages = [
     { name: t("langEnglish"), region: t("regionGlobal"), code: "en" },
@@ -78,59 +42,54 @@ const Page = () => {
   return (
     <>
       {/* Hero */}
-      <section className="relative [zoom:var(--viewport-scale)]">
-        <Image
-          src="/topographic.svg"
-          alt=""
-          width={500}
-          height={500}
-          className="w-full object-cover h-full absolute top-0 -z-1 opacity-20"
-        />
-        <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
-        <div className="pt-32 pb-28">
-          <Container className="pt-32 flex flex-col gap-6 text-center items-center">
-            <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
-              {t("heroTitle")}
-            </h1>
-            <TextComponent className="max-w-4xl md:text-xl">
-              {t("heroDescription")}
-            </TextComponent>
-            {/* <Link
-              href="/anonymous-reports"
-              className={cn(
-                buttonVariants({ variant: "default", size: "lg" }),
-                "font-title font-medium",
-              )}
-            >
-              Submit a report
-            </Link> */}
-          </Container>
+      <section className="relative isolate overflow-hidden bg-primary [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-white/20 md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-white/20 md:right-8 xl:right-16" />
+          <div className="absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-white/20 md:block" />
         </div>
-      </section>
-      {/* Hero */}
-      <section className="relative [zoom:var(--viewport-scale)]">
-        <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
-        <div className="pb-32 pt-20">
-          <Container size="xs">
-            <div className="py-32 flex flex-col gap-6 text-center items-center bg-white border rounded-3xl p-6">
-              <h1 className="text-4xl font-semibold font-title leading-tight max-w-3xl">
-                {t("objectiveTitle")}
-              </h1>
-              <TextComponent className="max-w-3xl">
-                {t("objectiveDescription")}
-              </TextComponent>
+        <div className="py-16 md:py-20">
+          <Container className="px-8 md:px-14 xl:px-24">
+            <div className="grid divide-y divide-white/20 md:grid-cols-2 md:items-center md:divide-y-0">
+              <div className="py-10 md:pb-0 md:pr-12 xl:pr-16">
+                <p className="mb-4 font-title text-xs font-semibold uppercase tracking-widest text-white/70">
+                  {tNav("about")} WatchTower
+                </p>
+                <h1 className="max-w-xl font-title text-4xl font-semibold leading-tight text-white md:text-5xl">
+                  {t("heroTitle")}
+                </h1>
+                <div className="mt-8 flex max-w-lg flex-col gap-4 border-t border-white/20 pt-8">
+                  <TextComponent className="text-white/70">
+                    {t("heroDescription")}
+                  </TextComponent>
+                  <TextComponent className="text-white/70">
+                    {t("objectiveDescription")}
+                  </TextComponent>
+                </div>
+              </div>
+
+              <div className="relative mx-auto aspect-square w-full max-w-sm pt-10 md:max-w-none md:pt-0 md:pl-12 xl:pl-16">
+                <Image
+                  src="/about-globe.png"
+                  alt=""
+                  width={459}
+                  height={459}
+                  className="h-full w-full object-contain"
+                />
+              </div>
             </div>
-            {/* <Link
-              href="/anonymous-reports"
-              className={cn(
-                buttonVariants({ variant: "default", size: "lg" }),
-                "font-title font-medium",
-              )}
-            >
-              Submit a report
-            </Link> */}
           </Container>
         </div>
+        <Image
+          src="/brand/icon-white.svg"
+          alt=""
+          width={120}
+          height={120}
+          className="pointer-events-none absolute -bottom-6 right-6 h-16 w-auto opacity-10 md:h-24"
+        />
+      </section>
+      <section className="bg-white">
+        <LanguageMarquee />
       </section>
 
       {/* Mission
@@ -153,138 +112,159 @@ const Page = () => {
       </section> */}
 
       {/* How It Works */}
-      <section className="pb-20 md:pb-32 isolate [zoom:var(--viewport-scale)]">
-        <Container size="xs">
+      <section className="bg-white py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
+        <Container size="lg">
           <div className="text-center mb-14 md:mb-20">
-            <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+            <p className="mb-3 font-title text-xs  font-semibold uppercase tracking-widest text-primary">
               {tHome("howItWorks")}
             </p>
-            <HeadingTwo className="text-center">
+            <HeadingTwo className="text-center max-w-md mx-auto">
               {tHome.rich("howItWorksHeading", { break: () => <br /> })}
             </HeadingTwo>
-            <TextComponent className="mt-4 max-w-sm mx-auto text-center">
+            <TextComponent className="mt-4 max-w-xl mx-auto text-center">
               {tHome("howItWorksDescription")}
             </TextComponent>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <div className="flex justify-center">
-              <div className="relative size-72 md:size-80 rounded-full bg-primary overflow-hidden flex items-center justify-center">
-                <Image
-                  src="/topographic.svg"
-                  alt=""
-                  width={500}
-                  height={500}
-                  className="absolute inset-0 w-full h-full object-cover opacity-30"
-                />
-                <div className="absolute inset-6 rounded-full border border-white/10" />
-                <div className="absolute inset-12 rounded-full border border-white/15" />
-                <div className="absolute inset-20 rounded-full border border-white/20" />
-                <div className="relative z-10">
+          <div className="flex flex-col gap-16 md:gap-24">
+            {[
+              {
+                number: 1,
+                title: tHome("step1Title"),
+                description: tHome("step1Description"),
+              },
+              {
+                number: 2,
+                title: tHome("step2Title"),
+                description: tHome("step2Description"),
+              },
+              {
+                number: 3,
+                title: tHome("step3Title"),
+                description: tHome("step3Description"),
+              },
+            ].map((step, index) => (
+              <div
+                key={step.number}
+                className="grid items-center gap-10 md:grid-cols-2 md:gap-16"
+              >
+                <div className={cn(index % 2 === 1 && "md:order-2")}>
                   <Image
-                    src="/brand/icon-white.svg"
-                    alt="WatchTower"
-                    width={300}
-                    height={300}
-                    className="h-20 w-auto"
+                    src="/placeholder.png"
+                    alt=""
+                    width={677}
+                    height={561}
+                    className="h-auto w-full rounded-2xl"
                   />
                 </div>
+                <div className={cn(index % 2 === 1 && "md:order-1")}>
+                  <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+                    {tHome("stepLabel", { number: step.number })}
+                  </p>
+                  <h3 className="font-title text-3xl font-semibold text-dark md:text-4xl">
+                    {step.title}
+                  </h3>
+                  <p className="mt-4 max-w-md text-dark/60 leading-relaxed">
+                    {step.description}
+                  </p>
+                  <Link
+                    href="#"
+                    className="mt-6 inline-flex items-center gap-1 font-title font-semibold text-primary hover:text-primary/80"
+                  >
+                    Learn more
+                    <ChevronRight className="size-4" />
+                  </Link>
+                </div>
               </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute left-5 top-5 bottom-16 w-px bg-dark/15" />
-              <div
-                className="hidden md:block absolute top-1/2 -translate-y-1/2 h-px bg-dark/15"
-                style={{ right: "calc(100% - 1.25rem)", width: "11rem" }}
-              />
-              <StepCard
-                icon={ClipboardList}
-                part={tHome("stepLabel", { number: 1 })}
-                title={tHome("step1Title")}
-                description={tHome("step1Description")}
-              />
-              <StepCard
-                icon={Loader}
-                part={tHome("stepLabel", { number: 2 })}
-                title={tHome("step2Title")}
-                description={tHome("step2Description")}
-              />
-              <StepCard
-                icon={Blocks}
-                part={tHome("stepLabel", { number: 3 })}
-                title={tHome("step3Title")}
-                description={tHome("step3Description")}
-              />
-            </div>
+            ))}
           </div>
         </Container>
       </section>
 
       {/* Languages */}
-      <section className="pb-20 md:pb-32 [zoom:var(--viewport-scale)]">
-        <Container size="xs">
-          <div className="rounded-3xl bg-primary p-8 md:p-16">
-            <div className="text-center mb-12">
-              {/* <p className="text-white/60 font-title font-semibold uppercase tracking-widest text-sm mb-4">
-                Languages Available
-              </p> */}
-              <h2 className="font-title font-semibold text-3xl md:text-4xl text-white leading-tight">
-                {t("languagesTitle")}
-              </h2>
-              <TextComponent className="text-white/60 mt-4 max-w-3xl mx-auto text-center">
-                {t("languagesDescription", { count: languages.length })}
-              </TextComponent>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-              {languages.map((lang) => (
-                <div
-                  key={lang.code}
-                  className="bg-white/10 border border-white/20 rounded-xl p-4 flex flex-col gap-1 text-center hover:bg-white/15 transition-colors"
-                >
-                  <span className="font-title font-semibold text-white text-sm">
-                    {lang.name}
+      <section className="relative isolate overflow-hidden bg-linear-to-b from-primary to-white [zoom:var(--viewport-scale)]">
+        <Image
+          src="/brand/Pattern.svg"
+          alt=""
+          width={1378}
+          height={617}
+          className="pointer-events-none absolute -top-16 right-0 -z-10 h-auto w-full rotate-180 opacity-50 mix-blend-overlay"
+        />
+        <Image
+          src="/brand/Pattern.svg"
+          alt=""
+          width={1378}
+          height={617}
+          className="pointer-events-none absolute -bottom-16 left-0 -z-10 h-auto w-full opacity-50 mix-blend-overlay"
+        />
+        <div className="pt-20 pb-16 md:pt-28 md:pb-20">
+          <Container size="xs" className="text-center">
+            <HeadingTwo className="text-4xl text-white md:text-5xl">
+              {t("languagesTitle")}
+            </HeadingTwo>
+            <TextComponent className="mx-auto mt-4 max-w-xl text-center text-white/70">
+              {t("languagesDescription", { count: languages.length })}
+            </TextComponent>
+          </Container>
+        </div>
+        <div
+          role="marquee"
+          aria-label={`Supported languages: ${languages
+            .map((lang) => lang.name)
+            .join(", ")}`}
+          className="overflow-hidden bg-white py-2.5"
+        >
+          <div className="flex w-max animate-marquee">
+            {[0, 1].map((copy) => (
+              <div
+                key={copy}
+                aria-hidden={copy === 1}
+                className="flex shrink-0 items-center font-title text-sm font-medium text-dark"
+              >
+                {languages.map((lang, index) => (
+                  <span key={index} className="flex items-center">
+                    <span className="px-3">{lang.name}</span>
+                    <span className="text-dark/40">&bull;</span>
                   </span>
-                  <span className="text-white/55 text-xs">{lang.region}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ))}
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* Impact */}
-      <section className="pb-20 md:pb-32 [zoom:var(--viewport-scale)]">
-        <Container size="xs">
-          <div className="bg-white border rounded-3xl pt-8 pb-4 md:py-16 px-4 md:px-16">
-            <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-4xl font-semibold font-title leading-tight">
-                {tHome("impactTitle")}
-              </h2>
-              <TextComponent className="mt-3 max-w-xl mx-auto text-center">
-                {tHome("impactDescription")}
-              </TextComponent>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {[
-                { value: "6", label: tHome("statCountries") },
-                { value: "13", label: tHome("statLanguages") },
-                { value: "22", label: tHome("statDeployments") },
-                { value: "2,000+", label: tHome("statWeeklyUsers") },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-gray-500/10 border border-white/20 rounded-2xl py-8 px-4 flex aspect-square justify-center flex-col items-center text-center"
-                >
-                  <span className="text-3xl md:text-4xl font-semibold font-title text-dark">
-                    {stat.value}
-                  </span>
-                  <span className="mt-2 text-sm font-medium text-dark/70 font-title tracking-wide">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
+      <section className="relative isolate border-y border-border bg-white [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        </div>
+        <Container size="xs" className="py-16 md:py-24">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl font-semibold font-title leading-tight">
+              {tHome("impactTitle")}
+            </h2>
+            <TextComponent className="mt-3 max-w-xl mx-auto text-center">
+              {tHome("impactDescription")}
+            </TextComponent>
+          </div>
+          <div className="grid grid-cols-2 divide-x divide-y divide-border md:grid-cols-4 md:divide-y-0">
+            {[
+              { value: "2,000+", label: tHome("statWeeklyUsers") },
+              { value: "22", label: tHome("statDeployments") },
+              { value: "13", label: tHome("statLanguages") },
+              { value: "6", label: tHome("statCountries") },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="flex flex-col items-center justify-center gap-1 py-8 text-center md:py-10"
+              >
+                <span className="font-title text-3xl font-semibold text-dark md:text-4xl">
+                  {stat.value}
+                </span>
+                <span className="text-sm text-dark/60">{stat.label}</span>
+              </div>
+            ))}
           </div>
         </Container>
       </section>
@@ -359,20 +339,38 @@ const Page = () => {
       </section> */}
 
       {/* Your Safety */}
-      <section className="pb-20 md:pb-32 text-background [zoom:var(--viewport-scale)]">
-        <Container size="xs">
-          <div className="bg-primary p-10 md:p-16 rounded-3xl">
-            <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+      <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-border" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-16 h-px bg-border" />
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        </div>
+        <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
+          <div className="relative isolate overflow-hidden bg-dark px-6 py-16 md:px-16 md:py-20">
+            <Image
+              src="/brand/Pattern.svg"
+              alt=""
+              width={1378}
+              height={617}
+              className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
+            />
+            <div className="grid gap-12 md:grid-cols-2 md:gap-16">
               <div>
-                <h2 className="font-title font-semibold text-3xl md:text-4xl text-background leading-snug">
-                  {t("safetyTitle")}
+                <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
+                  {t.rich("safetyTitle", { break: () => <br /> })}
                 </h2>
-                <TextComponent className="text-white/60 mt-4">
+                <p className="mt-4 max-w-xs text-white/60 leading-relaxed">
                   {t("safetyDescription")}
-                </TextComponent>
+                </p>
               </div>
 
-              <Accordion type="single" collapsible className="w-full">
+              <Accordion
+                type="single"
+                collapsible
+                defaultValue="identity"
+                className="w-full"
+              >
                 {[
                   {
                     value: "identity",
@@ -405,10 +403,14 @@ const Page = () => {
                     value={value}
                     className="border-white/15"
                   >
-                    <AccordionTrigger className="font-title text-background text-base hover:no-underline hover:text-background/80 [&>svg]:text-background/40 py-5">
-                      {question}
+                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-white hover:no-underline [&>svg]:hidden">
+                      <span className="flex-1">{question}</span>
+                      <span className="relative flex size-6 shrink-0 items-center justify-center rounded bg-primary">
+                        <Plus className="size-3.5 text-white group-data-[state=open]:hidden" />
+                        <Minus className="absolute size-3.5 text-white opacity-0 group-data-[state=open]:opacity-100" />
+                      </span>
                     </AccordionTrigger>
-                    <AccordionContent className="text-background/60 leading-relaxed font-normal text-base pb-5">
+                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-white/60">
                       {answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -416,29 +418,62 @@ const Page = () => {
               </Accordion>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* CTA */}
-      <section className="pb-20 md:pb-24 [zoom:var(--viewport-scale)]">
-        <Container size="xs">
-          <CallToAction
-            callToAction={{
-              title: t("ctaTitle"),
-              description: t("ctaDescription"),
-              variant: "secondary",
-              button1: {
-                title: t("ctaButton1"),
-                link: "/anonymous-reports",
-              },
-              button2: {
-                title: t("ctaButton2"),
-                link: "/maps/live-incident-map",
-              },
-            }}
-            color="white"
-          />
+      <section className="relative isolate overflow-hidden bg-white [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        </div>
+        <Image
+          src="/brand/Pattern.svg"
+          alt=""
+          width={1378}
+          height={617}
+          className="pointer-events-none absolute -bottom-16 left-0 -z-10 h-auto w-full opacity-30"
+        />
+        <Container size="xs" className="py-20 text-center md:py-28">
+          <HeadingTwo className="text-center">{t("ctaTitle")}</HeadingTwo>
+          <TextComponent className="mx-auto mt-4 max-w-md text-center">
+            {t("ctaDescription")}
+          </TextComponent>
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href="/anonymous-reports"
+              className={cn(
+                buttonVariants({ variant: "default" }),
+                "font-title font-medium bg-dark text-white hover:bg-dark/90",
+              )}
+            >
+              {t("ctaButton1")}
+              <ChevronRight />
+            </Link>
+            <Link
+              href="/maps/live-incident-map"
+              className={cn(
+                buttonVariants({ variant: "secondary" }),
+                "font-title font-medium",
+              )}
+            >
+              {t("ctaButton2")}
+              <ChevronRight />
+            </Link>
+          </div>
         </Container>
+      </section>
+
+      <section className="relative isolate bg-primary py-4 text-white [zoom:var(--viewport-scale)]">
+        <div className="flex flex-wrap items-center justify-center gap-3 px-4 text-center text-sm font-medium md:px-8 xl:px-16">
+          <span>{tHome("ctaTitle")}</span>
+          <Link
+            href="/anonymous-reports"
+            className="rounded-full border border-white/70 px-3 py-1 text-xs font-medium transition-colors hover:bg-white/10"
+          >
+            {tHome("ctaButton1")}
+          </Link>
+        </div>
       </section>
 
       <Footer />
