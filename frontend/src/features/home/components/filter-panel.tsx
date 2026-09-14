@@ -79,7 +79,7 @@ const FilterPanel = ({
   ];
 
   return (
-    <div className="flex h-full w-full shrink-0 flex-col gap-6 border-white/10 p-5 lg:w-72 lg:border-l">
+    <div className="flex h-full w-full shrink-0 flex-col gap-6 p-5 lg:w-72">
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-semibold uppercase tracking-widest text-white/40">
           {t("filterReports")}

@@ -156,10 +156,13 @@ const Page = () => {
       <section className="pb-20 md:pb-32 isolate [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="text-center mb-14 md:mb-20">
-            <HeadingTwo className="text-center">
+            <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
               {tHome("howItWorks")}
+            </p>
+            <HeadingTwo className="text-center">
+              {tHome.rich("howItWorksHeading", { break: () => <br /> })}
             </HeadingTwo>
-            <TextComponent className="mt-4 max-w-2xl mx-auto text-center">
+            <TextComponent className="mt-4 max-w-sm mx-auto text-center">
               {tHome("howItWorksDescription")}
             </TextComponent>
           </div>

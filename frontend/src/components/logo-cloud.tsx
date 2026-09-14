@@ -11,8 +11,12 @@ export default function LogoCloud() {
   const t = useTranslations("LogoCloud");
 
   return (
-    <section className="bg-background overflow-hidden py-10">
-      <Container size="lg" className="group relative lg:px-0">
+    <section className="relative bg-white overflow-hidden py-10 [zoom:var(--viewport-scale)]">
+      <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+        <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+        <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+      </div>
+      <Container size="lg" className="group relative px-8 md:px-12 xl:px-20">
         <div className="flex flex-col items-center md:flex-row">
           <div className="md:max-w-44 shrink-0 md:border-r md:pr-6">
             <H4 className="text-3xl md:text-lg text-center md:text-left pt-8 pb-4">
@@ -75,8 +79,8 @@ export default function LogoCloud() {
               ))}
             </InfiniteSlider>
 
-            <div className="hidden md:block bg-linear-to-r from-background absolute inset-y-0 left-0 w-4 md:w-20"></div>
-            <div className="hidden md:block bg-linear-to-l from-background absolute inset-y-0 right-0 w-4 md:w-20"></div>
+            <div className="hidden md:block bg-linear-to-r from-white absolute inset-y-0 left-0 w-4 md:w-20"></div>
+            <div className="hidden md:block bg-linear-to-l from-white absolute inset-y-0 right-0 w-4 md:w-20"></div>
             <ProgressiveBlur
               className="hidden md:block pointer-events-none absolute border-red-500 left-0 top-0 h-full w-20"
               direction="left"

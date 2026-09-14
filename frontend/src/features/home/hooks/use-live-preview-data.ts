@@ -169,7 +169,7 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
         const type = incidentTypes.find((it) => it.id === id);
         return {
           kind: "category",
-          label: type?.name ?? "Issue",
+          label: type?.name ?? "Incident",
           value: id,
           count,
         };

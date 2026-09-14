@@ -59,7 +59,7 @@ const Header = () => {
         <header className="flex items-center w-full bg-white border-b border-border py-4">
           <div
             className={cn(
-              "flex w-full items-center justify-between",
+              "mx-auto flex w-full max-w-360 items-center justify-between",
               "px-4 md:px-8 xl:px-16 [zoom:var(--viewport-scale)]",
             )}
           >

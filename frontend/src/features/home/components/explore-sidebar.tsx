@@ -84,7 +84,7 @@ const ExploreSidebar = ({ stats }: ExploreSidebarProps) => {
   ];
 
   return (
-    <div className="flex h-full w-full shrink-0 flex-col gap-6 border-white/10 p-5 lg:w-72 lg:border-r">
+    <div className="flex h-full w-full shrink-0 flex-col gap-6 p-5 lg:w-72">
       <Logo color="primary" className="h-6 w-auto" />
 
       <div className="flex flex-col gap-1">

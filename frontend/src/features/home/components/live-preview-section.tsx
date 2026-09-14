@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Locate } from "lucide-react";
 import { useLivePreviewData } from "../hooks/use-live-preview-data";
 import type {
   DateRange,
@@ -9,10 +11,13 @@ import type {
 } from "../hooks/use-live-preview-data";
 import ExploreSidebar from "./explore-sidebar";
 import SearchAndChips from "./search-and-chips";
-import GlobeMap from "./globe-map";
+import GlobeMap, { type GlobeMapHandle } from "./globe-map";
 import FilterPanel from "./filter-panel";
 
 const LivePreviewSection = () => {
+  const t = useTranslations("HomeLivePreview");
+  const mapHandleRef = useRef<GlobeMapHandle>(null);
+  const [viewMode, setViewMode] = useState<"globe" | "map">("globe");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("30d");
   const [customRange, setCustomRange] = useState<DateRange>({});
   const [categoryId, setCategoryId] = useState<string | null>(null);
@@ -57,17 +62,28 @@ const LivePreviewSection = () => {
   };
 
   return (
-    <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
-      <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
-        <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
-        <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
-      </div>
-      <div className="px-4 py-16 md:px-8 md:py-24 xl:px-16">
-        <div className="mx-auto max-w-360 overflow-hidden rounded-3xl bg-dark">
-          <div className="flex flex-col lg:flex-row">
-            <ExploreSidebar stats={stats} />
+    <section className="relative isolate bg-dark">
+      
+      <div className="">
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-4 lg:p-4">
+          {/* Map fills the exact bounds of this row (which sizes itself to the tallest card); everything else floats above it. */}
+          <div className="relative h-105 w-full overflow-hidden lg:absolute lg:inset-0 lg:z-0 lg:h-full">
+            <GlobeMap
+              ref={mapHandleRef}
+              bubbles={visibleBubbles}
+              points={points}
+              layers={layers}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
+          </div>
 
-            <div className="flex min-h-[560px] flex-1 flex-col gap-4 p-5">
+          <div className="relative z-10 mx-4 overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 md:mx-8 lg:mx-0 lg:w-72 lg:shrink-0 lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
+            <ExploreSidebar stats={stats} />
+          </div>
+
+          <div className="relative z-10 mx-4 min-w-0 md:mx-8 lg:mx-0 lg:flex lg:flex-1 lg:flex-col lg:self-stretch lg:pointer-events-none">
+            <div className="pointer-events-auto [zoom:var(--viewport-scale)]">
               <SearchAndChips
                 search={search}
                 onSearchChange={setSearch}
@@ -76,11 +92,43 @@ const LivePreviewSection = () => {
                 activeCategoryId={categoryId}
                 onToggleChip={handleToggleChip}
               />
-              <div className="relative min-h-[420px] flex-1 overflow-hidden rounded-2xl bg-black/40">
-                <GlobeMap bubbles={visibleBubbles} points={points} layers={layers} />
-              </div>
             </div>
 
+            {/* Desktop-only map controls, laid out as real flex siblings of the
+                cards so they scale and align with them instead of guessing pixels. */}
+            <div className="pointer-events-auto mt-auto hidden items-center justify-between lg:flex [zoom:var(--viewport-scale)]">
+              <div className="flex items-center gap-1 rounded-full bg-black/60 p-1 text-xs font-medium text-white ring-1 ring-white/10 backdrop-blur">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("globe")}
+                  className={`rounded-full px-3 py-1 transition-colors ${
+                    viewMode === "globe" ? "bg-primary text-white" : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  {t("viewAsGlobe")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("map")}
+                  className={`rounded-full px-3 py-1 transition-colors ${
+                    viewMode === "map" ? "bg-primary text-white" : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  {t("viewAsMap")}
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => mapHandleRef.current?.recenter()}
+                aria-label="Recenter map"
+                className="flex size-9 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/10 backdrop-blur transition-colors hover:bg-black/80"
+              >
+                <Locate className="size-4" />
+              </button>
+            </div>
+          </div>
+
+          <div className="relative z-10 mx-4 overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 md:mx-8 lg:mx-0 lg:w-72 lg:shrink-0 lg:self-stretch lg:overflow-y-auto lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
             <FilterPanel
               timePeriod={timePeriod}
               onTimePeriodChange={setTimePeriod}
