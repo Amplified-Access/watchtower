@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 import Footer from "@/components/layout/footer/page";
+import LanguageMarquee from "@/components/common/language-marquee";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
 import { ClipboardList } from "@/components/animate-ui/icons/clipboard-list";
@@ -115,6 +116,9 @@ const Page = () => {
             </div>
           </Container>
         </div>
+      </section>
+      <section className="bg-white">
+        <LanguageMarquee />
       </section>
       <section className="py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
         <Container size="xs">
