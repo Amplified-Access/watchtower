@@ -507,6 +507,10 @@
     "ctaTitle": "Amba",
     "ctaDescription": "Amba kũhe marũpoti ma mahitũko kũrĩ Watchtower, kana wone ũmenyo wa mũthenya wothe mepe-inĩ citũ.",
     "ctaButton1": "Tũma Rũpoti",
-    "ctaButton2": "Amba Wĩra"
+    "ctaButton2": "Amba Wĩra",
+    "missionStatement": "Watchtower nĩteithagia mĩcemanio kũheana rũpoti rwa maũndũ marĩa marĩkĩte, kũmenya mĩthiĩre ĩrĩ thĩinĩ wa marũpoti, na kũgarũra ũhoro kuuma thĩ ũtuĩke ũmenyo ũrĩa ũngĩteithia wĩra.",
+    "exploreLabel": "Menya Watchtower",
+    "exploreDescription": "Cũthĩrĩria marũpoti kũringana na kũndũ, mathĩna, thiomi, na mahinda nĩguo ũmenye ũrĩa gũtũmagĩrĩka thĩ.",
+    "exploreHeading": "Ona ũrĩa mĩcemanio ĩrahe rũpoti."
   }
 }

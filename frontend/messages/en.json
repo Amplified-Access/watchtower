@@ -507,6 +507,10 @@
     "ctaTitle": "Get started",
     "ctaDescription": "Start reporting incidents with Watchtower, or explore real-time insights on our interactive maps.",
     "ctaButton1": "Submit a report",
-    "ctaButton2": "Create a deployment"
+    "ctaButton2": "Create a deployment",
+    "missionStatement": "WatchTower helps communities report what is happening, understand patterns across reports and turn information from the ground into intelligence that can support action.",
+    "exploreLabel": "Explore WatchTower",
+    "exploreDescription": "Explore reports across places, issues, languages and time to understand what's happening on the ground.",
+    "exploreHeading": "See what communities are reporting."
   }
 }

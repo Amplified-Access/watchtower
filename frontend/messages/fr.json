@@ -507,6 +507,10 @@
     "ctaTitle": "Commencer",
     "ctaDescription": "Commencez à signaler des incidents avec Watchtower, ou explorez des informations en temps réel sur nos cartes interactives.",
     "ctaButton1": "Soumettre un signalement",
-    "ctaButton2": "Créer un déploiement"
+    "ctaButton2": "Créer un déploiement",
+    "missionStatement": "WatchTower aide les communautés à signaler ce qui se passe, à comprendre les tendances des signalements et à transformer les informations du terrain en renseignements capables de soutenir l'action.",
+    "exploreLabel": "Découvrir WatchTower",
+    "exploreDescription": "Explorez les signalements par lieu, par thème, par langue et dans le temps pour comprendre ce qui se passe sur le terrain.",
+    "exploreHeading": "Découvrez ce que les communautés signalent."
   }
 }

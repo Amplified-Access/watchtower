@@ -507,6 +507,10 @@
     "ctaTitle": "Jalqabi",
     "ctaDescription": "Watchtower waliin dhimmoota gabaasuu jalqabi, ykn kaartaa waliin hojjennu keenya irratti hubannoo yeroo dhugaa ilaali.",
     "ctaButton1": "Gabaasa Ergi",
-    "ctaButton2": "Diriirsaa Uumi"
+    "ctaButton2": "Diriirsaa Uumi",
+    "missionStatement": "Watchtower hawaasonni waan ta'aa jiru akka gabaasan, gosa gabaasaa keessatti adeemsa akka hubatan, fi odeeffannoo lafa irraa gara hubannoo tarkaanfii deeggaruu danda'uutti akka jijjiiran gargaara.",
+    "exploreLabel": "Watchtower Sakatta'i",
+    "exploreDescription": "Gabaasa bakkaan, dhimmaan, afaaniin, fi yeroon sakatta'ii waan lafa irratti ta'aa jiru hubadhu.",
+    "exploreHeading": "Waan hawaasonni gabaasaa jiran ilaali."
   }
 }

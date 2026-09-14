@@ -507,6 +507,10 @@
     "ctaTitle": "Anza",
     "ctaDescription": "Anza kuripoti matukio na Watchtower, au chunguza maarifa ya wakati halisi kwenye ramani zetu za kuingiliana.",
     "ctaButton1": "Wasilisha ripoti",
-    "ctaButton2": "Anzisha upelekaji"
+    "ctaButton2": "Anzisha upelekaji",
+    "missionStatement": "WatchTower inasaidia jamii kuripoti yanayotokea, kuelewa mifumo katika ripoti na kugeuza taarifa kutoka uwanjani kuwa maarifa yanayoweza kusaidia hatua.",
+    "exploreLabel": "Gundua WatchTower",
+    "exploreDescription": "Chunguza ripoti kwa maeneo, masuala, lugha na wakati ili kuelewa yanayotokea uwanjani.",
+    "exploreHeading": "Ona yale jamii zinayoripoti."
   }
 }

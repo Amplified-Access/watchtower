@@ -507,6 +507,10 @@
     "ctaTitle": "Tandika",
     "ctaDescription": "Tandika okuwaayo alipooti ku bintu ebibaddewo ku Watchtower, oba wetegereze ebikwata ku mmapu zaffe ezikola bulijjo.",
     "ctaButton1": "Waayo alipooti",
-    "ctaButton2": "Tandika okussa"
+    "ctaButton2": "Tandika okussa",
+    "missionStatement": "WatchTower eyamba ebibiina okuwaayo alipooti ku ebibaawo, okutegeera enkola mu alipooti, n'okufuula amawulire okuva ku ttaka okuba amagezi agayamba okukola ekikolwa.",
+    "exploreLabel": "Zuula WatchTower",
+    "exploreDescription": "Nnyonnyola alipooti mu bifo, ebizibu, ennimi n'ebiseera okutegeera ebibaawo ku ttaka.",
+    "exploreHeading": "Laba by'ebibiina bye biwaayo mu alipooti."
   }
 }

@@ -507,6 +507,10 @@
     "ctaTitle": "Tandika",
     "ctaDescription": "Tandika kupa malipoti ga shindu pa Watchtower, naho lola bumanyi bwa mwaawino pa malambo gitu ga kukolana.",
     "ctaButton1": "Tuma Ilipoti",
-    "ctaButton2": "Tandika Mulimo"
+    "ctaButton2": "Tandika Mulimo",
+    "missionStatement": "Watchtower ikuganja makundi kupa ilipoti ga shindu shikwitendeka, kumenya mienendo mu malipoti na kugalusha habali kuhuma pa nsi kuba bumanyi bukwiganja shikomo.",
+    "exploreLabel": "Lola Watchtower",
+    "exploreDescription": "Shindeka malipoti kwa mahali, mahoja, ndimi na mwaawino koro umenye shikwitendeka pa nsi.",
+    "exploreHeading": "Lola shaga makundi gakupa malipoti."
   }
 }

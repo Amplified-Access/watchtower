@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl";
 
 import Footer from "@/components/layout/footer/page";
 import LanguageMarquee from "@/components/common/language-marquee";
+import ScrollFadeText from "@/components/common/scroll-fade-text";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
 import { ClipboardList } from "@/components/animate-ui/icons/clipboard-list";
@@ -119,6 +120,31 @@ const Page = () => {
       </section>
       <section className="bg-white">
         <LanguageMarquee />
+      </section>
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        </div>
+        <div className="border-b border-border">
+          <Container size="xs" className="py-16 md:py-24">
+            <ScrollFadeText
+              text={t("missionStatement")}
+              className="text-2xl font-title font-semibold leading-snug md:text-4xl"
+            />
+          </Container>
+        </div>
+        <Container size="xs" className="pt-16 pb-8 text-center md:pt-24">
+          <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+            {t("exploreLabel")}
+          </p>
+          <TextComponent className="mx-auto max-w-xl">
+            {t("exploreDescription")}
+          </TextComponent>
+          <h3 className="mt-4 max-w-sm mx-auto font-title text-2xl font-semibold text-dark md:text-3xl">
+            {t("exploreHeading")}
+          </h3>
+        </Container>
       </section>
       <section className="py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
         <Container size="xs">

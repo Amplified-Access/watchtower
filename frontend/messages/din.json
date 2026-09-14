@@ -507,6 +507,10 @@
     "ctaTitle": "Guiir",
     "ctaDescription": "Guiir baŋ panyda kek Watchtower, walä nyin wël kaam adëŋ ë mapthiin da.",
     "ctaButton1": "Tɔ̈ɔ̈ŋ Baŋ",
-    "ctaButton2": "Guiir Luɔɔi"
+    "ctaButton2": "Guiir Luɔɔi",
+    "missionStatement": "Watchtower akony panyda bï baŋ kaam kɔc lueel, bï nyic kuɔɔth alɔŋ baŋ, ku bï puk athör bei piny ta bï nyic yenë kony luɔɔi.",
+    "exploreLabel": "Nyin Watchtower",
+    "exploreDescription": "Nyin baŋ alɔŋ bay, jɔl, thok, ku kaam bï nyic kaam bei piny.",
+    "exploreHeading": "Nyin kaam panyda baŋ."
   }
 }
