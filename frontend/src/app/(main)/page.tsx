@@ -8,7 +8,13 @@ import TextComponent from "@/components/common/text-component";
 import LogoCloud from "@/components/logo-cloud";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Minus, Plus } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -342,6 +348,59 @@ const Page = () => {
         <Container size="xs">
           <LogoCloud />
         </Container>
+      </section>
+      <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+          <div className="absolute inset-x-0 top-0 h-px bg-border" />
+          <div className="absolute inset-x-0 bottom-16 h-px bg-border" />
+        </div>
+        <div className="relative isolate mx-4 overflow-hidden bg-dark px-6 py-16 md:mx-8 md:px-16 md:py-20 xl:mx-16">
+          <Image
+            src="/brand/Pattern.svg"
+            alt=""
+            width={1378}
+            height={617}
+            className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
+          />
+          <div className="grid gap-12 md:grid-cols-2 md:gap-16">
+            <div>
+              <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+                {t("faqsLabel")}
+              </p>
+              <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
+                {t("faqsHeading")}
+              </h2>
+              <p className="mt-4 max-w-xs text-white/60 leading-relaxed">
+                {t("faqsDescription")}
+              </p>
+            </div>
+
+            <Accordion type="single" collapsible defaultValue="faq-1" className="w-full">
+              {[
+                { value: "faq-1", question: t("faq1Question"), answer: t("faq1Answer") },
+                { value: "faq-2", question: t("faq2Question"), answer: t("faq2Answer") },
+                { value: "faq-3", question: t("faq3Question"), answer: t("faq3Answer") },
+                { value: "faq-4", question: t("faq4Question"), answer: t("faq4Answer") },
+                { value: "faq-5", question: t("faq5Question"), answer: t("faq5Answer") },
+              ].map(({ value, question, answer }) => (
+                <AccordionItem key={value} value={value} className="border-white/15">
+                  <AccordionTrigger className="group gap-4 py-5 font-title text-base text-white hover:no-underline [&>svg]:hidden">
+                    <span className="flex-1">{question}</span>
+                    <span className="relative flex size-6 shrink-0 items-center justify-center rounded bg-primary">
+                      <Plus className="size-3.5 text-white group-data-[state=open]:hidden" />
+                      <Minus className="absolute size-3.5 text-white opacity-0 group-data-[state=open]:opacity-100" />
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-white/60">
+                    {answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
       </section>
       {/* <section className="py-20">
         <Container>
