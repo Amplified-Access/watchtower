@@ -1,6 +1,5 @@
 "use client";
 
-import CallToAction from "@/components/common/call-to-action";
 import Container from "@/components/common/container";
 import H4 from "@/components/common/heading-four";
 import HeadingTwo from "@/components/common/heading-two";
@@ -410,25 +409,16 @@ const Page = () => {
           />
         </Container>
       </section> */}
-      <section className="py-16 md:pb-20 [zoom:var(--viewport-scale)]">
-        <Container className="" size="xs">
-          <CallToAction
-            callToAction={{
-              title: t("ctaTitle"),
-              description: t("ctaDescription"),
-              variant: "secondary",
-              button1: {
-                title: t("ctaButton1"),
-                link: "/anonymous-reports",
-              },
-              button2: {
-                title: t("ctaButton2"),
-                link: "/maps",
-              },
-            }}
-            color="white"
-          />
-        </Container>
+      <section className="relative isolate bg-primary py-4 text-white [zoom:var(--viewport-scale)]">
+        <div className="flex flex-wrap items-center justify-center gap-3 px-4 text-center text-sm font-medium md:px-8 xl:px-16">
+          <span>{t("ctaTitle")}</span>
+          <Link
+            href="/anonymous-reports"
+            className="rounded-full border border-white/70 px-3 py-1 text-xs font-medium transition-colors hover:bg-white/10"
+          >
+            {t("ctaButton1")}
+          </Link>
+        </div>
       </section>
       <Footer />
     </>
