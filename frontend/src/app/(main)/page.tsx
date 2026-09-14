@@ -12,6 +12,7 @@ import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/_trpc/client";
 
 import Footer from "@/components/layout/footer/page";
 import LanguageMarquee from "@/components/common/language-marquee";
@@ -25,6 +26,41 @@ import { LoaderCircle } from "@/components/animate-ui/icons/loader-circle";
 
 const Page = () => {
   const t = useTranslations("Home");
+  const { data: insightsData } = trpc.getPublicInsights.useQuery({ limit: 3 });
+
+  // Falls back to static sample posts when there's no real data yet (empty
+  // DB, or the query erroring) so the section isn't just hidden.
+  const FALLBACK_INSIGHTS = [
+    {
+      id: "fallback-1",
+      slug: "",
+      title: t("insightsFallback1Title"),
+      imageUrl: undefined as string | undefined,
+      imageAlt: "",
+      publishedAt: "2026-09-01",
+      createdAt: "2026-09-01",
+    },
+    {
+      id: "fallback-2",
+      slug: "",
+      title: t("insightsFallback2Title"),
+      imageUrl: undefined as string | undefined,
+      imageAlt: "",
+      publishedAt: "2026-09-01",
+      createdAt: "2026-09-01",
+    },
+    {
+      id: "fallback-3",
+      slug: "",
+      title: t("insightsFallback3Title"),
+      imageUrl: undefined as string | undefined,
+      imageAlt: "",
+      publishedAt: "2026-09-01",
+      createdAt: "2026-09-01",
+    },
+  ];
+  const insights =
+    insightsData && insightsData.length > 0 ? insightsData : FALLBACK_INSIGHTS;
 
   return (
     <>
@@ -229,6 +265,78 @@ const Page = () => {
             </div>
           </div>
         </div>
+      </section>
+      <section className="relative bg-white py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-56 bg-linear-to-t from-primary/15 to-transparent md:h-80" />
+          <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+            <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+            <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+          </div>
+          <Container size="lg" className="px-8 md:px-12 xl:px-20">
+            <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+                  {t("insightsLabel")}
+                </p>
+                <h2 className="max-w-md font-title text-3xl font-semibold text-dark md:text-4xl">
+                  {t("insightsHeading")}
+                </h2>
+              </div>
+              <div className="flex flex-col gap-4 md:items-end md:text-right">
+                <p className="max-w-sm text-dark/60">
+                  {t("insightsDescription")}
+                </p>
+                <Link
+                  href="/insights"
+                  className="inline-flex items-center gap-1 font-title font-semibold text-primary hover:text-primary/80"
+                >
+                  {t("insightsCta")}
+                  <ChevronRight className="size-4" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3">
+              {insights.map((insight) => (
+                <Link
+                  key={insight.id}
+                  href={insight.slug ? `/insights/${insight.slug}` : "/insights"}
+                  className="group flex h-full flex-col"
+                >
+                  <div className="aspect-video bg-dark/5">
+                    {insight.imageUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={insight.imageUrl}
+                        alt={insight.imageAlt || insight.title}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                    )}
+                  </div>
+                  <div className="flex flex-1 flex-col bg-white p-4">
+                    <h3 className="font-title text-lg font-semibold text-dark">
+                      {insight.title}
+                    </h3>
+                    <div className="mt-auto flex items-center justify-between pt-3 text-sm">
+                      <span className="inline-flex items-center gap-1 font-title font-semibold text-primary">
+                        {t("readStory")}
+                        <ChevronRight className="size-3.5" />
+                      </span>
+                      <span className="text-dark/50">
+                        {new Date(
+                          insight.publishedAt ?? insight.createdAt,
+                        ).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </Container>
       </section>
       <section className="  py-10 [zoom:var(--viewport-scale)]">
         <Container size="xs">
