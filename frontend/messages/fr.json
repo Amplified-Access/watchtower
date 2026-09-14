@@ -490,6 +490,7 @@
     "startReporting": "Soumettre un signalement",
     "viewMaps": "Créer un déploiement",
     "howItWorks": "Comment ça marche",
+    "howItWorksHeading": "Comment ça marche",
     "howItWorksDescription": "D'un simple signalement à un changement à l'échelle du système, voici comment WatchTower permet aux communautés de faire entendre leur voix et de provoquer un changement significatif.",
     "stepLabel": "Étape {number}",
     "step1Title": "Activer le signalement",

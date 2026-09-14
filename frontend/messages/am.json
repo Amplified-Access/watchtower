@@ -490,6 +490,7 @@
     "startReporting": "ሪፖርት ያስገቡ",
     "viewMaps": "ማሰማራት ይፍጠሩ",
     "howItWorks": "እንዴት እንደሚሰራ",
+    "howItWorksHeading": "እንዴት እንደሚሰራ",
     "howItWorksDescription": "ከአንድ ነጠላ ሪፖርት እስከ ስርዓት አቀፍ ለውጥ ድረስ፣ WatchTower ማህበረሰቦች ድምጻቸውን እንዲያሰሙ እና ትርጉም ያለው ለውጥ እንዲያመጡ የሚያስችልበት መንገድ ይህ ነው።",
     "stepLabel": "ደረጃ {number}",
     "step1Title": "ሪፖርት ማድረግን ማንቃት",

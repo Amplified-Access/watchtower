@@ -490,6 +490,7 @@
     "startReporting": "رپورٹ جمع کروائیں",
     "viewMaps": "تعیناتی بنائیں",
     "howItWorks": "یہ کیسے کام کرتا ہے",
+    "howItWorksHeading": "یہ کیسے کام کرتا ہے",
     "howItWorksDescription": "ایک واحد رپورٹ سے لے کر نظام گیر تبدیلی تک، WatchTower کمیونٹیز کو اپنی آواز سنانے اور بامعنی تبدیلی لانے کے قابل بناتا ہے۔",
     "stepLabel": "مرحلہ {number}",
     "step1Title": "رپورٹنگ کو فعال کریں",
