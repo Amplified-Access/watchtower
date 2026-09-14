@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Locate } from "lucide-react";
@@ -12,6 +12,18 @@ const DEFAULT_ZOOM = 1.4;
 const HEATMAP_SOURCE_ID = "live-preview-reports";
 const HEATMAP_LAYER_ID = "live-preview-reports-heat";
 
+// Above lg, the sidebar/search/filter cards float on top of the map, so the
+// visual "center" needs to be biased into the area they leave uncovered.
+const DESKTOP_PADDING = { top: 120, bottom: 16, left: 320, right: 320 };
+const MOBILE_PADDING = { top: 16, bottom: 16, left: 16, right: 16 };
+
+const getMapPadding = () =>
+  window.matchMedia("(min-width: 1024px)").matches ? DESKTOP_PADDING : MOBILE_PADDING;
+
+export interface GlobeMapHandle {
+  recenter: () => void;
+}
+
 interface GlobeMapProps {
   bubbles: ReportBubble[];
   points: { lat: number; lon: number }[];
@@ -21,16 +33,18 @@ interface GlobeMapProps {
     heatmap: boolean;
     boundaries: boolean;
   };
+  viewMode: "globe" | "map";
+  onViewModeChange: (mode: "globe" | "map") => void;
   className?: string;
 }
 
-const GlobeMap = ({ bubbles, points, layers, className }: GlobeMapProps) => {
+const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
+  ({ bubbles, points, layers, viewMode, onViewModeChange, className }, ref) => {
   const t = useTranslations("HomeLivePreview");
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [viewMode, setViewMode] = useState<"globe" | "map">("globe");
   const boundaryLayerIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -40,13 +54,17 @@ const GlobeMap = ({ bubbles, points, layers, className }: GlobeMapProps) => {
 
     const map = new mapboxgl.Map({
       container,
-      style: "mapbox://styles/mapbox/dark-v11",
+      style: "mapbox://styles/mapbox/outdoors-v12",
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
       projection: { name: "globe" },
       attributionControl: false,
       logoPosition: "bottom-right",
     });
+    map.setPadding(getMapPadding());
+
+    const handleResize = () => map.setPadding(getMapPadding());
+    window.addEventListener("resize", handleResize);
 
     map.on("load", () => {
       map.setFog({});
@@ -85,6 +103,7 @@ const GlobeMap = ({ bubbles, points, layers, className }: GlobeMapProps) => {
     mapRef.current = map;
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
       map.remove();
@@ -178,30 +197,35 @@ const GlobeMap = ({ bubbles, points, layers, className }: GlobeMapProps) => {
     );
   }, [layers.boundaries, isLoaded]);
 
-  const toggleProjection = () => {
+  // Projection follows the (parent-owned) viewMode prop, so both the
+  // mobile overlay buttons and the desktop controls (rendered by the
+  // parent alongside the other floating cards) stay in sync.
+  useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
-    const next = viewMode === "globe" ? "map" : "globe";
-    map.setProjection({ name: next === "globe" ? "globe" : "mercator" });
-    setViewMode(next);
-  };
+    if (!map || !isLoaded) return;
+    map.setProjection({ name: viewMode === "globe" ? "globe" : "mercator" });
+  }, [viewMode, isLoaded]);
 
   const recenter = () => {
-    mapRef.current?.flyTo({ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM });
+    mapRef.current?.flyTo({
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
+      padding: getMapPadding(),
+    });
   };
+
+  useImperativeHandle(ref, () => ({ recenter }), []);
 
   return (
     <div className={className ?? "relative h-full w-full"}>
-      <div
-        ref={setContainer}
-        className="relative h-full w-full overflow-hidden rounded-2xl"
-      />
+      <div ref={setContainer} className="relative h-full w-full overflow-hidden" />
 
-      <div className="absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-black/60 p-1 text-xs font-medium text-white backdrop-blur">
-        <span className="px-2 text-white/50">{t("viewAsLabel")}</span>
+      {/* Below lg the map isn't covered by other cards, so it carries its own overlay controls.
+          At lg+, the parent renders equivalent controls as flex siblings of the cards instead. */}
+      <div className="absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-black/60 p-1 text-xs font-medium text-white ring-1 ring-white/10 backdrop-blur lg:hidden">
         <button
           type="button"
-          onClick={() => viewMode !== "globe" && toggleProjection()}
+          onClick={() => onViewModeChange("globe")}
           className={`rounded-full px-3 py-1 transition-colors ${
             viewMode === "globe" ? "bg-primary text-white" : "text-white/70 hover:text-white"
           }`}
@@ -210,7 +234,7 @@ const GlobeMap = ({ bubbles, points, layers, className }: GlobeMapProps) => {
         </button>
         <button
           type="button"
-          onClick={() => viewMode !== "map" && toggleProjection()}
+          onClick={() => onViewModeChange("map")}
           className={`rounded-full px-3 py-1 transition-colors ${
             viewMode === "map" ? "bg-primary text-white" : "text-white/70 hover:text-white"
           }`}
@@ -222,13 +246,16 @@ const GlobeMap = ({ bubbles, points, layers, className }: GlobeMapProps) => {
       <button
         type="button"
         onClick={recenter}
-        aria-label={t("viewAsLabel")}
-        className="absolute bottom-4 right-4 flex size-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-colors hover:bg-black/80"
+        aria-label="Recenter map"
+        className="absolute bottom-4 right-4 flex size-9 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/10 backdrop-blur transition-colors hover:bg-black/80 lg:hidden"
       >
         <Locate className="size-4" />
       </button>
     </div>
   );
-};
+  },
+);
+
+GlobeMap.displayName = "GlobeMap";
 
 export default GlobeMap;

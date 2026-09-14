@@ -29,13 +29,13 @@ const SearchAndChips = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5">
-        <Search className="size-4 shrink-0 text-white/40" />
+      <div className="flex items-center gap-2 rounded-full bg-black/70 px-4 py-2.5 shadow-2xl ring-1 ring-white/10 backdrop-blur-xl">
+        <Search className="size-4 shrink-0 text-white" />
         <input
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={t("searchPlaceholder")}
-          className="w-full bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+          className="w-full bg-transparent text-sm text-white placeholder:text-white focus:outline-none"
         />
       </div>
 
@@ -50,7 +50,7 @@ const SearchAndChips = ({
                 "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
                 isChipActive(chip)
                   ? "border-primary bg-primary text-white"
-                  : "border-white/15 text-white/70 hover:border-white/30 hover:text-white",
+                  : "border-white/10 text-white/70 hover:border-white/20 hover:text-white",
               )}
             >
               {chip.label}
