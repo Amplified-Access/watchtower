@@ -41,10 +41,13 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
-      # AWS SNS client throws at import time if these are unset — placeholders
-      # are enough to get through the build (nothing actually sends an SNS
-      # message here). Add real secrets here if the build starts failing on
-      # something else (e.g. DATABASE_URL for Drizzle, Mapbox, auth secrets).
+      # A couple of modules build a client eagerly at import time and throw
+      # if their env vars are unset, which Next hits while collecting page
+      # data for every API route — even though nothing here actually sends
+      # an SNS message or opens a DB connection during build. Placeholders
+      # satisfy the eager validation (neon() only checks the URL shape; nothing
+      # queries it) without needing real infra. Add more real secrets here if
+      # the build starts failing on something else (Mapbox, auth secrets).
       - name: Build
         run: pnpm build
         env:
@@ -52,3 +55,4 @@ jobs:
           AWS_ACCESS_KEY_ID: placeholder
           AWS_SECRET_ACCESS_KEY: placeholder
           AWS_SNS_TOPIC_ARN: arn:aws:sns:eu-north-1:000000000000:placeholder
+          DATABASE_URL: postgresql://user:password@host.tld/dbname
