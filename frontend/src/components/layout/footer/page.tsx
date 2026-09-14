@@ -1,134 +1,173 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import Logo from "@/components/logo";
-import { Mail } from "lucide-react";
-import TextComponent from "@/components/common/text-component";
+import {
+  FaLinkedinIn,
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaWhatsapp,
+} from "react-icons/fa6";
 import { useTranslations } from "next-intl";
 
 const Footer = () => {
   const t = useTranslations("Footer");
-  const tNav = useTranslations("Navigation");
 
-  const footerLinks = {
-    platform: {
-      heading: t("platform"),
+  const columns = [
+    {
+      heading: t("explore"),
       links: [
-        { label: tNav("about"), href: "/about" },
-        { label: tNav("maps"), href: "/maps" },
-        { label: tNav("chat"), href: "/chat" },
-        { label: tNav("alerts"), href: "/alerts" },
-        // { label: "Submit a report", href: "/anonymous-reports" },
+        { label: t("maps"), href: "/maps" },
+        { label: t("reports"), href: "/reports" },
+        { label: t("insights"), href: "/insights" },
+        { label: t("askWatchtower"), href: "/chat" },
+        { label: t("alerts"), href: "/alerts" },
       ],
     },
-    contact: {
-      heading: t("contactUs"),
+    {
+      heading: t("watchtower"),
       links: [
-        {
-          label: "hello@amplifiedaccess.org",
-          href: "mailto:hello@amplifiedaccess.org",
-        },
+        { label: t("about"), href: "/about" },
+        { label: t("howItWorks"), href: "/about" },
+        { label: t("storiesAndInsights"), href: "/insights" },
+        { label: t("faqs"), href: "/faqs" },
+        { label: t("alert"), href: "/alerts" },
       ],
     },
-  };
+    {
+      heading: t("forOrganisations"),
+      links: [
+        { label: t("deployments"), href: "/organizations" },
+        { label: t("organisationSignIn"), href: "/sign-in" },
+        { label: t("createADeployment"), href: "/register-organization" },
+      ],
+    },
+    {
+      heading: t("support"),
+      links: [
+        { label: t("helpCentre"), href: "/help-centre" },
+        { label: t("contact"), href: "mailto:hello@amplifiedaccess.org" },
+        { label: t("privacyPolicy"), href: "/privacy-policy" },
+        { label: t("termsOfUse"), href: "/terms-of-service" },
+      ],
+    },
+  ];
+
+  const socialLinks = [
+    { label: "LinkedIn", href: "#", icon: FaLinkedinIn },
+    { label: "Facebook", href: "#", icon: FaFacebookF },
+    { label: "Instagram", href: "#", icon: FaInstagram },
+    { label: "YouTube", href: "#", icon: FaYoutube },
+    { label: "WhatsApp", href: "#", icon: FaWhatsapp },
+  ];
 
   return (
-    <footer className="bg-primary text-white">
-      <div className="max-w-6xl mx-auto px-4 md:px-8 py-16 md:pb-20">
-        <div className="flex flex-col md:flex-row md:justify-between gap-12 md:gap-8">
-          {/* Brand column */}
-          <div className="flex flex-col gap-4 max-w-xs">
-            <div>
-              <Logo color="primary" className="w-52" />
+    <footer className="relative bg-white py-16 [zoom:var(--viewport-scale)]">
+      <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+        <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+        <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        <div className="absolute inset-x-0 top-16 h-px bg-border" />
+        <div className="absolute inset-x-0 bottom-16 h-px bg-border" />
+      </div>
+      <div className="relative isolate mx-4 overflow-hidden bg-dark text-white @container md:mx-8 xl:mx-16">
+        <div className="relative px-4">
+          <div className="flex w-full flex-wrap justify-between gap-x-12 gap-y-10 py-8">
+            <div className="self-start">
+              <Logo color="primary" className="w-40 shrink-0" />
             </div>
-            <TextComponent className="text-white mt-1 text-sm md:text-base">
-              {t("brandDescription")}
-            </TextComponent>
+            {columns.map((column) => (
+              <div key={column.heading} className="flex flex-col gap-4">
+                <h3 className="font-title text-sm font-semibold text-white">
+                  {column.heading}
+                </h3>
+                <ul className="flex flex-col gap-2.5">
+                  {column.links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-white/70 transition-colors hover:text-white"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          {/* Links group — Platform + Contact bundled to the right */}
-          <div className="flex gap-12 md:gap-16 shrink-0">
-            {/* Platform */}
-            <div className="flex flex-col gap-4">
-              <h3 className="font-title font-semibold text-sm text-white">
-                {footerLinks.platform.heading}
-              </h3>
-              <ul className="flex flex-col gap-2">
-                {footerLinks.platform.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-white hover:opacity-70 transition-opacity"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact */}
-            <div className="flex flex-col gap-4">
-              <h3 className="font-title font-semibold text-sm text-white">
-                {footerLinks.contact.heading}
-              </h3>
-              <ul className="flex flex-col gap-2">
-                {footerLinks.contact.links.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="flex items-center gap-2 text-sm text-white hover:opacity-70 transition-opacity"
-                    >
-                      {link.href.startsWith("mailto:") && (
-                        <Mail size={14} className="shrink-0" />
-                      )}
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="mb-5 flex justify-start gap-2 lg:justify-end">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                aria-label={social.label}
+                className="flex size-8 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+              >
+                <social.icon className="size-3.5" />
+              </a>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-white">
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-            <span>{t("copyright", { year: new Date().getFullYear() })}</span>
-            {/* <span className="hidden sm:inline text-white/30">·</span>
-            <span>
-              Designed and built by{" "}
-              <a
-                href="https://amplifiedaccess.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:opacity-70 transition-opacity"
+        {/* Watermark */}
+        <div className="relative border-t border-white/10 pt-10 ">
+          <Image
+            src="/brand/Pattern.svg"
+            alt=""
+            width={1378}
+            height={617}
+            className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
+          />
+          <div className="px-4">
+            <svg
+              aria-hidden
+              viewBox="0 0 1000 130"
+              width="1283"
+              height="184"
+              preserveAspectRatio="none"
+              className="pointer-events-none -mb-4 aspect-1000/130 w-full object-contain shrink-0 select-none"
+            >
+              <text
+                x="0"
+                y="105"
+                textLength="1000"
+                lengthAdjust="spacingAndGlyphs"
+                className="fill-white/20 font-title font-semibold"
+                fontSize="110"
               >
-                Amplified Access
-              </a> */}
-            {/* </span> */}
+                {t("watchtower")}
+              </text>
+            </svg>
+            <div className="pointer-events-none absolute inset-x-0 bottom-10 h-28 bg-linear-to-b from-transparent to-dark md:h-50" />
           </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/privacy-policy"
-              className="hover:opacity-70 transition-opacity"
-            >
-              {t("privacy")}
-            </Link>
-            <Link
-              href="/terms-of-service"
-              className="hover:opacity-70 transition-opacity"
-            >
-              {t("terms")}
-            </Link>
-            <Link
-              href="/cookie-policy"
-              className="hover:opacity-70 transition-opacity"
-            >
-              {t("cookies")}
-            </Link>
+
+          <div className="relative px-4 py-5">
+            <div className="flex flex-col items-center justify-between gap-3 text-sm text-white/60 sm:flex-row">
+              <span>{t("copyright", { year: new Date().getFullYear() })}</span>
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/privacy-policy"
+                  className="transition-colors hover:text-white"
+                >
+                  {t("privacyPolicy")}
+                </Link>
+                <Link
+                  href="/terms-of-service"
+                  className="transition-colors hover:text-white"
+                >
+                  {t("termsOfUse")}
+                </Link>
+                <Link
+                  href="/accessibility"
+                  className="transition-colors hover:text-white"
+                >
+                  {t("accessibility")}
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

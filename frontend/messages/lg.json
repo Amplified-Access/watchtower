@@ -27,7 +27,12 @@
     "chat": "Okunyumya",
     "alerts": "Ebikwasa",
     "organizations": "Ebitongole",
-    "about": "Ku ffe"
+    "about": "Ku ffe",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Okwewandiisa Ebikwasa",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Eddembe lyonna likuumiddwa.",
     "privacy": "Ekyama",
     "terms": "Ebiragiro",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Okuwagira emirimu emisinga obulungi"
   },
   "Home": {
-    "heroTitleLine1": "Waayo alipooti mu lulimi lwo. Owulirwe!",
+    "heroTitleLine1": "Waayo alipooti mu lulimi lwo.",
+    "heroTitleLine2": "Owulirwe!",
     "heroDescription": "Ebibiina bwe bisobola okwogera, ebintu bikyuka. Watchtower ekkiriza abantu okuwaayo alipooti ku nsonga z'ekitundu n'okutyoboola kwa ddembe mu nnimi zaabwe, buli omu n'asobola okwetaba mu bulamu bw'abannansi n'okuvunaanyizibwa mu lwatu.",
     "startReporting": "Waayo alipooti",
     "viewMaps": "Tandika okussa",

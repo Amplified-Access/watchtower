@@ -27,7 +27,12 @@
     "chat": "Ikiganiro",
     "alerts": "Inyito",
     "organizations": "Imiryango",
-    "about": "Abo turi bo"
+    "about": "Abo turi bo",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Kwiyandikisha Inyito",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Uburenganzira bwose burafitwe.",
     "privacy": "Ibanga",
     "terms": "Amabwiriza",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Gushyigikira amatsinda meza kurusha ayandi"
   },
   "Home": {
-    "heroTitleLine1": "Tanga raporo mu rurimi rwawe. Wumvwe!",
+    "heroTitleLine1": "Tanga raporo mu rurimi rwawe.",
+    "heroTitleLine2": "Wumvwe!",
     "heroDescription": "Iyo abaturage bashobora kuvuga, ibintu bihinduka. Watchtower ifasha abantu gutanga raporo ku bibazo by'aho batuye n'ibirego by'uburenganzira mu ndimi bavuga, kugira ngo buri wese ashobore kugira uruhare mu buzima bw'abenegihugu no mu kubazwa rusange.",
     "startReporting": "Ohereza raporo",
     "viewMaps": "Kora ubushakashatsi",

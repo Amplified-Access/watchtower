@@ -22,14 +22,14 @@ import Logo from "@/components/logo";
 import { useTranslations } from "next-intl";
 import LanguageSelector from "@/components/common/language-selector";
 
-const MobileNavigation = ({ scrolled }: { scrolled: boolean }) => {
+const MobileNavigation = () => {
   const t = useTranslations("Navigation");
   const tCommon = useTranslations("Common");
 
   return (
     <Sheet>
       <SheetTrigger asChild className="lg:hidden">
-        <IoMenuOutline className={cn("text-3xl", scrolled && "text-white")} />
+        <IoMenuOutline className="text-3xl" />
       </SheetTrigger>
       <SheetContent className="bg-primary border-none text-background">
         <SheetHeader className="">

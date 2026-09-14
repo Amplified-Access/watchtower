@@ -27,7 +27,12 @@
     "reports": "Gabaasota",
     "chat": "Haasawaa",
     "alerts": "Beeksisa",
-    "organizations": "Dhaabbilee"
+    "organizations": "Dhaabbilee",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Galmee Beeksisaa",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Mirgi hundi ni eegama.",
     "privacy": "Iccitii",
     "terms": "Haalota",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Garee gaggaarii deggeruu"
   },
   "Home": {
-    "heroTitleLine1": "Afaan keessaniin gabaasaa. Sagaleen keessan haa dhaga'amu!",
+    "heroTitleLine1": "Afaan keessaniin gabaasaa.",
+    "heroTitleLine2": "Sagaleen keessan haa dhaga'amu!",
     "heroDescription": "Hawaasonni yeroo dubbachuu danda'an, wanti ni jijjiirama. Watchtower namoonni dhimmoota naannoo fi cabiinsa mirgaa afaan dubbatanuun akka gabaasan dandeessisa, kanaanis namni hundi jireenya hawaasaa fi itti gaafatamummaa uummataa keessatti akka hirmaatu.",
     "startReporting": "Gabaasa Ergi",
     "viewMaps": "Diriirsaa Uumi",

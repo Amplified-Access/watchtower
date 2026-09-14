@@ -17,7 +17,7 @@ const BackButton = () => {
     >
       <ChevronLeft className="md:text-white md:absolute md:top-1/2 md:-translate-y-1/2 md:-left-6" />
       <Image
-        src={"/images/logomark-white.png"}
+        src={"/brand/logo-white.svg"}
         alt={""}
         width={300}
         height={300}

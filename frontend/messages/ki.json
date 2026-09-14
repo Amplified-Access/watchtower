@@ -27,7 +27,12 @@
     "chat": "Kwaria",
     "alerts": "Macũhĩrio",
     "organizations": "Miungano",
-    "about": "Ũhoro Witũ"
+    "about": "Ũhoro Witũ",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Ĩyandikithie Macũhĩrio",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Kĩhooto gĩothe nĩ gĩtũĩrĩ.",
     "privacy": "Hitho",
     "terms": "Mawatho",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Gũteithia ikundi njega mũno"
   },
   "Home": {
-    "heroTitleLine1": "He rũpoti na rũthiomi rwaku. Ũiguuo!",
+    "heroTitleLine1": "He rũpoti na rũthiomi rwaku.",
+    "heroTitleLine2": "Ũiguuo!",
     "heroDescription": "Rĩrĩa mĩcemanio ĩngĩhota kwaria, maũndũ nĩmagarũrũkaga. Watchtower nĩĩhotithagia andũ kũheana marũpoti ma mathĩna ma gĩthaka na mahĩtia ma kĩhooto na rũthiomi rũrĩa maragia, nĩguo o mũndũ ahote gũtonya wĩra-inĩ wa gĩthaka na ũrũgamĩrĩri wa andũ othe.",
     "startReporting": "Tũma Rũpoti",
     "viewMaps": "Amba Wĩra",

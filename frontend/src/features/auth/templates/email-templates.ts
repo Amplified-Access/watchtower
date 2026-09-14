@@ -1,7 +1,7 @@
 const BASE_STYLES = {
-  primary: "#006fac",
-  dark: "#113356",
-  background: "#f4f4f4",
+  primary: "#0042e7",
+  dark: "#000000",
+  background: "#f3f3f3",
   white: "#ffffff",
   textBody: "#444444",
   textMuted: "#888888",

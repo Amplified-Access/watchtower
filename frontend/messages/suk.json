@@ -27,7 +27,12 @@
     "chat": "Yoyaga",
     "alerts": "Malumba",
     "organizations": "Makundi",
-    "about": "Habali Yitu"
+    "about": "Habali Yitu",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Igilila Malumba",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Haki jose jibikilwe.",
     "privacy": "Ubwiswii",
     "terms": "Masharti",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Kuganja makundi mazuri kuliko goshi"
   },
   "Home": {
-    "heroTitleLine1": "Panga ilipoti mululimi lwako. Ubwe uigwe!",
+    "heroTitleLine1": "Panga ilipoti mululimi lwako.",
+    "heroTitleLine2": "Ubwe uigwe!",
     "heroDescription": "Buli bandu bakuganja kulonga, shindu shikulabuka. Watchtower ikuganja bandu kupa malipoti ga mahoja ga sengo na kusuka mahamba gadagu mululimi lwabwe, koro buli mundu ashobole kwingila mu wikaji wa witemi na kubazwa kwa bose.",
     "startReporting": "Tuma Ilipoti",
     "viewMaps": "Tandika Mulimo",

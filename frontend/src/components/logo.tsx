@@ -18,14 +18,12 @@ const Logo = ({
     >
       <Image
         src={
-          color != "white"
-            ? "/images/logomark-white.png"
-            : "/images/logomark.png"
+          color != "white" ? "/brand/logo-white.svg" : "/brand/logo-black.svg"
         }
         alt={""}
         width={300}
         height={300}
-        className={cn("h-9 w-full shrink-0", className)}
+        className={cn("h-7 w-full shrink-0", className)}
       />
     </Link>
   );

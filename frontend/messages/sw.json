@@ -27,7 +27,12 @@
     "chat": "Mazungumzo",
     "alerts": "Arifa",
     "organizations": "Mashirika",
-    "about": "Kuhusu"
+    "about": "Kuhusu",
+    "reportIssue": "Ripoti tukio"
+  },
+  "AnnouncementBanner": {
+    "message": "Kuna nini kinachotokea katika jamii yako?",
+    "cta": "Toa Ripoti"
   },
   "Alerts": {
     "pageTitle": "Usajili wa tahadhari",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Haki zote zimehifadhiwa.",
     "privacy": "Faragha",
     "terms": "Masharti",
-    "cookies": "Vidakuzi"
+    "cookies": "Vidakuzi",
+    "explore": "Chunguza",
+    "watchtower": "WatchTower",
+    "forOrganisations": "Kwa Mashirika",
+    "support": "Msaada",
+    "maps": "Ramani",
+    "reports": "Ripoti",
+    "insights": "Maarifa",
+    "askWatchtower": "Uliza WatchTower",
+    "alerts": "Tahadhari",
+    "about": "Kuhusu",
+    "howItWorks": "Jinsi Inavyofanya Kazi",
+    "storiesAndInsights": "Hadithi na Maarifa",
+    "faqs": "Maswali Yanayoulizwa Mara kwa Mara",
+    "alert": "Tahadhari",
+    "deployments": "Uwekaji",
+    "organisationSignIn": "Ingia kama Shirika",
+    "createADeployment": "Unda Uwekaji",
+    "helpCentre": "Kituo cha Msaada",
+    "contact": "Wasiliana",
+    "privacyPolicy": "Sera ya Faragha",
+    "termsOfUse": "Masharti ya Matumizi",
+    "accessibility": "Ufikivu"
   },
   "LogoCloud": {
     "heading": "Kuwezesha timu bora zaidi"
   },
   "Home": {
-    "heroTitleLine1": "Ripoti kwa lugha yako. Sikika!",
+    "heroTitleLine1": "Ripoti kwa lugha yako.",
+    "heroTitleLine2": "Sikika!",
     "heroDescription": "Jamii zinapoweza kusema, mambo hubadilika. Watchtower inawawezesha watu kuripoti masuala ya ndani na ukiukaji wa haki katika lugha wanazozungumza ili kila mtu aweze kushiriki katika maisha ya kiraia na uwajibikaji wa umma.",
     "startReporting": "Wasilisha ripoti",
     "viewMaps": "Anzisha upelekaji",

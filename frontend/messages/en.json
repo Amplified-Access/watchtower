@@ -27,7 +27,12 @@
     "reports": "Reports",
     "chat": "Chat",
     "alerts": "Alerts",
-    "organizations": "Organizations"
+    "organizations": "Organizations",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Alert Subscriptions",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. All rights reserved.",
     "privacy": "Privacy",
     "terms": "Terms",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Powering the best teams"
   },
   "Home": {
-    "heroTitleLine1": "Report in your language. Be heard!",
+    "heroTitleLine1": "Report in your language.",
+    "heroTitleLine2": "Be heard!",
     "heroDescription": "When communities can speak up, things change. Watchtower enables people to report local issues and rights violations in the languages they speak so that everyone can participate in civic life and public accountability.",
     "startReporting": "Submit a report",
     "viewMaps": "Create a deployment",

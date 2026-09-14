@@ -1,0 +1,11 @@
+overrides:
+  '@opentelemetry/instrumentation': 0.215.0
+  import-in-the-middle: 3.0.1
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@sentry/cli': true
+  '@swc/core': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

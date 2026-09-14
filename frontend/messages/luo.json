@@ -27,7 +27,12 @@
     "reports": "Ripodhi",
     "chat": "Wuoyo",
     "alerts": "Sigana",
-    "organizations": "Riwruok"
+    "organizations": "Riwruok",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Yudo Sigana",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Ratiro duto orit.",
     "privacy": "Mumbo",
     "terms": "Chike",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Konyo thimbe maber moloyo"
   },
   "Home": {
-    "heroTitleLine1": "Ripodh e dhogi. Winjri!",
+    "heroTitleLine1": "Ripodh e dhogi.",
+    "heroTitleLine2": "Winjri!",
     "heroDescription": "Ka oganda nyalo wuoyo, gik moko lokore. Watchtower miyo ji teko mar ripodho weche mag alworni kod ketho mag ratiro e dhok ma giwuoyogo mondo ngʼato ka ngʼato riwre e ngima mar oganda kod miyo joma nigi diragruok luor.",
     "startReporting": "Or Ripodho",
     "viewMaps": "Chak Tich",

@@ -27,7 +27,12 @@
     "chat": "ਗੱਲਬਾਤ",
     "alerts": "ਚੇਤਾਵਨੀਆਂ",
     "organizations": "ਸੰਸਥਾਵਾਂ",
-    "about": "ਬਾਰੇ"
+    "about": "ਬਾਰੇ",
+    "reportIssue": "ਘਟਨਾ ਦੀ ਰਿਪੋਰਟ ਕਰੋ"
+  },
+  "AnnouncementBanner": {
+    "message": "ਤੁਹਾਡੇ ਭਾਈਚਾਰੇ ਵਿੱਚ ਕੀ ਹੋ ਰਿਹਾ ਹੈ?",
+    "cta": "ਰਿਪੋਰਟ ਕਰੋ"
   },
   "Alerts": {
     "pageTitle": "ਚੇਤਾਵਨੀਆਂ ਲਈ ਸਬਸਕਰਾਈਬ ਕਰੋ",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access। ਸਾਰੇ ਅਧਿਕਾਰ ਸੁਰੱਖਿਅਤ ਹਨ।",
     "privacy": "ਪਰਦੇਦਾਰੀ",
     "terms": "ਸ਼ਰਤਾਂ",
-    "cookies": "ਕੂਕੀਜ਼"
+    "cookies": "ਕੂਕੀਜ਼",
+    "explore": "ਖੋਜੋ",
+    "watchtower": "ਵਾਚਟਾਵਰ",
+    "forOrganisations": "ਸੰਸਥਾਵਾਂ ਲਈ",
+    "support": "ਸਹਾਇਤਾ",
+    "maps": "ਨਕਸ਼ੇ",
+    "reports": "ਰਿਪੋਰਟਾਂ",
+    "insights": "ਸੂਝਾਂ",
+    "askWatchtower": "ਵਾਚਟਾਵਰ ਨੂੰ ਪੁੱਛੋ",
+    "alerts": "ਚੇਤਾਵਨੀਆਂ",
+    "about": "ਬਾਰੇ",
+    "howItWorks": "ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ",
+    "storiesAndInsights": "ਕਹਾਣੀਆਂ ਅਤੇ ਸੂਝਾਂ",
+    "faqs": "ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਸਵਾਲ",
+    "alert": "ਚੇਤਾਵਨੀ",
+    "deployments": "ਤਾਇਨਾਤੀਆਂ",
+    "organisationSignIn": "ਸੰਸਥਾ ਸਾਈਨ ਇਨ",
+    "createADeployment": "ਤਾਇਨਾਤੀ ਬਣਾਓ",
+    "helpCentre": "ਸਹਾਇਤਾ ਕੇਂਦਰ",
+    "contact": "ਸੰਪਰਕ",
+    "privacyPolicy": "ਪਰਦੇਦਾਰੀ ਨੀਤੀ",
+    "termsOfUse": "ਵਰਤੋਂ ਦੀਆਂ ਸ਼ਰਤਾਂ",
+    "accessibility": "ਪਹੁੰਚਯੋਗਤਾ"
   },
   "LogoCloud": {
     "heading": "ਸਭ ਤੋਂ ਵਧੀਆ ਟੀਮਾਂ ਨੂੰ ਸ਼ਕਤੀ ਦੇਣਾ"
   },
   "Home": {
-    "heroTitleLine1": "ਆਪਣੀ ਭਾਸ਼ਾ ਵਿੱਚ ਰਿਪੋਰਟ ਕਰੋ। ਸੁਣੇ ਜਾਓ!",
+    "heroTitleLine1": "ਆਪਣੀ ਭਾਸ਼ਾ ਵਿੱਚ ਰਿਪੋਰਟ ਕਰੋ।",
+    "heroTitleLine2": "ਸੁਣੇ ਜਾਓ!",
     "heroDescription": "ਜਦੋਂ ਭਾਈਚਾਰੇ ਬੋਲ ਸਕਦੇ ਹਨ, ਚੀਜ਼ਾਂ ਬਦਲਦੀਆਂ ਹਨ। Watchtower ਲੋਕਾਂ ਨੂੰ ਆਪਣੀ ਬੋਲੀ ਜਾਂਦੀ ਭਾਸ਼ਾ ਵਿੱਚ ਸਥਾਨਕ ਮੁੱਦਿਆਂ ਅਤੇ ਅਧਿਕਾਰਾਂ ਦੀ ਉਲੰਘਣਾ ਦੀ ਰਿਪੋਰਟ ਕਰਨ ਦੇ ਯੋਗ ਬਣਾਉਂਦਾ ਹੈ ਤਾਂ ਜੋ ਹਰ ਕੋਈ ਨਾਗਰਿਕ ਜੀਵਨ ਅਤੇ ਜਨਤਕ ਜਵਾਬਦੇਹੀ ਵਿੱਚ ਹਿੱਸਾ ਲੈ ਸਕੇ।",
     "startReporting": "ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਕਰੋ",
     "viewMaps": "ਤਾਇਨਾਤੀ ਬਣਾਓ",

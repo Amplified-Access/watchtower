@@ -78,7 +78,7 @@ const Page = () => {
   return (
     <>
       {/* Hero */}
-      <section className="relative">
+      <section className="relative [zoom:var(--viewport-scale)]">
         <Image
           src="/topographic.svg"
           alt=""
@@ -108,7 +108,7 @@ const Page = () => {
         </div>
       </section>
       {/* Hero */}
-      <section className="relative">
+      <section className="relative [zoom:var(--viewport-scale)]">
         <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
         <div className="pb-32 pt-20">
           <Container size="xs">
@@ -134,7 +134,7 @@ const Page = () => {
       </section>
 
       {/* Mission
-      <section className="py-20 md:py-32 bg-dark text-background">
+      <section className="py-20 md:py-32 bg-dark text-background [zoom:var(--viewport-scale)]">
         <Container size="text" className="text-center flex flex-col gap-6">
           <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm">
             Our Mission
@@ -153,7 +153,7 @@ const Page = () => {
       </section> */}
 
       {/* How It Works */}
-      <section className="pb-20 md:pb-32 isolate">
+      <section className="pb-20 md:pb-32 isolate [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="text-center mb-14 md:mb-20">
             <HeadingTwo className="text-center">
@@ -179,7 +179,7 @@ const Page = () => {
                 <div className="absolute inset-20 rounded-full border border-white/20" />
                 <div className="relative z-10">
                   <Image
-                    src="/icons/icon-white.png"
+                    src="/brand/icon-white.svg"
                     alt="WatchTower"
                     width={300}
                     height={300}
@@ -219,7 +219,7 @@ const Page = () => {
       </section>
 
       {/* Languages */}
-      <section className="pb-20 md:pb-32">
+      <section className="pb-20 md:pb-32 [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="rounded-3xl bg-primary p-8 md:p-16">
             <div className="text-center mb-12">
@@ -251,7 +251,7 @@ const Page = () => {
       </section>
 
       {/* Impact */}
-      <section className="pb-20 md:pb-32">
+      <section className="pb-20 md:pb-32 [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="bg-white border rounded-3xl pt-8 pb-4 md:py-16 px-4 md:px-16">
             <div className="text-center mb-12 md:mb-16">
@@ -356,7 +356,7 @@ const Page = () => {
       </section> */}
 
       {/* Your Safety */}
-      <section className="pb-20 md:pb-32 text-background">
+      <section className="pb-20 md:pb-32 text-background [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="bg-primary p-10 md:p-16 rounded-3xl">
             <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
@@ -417,7 +417,7 @@ const Page = () => {
       </section>
 
       {/* CTA */}
-      <section className="pb-20 md:pb-24">
+      <section className="pb-20 md:pb-24 [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <CallToAction
             callToAction={{

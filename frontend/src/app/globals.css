@@ -7,8 +7,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-dark: var(--dark);
-  --font-body: var(--font-whitney);
-  --font-title: var(--font-ginto);
+  --font-body: "Epilogue Variable", sans-serif;
+  --font-title: "Epilogue Variable", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,29 +45,29 @@
 }
 
 :root {
-  --viz-background: #f4f4f4;
-  --viz-primary: #006fac;
-  --viz-dark: #113356;
+  --viz-background: #f3f3f3;
+  --viz-primary: #0042e7;
+  --viz-dark: #000000;
   --radius: 0.625rem;
-  --background: #f4f4f4;
-  --primary: #006fac;
-  --dark: #113356;
-  --foreground: oklch(0.145 0 0);
+  --background: #f3f3f3;
+  --primary: #0042e7;
+  --dark: #000000;
+  --foreground: #000000;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: #000000;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --popover-foreground: #000000;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --secondary-foreground: #000000;
+  --muted: #6b6b6b;
+  --muted-foreground: #6b6b6b;
   --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent-foreground: #000000;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #f3f3f3;
+  --input: #f3f3f3;
+  --ring: #0042e7;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -81,6 +81,16 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Container padding steps up to xl:px-16 (a 64px gap on each side) at
+     the 1280px (80rem) breakpoint and stops there — past that width a
+     max-width container alone just centers with more empty margin, so
+     --viewport-scale takes over: it grows 1:1 with the viewport past the
+     1280px baseline and holds at 1.5x past 1920px so text/spacing don't
+     run away on ultra-wide/4K displays. Apply via
+     `[zoom:var(--viewport-scale)]` on a section's root element — same
+     convention and baseline as the ActionChallenge frontend. */
+  --viewport-scale: clamp(1, calc(100vw / 80rem), 1.5);
 }
 
 .dark {

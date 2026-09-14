@@ -27,7 +27,12 @@
     "chat": "چیٹ",
     "alerts": "انتباہات",
     "organizations": "تنظیمیں",
-    "about": "تعارف"
+    "about": "تعارف",
+    "reportIssue": "واقعہ کی رپورٹ کریں"
+  },
+  "AnnouncementBanner": {
+    "message": "آپ کی کمیونٹی میں کیا ہو رہا ہے؟",
+    "cta": "رپورٹ کریں"
   },
   "Alerts": {
     "pageTitle": "انتباہات کے لیے سبسکرائب کریں",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access۔ جملہ حقوق محفوظ ہیں۔",
     "privacy": "رازداری",
     "terms": "شرائط",
-    "cookies": "کوکیز"
+    "cookies": "کوکیز",
+    "explore": "دریافت کریں",
+    "watchtower": "واچ ٹاور",
+    "forOrganisations": "تنظیموں کے لیے",
+    "support": "معاونت",
+    "maps": "نقشے",
+    "reports": "رپورٹس",
+    "insights": "بصیرت",
+    "askWatchtower": "واچ ٹاور سے پوچھیں",
+    "alerts": "الرٹس",
+    "about": "کے بارے میں",
+    "howItWorks": "یہ کیسے کام کرتا ہے",
+    "storiesAndInsights": "کہانیاں اور بصیرت",
+    "faqs": "اکثر پوچھے گئے سوالات",
+    "alert": "الرٹ",
+    "deployments": "تعیناتیاں",
+    "organisationSignIn": "تنظیم سائن ان",
+    "createADeployment": "تعیناتی بنائیں",
+    "helpCentre": "مدد مرکز",
+    "contact": "رابطہ",
+    "privacyPolicy": "پرائیویسی پالیسی",
+    "termsOfUse": "استعمال کی شرائط",
+    "accessibility": "رسائی"
   },
   "LogoCloud": {
     "heading": "بہترین ٹیموں کو بااختیار بنانا"
   },
   "Home": {
-    "heroTitleLine1": "اپنی زبان میں رپورٹ کریں۔ اپنی آواز پہنچائیں!",
+    "heroTitleLine1": "اپنی زبان میں رپورٹ کریں۔",
+    "heroTitleLine2": "اپنی آواز پہنچائیں!",
     "heroDescription": "جب کمیونٹیز بول سکتی ہیں تو حالات بدل جاتے ہیں۔ Watchtower لوگوں کو اپنی بولی جانے والی زبانوں میں مقامی مسائل اور حقوق کی خلاف ورزیوں کی رپورٹ کرنے کے قابل بناتا ہے تاکہ ہر کوئی شہری زندگی اور عوامی جوابدہی میں حصہ لے سکے۔",
     "startReporting": "رپورٹ جمع کروائیں",
     "viewMaps": "تعیناتی بنائیں",

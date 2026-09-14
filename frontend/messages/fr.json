@@ -27,7 +27,12 @@
     "chat": "Chat",
     "alerts": "Alertes",
     "organizations": "Organisations",
-    "about": "À propos"
+    "about": "À propos",
+    "reportIssue": "Signaler un incident"
+  },
+  "AnnouncementBanner": {
+    "message": "Que se passe-t-il dans votre communauté ?",
+    "cta": "Faire un signalement"
   },
   "Alerts": {
     "pageTitle": "Abonnements aux alertes",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Tous droits réservés.",
     "privacy": "Confidentialité",
     "terms": "Conditions",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explorer",
+    "watchtower": "WatchTower",
+    "forOrganisations": "Pour les organisations",
+    "support": "Assistance",
+    "maps": "Cartes",
+    "reports": "Rapports",
+    "insights": "Analyses",
+    "askWatchtower": "Demander à WatchTower",
+    "alerts": "Alertes",
+    "about": "À propos",
+    "howItWorks": "Comment ça marche",
+    "storiesAndInsights": "Histoires et analyses",
+    "faqs": "FAQ",
+    "alert": "Alerte",
+    "deployments": "Déploiements",
+    "organisationSignIn": "Connexion organisation",
+    "createADeployment": "Créer un déploiement",
+    "helpCentre": "Centre d'aide",
+    "contact": "Contact",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfUse": "Conditions d'utilisation",
+    "accessibility": "Accessibilité"
   },
   "LogoCloud": {
     "heading": "Au service des meilleures équipes"
   },
   "Home": {
-    "heroTitleLine1": "Signalez dans votre langue. Faites-vous entendre !",
+    "heroTitleLine1": "Signalez dans votre langue.",
+    "heroTitleLine2": "Faites-vous entendre !",
     "heroDescription": "Quand les communautés peuvent s'exprimer, les choses changent. Watchtower permet aux gens de signaler des problèmes locaux et des violations de droits dans les langues qu'ils parlent, afin que chacun puisse participer à la vie civique et à la redevabilité publique.",
     "startReporting": "Soumettre un signalement",
     "viewMaps": "Créer un déploiement",

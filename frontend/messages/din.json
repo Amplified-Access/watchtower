@@ -27,7 +27,12 @@
     "reports": "Baŋ Athör",
     "chat": "Lɛ̈k",
     "alerts": "Alɔŋ",
-    "organizations": "Mat"
+    "organizations": "Mat",
+    "reportIssue": "Report an incident"
+  },
+  "AnnouncementBanner": {
+    "message": "What's happening in your community?",
+    "cta": "Make a Report"
   },
   "Alerts": {
     "pageTitle": "Alɔŋ Kɔc",
@@ -451,13 +456,36 @@
     "copyright": "© {year} Amplified Access. Löŋ kedhiɛ acï kony.",
     "privacy": "Thiaak",
     "terms": "Löŋ",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "explore": "Explore",
+    "watchtower": "WatchTower",
+    "forOrganisations": "For Organisations",
+    "support": "Support",
+    "maps": "Maps",
+    "reports": "Reports",
+    "insights": "Insights",
+    "askWatchtower": "Ask WatchTower",
+    "alerts": "Alerts",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "storiesAndInsights": "Stories & Insights",
+    "faqs": "FAQs",
+    "alert": "Alert",
+    "deployments": "Deployments",
+    "organisationSignIn": "Organisation Sign In",
+    "createADeployment": "Create a Deployment",
+    "helpCentre": "Help Centre",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "accessibility": "Accessibility"
   },
   "LogoCloud": {
     "heading": "Kony atim adëŋ löny"
   },
   "Home": {
-    "heroTitleLine1": "Baŋ kek thok du. Yïn abï nyic!",
+    "heroTitleLine1": "Baŋ kek thok du.",
+    "heroTitleLine2": "Yïn abï nyic!",
     "heroDescription": "Të panyda aa lueel, wël aa puk. Watchtower akony kɔc bï baŋ panyda ku lööŋ raan kek thok yen aa lueel, bï raan kedhiɛ mat alɔŋ diäär ku diäär panyda.",
     "startReporting": "Tɔ̈ɔ̈ŋ Baŋ",
     "viewMaps": "Guiir Luɔɔi",

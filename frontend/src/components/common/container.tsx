@@ -23,15 +23,15 @@ const Container = ({
       className={cn(
         `${
           size == "lg"
-            ? "max-w-360"
+            ? "max-w-360 px-4 md:px-8 xl:px-16"
             : size == "sm"
-            ? "max-w-7xl"
+            ? "max-w-7xl px-4 md:px-8 xl:px-16"
             : size == "xs"
-            ? "max-w-6xl"
+            ? "max-w-6xl px-4 md:px-8"
             : size == "text"
-            ? "max-w-4xl"
-            : "px-8"
-        } w-full mx-auto px-4 md:px-8`,
+            ? "max-w-4xl px-4 md:px-8"
+            : "px-4 md:px-8 xl:px-16"
+        } w-full mx-auto`,
         className
       )}
     >

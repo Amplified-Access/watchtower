@@ -8,6 +8,7 @@ import TextComponent from "@/components/common/text-component";
 import LogoCloud from "@/components/logo-cloud";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -62,20 +63,24 @@ const Page = () => {
 
   return (
     <>
-      <section className="relative md:mb-10">
-        <div className="h-32 bg-linear-to-b from-transparent to-background w-full absolute bottom-0" />
+      <section className="relative isolate bg-white overflow-hidden [zoom:var(--viewport-scale)]">
         <Image
-          src={"/topographic.svg"}
-          alt={""}
-          width={500}
-          height={500}
-          className="w-full object-cover h-full absolute top-0 -z-1 opacity-20"
+          src="/brand/Pattern.svg"
+          alt=""
+          width={1378}
+          height={617}
+          className="pointer-events-none absolute -bottom-55 left-0 -z-10 h-auto w-full invert"
         />
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        </div>
         <div className="py-32 2xl:py-40">
           <Container className="pt-16 flex flex-col gap-8  h-full justify-center text-center items-center">
             {/* <HealthCheck /> */}
             <h1 className="text-4xl font-semibold max-w-xl  font-title leading-tight">
               <span className="block">{t("heroTitleLine1")}</span>
+              <span className="block">{t("heroTitleLine2")}</span>
             </h1>
             <TextComponent className="max-w-3xl">
               {t("heroDescription")}
@@ -88,28 +93,30 @@ const Page = () => {
                     variant: "default",
                     size: "lg",
                   }),
-                  "font-title font-medium",
+                  "font-title font-medium bg-dark text-white hover:bg-dark/90",
                 )}
               >
                 {t("startReporting")}
+                <ChevronRight />
               </Link>
               <Link
                 href={"/sign-in"}
                 className={cn(
                   buttonVariants({
-                    variant: "outline",
+                    variant: "secondary",
                     size: "lg",
                   }),
                   "font-title font-medium",
                 )}
               >
                 {t("viewMaps")}
+                <ChevronRight />
               </Link>
             </div>
           </Container>
         </div>
       </section>
-      <section className="py-16 md:py-24 isolate">
+      <section className="py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="text-center mb-14 md:mb-20">
             <HeadingTwo className="text-center">{t("howItWorks")}</HeadingTwo>
@@ -134,7 +141,7 @@ const Page = () => {
                 <div className="absolute inset-20 rounded-full border border-white/20" />
                 <div className="relative z-10">
                   <Image
-                    src="/icons/icon-white.png"
+                    src="/brand/icon-white.svg"
                     alt="WatchTower"
                     width={300}
                     height={300}
@@ -173,7 +180,7 @@ const Page = () => {
           </div>
         </Container>
       </section>
-      <section className="  py-10">
+      <section className="  py-10 [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <LogoCloud />
         </Container>
@@ -190,7 +197,7 @@ const Page = () => {
           />
         </Container>
       </section> */}
-      <section className="py-16 md:py-20">
+      <section className="py-16 md:py-20 [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="bg-primary rounded-3xl py-8 md:py-16 px-4 md:px-16">
             <div className="text-center mb-10 md:mb-14 ">
@@ -224,7 +231,7 @@ const Page = () => {
           </div>
         </Container>
       </section>
-      <section className="py-16 md:pb-20">
+      <section className="py-16 md:pb-20 [zoom:var(--viewport-scale)]">
         <Container className="" size="xs">
           <CallToAction
             callToAction={{
