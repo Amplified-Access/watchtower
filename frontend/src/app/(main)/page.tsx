@@ -17,6 +17,7 @@ import { useTranslations } from "next-intl";
 import Footer from "@/components/layout/footer/page";
 import LanguageMarquee from "@/components/common/language-marquee";
 import ScrollFadeText from "@/components/common/scroll-fade-text";
+import LivePreviewSection from "@/features/home/components/live-preview-section";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
 import { ClipboardList } from "@/components/animate-ui/icons/clipboard-list";
@@ -146,6 +147,7 @@ const Page = () => {
           </h3>
         </Container>
       </section>
+      <LivePreviewSection />
       <section className="py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <div className="text-center mb-14 md:mb-20">

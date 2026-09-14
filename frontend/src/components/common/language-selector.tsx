@@ -16,7 +16,7 @@ interface LanguageSelectorProps {
   className?: string;
 }
 
-const languages = [
+export const languages = [
   { code: "en", name: "English", short: "Eng", flag: "🇬🇧" },
   { code: "fr", name: "Français", short: "Fr", flag: "🇫🇷" },
   { code: "sw", name: "Kiswahili", short: "Swa", flag: "🇰🇪" },

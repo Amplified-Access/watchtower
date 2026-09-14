@@ -38,6 +38,7 @@ interface RawAnonymousReport {
   description: string;
   injuries: number;
   fatalities: number;
+  createdAt?: string;
 }
 
 export interface CombinedIncidentReport {
@@ -49,6 +50,9 @@ export interface CombinedIncidentReport {
   displayName: string;
   incidentTypeColor?: string;
   incidentTypeDescriptions?: string;
+  country?: string | null;
+  createdAt?: string | null;
+  incidentTypeId?: string | null;
 }
 
 export const anonymousReportingRouter = router({
@@ -212,6 +216,9 @@ export const anonymousReportingRouter = router({
                 r.location.country ??
                 "Unknown Location",
               incidentTypeDescriptions: r.description,
+              country: r.location.country ?? null,
+              createdAt: r.createdAt ?? null,
+              incidentTypeId: r.incidentTypeId ?? null,
             };
           })
           .filter((r) => r.lat != null && r.lon != null)
