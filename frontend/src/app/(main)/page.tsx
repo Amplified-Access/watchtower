@@ -193,6 +193,43 @@ const Page = () => {
           </div>
         </Container>
       </section>
+      <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+          <div className="absolute inset-x-0 top-0 h-px bg-border" />
+          <div className="absolute inset-x-0 bottom-16 h-px bg-border" />
+        </div>
+        <div className="relative isolate mx-4 overflow-hidden bg-dark px-6 py-16 md:mx-8 md:px-16 md:py-20 xl:mx-16">
+          <Image
+            src="/asset.svg"
+            alt=""
+            width={552}
+            height={594}
+            className="pointer-events-none absolute inset-y-0 right-0 -top-10 -z-10 scale-125 h-full object-cover object-left md:w-48"
+          />
+          <div className="relative z-10 grid gap-10 md:grid-cols-2 md:gap-16 md:items-center">
+            <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
+              {t("speakNaturallyTitle")}
+            </h2>
+            <div>
+              <p className="max-w-xs text-white/60 leading-relaxed">
+                {t("speakNaturallyDescription")}
+              </p>
+              <Link
+                href="/anonymous-reports"
+                className={cn(
+                  buttonVariants({ variant: "secondary", size: "lg" }),
+                  "mt-6 font-title font-medium",
+                )}
+              >
+                {t("speakNaturallyCta")}
+                <ChevronRight />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
       <section className="  py-10 [zoom:var(--viewport-scale)]">
         <Container size="xs">
           <LogoCloud />
