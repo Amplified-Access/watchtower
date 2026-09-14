@@ -61,6 +61,16 @@ An agent that skips reading docs and writes code based on assumptions will event
 
 ## Commands
 
+### Root Makefile (run from the repo root)
+```
+make setup           # first-run: prereq checks, installs deps, copies env files, starts Postgres
+make dev              # Postgres + Go backend (hot-reload) + frontend, all in one terminal
+make test / build / lint            # both services
+make test-backend / test-frontend   # (also build-*, lint-*)
+make deploy-prod                    # rebase production onto main, force-push-with-lease (staging auto-syncs)
+```
+Thin wrapper around the per-service commands below — see `Makefile` and `scripts/` at the repo root.
+
 ### Backend (run from `backend/`)
 ```
 make build        # compile
@@ -162,9 +172,11 @@ src/
 
 ## CI
 
-PRs to `main`, `staging`, `production` run:
-- `make build` + `make test` + `make itest` (backend, with Redis sidecar)
-- Frontend lint and build run in `ci-cd.yml`
+Two path-scoped pipelines, each only runs when its area changed:
+- **`backend-pipeline.yml`** — PRs to `main`/`staging`/`production` touching `backend/**`: `go vet` + `make build` + `make test` (Redis sidecar) + `make itest`. Pushes to `staging`/`production` re-run the same job, then deploy to Railway on success.
+- **`frontend-pipeline.yml`** — PRs touching `frontend/**`: `pnpm lint` + `pnpm test` + `pnpm build`. No deploy job yet — Vercel deploys from its own git integration on push to `staging`/`production` — but named/structured to match `backend-pipeline.yml` in case one's added later.
+
+`staging` auto-syncs from `main` on every push (`sync-staging.yml`); `production` is promoted deliberately via `make deploy-prod`.
 
 Always ensure `make test` and `pnpm test` pass before marking work done.
 

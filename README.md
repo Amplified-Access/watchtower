@@ -62,6 +62,20 @@ watchtower/
 - Node.js 20+ with pnpm
 - Docker (for local database)
 
+### Quickstart
+
+A root `Makefile` wraps the per-service commands below so you don't have to
+juggle two directories:
+
+```bash
+make setup   # first-run: checks prerequisites, installs deps, copies env files, starts Postgres
+make dev     # runs Postgres, the Go backend (hot-reload), and the frontend together
+```
+
+Run `make help`-style discovery via `make -n <target>`, or see the
+[Makefile](./Makefile) for the full list (`test`, `build`, `lint`,
+`deploy-prod`, and per-service variants like `test-backend`/`test-frontend`).
+
 ### Backend
 
 ```bash
@@ -106,13 +120,21 @@ All checks must pass for the commit to proceed.
 
 ### CI/CD and Branching
 
-All work is merged into `main` via pull requests. The `staging` and `production` branches are then rebased from `main` to promote changes:
+All work is merged into `main` via pull requests. `staging` auto-syncs to
+`main` on every push (rebase + force-push-with-lease, via
+[`sync-staging.yml`](./.github/workflows/sync-staging.yml)) so it always
+mirrors `main` with no manual step. `production` is promoted deliberately:
 
 ```
 feature-branch → main (via PR)
-main → staging  (rebase to promote to staging)
-main → production (rebase to promote to production)
+main → staging     (automatic, on every push to main)
+main → production  (manual: make deploy-prod)
 ```
+
+`make deploy-prod` rebases `production` onto `main` and force-pushes (with
+lease) to trigger the platform deploys below. It refuses to run with a dirty
+working tree and prompts for confirmation before pushing (set `CONFIRM=yes`
+to skip the prompt in CI/scripted use).
 
 Both services have dedicated environments on their respective platforms:
 

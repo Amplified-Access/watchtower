@@ -1,0 +1,58 @@
+name: Frontend Pipeline
+
+on:
+  pull_request:
+    branches: [main, staging, production]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-pipeline.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit tests
+        run: pnpm test
+
+      # A couple of modules build a client eagerly at import time and throw
+      # if their env vars are unset, which Next hits while collecting page
+      # data for every API route — even though nothing here actually sends
+      # an SNS message or opens a DB connection during build. Placeholders
+      # satisfy the eager validation (neon() only checks the URL shape; nothing
+      # queries it) without needing real infra. Add more real secrets here if
+      # the build starts failing on something else (Mapbox, auth secrets).
+      - name: Build
+        run: pnpm build
+        env:
+          AWS_REGION: eu-north-1
+          AWS_ACCESS_KEY_ID: placeholder
+          AWS_SECRET_ACCESS_KEY: placeholder
+          AWS_SNS_TOPIC_ARN: arn:aws:sns:eu-north-1:000000000000:placeholder
+          DATABASE_URL: postgresql://user:password@host.tld/dbname

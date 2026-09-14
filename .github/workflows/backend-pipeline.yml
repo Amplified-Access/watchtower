@@ -1,13 +1,19 @@
-name: Test and Deploy Backend to Railway
+name: Backend Pipeline
 
 on:
+  pull_request:
+    branches: [main, staging, production]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-pipeline.yml"
   push:
-    branches:
-      - staging
-      - production
-    paths-ignore:
-      - "README.md"
-      - "frontend/**"
+    branches: [staging, production]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-pipeline.yml"
+
+permissions:
+  contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -15,6 +21,22 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -22,16 +44,33 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.25"
+          cache: true
           cache-dependency-path: backend/go.sum
 
-      - name: Run Tests
-        run: |
-          cd backend
-          go test ./...
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: make build
+
+      - name: Run tests
+        run: make test
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          REDIS_PASSWORD: ""
+          REDIS_DB: 0
+          REDIS_URL: redis://:@localhost:6379/0
+
+      - name: Run integration tests
+        run: make itest
 
   deploy-staging:
     needs: test
-    if: github.ref == 'refs/heads/staging'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     environment: staging
     steps:
@@ -56,7 +95,7 @@ jobs:
 
   deploy-production:
     needs: test
-    if: github.ref == 'refs/heads/production'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
     environment: production
     steps:
