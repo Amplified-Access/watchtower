@@ -403,10 +403,10 @@
     "languageText": "We prefer all security communications to be in <strong>English</strong>."
   },
   "About": {
-    "heroTitle": "About the platform",
-    "heroDescription": "WatchTower is a community-centered civic intelligence platform that uses AI and local language technologies to enable people to report incidents, risks and rights violations in their own languages and transforms these reports into actionable insights for accountability and response",
+    "heroTitle": "Every voice deserves to be understood.",
+    "heroDescription": "WatchTower is a community-centred, multilingual reporting and civic intelligence tool that enables people to report local issues and rights violations in the languages they speak.",
     "objectiveTitle": "Our Objective",
-    "objectiveDescription": "To ensure that every person has the power to report civic incidents in the language they speak, so that no voice goes unheard and everybody can participate in holding those responsible to account.",
+    "objectiveDescription": "By helping reports become understandable, organised and connected, WatchTower makes it easier to see what communities are experiencing and where patterns may be emerging.",
     "languagesTitle": "Supported languages",
     "languagesDescription": "WatchTower currently supports {count} languages enabling more community voices to participate, be heard and contribute to public accountability in the language that feels most natural to them.",
     "langEnglish": "English",
@@ -432,7 +432,7 @@
     "regionEastAfrica": "East Africa",
     "regionPakistan": "Pakistan",
     "regionSouthSudan": "South Sudan",
-    "safetyTitle": "Your data belongs to you",
+    "safetyTitle": "Your data <break></break>belongs to you",
     "safetyDescription": "We know that speaking up can carry risk. Here is how WatchTower is built to protect you.",
     "faqIdentityQuestion": "Is my identity protected when I submit a report?",
     "faqIdentityAnswer": "You never need to provide your name, phone number, or any identifying information to file a report. Anonymous is the default, not the exception.",
