@@ -2,7 +2,7 @@
         test test-backend test-frontend \
         build build-backend build-frontend \
         lint lint-backend lint-frontend \
-        deploy-staging deploy-prod
+        deploy-prod
 
 # ── Setup ────────────────────────────────────────────────────────────────────
 
@@ -52,12 +52,11 @@ lint: lint-backend lint-frontend
 
 # ── Deploy ───────────────────────────────────────────────────────────────────
 
-# Rebases `staging`/`production` onto main and force-pushes (with lease) to
-# trigger Railway (backend) + Vercel (frontend) deploys, per the CI/CD and
-# Branching section in README.md. Aborts on a dirty working tree or a rebase
-# conflict; prompts for confirmation before pushing unless CONFIRM=yes.
-deploy-staging:
-	bash scripts/deploy.sh staging
-
+# `staging` auto-syncs to `main` on every push (.github/workflows/sync-staging.yml)
+# — there's no manual staging deploy step. `deploy-prod` rebases `production`
+# onto main and force-pushes (with lease) to trigger the Railway (backend) +
+# Vercel (frontend) deploys, per the CI/CD and Branching section in
+# README.md. Aborts on a dirty working tree or a rebase conflict; prompts for
+# confirmation before pushing unless CONFIRM=yes.
 deploy-prod:
 	bash scripts/deploy.sh production

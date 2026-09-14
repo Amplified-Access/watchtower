@@ -1,18 +1,25 @@
 backend:
-  - backend/**
+  - changed-files:
+      - any-glob-to-any-file: ["backend/**"]
 
 frontend:
-  - frontend/**
+  - changed-files:
+      - any-glob-to-any-file: ["frontend/**"]
 
 ci/cd:
-  - .github/workflows/**
+  - changed-files:
+      - any-glob-to-any-file: [".github/workflows/**", "Makefile", "backend/Makefile", "scripts/**"]
 
 documentation:
-  - '**/*.md'
-  - backend/docs/**
+  - changed-files:
+      - any-glob-to-any-file: ["**/*.md", "backend/docs/**", "frontend/docs/**"]
 
 dependencies:
-  - backend/go.mod
-  - backend/go.sum
-  - frontend/package.json
-  - frontend/pnpm-lock.yaml
+  - changed-files:
+      - any-glob-to-any-file:
+          - "backend/go.mod"
+          - "backend/go.sum"
+          - "frontend/package.json"
+          - "frontend/pnpm-lock.yaml"
+          - "package.json"
+          - "pnpm-lock.yaml"

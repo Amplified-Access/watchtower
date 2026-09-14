@@ -1,0 +1,54 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    branches: [main, staging, production]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit tests
+        run: pnpm test
+
+      # AWS SNS client throws at import time if these are unset — placeholders
+      # are enough to get through the build (nothing actually sends an SNS
+      # message here). Add real secrets here if the build starts failing on
+      # something else (e.g. DATABASE_URL for Drizzle, Mapbox, auth secrets).
+      - name: Build
+        run: pnpm build
+        env:
+          AWS_REGION: eu-north-1
+          AWS_ACCESS_KEY_ID: placeholder
+          AWS_SECRET_ACCESS_KEY: placeholder
+          AWS_SNS_TOPIC_ARN: arn:aws:sns:eu-north-1:000000000000:placeholder

@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # scripts/deploy.sh — rebase staging/production onto main and force-push (with lease)
-# Usage: ./scripts/deploy.sh staging|production  (or via: make deploy-staging / make deploy-prod)
+# Usage: ./scripts/deploy.sh staging|production  (or via: make deploy-prod for production)
+#
+# `staging` normally syncs to `main` automatically on every push
+# (.github/workflows/sync-staging.yml) — `./scripts/deploy.sh staging` is a
+# manual escape hatch (e.g. to re-sync without waiting on that workflow), not
+# the everyday path. `make deploy-prod` (-> `./scripts/deploy.sh production`)
+# is the normal way to promote to production.
 #
 # Fast-forwards the target branch to include everything on `main` by rebasing
 # it onto origin/main, then force-pushes (with lease, never a bare --force) so
