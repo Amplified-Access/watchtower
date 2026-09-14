@@ -65,13 +65,14 @@ const Footer = () => {
 
   return (
     <footer className="relative bg-white py-16 [zoom:var(--viewport-scale)]">
+      <div className="pointer-events-none absolute inset-x-0 top-16 h-px bg-border" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-16 h-px bg-border" />
       <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
         <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
         <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
-        <div className="absolute inset-x-0 top-16 h-px bg-border" />
-        <div className="absolute inset-x-0 bottom-16 h-px bg-border" />
       </div>
-      <div className="relative isolate mx-4 overflow-hidden bg-dark text-white @container md:mx-8 xl:mx-16">
+      <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
+      <div className="relative isolate overflow-hidden bg-dark text-white @container">
         <div className="relative px-4">
           <div className="flex w-full flex-wrap justify-between gap-x-12 gap-y-10 py-8">
             <div className="self-start">
@@ -170,6 +171,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );
