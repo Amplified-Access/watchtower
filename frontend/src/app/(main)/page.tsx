@@ -1,7 +1,6 @@
 "use client";
 
 import Container from "@/components/common/container";
-import H4 from "@/components/common/heading-four";
 import HeadingTwo from "@/components/common/heading-two";
 import TextComponent from "@/components/common/text-component";
 import LogoCloud from "@/components/logo-cloud";
@@ -28,6 +27,9 @@ import { MessageSquareWarning } from "@/components/animate-ui/icons/message-squa
 import { Gavel } from "@/components/animate-ui/icons/gavel";
 import { LoaderCircle } from "@/components/animate-ui/icons/loader-circle";
 // import HealthCheck from "@/components/health-check"; helloooooo
+
+// TODO: re-enable once insights content is ready for launch
+const SHOW_INSIGHTS = false;
 
 const Page = () => {
   const t = useTranslations("Home");
@@ -81,7 +83,7 @@ const Page = () => {
           <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
-        <div className="py-32 2xl:py-40">
+        <div className="py-28">
           <Container className="pt-16 flex flex-col gap-8  h-full justify-center text-center items-center">
             {/* <HealthCheck /> */}
             <h1 className="text-4xl font-semibold max-w-xl  font-title leading-tight">
@@ -193,9 +195,21 @@ const Page = () => {
 
           <div className="flex flex-col gap-16 md:gap-24">
             {[
-              { number: 1, title: t("step1Title"), description: t("step1Description") },
-              { number: 2, title: t("step2Title"), description: t("step2Description") },
-              { number: 3, title: t("step3Title"), description: t("step3Description") },
+              {
+                number: 1,
+                title: t("step1Title"),
+                description: t("step1Description"),
+              },
+              {
+                number: 2,
+                title: t("step2Title"),
+                description: t("step2Description"),
+              },
+              {
+                number: 3,
+                title: t("step3Title"),
+                description: t("step3Description"),
+              },
             ].map((step, index) => (
               <div
                 key={step.number}
@@ -273,7 +287,8 @@ const Page = () => {
           </div>
         </div>
       </section>
-      <section className="relative bg-white py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
+      {SHOW_INSIGHTS && (
+        <section className="relative bg-white py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
           <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-56 bg-linear-to-t from-primary/15 to-transparent md:h-80" />
           <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
             <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
@@ -344,7 +359,8 @@ const Page = () => {
               ))}
             </div>
           </Container>
-      </section>
+        </section>
+      )}
       <LogoCloud />
       <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-border" />
@@ -375,15 +391,44 @@ const Page = () => {
                 </p>
               </div>
 
-              <Accordion type="single" collapsible defaultValue="faq-1" className="w-full">
+              <Accordion
+                type="single"
+                collapsible
+                defaultValue="faq-1"
+                className="w-full"
+              >
                 {[
-                  { value: "faq-1", question: t("faq1Question"), answer: t("faq1Answer") },
-                  { value: "faq-2", question: t("faq2Question"), answer: t("faq2Answer") },
-                  { value: "faq-3", question: t("faq3Question"), answer: t("faq3Answer") },
-                  { value: "faq-4", question: t("faq4Question"), answer: t("faq4Answer") },
-                  { value: "faq-5", question: t("faq5Question"), answer: t("faq5Answer") },
+                  {
+                    value: "faq-1",
+                    question: t("faq1Question"),
+                    answer: t("faq1Answer"),
+                  },
+                  {
+                    value: "faq-2",
+                    question: t("faq2Question"),
+                    answer: t("faq2Answer"),
+                  },
+                  {
+                    value: "faq-3",
+                    question: t("faq3Question"),
+                    answer: t("faq3Answer"),
+                  },
+                  {
+                    value: "faq-4",
+                    question: t("faq4Question"),
+                    answer: t("faq4Answer"),
+                  },
+                  {
+                    value: "faq-5",
+                    question: t("faq5Question"),
+                    answer: t("faq5Answer"),
+                  },
                 ].map(({ value, question, answer }) => (
-                  <AccordionItem key={value} value={value} className="border-white/15">
+                  <AccordionItem
+                    key={value}
+                    value={value}
+                    className="border-white/15"
+                  >
                     <AccordionTrigger className="group gap-4 py-5 font-title text-base text-white hover:no-underline [&>svg]:hidden">
                       <span className="flex-1">{question}</span>
                       <span className="relative flex size-6 shrink-0 items-center justify-center rounded bg-primary">
