@@ -1,6 +1,6 @@
 services:
   psql_bp:
-    image: postgres:latest
+    image: postgres:16
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${BLUEPRINT_DB_DATABASE}
@@ -10,6 +10,11 @@ services:
       - "${BLUEPRINT_DB_PORT}:5432"
     volumes:
       - psql_volume_bp:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${BLUEPRINT_DB_USERNAME} -d ${BLUEPRINT_DB_DATABASE}"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
 
 volumes:
   psql_volume_bp:

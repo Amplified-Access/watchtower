@@ -33,9 +33,9 @@ header "Checking prerequisites..."
 
 # go ≥ 1.25
 if command -v go &>/dev/null; then
-  GO_VERSION=$(go version | grep -oP '\d+\.\d+' | head -1)
-  GO_MAJOR=$(echo "$GO_VERSION" | cut -d. -f1)
-  GO_MINOR=$(echo "$GO_VERSION" | cut -d. -f2)
+  GO_VERSION=$(go env GOVERSION)
+  GO_VERSION="${GO_VERSION#go}"
+  IFS=. read -r GO_MAJOR GO_MINOR _ <<< "$GO_VERSION"
   if [[ "$GO_MAJOR" -gt 1 ]] || [[ "$GO_MAJOR" -eq 1 && "$GO_MINOR" -ge 25 ]]; then
     pass "go $GO_VERSION (≥ 1.25)"
   else
@@ -114,10 +114,33 @@ fi
 
 # ── 5. Start Postgres ──────────────────────────────────────────────────────────
 header "Starting Postgres (Docker Compose)..."
-(cd "$SCRIPT_DIR/backend" && make docker-run) &
-info "Waiting 5s for Postgres to be healthy..."
-sleep 5
-pass "Postgres container started"
+# Detached (-d), not `make docker-run` (which stays attached streaming logs
+# forever) — this is a one-shot setup script, not a long-running dev session,
+# and an attached background job here would keep this script's own output
+# pipe open indefinitely for any caller that redirects/pipes it.
+if ! (cd "$SCRIPT_DIR/backend" && docker compose up -d --build); then
+  fail "docker compose up failed. Run 'cd backend && docker compose up --build' to see the error."
+fi
+
+info "Waiting for Postgres to be healthy..."
+POSTGRES_READY=false
+for _ in $(seq 1 30); do
+  CONTAINER_ID="$(cd "$SCRIPT_DIR/backend" && docker compose ps -q psql_bp 2>/dev/null || true)"
+  if [[ -n "$CONTAINER_ID" ]]; then
+    STATUS="$(docker inspect --format='{{.State.Health.Status}}' "$CONTAINER_ID" 2>/dev/null || true)"
+    if [[ "$STATUS" == "healthy" ]]; then
+      POSTGRES_READY=true
+      break
+    fi
+  fi
+  sleep 1
+done
+
+if [[ "$POSTGRES_READY" == true ]]; then
+  pass "Postgres container is healthy"
+else
+  fail "Postgres did not become healthy within 30s. Check 'cd backend && docker compose logs'."
+fi
 
 # ── 6. Ready summary ───────────────────────────────────────────────────────────
 echo ""
