@@ -4,7 +4,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Locate } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { ReportBubble } from "../hooks/use-live-preview-data";
 
 const DEFAULT_CENTER: [number, number] = [25, 8];
@@ -17,8 +17,36 @@ const HEATMAP_LAYER_ID = "live-preview-reports-heat";
 const DESKTOP_PADDING = { top: 120, bottom: 16, left: 320, right: 320 };
 const MOBILE_PADDING = { top: 16, bottom: 16, left: 16, right: 16 };
 
-const getMapPadding = () =>
-  window.matchMedia("(min-width: 1024px)").matches ? DESKTOP_PADDING : MOBILE_PADDING;
+// Docked panels sit beside the map rather than over it, so no bias is needed.
+const getMapPadding = (docked: boolean) =>
+  !docked && window.matchMedia("(min-width: 1024px)").matches ? DESKTOP_PADDING : MOBILE_PADDING;
+
+export interface MapReportPoint {
+  lat: number;
+  lon: number;
+  /** Shown in a popup when the report pin is clicked. */
+  title?: string;
+  description?: string;
+  createdAt?: string;
+}
+
+// Built with textContent (never innerHTML) because report text is user-submitted.
+const buildReportPopup = (point: MapReportPoint, dateLine?: string) => {
+  const root = document.createElement("div");
+  root.style.fontFamily = "var(--font-title)";
+  const addLine = (text: string, style: Partial<CSSStyleDeclaration>) => {
+    const line = document.createElement("p");
+    line.textContent = text;
+    Object.assign(line.style, style);
+    root.appendChild(line);
+  };
+  if (point.title) addLine(point.title, { fontWeight: "600", color: "#000" });
+  if (point.description) {
+    addLine(point.description, { marginTop: "4px", color: "rgba(0,0,0,0.65)" });
+  }
+  if (dateLine) addLine(dateLine, { marginTop: "6px", fontSize: "11px", color: "rgba(0,0,0,0.45)" });
+  return root;
+};
 
 export interface GlobeMapHandle {
   recenter: () => void;
@@ -26,7 +54,7 @@ export interface GlobeMapHandle {
 
 interface GlobeMapProps {
   bubbles: ReportBubble[];
-  points: { lat: number; lon: number }[];
+  points: MapReportPoint[];
   layers: {
     reports: boolean;
     clusters: boolean;
@@ -36,11 +64,17 @@ interface GlobeMapProps {
   viewMode: "globe" | "map";
   onViewModeChange: (mode: "globe" | "map") => void;
   className?: string;
+  /**
+   * The live map page docks its panels beside the map and renders its own
+   * controls: skip the floating-panel padding and the built-in overlay controls.
+   */
+  docked?: boolean;
 }
 
 const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
-  ({ bubbles, points, layers, viewMode, onViewModeChange, className }, ref) => {
+  ({ bubbles, points, layers, viewMode, onViewModeChange, className, docked = false }, ref) => {
   const t = useTranslations("HomeLivePreview");
+  const locale = useLocale();
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -61,10 +95,13 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       attributionControl: false,
       logoPosition: "bottom-right",
     });
-    map.setPadding(getMapPadding());
+    map.setPadding(getMapPadding(docked));
 
-    const handleResize = () => map.setPadding(getMapPadding());
+    const handleResize = () => map.setPadding(getMapPadding(docked));
     window.addEventListener("resize", handleResize);
+    // Docked panels opening and closing resize the container, not the window.
+    const resizeObserver = new ResizeObserver(() => map.resize());
+    resizeObserver.observe(container);
 
     map.on("load", () => {
       map.setFog({});
@@ -104,6 +141,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      resizeObserver.disconnect();
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
       map.remove();
@@ -156,13 +194,29 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
         el.style.border = "1px solid var(--primary)";
         el.style.opacity = "0.85";
 
-        const marker = new mapboxgl.Marker(el)
-          .setLngLat([point.lon, point.lat])
-          .addTo(map);
+        const marker = new mapboxgl.Marker(el).setLngLat([point.lon, point.lat]);
+        if (point.title || point.description) {
+          el.style.cursor = "pointer";
+          const dateLine = point.createdAt
+            ? t("reportDate", {
+                date: new Date(point.createdAt).toLocaleDateString(locale, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+              })
+            : undefined;
+          marker.setPopup(
+            new mapboxgl.Popup({ offset: 10, maxWidth: "260px" }).setDOMContent(
+              buildReportPopup(point, dateLine),
+            ),
+          );
+        }
+        marker.addTo(map);
         markersRef.current.push(marker);
       }
     }
-  }, [bubbles, points, layers.clusters, layers.reports, isLoaded]);
+  }, [bubbles, points, layers.clusters, layers.reports, isLoaded, locale, t]);
 
   // Heatmap data + visibility
   useEffect(() => {
@@ -210,11 +264,11 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     mapRef.current?.flyTo({
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
-      padding: getMapPadding(),
+      padding: getMapPadding(docked),
     });
   };
 
-  useImperativeHandle(ref, () => ({ recenter }), []);
+  useImperativeHandle(ref, () => ({ recenter }));
 
   return (
     <div className={className ?? "relative h-full w-full"}>
@@ -222,7 +276,9 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
 
       {/* Below lg the map isn't covered by other cards, so it carries its own overlay controls.
           At lg+, the parent renders equivalent controls as flex siblings of the cards instead. */}
-      <div className="absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-black/60 p-1 text-xs font-medium text-white ring-1 ring-white/10 backdrop-blur lg:hidden">
+      <div
+        className={`absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-black/60 p-1 text-xs font-medium text-white ring-1 ring-white/10 backdrop-blur lg:hidden ${docked ? "hidden" : ""}`}
+      >
         <button
           type="button"
           onClick={() => onViewModeChange("globe")}
@@ -247,7 +303,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
         type="button"
         onClick={recenter}
         aria-label="Recenter map"
-        className="absolute bottom-4 right-4 flex size-9 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/10 backdrop-blur transition-colors hover:bg-black/80 lg:hidden"
+        className={`absolute bottom-4 right-4 flex size-9 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/10 backdrop-blur transition-colors hover:bg-black/80 lg:hidden ${docked ? "hidden" : ""}`}
       >
         <Locate className="size-4" />
       </button>
