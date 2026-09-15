@@ -684,6 +684,15 @@
     "layerClusters": "Kuɔny",
     "layerHeatmap": "Mapthiin Liir",
     "layerCountryBoundaries": "Adhëëŋ Pinynhial",
-    "viewReportsCta": "Nyin Baŋ {count}+"
+    "viewReportsCta": "Nyin Baŋ {count}+",
+    "viewAsHeading": "View as",
+    "showExplore": "Show explore panel",
+    "hideExplore": "Hide explore panel",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "recenterMap": "Recenter map",
+    "mapLayersButton": "Map layers",
+    "reportDate": "Reported {date}",
+    "closePopup": "Close"
   }
 }

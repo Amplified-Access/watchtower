@@ -684,6 +684,15 @@
     "layerClusters": "Regroupements",
     "layerHeatmap": "Carte de chaleur",
     "layerCountryBoundaries": "Frontières des pays",
-    "viewReportsCta": "Voir {count}+ signalements"
+    "viewReportsCta": "Voir {count}+ signalements",
+    "viewAsHeading": "Afficher en",
+    "showExplore": "Afficher le panneau Explorer",
+    "hideExplore": "Masquer le panneau Explorer",
+    "showFilters": "Afficher les filtres",
+    "hideFilters": "Masquer les filtres",
+    "recenterMap": "Recentrer la carte",
+    "mapLayersButton": "Couches de la carte",
+    "reportDate": "Signalé le {date}",
+    "closePopup": "Fermer"
   }
 }

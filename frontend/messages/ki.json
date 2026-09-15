@@ -684,6 +684,15 @@
     "layerClusters": "Ikundi",
     "layerHeatmap": "Mepe ma Ũrugarĩ",
     "layerCountryBoundaries": "Mĩhaka ya Mabũrũri",
-    "viewReportsCta": "Ona Marũpoti {count}+"
+    "viewReportsCta": "Ona Marũpoti {count}+",
+    "viewAsHeading": "View as",
+    "showExplore": "Show explore panel",
+    "hideExplore": "Hide explore panel",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "recenterMap": "Recenter map",
+    "mapLayersButton": "Map layers",
+    "reportDate": "Reported {date}",
+    "closePopup": "Close"
   }
 }

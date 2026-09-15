@@ -684,6 +684,15 @@
     "layerClusters": "ਸਮੂਹ",
     "layerHeatmap": "ਹੀਟਮੈਪ",
     "layerCountryBoundaries": "ਦੇਸ਼ ਦੀਆਂ ਸੀਮਾਵਾਂ",
-    "viewReportsCta": "{count}+ ਰਿਪੋਰਟਾਂ ਵੇਖੋ"
+    "viewReportsCta": "{count}+ ਰਿਪੋਰਟਾਂ ਵੇਖੋ",
+    "viewAsHeading": "ਇਸ ਤਰ੍ਹਾਂ ਵੇਖੋ",
+    "showExplore": "ਖੋਜ ਪੈਨਲ ਵਿਖਾਓ",
+    "hideExplore": "ਖੋਜ ਪੈਨਲ ਲੁਕਾਓ",
+    "showFilters": "ਫਿਲਟਰ ਵਿਖਾਓ",
+    "hideFilters": "ਫਿਲਟਰ ਲੁਕਾਓ",
+    "recenterMap": "ਨਕਸ਼ਾ ਕੇਂਦਰ ਵਿੱਚ ਲਿਆਓ",
+    "mapLayersButton": "ਨਕਸ਼ੇ ਦੀਆਂ ਪਰਤਾਂ",
+    "reportDate": "ਰਿਪੋਰਟ ਕੀਤਾ {date}",
+    "closePopup": "ਬੰਦ ਕਰੋ"
   }
 }

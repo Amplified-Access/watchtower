@@ -684,6 +684,15 @@
     "layerClusters": "Makundi",
     "layerHeatmap": "Ramani ya Joto",
     "layerCountryBoundaries": "Mipaka ya Nchi",
-    "viewReportsCta": "Ona Ripoti {count}+"
+    "viewReportsCta": "Ona Ripoti {count}+",
+    "viewAsHeading": "Tazama kama",
+    "showExplore": "Onyesha paneli ya kuchunguza",
+    "hideExplore": "Ficha paneli ya kuchunguza",
+    "showFilters": "Onyesha vichujio",
+    "hideFilters": "Ficha vichujio",
+    "recenterMap": "Rudisha ramani katikati",
+    "mapLayersButton": "Tabaka za ramani",
+    "reportDate": "Iliripotiwa {date}",
+    "closePopup": "Funga"
   }
 }

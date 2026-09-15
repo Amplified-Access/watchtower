@@ -684,6 +684,15 @@
     "layerClusters": "Riwruok",
     "layerHeatmap": "Ramaki mar Liet",
     "layerCountryBoundaries": "Tongʼ mag Pinje",
-    "viewReportsCta": "Ne Ripodho {count}+"
+    "viewReportsCta": "Ne Ripodho {count}+",
+    "viewAsHeading": "View as",
+    "showExplore": "Show explore panel",
+    "hideExplore": "Hide explore panel",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "recenterMap": "Recenter map",
+    "mapLayersButton": "Map layers",
+    "reportDate": "Reported {date}",
+    "closePopup": "Close"
   }
 }
