@@ -67,6 +67,7 @@ const Header = () => {
             <div className="hidden md:flex gap-6 font-title text-sm font-medium">
               <Link href={"/about"}>{t("about")}</Link>
               <Link href={"/maps"}>{t("maps")}</Link>
+              <Link href={"/case-studies"}>{t("caseStudies")}</Link>
               {/* <Link href={"/reports"}>{t("reports")}</Link> */}
               <Link href={"/chat"}>{t("chat")}</Link>
               <Link href={"/alerts"}>{t("alerts")}</Link>

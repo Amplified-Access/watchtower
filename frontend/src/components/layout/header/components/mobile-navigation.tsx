@@ -54,6 +54,14 @@ const MobileNavigation = () => {
           </SheetClose>
           <SheetClose asChild>
             <Link
+              href={"/case-studies"}
+              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
+            >
+              {t("caseStudies")}
+            </Link>
+          </SheetClose>
+          <SheetClose asChild>
+            <Link
               href={"/chat"}
               className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
