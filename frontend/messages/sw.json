@@ -54,7 +54,9 @@
     "pagination": "Kurasa za mifano halisi",
     "previousPage": "Ukurasa uliopita",
     "nextPage": "Ukurasa unaofuata",
-    "pageLabel": "Ukurasa {number}"
+    "pageLabel": "Ukurasa {number}",
+    "relatedCaseStudies": "Mifano inayohusiana",
+    "exploreOnMap": "Chunguza kwenye ramani"
   },
   "Alerts": {
     "pageTitle": "Usajili wa tahadhari",

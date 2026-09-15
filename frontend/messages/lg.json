@@ -54,7 +54,9 @@
     "pagination": "Empapula z'ebyokulabirako",
     "previousPage": "Olupapula oluvudde",
     "nextPage": "Olupapula oluddako",
-    "pageLabel": "Olupapula {number}"
+    "pageLabel": "Olupapula {number}",
+    "relatedCaseStudies": "Ebyokulabirako ebikwatagana",
+    "exploreOnMap": "Noonyereza ku maapu"
   },
   "Alerts": {
     "pageTitle": "Okwewandiisa Ebikwasa",

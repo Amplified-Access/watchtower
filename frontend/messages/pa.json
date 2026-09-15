@@ -54,7 +54,9 @@
     "pagination": "ਕੇਸ ਸਟੱਡੀਜ਼ ਦੇ ਪੰਨੇ",
     "previousPage": "ਪਿਛਲਾ ਪੰਨਾ",
     "nextPage": "ਅਗਲਾ ਪੰਨਾ",
-    "pageLabel": "ਪੰਨਾ {number}"
+    "pageLabel": "ਪੰਨਾ {number}",
+    "relatedCaseStudies": "ਸੰਬੰਧਿਤ ਕੇਸ ਸਟੱਡੀਜ਼",
+    "exploreOnMap": "ਨਕਸ਼ੇ 'ਤੇ ਵੇਖੋ"
   },
   "Alerts": {
     "pageTitle": "ਚੇਤਾਵਨੀਆਂ ਲਈ ਸਬਸਕਰਾਈਬ ਕਰੋ",

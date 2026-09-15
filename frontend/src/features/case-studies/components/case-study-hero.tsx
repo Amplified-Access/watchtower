@@ -1,0 +1,44 @@
+"use client";
+
+import Image from "next/image";
+import type { CaseStudy } from "../data/placeholder-case-studies";
+import { useCategoryLabel } from "../hooks/use-category-label";
+
+// Full-bleed grid hero with the title block beside the cover image, matching
+// the listing page hero (no gutter lines).
+const CaseStudyHero = ({ caseStudy }: { caseStudy: CaseStudy }) => {
+  const categoryLabel = useCategoryLabel();
+  const meta = [caseStudy.location, categoryLabel(caseStudy.category), caseStudy.deployment]
+    .filter(Boolean)
+    .join(" · ");
+
+  return (
+    <section className="relative isolate border-b border-border bg-[#f4f4f4] [zoom:var(--viewport-scale)]">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgb(0_0_0/0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgb(0_0_0/0.06)_1px,transparent_1px)] bg-size-[46px_46px]" />
+      <div className="mx-auto grid max-w-360 items-center gap-10 px-8 pt-36 pb-12 md:px-16 md:pt-40 md:pb-16 lg:grid-cols-[1fr_1.05fr] lg:gap-16 xl:px-24">
+        <div>
+          <span aria-hidden className="block h-1.5 w-16 bg-primary" />
+          <h1 className="mt-2 max-w-xl font-title text-4xl font-medium leading-[1.05] text-dark md:text-5xl">
+            {caseStudy.title}
+          </h1>
+          <p className="mt-6 max-w-md text-dark/60 leading-snug md:text-lg">{caseStudy.summary}</p>
+          <p className="mt-10 max-w-sm font-title font-semibold leading-snug text-dark md:mt-16 md:text-lg">
+            {meta}
+          </p>
+        </div>
+        <div className="relative aspect-7/4 overflow-hidden bg-dark/5">
+          <Image
+            src={caseStudy.imageUrl}
+            alt={caseStudy.imageAlt}
+            fill
+            priority
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default CaseStudyHero;
