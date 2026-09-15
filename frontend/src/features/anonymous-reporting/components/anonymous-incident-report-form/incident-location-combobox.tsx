@@ -26,10 +26,9 @@ import { Check, ChevronDown, Loader2 } from "lucide-react";
 import { trpc } from "@/_trpc/client";
 import { cn } from "@/lib/utils";
 import { UseFormReturn } from "react-hook-form";
-import z from "zod";
-import {
-  formSchema,
+import type {
   LocationData,
+  ReportFormValues,
 } from "../../schemas/anonymous-incident-reproting-form-schema";
 import { reportFieldClassName, reportLabelClassName } from "./field-styles";
 
@@ -38,7 +37,7 @@ const MIN_SEARCH_LENGTH = 3;
 const IncidentLocationCombobox = ({
   form,
 }: {
-  form: UseFormReturn<z.infer<typeof formSchema>>;
+  form: UseFormReturn<ReportFormValues>;
 }) => {
   const [open, setOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");

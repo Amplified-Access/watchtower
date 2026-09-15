@@ -18,8 +18,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { trpc } from "@/_trpc/client";
 import { cn } from "@/lib/utils";
 import { UseFormReturn } from "react-hook-form";
-import z from "zod";
-import { formSchema } from "../../schemas/anonymous-incident-reproting-form-schema";
+import type { ReportFormValues } from "../../schemas/anonymous-incident-reproting-form-schema";
 import {
   Command,
   CommandEmpty,
@@ -33,7 +32,7 @@ import { reportFieldClassName, reportLabelClassName } from "./field-styles";
 const IncidentTypeCombobox = ({
   form,
 }: {
-  form: UseFormReturn<z.infer<typeof formSchema>>;
+  form: UseFormReturn<ReportFormValues>;
 }) => {
   const [open, setOpen] = useState(false);
   const t = useTranslations("IncidentReporting");
