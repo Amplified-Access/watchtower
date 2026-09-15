@@ -528,6 +528,21 @@
   "LogoCloud": {
     "heading": "ਸਭ ਤੋਂ ਵਧੀਆ ਟੀਮਾਂ ਨੂੰ ਸ਼ਕਤੀ ਦੇਣਾ"
   },
+  "ChatPage": {
+    "subtitle": "ਤੁਸੀਂ ਕੀ ਸਮਝਣਾ ਚਾਹੋਗੇ?",
+    "placeholder": "ਮੈਨੂੰ ਕੁਝ ਵੀ ਪੁੱਛੋ...",
+    "starterWhatIs": "WatchTower ਕੀ ਹੈ",
+    "starterFindSomething": "ਕੁਝ ਲੱਭਣ ਵਿੱਚ ਮੇਰੀ ਮਦਦ ਕਰੋ",
+    "attachComingSoon": "ਅਟੈਚਮੈਂਟ ਜਲਦੀ ਆ ਰਹੇ ਹਨ",
+    "voiceLanguage": "ਆਵਾਜ਼ ਦੀ ਭਾਸ਼ਾ",
+    "startDictation": "ਆਵਾਜ਼ ਨਾਲ ਲਿਖਣਾ ਸ਼ੁਰੂ ਕਰੋ",
+    "stopDictation": "ਆਵਾਜ਼ ਨਾਲ ਲਿਖਣਾ ਬੰਦ ਕਰੋ",
+    "send": "ਭੇਜੋ",
+    "listening": "ਸੁਣ ਰਿਹਾ ਹਾਂ... ਹੁਣ ਬੋਲੋ",
+    "micDenied": "ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਦੀ ਪਹੁੰਚ ਅਸਵੀਕਾਰ। ਕਿਰਪਾ ਕਰਕੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।",
+    "dictationNotSupported": "ਇਹ ਬ੍ਰਾਊਜ਼ਰ ਆਵਾਜ਼ ਨਾਲ ਲਿਖਣ ਦਾ ਸਮਰਥਨ ਨਹੀਂ ਕਰਦਾ।",
+    "dictationFailed": "ਆਵਾਜ਼ ਨਾਲ ਲਿਖਣਾ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
+  },
   "Home": {
     "heroTitleLine1": "ਆਪਣੀ ਭਾਸ਼ਾ ਵਿੱਚ ਰਿਪੋਰਟ ਕਰੋ।",
     "heroTitleLine2": "ਸੁਣੇ ਜਾਓ!",

@@ -528,6 +528,21 @@
   "LogoCloud": {
     "heading": "Okuwagira emirimu emisinga obulungi"
   },
+  "ChatPage": {
+    "subtitle": "Kiki ky'oyagala okutegeera?",
+    "placeholder": "Mbuuza kyonna...",
+    "starterWhatIs": "WatchTower kye ki",
+    "starterFindSomething": "Nnyamba okufuna ekintu",
+    "attachComingSoon": "Ebigattibwako bijja mangu",
+    "voiceLanguage": "Olulimi lw'eddoboozi",
+    "startDictation": "Tandika okuwandiika n'eddoboozi",
+    "stopDictation": "Lekera awo okuwandiika n'eddoboozi",
+    "send": "Weereza",
+    "listening": "Mpuliriza... yogera kati",
+    "micDenied": "Olukusa lwa maikulofooni lugaanyiddwa. Kkiriza maikulofooni.",
+    "dictationNotSupported": "Okuwandiika n'eddoboozi tekuwagirwa mu browser eno.",
+    "dictationFailed": "Tetusobodde kutandika kuwandiika n'eddoboozi. Gezaako nate."
+  },
   "Home": {
     "heroTitleLine1": "Waayo alipooti mu lulimi lwo.",
     "heroTitleLine2": "Owulirwe!",
