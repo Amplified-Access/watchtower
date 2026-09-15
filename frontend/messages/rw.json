@@ -54,7 +54,9 @@
     "pagination": "Amapaji y'ingero",
     "previousPage": "Ipaji ibanza",
     "nextPage": "Ipaji ikurikira",
-    "pageLabel": "Ipaji {number}"
+    "pageLabel": "Ipaji {number}",
+    "relatedCaseStudies": "Ingero zifitanye isano",
+    "exploreOnMap": "Reba ku ikarita"
   },
   "Alerts": {
     "pageTitle": "Kwiyandikisha Inyito",

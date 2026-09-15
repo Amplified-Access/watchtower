@@ -54,7 +54,9 @@
     "pagination": "Pages des études de cas",
     "previousPage": "Page précédente",
     "nextPage": "Page suivante",
-    "pageLabel": "Page {number}"
+    "pageLabel": "Page {number}",
+    "relatedCaseStudies": "Études de cas associées",
+    "exploreOnMap": "Explorer sur la carte"
   },
   "Alerts": {
     "pageTitle": "Abonnements aux alertes",

@@ -54,7 +54,9 @@
     "pagination": "کیس اسٹڈیز کے صفحات",
     "previousPage": "پچھلا صفحہ",
     "nextPage": "اگلا صفحہ",
-    "pageLabel": "صفحہ {number}"
+    "pageLabel": "صفحہ {number}",
+    "relatedCaseStudies": "متعلقہ کیس اسٹڈیز",
+    "exploreOnMap": "نقشے پر دیکھیں"
   },
   "Alerts": {
     "pageTitle": "انتباہات کے لیے سبسکرائب کریں",

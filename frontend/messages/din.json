@@ -54,7 +54,9 @@
     "pagination": "Case studies pages",
     "previousPage": "Previous page",
     "nextPage": "Next page",
-    "pageLabel": "Page {number}"
+    "pageLabel": "Page {number}",
+    "relatedCaseStudies": "Related case studies",
+    "exploreOnMap": "Explore on map"
   },
   "Alerts": {
     "pageTitle": "Alɔŋ Kɔc",
