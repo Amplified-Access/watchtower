@@ -53,9 +53,8 @@ const CaseStudyCard = ({ caseStudy }: { caseStudy: CaseStudy }) => {
       <p className="mt-3 max-w-lg text-dark/60 leading-snug">
         {caseStudy.summary}
       </p>
-      {/* TODO: link to the case study detail page once it exists. */}
       <Link
-        href="#"
+        href={`/case-studies/${caseStudy.slug}`}
         className="mt-4 inline-flex w-fit items-center gap-1 font-title text-sm font-medium uppercase tracking-wide text-primary hover:text-primary/80"
       >
         {t("readCaseStudy")}
