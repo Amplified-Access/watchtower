@@ -9,12 +9,14 @@ interface MiniatureMapThumbnailProps {
   incidentTypeName: string;
   incidentTypeColor?: string;
   className?: string;
+  mapStyle?: string;
 }
 
 const MiniatureMapThumbnail = ({
   incidentTypeName,
   incidentTypeColor = "#ef4444",
   className = "aspect-12/9 w-full rounded-lg",
+  mapStyle = "mapbox://styles/mapbox/streets-v9",
 }: MiniatureMapThumbnailProps) => {
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
@@ -34,9 +36,14 @@ const MiniatureMapThumbnail = ({
 
     const mapInstance = new mapboxgl.Map({
       container: mapContainer,
-      style: "mapbox://styles/mapbox/streets-v9", // Same as live incident map
-      center: [40.817223, -6.286389], // Same as live incident map
-      zoom: 3, // Same as live incident map
+      style: mapStyle,
+      // Framed wide enough to take in every reporting country, from Rwanda
+      // and Tanzania across to Pakistan.
+      center: [46, 8],
+      zoom: 2.3,
+      // Mapbox v3 defaults to the globe at low zoom, which shows curved dark
+      // edges in these wide, cropped thumbnails.
+      projection: "mercator",
       interactive: false, // Disable all interactions
       attributionControl: false, // Remove attribution for cleaner look
       logoPosition: "bottom-right",
@@ -60,7 +67,7 @@ const MiniatureMapThumbnail = ({
     return () => {
       mapInstance.remove();
     };
-  }, [mapContainer]);
+  }, [mapContainer, mapStyle]);
 
   useEffect(() => {
     if (!map || !isMapLoaded || !incidentReports?.data) return;
@@ -101,8 +108,8 @@ const MiniatureMapThumbnail = ({
     // Add markers
     validReports.forEach((report: any) => {
       const reportCount = Number(report.totalReports) || 1;
-      const baseSize = 4; // Smaller base size for thumbnails
-      const maxSize = 8; // Smaller max size for thumbnails
+      const baseSize = 8;
+      const maxSize = 16;
       const scaleFactor = Math.min(Math.log(reportCount + 1) * 0.5, 2);
       const markerSize = Math.max(
         baseSize,
@@ -115,7 +122,7 @@ const MiniatureMapThumbnail = ({
       markerElement.style.height = `${markerSize}px`;
       markerElement.style.backgroundColor = incidentTypeColor;
       markerElement.style.borderRadius = "50%";
-      markerElement.style.border = "1px solid rgba(255,255,255,0.8)";
+      markerElement.style.border = "1.5px solid rgba(255,255,255,0.9)";
       markerElement.style.boxShadow = "0 1px 3px rgba(0,0,0,0.3)";
 
       // Add marker to map
