@@ -555,6 +555,13 @@
     "termsOfUse": "Terms of Use",
     "accessibility": "Accessibility"
   },
+  "PrivacyPolicyPage": {
+    "eyebrow": "Privacy Policy",
+    "heading": "Your privacy matters.",
+    "intro": "WatchTower is designed to help people report what is happening in their communities while giving them clear choices about the information they share.",
+    "lastUpdated": "Last updated: {date}",
+    "inThisPolicy": "In this policy"
+  },
   "LogoCloud": {
     "heading": "Gũteithia ikundi njega mũno"
   },

@@ -555,6 +555,13 @@
     "termsOfUse": "Conditions d'utilisation",
     "accessibility": "Accessibilité"
   },
+  "PrivacyPolicyPage": {
+    "eyebrow": "Politique de confidentialité",
+    "heading": "Votre vie privée compte.",
+    "intro": "WatchTower est conçu pour aider les personnes à signaler ce qui se passe dans leurs communautés tout en leur offrant des choix clairs sur les informations qu'elles partagent.",
+    "lastUpdated": "Dernière mise à jour : {date}",
+    "inThisPolicy": "Dans cette politique"
+  },
   "LogoCloud": {
     "heading": "Au service des meilleures équipes"
   },

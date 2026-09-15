@@ -555,6 +555,13 @@
     "termsOfUse": "Terms of Use",
     "accessibility": "Accessibility"
   },
+  "PrivacyPolicyPage": {
+    "eyebrow": "Enkola y'Ebyekyama",
+    "heading": "Ebyekyama byo bikulu.",
+    "intro": "WatchTower yakolebwa okuyamba abantu okuloopa ebigenda mu maaso mu bitundu byabwe, nga bibawa okulonda okw'olwatu ku bubaka bwe bagabana.",
+    "lastUpdated": "Kyasembayo okukyusibwa: {date}",
+    "inThisPolicy": "Mu nkola eno"
+  },
   "LogoCloud": {
     "heading": "Okuwagira emirimu emisinga obulungi"
   },
