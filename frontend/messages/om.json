@@ -203,6 +203,24 @@
     "incidentTypes": "Gosa Dhimmootaa",
     "regions": "Naannoolee"
   },
+  "MapsPage": {
+    "eyebrow": "Maps",
+    "heroTitleLine1": "See what's happening.",
+    "heroTitleLine2": "See where it's happening.",
+    "heroDescription": "Navigate live interactive maps to explore community-reported issues across locations and over time.",
+    "exploreLiveMap": "Explore Live Map",
+    "openLiveMap": "Open the live incident map",
+    "thematicLabel": "Thematic Maps",
+    "thematicHeading": "Explore the issues shaping communities.",
+    "thematicDescription": "Go beyond individual incidents and explore reporting around specific issues, locations and themes.",
+    "exploreMap": "Explore Map",
+    "thematicEmpty": "No incident types are currently available for mapping.",
+    "thematicError": "Unable to load incident types. Please try again later.",
+    "digDeeperTitle": "Dig deeper",
+    "digDeeperDescription": "Ask questions through our chat assistant or sign up for timely alerts and updates to stay informed on emerging issues or trends.",
+    "chatWithEsi": "Chat With Esi",
+    "viewLiveMap": "View Live Map"
+  },
   "Dashboard": {
     "overview": "Ilaalcha Waliigalaa",
     "recentActivity": "Sochii Dhiyoo",

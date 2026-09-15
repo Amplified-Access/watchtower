@@ -203,6 +203,24 @@
     "incidentTypes": "Ubwoko bw'Ibibazo",
     "regions": "Uturere"
   },
+  "MapsPage": {
+    "eyebrow": "Amakarita",
+    "heroTitleLine1": "Reba ibiri kuba.",
+    "heroTitleLine2": "Reba aho biri kubera.",
+    "heroDescription": "Koresha amakarita ahuza abantu ako kanya kugira ngo urebe ibibazo byatanzwe n'abaturage ahantu hatandukanye no mu bihe bitandukanye.",
+    "exploreLiveMap": "Reba Ikarita Ako Kanya",
+    "openLiveMap": "Fungura ikarita y'ibyabaye ako kanya",
+    "thematicLabel": "Amakarita y'Insanganyamatsiko",
+    "thematicHeading": "Menya ibibazo bigira ingaruka ku baturage.",
+    "thematicDescription": "Renga ibyabaye kimwe kimwe maze urebe raporo zijyanye n'ibibazo, ahantu n'insanganyamatsiko byihariye.",
+    "exploreMap": "Reba Ikarita",
+    "thematicEmpty": "Nta bwoko bw'ibyabaye buboneka ku ikarita ubu.",
+    "thematicError": "Ntibyashobotse gufungura ubwoko bw'ibyabaye. Ongera ugerageze nyuma.",
+    "digDeeperTitle": "Cukumbura birenzeho",
+    "digDeeperDescription": "Baza ibibazo ukoresheje umufasha wacu wo kuganira cyangwa wiyandikishe ku butumwa bwo kukumenyesha ibibazo n'imigendekere mishya.",
+    "chatWithEsi": "Ganira na Esi",
+    "viewLiveMap": "Reba Ikarita Ako Kanya"
+  },
   "Dashboard": {
     "overview": "Incamake",
     "recentActivity": "Ibikorwa Biheruka",
