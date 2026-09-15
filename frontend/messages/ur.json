@@ -625,6 +625,15 @@
     "layerClusters": "جھرمٹ",
     "layerHeatmap": "ہیٹ میپ",
     "layerCountryBoundaries": "ممالک کی حدود",
-    "viewReportsCta": "{count}+ رپورٹس دیکھیں"
+    "viewReportsCta": "{count}+ رپورٹس دیکھیں",
+    "viewAsHeading": "اس طرح دیکھیں",
+    "showExplore": "دریافت پینل دکھائیں",
+    "hideExplore": "دریافت پینل چھپائیں",
+    "showFilters": "فلٹرز دکھائیں",
+    "hideFilters": "فلٹرز چھپائیں",
+    "recenterMap": "نقشہ مرکز میں لائیں",
+    "mapLayersButton": "نقشے کی تہیں",
+    "reportDate": "رپورٹ کی تاریخ {date}",
+    "closePopup": "بند کریں"
   }
 }

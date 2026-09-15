@@ -625,6 +625,15 @@
     "layerClusters": "Ebibinja",
     "layerHeatmap": "Mapu ey'Obubugumu",
     "layerCountryBoundaries": "Ensalo z'Amawanga",
-    "viewReportsCta": "Laba Alipooti {count}+"
+    "viewReportsCta": "Laba Alipooti {count}+",
+    "viewAsHeading": "Laba nga",
+    "showExplore": "Laga ekitundu ky'okunoonyereza",
+    "hideExplore": "Kweka ekitundu ky'okunoonyereza",
+    "showFilters": "Laga ebisengejja",
+    "hideFilters": "Kweka ebisengejja",
+    "recenterMap": "Zzaayo maapu wakati",
+    "mapLayersButton": "Emitendera gya maapu",
+    "reportDate": "Kyaloopebwa {date}",
+    "closePopup": "Ggalawo"
   }
 }

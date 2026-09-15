@@ -625,6 +625,15 @@
     "layerClusters": "ስብስቦች",
     "layerHeatmap": "የሙቀት ካርታ",
     "layerCountryBoundaries": "የሀገር ድንበሮች",
-    "viewReportsCta": "{count}+ ሪፖርቶችን ይመልከቱ"
+    "viewReportsCta": "{count}+ ሪፖርቶችን ይመልከቱ",
+    "viewAsHeading": "እንደዚህ ይመልከቱ",
+    "showExplore": "የማሰሻ ፓነሉን አሳይ",
+    "hideExplore": "የማሰሻ ፓነሉን ደብቅ",
+    "showFilters": "ማጣሪያዎችን አሳይ",
+    "hideFilters": "ማጣሪያዎችን ደብቅ",
+    "recenterMap": "ካርታውን ወደ መሃል መልስ",
+    "mapLayersButton": "የካርታ ንብርብሮች",
+    "reportDate": "የተዘገበው {date}",
+    "closePopup": "ዝጋ"
   }
 }

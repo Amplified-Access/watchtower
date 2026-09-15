@@ -625,6 +625,15 @@
     "layerClusters": "Tuuta",
     "layerHeatmap": "Kaartaa Ho'aa",
     "layerCountryBoundaries": "Daangaa Biyyootaa",
-    "viewReportsCta": "Gabaasota {count}+ Ilaali"
+    "viewReportsCta": "Gabaasota {count}+ Ilaali",
+    "viewAsHeading": "View as",
+    "showExplore": "Show explore panel",
+    "hideExplore": "Hide explore panel",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "recenterMap": "Recenter map",
+    "mapLayersButton": "Map layers",
+    "reportDate": "Reported {date}",
+    "closePopup": "Close"
   }
 }

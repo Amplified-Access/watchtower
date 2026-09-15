@@ -625,6 +625,15 @@
     "layerClusters": "Amatsinda",
     "layerHeatmap": "Ikarita y'Ubushyuhe",
     "layerCountryBoundaries": "Imipaka y'Ibihugu",
-    "viewReportsCta": "Reba Amaraporo {count}+"
+    "viewReportsCta": "Reba Amaraporo {count}+",
+    "viewAsHeading": "Reba nka",
+    "showExplore": "Erekana ahashakishirizwa",
+    "hideExplore": "Hisha ahashakishirizwa",
+    "showFilters": "Erekana amayunguruzo",
+    "hideFilters": "Hisha amayunguruzo",
+    "recenterMap": "Garura ikarita hagati",
+    "mapLayersButton": "Ibice by'ikarita",
+    "reportDate": "Byatanzwe {date}",
+    "closePopup": "Funga"
   }
 }
