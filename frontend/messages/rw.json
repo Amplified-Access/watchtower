@@ -275,7 +275,12 @@
     "noAccount": "Ntufite konti?",
     "haveAccount": "Ufite konti?",
     "resetPassword": "Subiza Ijambo ry'Ibanga",
-    "backToSignIn": "Subira Kwinjira"
+    "backToSignIn": "Subira Kwinjira",
+    "signInHeading": "Injira",
+    "emailPlaceholder": "ukoresha@imeri.com",
+    "registerOrganization": "Andikisha Umuryango",
+    "signInFailed": "Kwinjira byanze",
+    "signInFailedRetry": "Kwinjira byanze. Ongera ugerageze."
   },
   "Datasets": {
     "browseDescription": "Menya amakuru yuzuye - aboneka ku buntu ku bushakashatsi, isesengura n'ikoreshwa n'umuryango.",

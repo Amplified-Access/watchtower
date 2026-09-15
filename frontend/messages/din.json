@@ -275,7 +275,12 @@
     "noAccount": "Acïn akaawuunt du?",
     "haveAccount": "Nɔŋ akaawuunt du?",
     "resetPassword": "Puk Kaam Thiaak",
-    "backToSignIn": "Puk tënë Bɛ̈ny lɔ nhom"
+    "backToSignIn": "Puk tënë Bɛ̈ny lɔ nhom",
+    "signInHeading": "Sign in",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "Register Organisation",
+    "signInFailed": "Sign in failed",
+    "signInFailedRetry": "Sign in failed. Please try again."
   },
   "Datasets": {
     "browseDescription": "Nyin athör adit - acïn wël bï yïn bɛ̈i tënë luɔɔi wɛ̈t, nyin, ku luɔɔi panyda.",

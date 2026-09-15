@@ -275,7 +275,12 @@
     "noAccount": "Hauna akaunti?",
     "haveAccount": "Una akaunti tayari?",
     "resetPassword": "Weka upya neno la siri",
-    "backToSignIn": "Rudi kwenye kuingia"
+    "backToSignIn": "Rudi kwenye kuingia",
+    "signInHeading": "Ingia",
+    "emailPlaceholder": "mtumiaji@barua.com",
+    "registerOrganization": "Sajili Shirika",
+    "signInFailed": "Imeshindwa kuingia",
+    "signInFailedRetry": "Imeshindwa kuingia. Tafadhali jaribu tena."
   },
   "Datasets": {
     "browseDescription": "Gundua seti kamili za data - zinazopatikana bila malipo kwa utafiti, uchambuzi na matumizi ya jamii.",

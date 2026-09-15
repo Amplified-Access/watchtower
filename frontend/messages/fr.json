@@ -275,7 +275,12 @@
     "noAccount": "Vous n'avez pas de compte?",
     "haveAccount": "Vous avez déjà un compte?",
     "resetPassword": "Réinitialiser le mot de passe",
-    "backToSignIn": "Retour à la connexion"
+    "backToSignIn": "Retour à la connexion",
+    "signInHeading": "Connexion",
+    "emailPlaceholder": "utilisateur@email.com",
+    "registerOrganization": "Enregistrer une organisation",
+    "signInFailed": "Échec de la connexion",
+    "signInFailedRetry": "Échec de la connexion. Veuillez réessayer."
   },
   "Datasets": {
     "browseDescription": "Découvrez des ensembles de données complets, librement disponibles pour la recherche, l'analyse et l'usage communautaire.",

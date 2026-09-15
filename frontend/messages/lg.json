@@ -275,7 +275,12 @@
     "noAccount": "Tolinawo kawumbi?",
     "haveAccount": "Olinawo kawumbi dda?",
     "resetPassword": "Dda ku Kigambo ky'okuyingiza",
-    "backToSignIn": "Dda mu Kuyingiza"
+    "backToSignIn": "Dda mu Kuyingiza",
+    "signInHeading": "Yingira",
+    "emailPlaceholder": "omukozesa@email.com",
+    "registerOrganization": "Wandiisa Ekitongole",
+    "signInFailed": "Okuyingira kugaanye",
+    "signInFailedRetry": "Okuyingira kugaanye. Gezaako nate."
   },
   "Datasets": {
     "browseDescription": "Zuula ebikwata ku data ebijjuvu - ebisangibwa awatali kusasula okukozesebwa mu kunoonyereza, okwekenneenya n'ebibiina.",

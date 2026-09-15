@@ -275,7 +275,12 @@
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
     "resetPassword": "Reset Password",
-    "backToSignIn": "Back to Sign In"
+    "backToSignIn": "Back to Sign In",
+    "signInHeading": "Sign in",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "Register Organisation",
+    "signInFailed": "Sign in failed",
+    "signInFailedRetry": "Sign in failed. Please try again."
   },
   "Datasets": {
     "browseDescription": "Discover comprehensive datasets - freely available for research, analysis and community use.",

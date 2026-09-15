@@ -275,7 +275,12 @@
     "noAccount": "Akkaawuntii hin qabdu?",
     "haveAccount": "Duraan akkaawuntii qabda?",
     "resetPassword": "Jecha Iccitii Haaromsi",
-    "backToSignIn": "Gara Seenuu Deebi'i"
+    "backToSignIn": "Gara Seenuu Deebi'i",
+    "signInHeading": "Sign in",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "Register Organisation",
+    "signInFailed": "Sign in failed",
+    "signInFailedRetry": "Sign in failed. Please try again."
   },
   "Datasets": {
     "browseDescription": "Daataa bal'aa - qorannoo, xiinxala, fi fayyadama hawaasaaf tola argamu argadhu.",
