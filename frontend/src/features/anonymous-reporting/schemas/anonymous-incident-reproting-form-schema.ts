@@ -56,9 +56,8 @@ export const formSchema = z.object({
     .max(2000, {
       message: "Description cannot exceed 2000 characters.",
     }),
-  entities: z.array(z.enum(entityOptions)).min(1, {
-    message: "Please select at least one entity involved.",
-  }),
+  // Optional: the redesigned public form no longer asks for entities involved.
+  entities: z.array(z.enum(entityOptions)),
   injuries: z.enum(casualtyOptions, {
     message: "Please specify the number of injuries.",
   }),
