@@ -18,7 +18,7 @@ const AlertSubscriptionInputSchema = z.object({
   severityLevels: z.array(z.enum(["low", "medium", "high", "critical"])).min(1),
   emailNotifications: z.boolean().default(true),
   smsNotifications: z.boolean().default(false),
-  alertFrequency: z.enum(["immediate", "hourly", "daily", "weekly"]).default("immediate"),
+  alertFrequency: z.enum(["immediate", "hourly", "daily"]).default("immediate"),
   preferredLanguage: z.string().default("en"),
   timezone: z.string().default("UTC"),
 });

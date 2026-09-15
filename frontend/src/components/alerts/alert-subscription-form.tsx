@@ -48,6 +48,7 @@ const SEVERITY_LEVELS = [
   { value: "critical", label: "Critical", color: "bg-red-100 text-red-700" },
 ] as const;
 
+// Must match entity.AlertFrequency in the Go API.
 const ALERT_FREQUENCIES = [
   {
     value: "immediate",
@@ -55,19 +56,14 @@ const ALERT_FREQUENCIES = [
     description: "Receive alerts immediately",
   },
   {
-    value: "monthly",
-    label: "Monthly",
-    description: "Receive monthly summaries",
+    value: "hourly",
+    label: "Hourly",
+    description: "Receive an hourly digest",
   },
   {
-    value: "quarterly",
-    label: "Quarterly",
-    description: "Receive quarterly summaries",
-  },
-  {
-    value: "yearly",
-    label: "Yearly",
-    description: "Receive yearly summaries",
+    value: "daily",
+    label: "Daily",
+    description: "Receive a daily digest",
   },
 ] as const;
 
@@ -94,7 +90,7 @@ const alertSubscriptionFormSchema = z.object({
     .number()
     .min(0, "Please select a severity level")
     .max(3, "Invalid severity level"),
-  alertFrequency: z.enum(["immediate", "hourly", "daily", "weekly"]),
+  alertFrequency: z.enum(["immediate", "hourly", "daily"]),
   emailNotifications: z.boolean(),
   preferredLanguage: z.string(),
   timezone: z.string(),
@@ -682,7 +678,7 @@ const AlertSubscriptionForm: React.FC = () => {
                       {t("frequency")}
                     </FormDescription>
                     <FormControl>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
                         {ALERT_FREQUENCIES.map((frequency) => (
                           <div
                             key={frequency.value}
