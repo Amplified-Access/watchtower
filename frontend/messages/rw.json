@@ -115,7 +115,17 @@
     "ctaTitle": "Tangira",
     "ctaDescription": "Tangira gutanga raporo ku Watchtower cyangwa reba amakarita yacu akora mu gihe nyacyo. Buri raporo ifasha kubaka Urwanda rw'amategeko.",
     "ctaButton1": "Koresha WatchTower",
-    "ctaButton2": "Reba amakarita yacu"
+    "ctaButton2": "Reba amakarita yacu",
+    "heading": "Ni iki wifuza gukurikirana?",
+    "subheading": "Hitamo ahantu, ikibazo, cyangwa igikorwa wifuza ko WatchTower igukurikiranira.",
+    "nameLabel": "Izina cyangwa Izina ry'Umuryango",
+    "emailLabel": "Imeri",
+    "writeHere": "Andika hano",
+    "incidentTypeLabel": "Ubwoko bw'Ibyabaye",
+    "incidentLocationLabel": "Aho Byabereye",
+    "radiusLabel": "Intera",
+    "radiusPlaceholder": "Intera (km)",
+    "consentRequired": "Emera kwakira ubutumwa kuri imeri kugira ngo wiyandikishe."
   },
   "IncidentReporting": {
     "title": "Tanga Raporo y'Ikibazo",

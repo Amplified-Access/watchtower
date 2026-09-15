@@ -115,7 +115,17 @@
     "ctaTitle": "ይጀምሩ",
     "ctaDescription": "በWatchtower ላይ ክስተቶችን ማሪፖርት ማድረግ ይጀምሩ ወይም የእኛን የቀጥታ ካርታዎች ይመልከቱ። እያንዳንዱ ሪፖርት የህግ አገዛዝ ኢትዮጵያን ለመገንባት ይረዳል።",
     "ctaButton1": "WatchTower ይጠቀሙ",
-    "ctaButton2": "ካርታዎቻችንን ይመልከቱ"
+    "ctaButton2": "ካርታዎቻችንን ይመልከቱ",
+    "heading": "ምን መከታተል ይፈልጋሉ?",
+    "subheading": "WatchTower እንዲከታተልልዎ የሚፈልጉትን ቦታ፣ ጉዳይ ወይም ስምሪት ይምረጡ።",
+    "nameLabel": "ስም ወይም የድርጅት ስም",
+    "emailLabel": "ኢሜይል",
+    "writeHere": "እዚህ ይጻፉ",
+    "incidentTypeLabel": "የክስተት ዓይነት",
+    "incidentLocationLabel": "የክስተት ቦታ",
+    "radiusLabel": "ራዲየስ",
+    "radiusPlaceholder": "ራዲየስ (ኪሜ)",
+    "consentRequired": "ለመመዝገብ የኢሜይል ማሳወቂያዎችን ለመቀበል ይስማሙ።"
   },
   "IncidentReporting": {
     "title": "ክስተት ሪፖርት ያድርጉ",

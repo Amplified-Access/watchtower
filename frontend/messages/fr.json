@@ -115,7 +115,17 @@
     "ctaTitle": "Commencer",
     "ctaDescription": "Commencez à signaler des incidents avec Watchtower ou explorez des informations en temps réel via nos cartes interactives. Chaque rapport contribue à une Afrique de l'Est plus sûre.",
     "ctaButton1": "Utiliser WatchTower",
-    "ctaButton2": "Voir nos cartes"
+    "ctaButton2": "Voir nos cartes",
+    "heading": "Que souhaitez-vous suivre ?",
+    "subheading": "Choisissez le lieu, le sujet ou le déploiement que WatchTower doit suivre pour vous.",
+    "nameLabel": "Nom ou nom de l'organisation",
+    "emailLabel": "E-mail",
+    "writeHere": "Écrire ici",
+    "incidentTypeLabel": "Type d'incident",
+    "incidentLocationLabel": "Lieu de l'incident",
+    "radiusLabel": "Rayon",
+    "radiusPlaceholder": "Rayon (km)",
+    "consentRequired": "Veuillez accepter de recevoir des notifications par e-mail pour vous abonner."
   },
   "IncidentReporting": {
     "title": "Signaler un incident",

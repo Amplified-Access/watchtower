@@ -115,7 +115,17 @@
     "ctaTitle": "Guiir",
     "ctaDescription": "Guiir baŋ athör kek Watchtower, walä lɔ nyin athör në mapthiin ku ye kony pial ë Afrika Bɛɛr.",
     "ctaButton1": "Luui WatchTower",
-    "ctaButton2": "Nyin mapthiin"
+    "ctaButton2": "Nyin mapthiin",
+    "heading": "What would you like to follow?",
+    "subheading": "Choose the place, issue, or deployment you want WatchTower to keep track of.",
+    "nameLabel": "Name or Organisation Name",
+    "emailLabel": "Email",
+    "writeHere": "Write here",
+    "incidentTypeLabel": "Incident Type",
+    "incidentLocationLabel": "Incident Location",
+    "radiusLabel": "Radius",
+    "radiusPlaceholder": "Radius (km)",
+    "consentRequired": "Please agree to receive email notifications to subscribe."
   },
   "IncidentReporting": {
     "title": "Baŋ Athör",

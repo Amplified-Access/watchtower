@@ -115,7 +115,17 @@
     "ctaTitle": "Amba",
     "ctaDescription": "Amba kũhe marũpoti ma mahitũko kũrĩ Watchtower kana wone mepe ciitũ cia mũthenya wothe. Rũpoti rĩothe nĩrĩteithagia gũaka Mũtaratara wa Watho.",
     "ctaButton1": "Hũthĩra WatchTower",
-    "ctaButton2": "Ona mepe ciitũ"
+    "ctaButton2": "Ona mepe ciitũ",
+    "heading": "What would you like to follow?",
+    "subheading": "Choose the place, issue, or deployment you want WatchTower to keep track of.",
+    "nameLabel": "Name or Organisation Name",
+    "emailLabel": "Email",
+    "writeHere": "Write here",
+    "incidentTypeLabel": "Incident Type",
+    "incidentLocationLabel": "Incident Location",
+    "radiusLabel": "Radius",
+    "radiusPlaceholder": "Radius (km)",
+    "consentRequired": "Please agree to receive email notifications to subscribe."
   },
   "IncidentReporting": {
     "title": "He Rũpoti rĩa Kĩhitũko",

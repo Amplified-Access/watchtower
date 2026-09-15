@@ -115,7 +115,17 @@
     "ctaTitle": "Tandika",
     "ctaDescription": "Tandika okuwa alipooti ku bintu ebibadde ku Watchtower oba wetegereze ebikwata ku mmapu zaffe ezikola bulijjo. Buli lipooti eyamba okuzimba Buganda Obw'amatteeka Obulungi.",
     "ctaButton1": "Kozesa WatchTower",
-    "ctaButton2": "Laba mmaapu zaffe"
+    "ctaButton2": "Laba mmaapu zaffe",
+    "heading": "Kiki ky'oyagala okugoberera?",
+    "subheading": "Londa ekifo, ensonga, oba pulojekiti gy'oyagala WatchTower ekulondoolere.",
+    "nameLabel": "Erinnya oba Erinnya ly'Ekitongole",
+    "emailLabel": "Email",
+    "writeHere": "Wandiika wano",
+    "incidentTypeLabel": "Ekika ky'Ekibaddewo",
+    "incidentLocationLabel": "Ekifo w'Ekibaddewo",
+    "radiusLabel": "Obugazi",
+    "radiusPlaceholder": "Obugazi (km)",
+    "consentRequired": "Kkiriza okufuna obubaka ku email okusobola okwewandiisa."
   },
   "IncidentReporting": {
     "title": "Waayo Alipooti ku Kintu Ekibaddewo",

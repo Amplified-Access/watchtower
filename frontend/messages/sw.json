@@ -115,7 +115,17 @@
     "ctaTitle": "Anza",
     "ctaDescription": "Anza kuripoti matukio na Watchtower au chunguza maarifa ya wakati halisi kupitia ramani zetu za maingiliano. Kila ripoti inachangia Afrika Mashariki salama zaidi.",
     "ctaButton1": "Tumia WatchTower",
-    "ctaButton2": "Angalia ramani zetu"
+    "ctaButton2": "Angalia ramani zetu",
+    "heading": "Ungependa kufuatilia nini?",
+    "subheading": "Chagua mahali, suala, au mradi unaotaka WatchTower ifuatilie.",
+    "nameLabel": "Jina au Jina la Shirika",
+    "emailLabel": "Barua pepe",
+    "writeHere": "Andika hapa",
+    "incidentTypeLabel": "Aina ya Tukio",
+    "incidentLocationLabel": "Mahali pa Tukio",
+    "radiusLabel": "Kipenyo",
+    "radiusPlaceholder": "Kipenyo (km)",
+    "consentRequired": "Tafadhali kubali kupokea arifa za barua pepe ili kujisajili."
   },
   "IncidentReporting": {
     "title": "Ripoti tukio",

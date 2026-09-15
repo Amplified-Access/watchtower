@@ -115,7 +115,17 @@
     "ctaTitle": "Jalqabi",
     "ctaDescription": "Watchtower waliin dhimmoota gabaasuu jalqabi, ykn kaartaa waliin hojjennuu irratti hubannoo yeroo dhugaa ilaali. Gabaasni hundi Afrikaa Bahaa nageenya qabu uumuuf ni gumaacha.",
     "ctaButton1": "WatchTower Fayyadami",
-    "ctaButton2": "Kaartaa Keenya Ilaali"
+    "ctaButton2": "Kaartaa Keenya Ilaali",
+    "heading": "What would you like to follow?",
+    "subheading": "Choose the place, issue, or deployment you want WatchTower to keep track of.",
+    "nameLabel": "Name or Organisation Name",
+    "emailLabel": "Email",
+    "writeHere": "Write here",
+    "incidentTypeLabel": "Incident Type",
+    "incidentLocationLabel": "Incident Location",
+    "radiusLabel": "Radius",
+    "radiusPlaceholder": "Radius (km)",
+    "consentRequired": "Please agree to receive email notifications to subscribe."
   },
   "IncidentReporting": {
     "title": "Dhimma Gabaasi",

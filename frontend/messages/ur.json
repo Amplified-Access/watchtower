@@ -115,7 +115,17 @@
     "ctaTitle": "شروع کریں",
     "ctaDescription": "Watchtower پر واقعات کی رپورٹنگ شروع کریں، یا ہمارے لائیو نقشے دیکھیں۔ ہر رپورٹ قانون کی حکومت بنانے میں مدد کرتی ہے۔",
     "ctaButton1": "WatchTower استعمال کریں",
-    "ctaButton2": "ہمارے نقشے دیکھیں"
+    "ctaButton2": "ہمارے نقشے دیکھیں",
+    "heading": "آپ کیا فالو کرنا چاہیں گے؟",
+    "subheading": "وہ جگہ، مسئلہ یا ڈیپلائمنٹ منتخب کریں جس پر آپ چاہتے ہیں WatchTower نظر رکھے۔",
+    "nameLabel": "نام یا تنظیم کا نام",
+    "emailLabel": "ای میل",
+    "writeHere": "یہاں لکھیں",
+    "incidentTypeLabel": "واقعے کی قسم",
+    "incidentLocationLabel": "واقعے کا مقام",
+    "radiusLabel": "رداس",
+    "radiusPlaceholder": "رداس (کلومیٹر)",
+    "consentRequired": "سبسکرائب کرنے کے لیے براہِ کرم ای میل اطلاعات وصول کرنے پر رضامندی دیں۔"
   },
   "IncidentReporting": {
     "title": "واقعہ کی رپورٹ کریں",
