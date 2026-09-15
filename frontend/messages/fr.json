@@ -523,6 +523,21 @@
   "LogoCloud": {
     "heading": "Au service des meilleures équipes"
   },
+  "ChatPage": {
+    "subtitle": "Que souhaitez-vous comprendre ?",
+    "placeholder": "Posez-moi une question...",
+    "starterWhatIs": "Qu'est-ce que WatchTower",
+    "starterFindSomething": "Aidez-moi à trouver quelque chose",
+    "attachComingSoon": "Les pièces jointes arrivent bientôt",
+    "voiceLanguage": "Langue de la voix",
+    "startDictation": "Démarrer la dictée vocale",
+    "stopDictation": "Arrêter la dictée vocale",
+    "send": "Envoyer",
+    "listening": "J'écoute... parlez maintenant",
+    "micDenied": "Accès au micro refusé. Veuillez autoriser l'accès au micro.",
+    "dictationNotSupported": "La dictée vocale n'est pas prise en charge par ce navigateur.",
+    "dictationFailed": "Impossible de démarrer la dictée vocale. Veuillez réessayer."
+  },
   "Home": {
     "heroTitleLine1": "Signalez dans votre langue.",
     "heroTitleLine2": "Faites-vous entendre !",

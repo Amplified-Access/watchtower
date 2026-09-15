@@ -523,6 +523,21 @@
   "LogoCloud": {
     "heading": "Kuwezesha timu bora zaidi"
   },
+  "ChatPage": {
+    "subtitle": "Ungependa kuelewa nini?",
+    "placeholder": "Niulize chochote...",
+    "starterWhatIs": "WatchTower ni nini",
+    "starterFindSomething": "Nisaidie kupata kitu",
+    "attachComingSoon": "Viambatisho vinakuja hivi karibuni",
+    "voiceLanguage": "Lugha ya sauti",
+    "startDictation": "Anza kuandika kwa sauti",
+    "stopDictation": "Acha kuandika kwa sauti",
+    "send": "Tuma",
+    "listening": "Ninasikiliza... ongea sasa",
+    "micDenied": "Ruhusa ya maikrofoni imekataliwa. Tafadhali ruhusu maikrofoni.",
+    "dictationNotSupported": "Kuandika kwa sauti hakutumiki kwenye kivinjari hiki.",
+    "dictationFailed": "Imeshindwa kuanza kuandika kwa sauti. Tafadhali jaribu tena."
+  },
   "Home": {
     "heroTitleLine1": "Ripoti kwa lugha yako.",
     "heroTitleLine2": "Sikika!",

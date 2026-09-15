@@ -523,6 +523,21 @@
   "LogoCloud": {
     "heading": "Gushyigikira amatsinda meza kurusha ayandi"
   },
+  "ChatPage": {
+    "subtitle": "Ni iki wifuza gusobanukirwa?",
+    "placeholder": "Mbaza icyo ari cyo cyose...",
+    "starterWhatIs": "WatchTower ni iki",
+    "starterFindSomething": "Mfasha kubona ikintu",
+    "attachComingSoon": "Imigereka iraza vuba",
+    "voiceLanguage": "Ururimi rw'ijwi",
+    "startDictation": "Tangira kwandika ukoresheje ijwi",
+    "stopDictation": "Hagarika kwandika ukoresheje ijwi",
+    "send": "Ohereza",
+    "listening": "Ndumva... vuga ubu",
+    "micDenied": "Uburenganzira bwa mikoro bwanzwe. Emerera mikoro.",
+    "dictationNotSupported": "Kwandika ukoresheje ijwi ntibishyigikiwe muri iyi mushakisha.",
+    "dictationFailed": "Ntibyashobotse gutangira kwandika ukoresheje ijwi. Ongera ugerageze."
+  },
   "Home": {
     "heroTitleLine1": "Tanga raporo mu rurimi rwawe.",
     "heroTitleLine2": "Wumvwe!",

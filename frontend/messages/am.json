@@ -523,6 +523,21 @@
   "LogoCloud": {
     "heading": "ምርጥ ቡድኖችን ማብቃት"
   },
+  "ChatPage": {
+    "subtitle": "ምን መረዳት ይፈልጋሉ?",
+    "placeholder": "ማንኛውንም ነገር ይጠይቁኝ...",
+    "starterWhatIs": "WatchTower ምንድን ነው",
+    "starterFindSomething": "አንድ ነገር እንዳገኝ እርዳኝ",
+    "attachComingSoon": "አባሪዎች በቅርቡ ይመጣሉ",
+    "voiceLanguage": "የድምጽ ቋንቋ",
+    "startDictation": "በድምጽ መጻፍ ጀምር",
+    "stopDictation": "በድምጽ መጻፍ አቁም",
+    "send": "ላክ",
+    "listening": "እያዳመጥኩ ነው... አሁን ይናገሩ",
+    "micDenied": "የማይክሮፎን ፈቃድ ተከልክሏል። እባክዎ ማይክሮፎን ይፍቀዱ።",
+    "dictationNotSupported": "በዚህ አሳሽ በድምጽ መጻፍ አይደገፍም።",
+    "dictationFailed": "በድምጽ መጻፍ መጀመር አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
+  },
   "Home": {
     "heroTitleLine1": "በቋንቋዎ ሪፖርት ያድርጉ።",
     "heroTitleLine2": "ይሰሙ!",

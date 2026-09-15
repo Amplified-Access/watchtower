@@ -523,6 +523,21 @@
   "LogoCloud": {
     "heading": "Konyo thimbe maber moloyo"
   },
+  "ChatPage": {
+    "subtitle": "What would you like to understand?",
+    "placeholder": "Ask me anything...",
+    "starterWhatIs": "What is WatchTower",
+    "starterFindSomething": "Help me find something",
+    "attachComingSoon": "Attachments are coming soon",
+    "voiceLanguage": "Voice language",
+    "startDictation": "Start voice dictation",
+    "stopDictation": "Stop voice dictation",
+    "send": "Send",
+    "listening": "Listening... speak now",
+    "micDenied": "Microphone access denied. Please allow microphone access.",
+    "dictationNotSupported": "Voice dictation isn't supported in this browser.",
+    "dictationFailed": "Couldn't start voice dictation. Please try again."
+  },
   "Home": {
     "heroTitleLine1": "Ripodh e dhogi.",
     "heroTitleLine2": "Winjri!",

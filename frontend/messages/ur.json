@@ -523,6 +523,21 @@
   "LogoCloud": {
     "heading": "بہترین ٹیموں کو بااختیار بنانا"
   },
+  "ChatPage": {
+    "subtitle": "آپ کیا سمجھنا چاہیں گے؟",
+    "placeholder": "مجھ سے کچھ بھی پوچھیں...",
+    "starterWhatIs": "WatchTower کیا ہے",
+    "starterFindSomething": "کچھ تلاش کرنے میں میری مدد کریں",
+    "attachComingSoon": "اٹیچمنٹس جلد آ رہی ہیں",
+    "voiceLanguage": "آواز کی زبان",
+    "startDictation": "صوتی ڈکٹیشن شروع کریں",
+    "stopDictation": "صوتی ڈکٹیشن بند کریں",
+    "send": "بھیجیں",
+    "listening": "سن رہا ہوں... اب بولیں",
+    "micDenied": "مائیکروفون تک رسائی مسترد۔ براہِ کرم مائیکروفون کی اجازت دیں۔",
+    "dictationNotSupported": "یہ براؤزر صوتی ڈکٹیشن کی سہولت نہیں دیتا۔",
+    "dictationFailed": "صوتی ڈکٹیشن شروع نہیں ہو سکی۔ براہِ کرم دوبارہ کوشش کریں۔"
+  },
   "Home": {
     "heroTitleLine1": "اپنی زبان میں رپورٹ کریں۔",
     "heroTitleLine2": "اپنی آواز پہنچائیں!",
