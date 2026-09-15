@@ -275,7 +275,12 @@
     "noAccount": "Ndũrĩ na gĩthabũ?",
     "haveAccount": "Ũrĩkĩrĩ na gĩthabũ?",
     "resetPassword": "Acoka Namba ya Hitho",
-    "backToSignIn": "Cooka Gwĩka Toonya"
+    "backToSignIn": "Cooka Gwĩka Toonya",
+    "signInHeading": "Sign in",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "Register Organisation",
+    "signInFailed": "Sign in failed",
+    "signInFailedRetry": "Sign in failed. Please try again."
   },
   "Datasets": {
     "browseDescription": "Menya ũhoro wa mĩbango ũrĩa mũingĩ - ũrĩa wonekaga tũhũ nĩ ũndũ wa ũthuthuria, gũthuthuria, na kũhũthĩrwo nĩ mũcemanio.",

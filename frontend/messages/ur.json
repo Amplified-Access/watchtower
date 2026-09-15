@@ -275,7 +275,12 @@
     "noAccount": "کوئی اکاؤنٹ نہیں ہے؟",
     "haveAccount": "پہلے سے اکاؤنٹ ہے؟",
     "resetPassword": "پاس ورڈ دوبارہ ترتیب دیں",
-    "backToSignIn": "سائن ان پر واپس جائیں"
+    "backToSignIn": "سائن ان پر واپس جائیں",
+    "signInHeading": "سائن ان کریں",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "تنظیم رجسٹر کریں",
+    "signInFailed": "سائن ان ناکام ہو گیا",
+    "signInFailedRetry": "سائن ان ناکام ہو گیا۔ براہِ کرم دوبارہ کوشش کریں۔"
   },
   "Datasets": {
     "browseDescription": "تحقیق، تجزیہ اور کمیونٹی استعمال کے لیے آزادانہ طور پر دستیاب جامع ڈیٹا سیٹس دریافت کریں۔",

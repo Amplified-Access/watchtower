@@ -275,7 +275,12 @@
     "noAccount": "Ionge gi akaunt?",
     "haveAccount": "Isebedo gi akaunt?",
     "resetPassword": "Chak Sitima Kendo",
-    "backToSignIn": "Dog e Donjo"
+    "backToSignIn": "Dog e Donjo",
+    "signInHeading": "Sign in",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "Register Organisation",
+    "signInFailed": "Sign in failed",
+    "signInFailedRetry": "Sign in failed. Please try again."
   },
   "Datasets": {
     "browseDescription": "Yud fweny mopongʼ chuth - moyudore nono e ohala ne nono, nono, kod tiyo gi oganda.",

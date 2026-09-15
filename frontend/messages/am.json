@@ -275,7 +275,12 @@
     "noAccount": "መለያ የለዎትም?",
     "haveAccount": "መለያ አለዎት?",
     "resetPassword": "የይለፍ ቃል ዳግም አስጀምር",
-    "backToSignIn": "ወደ መግቢያ ተመለስ"
+    "backToSignIn": "ወደ መግቢያ ተመለስ",
+    "signInHeading": "ይግቡ",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "ድርጅት ያስመዝግቡ",
+    "signInFailed": "መግባት አልተሳካም",
+    "signInFailedRetry": "መግባት አልተሳካም። እባክዎ እንደገና ይሞክሩ።"
   },
   "Datasets": {
     "browseDescription": "ለምርምር፣ ትንተና እና የማህበረሰብ አጠቃቀም በነጻ የሚገኙ ሁሉን አቀፍ የመረጃ ስብስቦችን ያግኙ።",

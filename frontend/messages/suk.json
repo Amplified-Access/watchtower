@@ -275,7 +275,12 @@
     "noAccount": "Tuli na akaundi?",
     "haveAccount": "Uli na akaundi?",
     "resetPassword": "Tandika Kabili Namba ya Uhishu",
-    "backToSignIn": "Buyila ku Igilila"
+    "backToSignIn": "Buyila ku Igilila",
+    "signInHeading": "Sign in",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "Register Organisation",
+    "signInFailed": "Sign in failed",
+    "signInFailedRetry": "Sign in failed. Please try again."
   },
   "Datasets": {
     "browseDescription": "Menya seti ja habali jikamilifu - jikupatikana bila malipo koro utafiti, uchambuzi na matumizi ga makundi.",

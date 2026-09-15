@@ -275,7 +275,12 @@
     "noAccount": "ਕੋਈ ਖਾਤਾ ਨਹੀਂ ਹੈ?",
     "haveAccount": "ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ?",
     "resetPassword": "ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ",
-    "backToSignIn": "ਸਾਈਨ ਇਨ 'ਤੇ ਵਾਪਸ ਜਾਓ"
+    "backToSignIn": "ਸਾਈਨ ਇਨ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+    "signInHeading": "ਸਾਈਨ ਇਨ ਕਰੋ",
+    "emailPlaceholder": "user@email.com",
+    "registerOrganization": "ਸੰਸਥਾ ਰਜਿਸਟਰ ਕਰੋ",
+    "signInFailed": "ਸਾਈਨ ਇਨ ਅਸਫਲ ਰਿਹਾ",
+    "signInFailedRetry": "ਸਾਈਨ ਇਨ ਅਸਫਲ ਰਿਹਾ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
   },
   "Datasets": {
     "browseDescription": "ਖੋਜ, ਵਿਸ਼ਲੇਸ਼ਣ ਅਤੇ ਭਾਈਚਾਰਕ ਵਰਤੋਂ ਲਈ ਸੁਤੰਤਰ ਰੂਪ ਵਿੱਚ ਉਪਲਬਧ ਵਿਆਪਕ ਡਾਟਾਸੈੱਟਾਂ ਦੀ ਖੋਜ ਕਰੋ।",
