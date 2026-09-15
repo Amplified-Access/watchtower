@@ -520,6 +520,13 @@
     "termsOfUse": "Terms of Use",
     "accessibility": "Accessibility"
   },
+  "PrivacyPolicyPage": {
+    "eyebrow": "የግላዊነት ፖሊሲ",
+    "heading": "ግላዊነትዎ አስፈላጊ ነው።",
+    "intro": "WatchTower ሰዎች በማህበረሰባቸው ውስጥ የሚሆነውን እንዲዘግቡ ለመርዳት እና ስለሚያጋሩት መረጃ ግልጽ ምርጫ እንዲሰጣቸው ተደርጎ የተሰራ ነው።",
+    "lastUpdated": "ለመጨረሻ ጊዜ የተሻሻለው፦ {date}",
+    "inThisPolicy": "በዚህ ፖሊሲ ውስጥ"
+  },
   "LogoCloud": {
     "heading": "ምርጥ ቡድኖችን ማብቃት"
   },
