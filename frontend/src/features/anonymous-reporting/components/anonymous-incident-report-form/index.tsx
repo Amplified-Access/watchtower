@@ -45,11 +45,6 @@ import { cn } from "@/lib/utils";
 const AnonymousIncidentReportForm = () => {
   const t = useTranslations("IncidentReporting");
 
-  // Get incident categories for enhanced logging
-  const incidentCategories =
-    trpc.anonymousReports.getAllIncidentTypes.useQuery();
-  const categories = incidentCategories.data?.data || [];
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema as any),
     defaultValues: {
@@ -88,6 +83,9 @@ const AnonymousIncidentReportForm = () => {
     file: File;
     id: string;
   } | null>(null);
+  // Bumped after a successful submit to remount (and clear) EvidenceUpload,
+  // which keeps its own file list.
+  const [evidenceUploadKey, setEvidenceUploadKey] = useState(0);
 
   // Language selector state
   const [isPending, startTransition] = useTransition();
@@ -298,78 +296,56 @@ const AnonymousIncidentReportForm = () => {
     }
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Get category name from ID for enhanced logging
-    const selectedCategory = categories.find(
-      (cat) => cat.id === values.category,
-    );
+  // The router takes counts as numbers; the select stores "0".."5" and "6+".
+  const toCount = (value: string) => (value === "6+" ? 6 : Number(value));
 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Upload evidence file if provided
-    let evidenceFileKey = null;
+    let evidenceFileKey: string | undefined;
     if (evidenceFile?.file) {
       const fileResponse = await uploadEvidenceFile(evidenceFile.file);
-      if (fileResponse?.fileKey) {
-        evidenceFileKey = fileResponse.fileKey;
-      }
+      evidenceFileKey = fileResponse?.fileKey ?? undefined;
     }
 
     // Upload audio file if provided
-    let audioFileKey = null;
+    let audioFileKey: string | undefined;
     if (audioBlob) {
       const audioResponse = await uploadAudioFile(audioBlob);
-      if (audioResponse?.fileKey) {
-        audioFileKey = audioResponse.fileKey;
-      }
+      audioFileKey = audioResponse?.fileKey ?? undefined;
     }
-
-    // Prepare the submission data with enhanced details
-    const submissionData = {
-      ...values,
-      incidentTypeId: values.category,
-      location: {
-        latitude: Number(values.location.lat),
-        longitude: Number(values.location.lon),
-        address: values.location.display_name,
-        country: values.location.display_name?.split(",").pop()?.trim(),
-      },
-
-
-
-
-      evidenceFileKey,
-      audioFileKey,
-      categoryDetails: {
-        id: values.category,
-        name: selectedCategory?.name || "Unknown",
-        description: selectedCategory?.description || "Unknown",
-      },
-      locationDetails: {
-        coordinates: {
-          lat: values.location.lat,
-          lon: values.location.lon,
-        },
-        displayName: values.location.display_name,
-        placeId: values.location.place_id,
-      },
-    };
 
     try {
-      submitMutation.mutate(submissionData as any);
-      submitMutation.isSuccess && toast.success(t("reportSuccess"));
-    } catch (error) {
+      await submitMutation.mutateAsync({
+        incidentTypeId: values.category,
+        location: {
+          latitude: Number(values.location.lat),
+          longitude: Number(values.location.lon),
+          address: values.location.display_name,
+          country: values.location.display_name?.split(",").pop()?.trim(),
+        },
+        description: values.description,
+        entities: values.entities,
+        injuries: toCount(values.injuries),
+        fatalities: toCount(values.fatalities),
+        evidenceFileKey,
+        audioFileKey,
+      });
+    } catch {
       toast.error(t("submitError"));
+      return;
     }
 
-    // Simulate a promise (e.g., API call)
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(submissionData);
-      }, 1000);
-    }).then((result) => {
-      console.log("Promise resolved with:", result);
-    });
-    console.log("Form submission data:", submissionData);
     toast.success(t("reportSuccess"));
+    form.reset();
+    setEvidenceFile(null);
+    setEvidenceUploadKey((key) => key + 1);
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setAudioBlob(null);
+    setAudioUrl(null);
+    setRecordingDuration(0);
+    setIsPlaying(false);
   }
 
   return (
@@ -598,7 +574,11 @@ const AnonymousIncidentReportForm = () => {
                 {t("evidenceFilesDescription")}
               </p>
             </div>
-            <EvidenceUpload file={evidenceFile} setFile={setEvidenceFile} />
+            <EvidenceUpload
+              key={evidenceUploadKey}
+              file={evidenceFile}
+              setFile={setEvidenceFile}
+            />
           </div>
 
           {/* Voice Recording Section */}
@@ -687,8 +667,12 @@ const AnonymousIncidentReportForm = () => {
             )}
           </div>
 
-          <Button type="submit" className="w-full">
-            {submitMutation.isPending ? <Loader /> : t("submitReport")}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? <Loader /> : t("submitReport")}
           </Button>
         </form>
       </Form>
