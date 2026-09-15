@@ -23,6 +23,7 @@
     "home": "Accueil",
     "datasets": "Ensembles de données",
     "maps": "Cartes",
+    "caseStudies": "Études de cas",
     "reports": "Rapports",
     "chat": "Chat",
     "alerts": "Alertes",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "Que se passe-t-il dans votre communauté ?",
     "cta": "Faire un signalement"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "Études de cas",
+    "heroTitleLine1": "Découvrez ce que les communautés",
+    "heroTitleLine2": "nous disent.",
+    "heroDescription": "Découvrez comment les voix des communautés, les savoirs locaux et les signalements via WatchTower contribuent à constituer des preuves et à mieux comprendre ce qui se passe sur le terrain.",
+    "filterAll": "Tout",
+    "categoryClimate": "Climat",
+    "categoryWaterSanitation": "Eau et assainissement",
+    "categoryRightsSafety": "Droits et sécurité",
+    "categoryPublicServices": "Services publics",
+    "moreFilters": "Plus de filtres",
+    "location": "Lieu",
+    "allLocations": "Tous les lieux",
+    "readCaseStudy": "Lire l'étude de cas",
+    "empty": "Aucune étude de cas ne correspond à ces filtres.",
+    "clearFilters": "Effacer les filtres",
+    "pagination": "Pages des études de cas",
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "pageLabel": "Page {number}"
   },
   "Alerts": {
     "pageTitle": "Abonnements aux alertes",

@@ -23,6 +23,7 @@
     "home": "ਘਰ",
     "datasets": "ਡੇਟਾਸੈੱਟ",
     "maps": "ਨਕਸ਼ੇ",
+    "caseStudies": "ਕੇਸ ਸਟੱਡੀਜ਼",
     "reports": "ਰਿਪੋਰਟਾਂ",
     "chat": "ਗੱਲਬਾਤ",
     "alerts": "ਚੇਤਾਵਨੀਆਂ",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "ਤੁਹਾਡੇ ਭਾਈਚਾਰੇ ਵਿੱਚ ਕੀ ਹੋ ਰਿਹਾ ਹੈ?",
     "cta": "ਰਿਪੋਰਟ ਕਰੋ"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "ਕੇਸ ਸਟੱਡੀਜ਼",
+    "heroTitleLine1": "ਵੇਖੋ ਭਾਈਚਾਰੇ",
+    "heroTitleLine2": "ਸਾਨੂੰ ਕੀ ਦੱਸ ਰਹੇ ਹਨ।",
+    "heroDescription": "ਜਾਣੋ ਕਿ ਭਾਈਚਾਰੇ ਦੀਆਂ ਆਵਾਜ਼ਾਂ, ਸਥਾਨਕ ਗਿਆਨ ਅਤੇ WatchTower ਰਾਹੀਂ ਰਿਪੋਰਟਿੰਗ ਸਬੂਤ ਬਣਾਉਣ ਅਤੇ ਜ਼ਮੀਨੀ ਹਾਲਾਤ ਨੂੰ ਡੂੰਘਾਈ ਨਾਲ ਸਮਝਣ ਵਿੱਚ ਕਿਵੇਂ ਮਦਦ ਕਰ ਰਹੀ ਹੈ।",
+    "filterAll": "ਸਾਰੇ",
+    "categoryClimate": "ਜਲਵਾਯੂ",
+    "categoryWaterSanitation": "ਪਾਣੀ ਅਤੇ ਸਫ਼ਾਈ",
+    "categoryRightsSafety": "ਅਧਿਕਾਰ ਅਤੇ ਸੁਰੱਖਿਆ",
+    "categoryPublicServices": "ਜਨਤਕ ਸੇਵਾਵਾਂ",
+    "moreFilters": "ਹੋਰ ਫਿਲਟਰ",
+    "location": "ਸਥਾਨ",
+    "allLocations": "ਸਾਰੇ ਸਥਾਨ",
+    "readCaseStudy": "ਕੇਸ ਸਟੱਡੀ ਪੜ੍ਹੋ",
+    "empty": "ਇਹਨਾਂ ਫਿਲਟਰਾਂ ਨਾਲ ਕੋਈ ਕੇਸ ਸਟੱਡੀ ਮੇਲ ਨਹੀਂ ਖਾਂਦੀ।",
+    "clearFilters": "ਫਿਲਟਰ ਸਾਫ਼ ਕਰੋ",
+    "pagination": "ਕੇਸ ਸਟੱਡੀਜ਼ ਦੇ ਪੰਨੇ",
+    "previousPage": "ਪਿਛਲਾ ਪੰਨਾ",
+    "nextPage": "ਅਗਲਾ ਪੰਨਾ",
+    "pageLabel": "ਪੰਨਾ {number}"
   },
   "Alerts": {
     "pageTitle": "ਚੇਤਾਵਨੀਆਂ ਲਈ ਸਬਸਕਰਾਈਬ ਕਰੋ",

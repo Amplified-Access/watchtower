@@ -24,6 +24,7 @@
     "about": "Waa'ee",
     "datasets": "Daataa",
     "maps": "Kaartaawwan",
+    "caseStudies": "Case studies",
     "reports": "Gabaasota",
     "chat": "Haasawaa",
     "alerts": "Beeksisa",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "What's happening in your community?",
     "cta": "Make a Report"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "Case Studies",
+    "heroTitleLine1": "See what communities",
+    "heroTitleLine2": "are telling us.",
+    "heroDescription": "Explore how community voices, local knowledge and reporting through WatchTower are helping build evidence and deepen understanding of what is happening on the ground.",
+    "filterAll": "All",
+    "categoryClimate": "Climate",
+    "categoryWaterSanitation": "Water & Sanitation",
+    "categoryRightsSafety": "Rights & Safety",
+    "categoryPublicServices": "Public Services",
+    "moreFilters": "More Filters",
+    "location": "Location",
+    "allLocations": "All locations",
+    "readCaseStudy": "Read case study",
+    "empty": "No case studies match these filters.",
+    "clearFilters": "Clear filters",
+    "pagination": "Case studies pages",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "pageLabel": "Page {number}"
   },
   "Alerts": {
     "pageTitle": "Galmee Beeksisaa",
