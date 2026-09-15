@@ -23,6 +23,7 @@
     "home": "Ahabanza",
     "datasets": "Inyandiko",
     "maps": "Amakarita",
+    "caseStudies": "Ingero z'ubushakashatsi",
     "reports": "Raporo",
     "chat": "Ikiganiro",
     "alerts": "Inyito",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "What's happening in your community?",
     "cta": "Make a Report"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "Ingero z'Ubushakashatsi",
+    "heroTitleLine1": "Reba ibyo abaturage",
+    "heroTitleLine2": "batubwira.",
+    "heroDescription": "Menya uko amajwi y'abaturage, ubumenyi bw'aho batuye na raporo zitangwa binyuze kuri WatchTower bifasha kubaka ibimenyetso no gusobanukirwa neza ibibera ku butaka.",
+    "filterAll": "Byose",
+    "categoryClimate": "Ikirere",
+    "categoryWaterSanitation": "Amazi n'Isuku",
+    "categoryRightsSafety": "Uburenganzira n'Umutekano",
+    "categoryPublicServices": "Serivisi za Leta",
+    "moreFilters": "Andi Mayunguruzo",
+    "location": "Aho biherereye",
+    "allLocations": "Ahantu hose",
+    "readCaseStudy": "Soma urugero",
+    "empty": "Nta rugero ruhuye n'aya mayunguruzo.",
+    "clearFilters": "Siba amayunguruzo",
+    "pagination": "Amapaji y'ingero",
+    "previousPage": "Ipaji ibanza",
+    "nextPage": "Ipaji ikurikira",
+    "pageLabel": "Ipaji {number}"
   },
   "Alerts": {
     "pageTitle": "Kwiyandikisha Inyito",

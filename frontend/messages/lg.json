@@ -23,6 +23,7 @@
     "home": "Awaka",
     "datasets": "Ebikoresebwa",
     "maps": "Mmaapu",
+    "caseStudies": "Ebyokulabirako",
     "reports": "Alipooti",
     "chat": "Okunyumya",
     "alerts": "Ebikwasa",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "What's happening in your community?",
     "cta": "Make a Report"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "Ebyokulabirako",
+    "heroTitleLine1": "Laba abantu b'omu bitundu",
+    "heroTitleLine2": "bye batugamba.",
+    "heroDescription": "Noonyereza engeri amaloboozi g'abantu, amagezi g'omu kitundu n'okuloopa okuyita mu WatchTower gye biyamba okuzimba obujulizi n'okutegeera obulungi ebigenda mu maaso.",
+    "filterAll": "Byonna",
+    "categoryClimate": "Embeera y'Obudde",
+    "categoryWaterSanitation": "Amazzi n'Obuyonjo",
+    "categoryRightsSafety": "Eddembe n'Obukuumi",
+    "categoryPublicServices": "Empeereza za Gavumenti",
+    "moreFilters": "Ebisengejja Ebirala",
+    "location": "Ekifo",
+    "allLocations": "Ebifo byonna",
+    "readCaseStudy": "Soma ekyokulabirako",
+    "empty": "Tewali kyokulabirako kikwatagana n'ebisengejja bino.",
+    "clearFilters": "Jjawo ebisengejja",
+    "pagination": "Empapula z'ebyokulabirako",
+    "previousPage": "Olupapula oluvudde",
+    "nextPage": "Olupapula oluddako",
+    "pageLabel": "Olupapula {number}"
   },
   "Alerts": {
     "pageTitle": "Okwewandiisa Ebikwasa",

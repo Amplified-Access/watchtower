@@ -23,6 +23,7 @@
     "home": "መነሻ",
     "datasets": "የውሂብ ስብስቦች",
     "maps": "ካርታዎች",
+    "caseStudies": "የጉዳይ ጥናቶች",
     "reports": "ሪፖርቶች",
     "chat": "ውይይት",
     "alerts": "ማንቂያዎች",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "What's happening in your community?",
     "cta": "Make a Report"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "የጉዳይ ጥናቶች",
+    "heroTitleLine1": "ማህበረሰቦች",
+    "heroTitleLine2": "የሚነግሩንን ይመልከቱ።",
+    "heroDescription": "የማህበረሰብ ድምጾች፣ የአካባቢ እውቀትና በWatchTower የሚቀርቡ ሪፖርቶች ማስረጃ ለመገንባትና መሬት ላይ ያለውን ሁኔታ በጥልቀት ለመረዳት እንዴት እንደሚረዱ ያስሱ።",
+    "filterAll": "ሁሉም",
+    "categoryClimate": "የአየር ንብረት",
+    "categoryWaterSanitation": "ውሃና ንጽህና",
+    "categoryRightsSafety": "መብቶችና ደህንነት",
+    "categoryPublicServices": "የሕዝብ አገልግሎቶች",
+    "moreFilters": "ተጨማሪ ማጣሪያዎች",
+    "location": "ቦታ",
+    "allLocations": "ሁሉም ቦታዎች",
+    "readCaseStudy": "የጉዳይ ጥናቱን ያንብቡ",
+    "empty": "ከእነዚህ ማጣሪያዎች ጋር የሚዛመድ የጉዳይ ጥናት የለም።",
+    "clearFilters": "ማጣሪያዎችን ያጽዱ",
+    "pagination": "የጉዳይ ጥናቶች ገጾች",
+    "previousPage": "ቀዳሚ ገጽ",
+    "nextPage": "ቀጣይ ገጽ",
+    "pageLabel": "ገጽ {number}"
   },
   "Alerts": {
     "pageTitle": "ለማንቂያዎች ይመዝገቡ",

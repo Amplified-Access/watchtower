@@ -23,6 +23,7 @@
     "home": "ہوم",
     "datasets": "ڈیٹا سیٹس",
     "maps": "نقشے",
+    "caseStudies": "کیس اسٹڈیز",
     "reports": "رپورٹیں",
     "chat": "چیٹ",
     "alerts": "انتباہات",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "آپ کی کمیونٹی میں کیا ہو رہا ہے؟",
     "cta": "رپورٹ کریں"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "کیس اسٹڈیز",
+    "heroTitleLine1": "دیکھیں کمیونٹیز",
+    "heroTitleLine2": "ہمیں کیا بتا رہی ہیں۔",
+    "heroDescription": "جانیں کہ کمیونٹی کی آوازیں، مقامی علم اور WatchTower کے ذریعے رپورٹنگ کس طرح شواہد اکٹھے کرنے اور زمینی حقائق کو بہتر سمجھنے میں مدد دے رہی ہیں۔",
+    "filterAll": "سب",
+    "categoryClimate": "موسمیات",
+    "categoryWaterSanitation": "پانی اور صفائی",
+    "categoryRightsSafety": "حقوق اور تحفظ",
+    "categoryPublicServices": "عوامی خدمات",
+    "moreFilters": "مزید فلٹرز",
+    "location": "مقام",
+    "allLocations": "تمام مقامات",
+    "readCaseStudy": "کیس اسٹڈی پڑھیں",
+    "empty": "ان فلٹرز سے کوئی کیس اسٹڈی میل نہیں کھاتی۔",
+    "clearFilters": "فلٹرز صاف کریں",
+    "pagination": "کیس اسٹڈیز کے صفحات",
+    "previousPage": "پچھلا صفحہ",
+    "nextPage": "اگلا صفحہ",
+    "pageLabel": "صفحہ {number}"
   },
   "Alerts": {
     "pageTitle": "انتباہات کے لیے سبسکرائب کریں",

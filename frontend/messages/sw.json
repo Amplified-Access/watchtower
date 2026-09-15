@@ -23,6 +23,7 @@
     "home": "Nyumbani",
     "datasets": "Seti za Data",
     "maps": "Ramani",
+    "caseStudies": "Mifano halisi",
     "reports": "Ripoti",
     "chat": "Mazungumzo",
     "alerts": "Arifa",
@@ -33,6 +34,27 @@
   "AnnouncementBanner": {
     "message": "Kuna nini kinachotokea katika jamii yako?",
     "cta": "Toa Ripoti"
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "Mifano Halisi",
+    "heroTitleLine1": "Ona jamii",
+    "heroTitleLine2": "zinatuambia nini.",
+    "heroDescription": "Chunguza jinsi sauti za jamii, maarifa ya wenyeji na ripoti kupitia WatchTower zinavyosaidia kujenga ushahidi na kuelewa kwa kina kinachotokea mashinani.",
+    "filterAll": "Zote",
+    "categoryClimate": "Hali ya Hewa",
+    "categoryWaterSanitation": "Maji na Usafi",
+    "categoryRightsSafety": "Haki na Usalama",
+    "categoryPublicServices": "Huduma za Umma",
+    "moreFilters": "Vichujio Zaidi",
+    "location": "Mahali",
+    "allLocations": "Maeneo yote",
+    "readCaseStudy": "Soma mfano huu",
+    "empty": "Hakuna mifano inayolingana na vichujio hivi.",
+    "clearFilters": "Futa vichujio",
+    "pagination": "Kurasa za mifano halisi",
+    "previousPage": "Ukurasa uliopita",
+    "nextPage": "Ukurasa unaofuata",
+    "pageLabel": "Ukurasa {number}"
   },
   "Alerts": {
     "pageTitle": "Usajili wa tahadhari",
