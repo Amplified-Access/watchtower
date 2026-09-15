@@ -203,6 +203,24 @@
     "incidentTypes": "Aina za matukio",
     "regions": "Mikoa"
   },
+  "MapsPage": {
+    "eyebrow": "Ramani",
+    "heroTitleLine1": "Ona kinachotokea.",
+    "heroTitleLine2": "Ona kinapotokea.",
+    "heroDescription": "Tumia ramani shirikishi za moja kwa moja kuchunguza masuala yaliyoripotiwa na jamii katika maeneo mbalimbali na kwa muda.",
+    "exploreLiveMap": "Chunguza Ramani ya Moja kwa Moja",
+    "openLiveMap": "Fungua ramani ya matukio ya moja kwa moja",
+    "thematicLabel": "Ramani za Mada",
+    "thematicHeading": "Chunguza masuala yanayoathiri jamii.",
+    "thematicDescription": "Nenda zaidi ya matukio binafsi na uchunguze ripoti kuhusu masuala, maeneo na mada mahususi.",
+    "exploreMap": "Chunguza Ramani",
+    "thematicEmpty": "Hakuna aina za matukio zinazopatikana kwa ramani kwa sasa.",
+    "thematicError": "Imeshindwa kupakia aina za matukio. Tafadhali jaribu tena baadaye.",
+    "digDeeperTitle": "Chimba zaidi",
+    "digDeeperDescription": "Uliza maswali kupitia msaidizi wetu wa gumzo au jisajili kupokea arifa ili uwe na taarifa kuhusu masuala na mienendo mipya.",
+    "chatWithEsi": "Ongea na Esi",
+    "viewLiveMap": "Tazama Ramani ya Moja kwa Moja"
+  },
   "Dashboard": {
     "overview": "Muhtasari",
     "recentActivity": "Shughuli za hivi karibuni",

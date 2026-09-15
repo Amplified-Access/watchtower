@@ -1,92 +1,83 @@
-import Container from "@/components/common/container";
-import HeadingFour from "@/components/common/heading-four";
-import HeadingOne from "@/components/common/heading-one";
-import HeadingTwo from "@/components/common/heading-two";
-import TextComponent from "@/components/common/text-component";
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import H3 from "@/components/common/heading-three";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
+import { Bot, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import CallToAction from "@/components/common/call-to-action";
-import { ArrowRight, MoveRight } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import Footer from "@/components/layout/footer/page";
+import MapsHero from "@/features/maps/components/maps-landing/maps-hero";
 import DynamicThematicMaps from "@/features/maps/components/dynamic-thematic-maps";
 
 const Page = () => {
+  const t = useTranslations("MapsPage");
+  const tBanner = useTranslations("AnnouncementBanner");
+
   return (
     <>
-      <section className="sticky top-0 shadow-xs w-full z-5 pt-20 pb-3 bg-white ">
-        <Container size="xs" className="">
-          <TextComponent className="text-sm ">
-            Navigate our live interactive maps to explore community-reported issues across locations and over time.
-          </TextComponent>
-        </Container>
-      </section>
-      <section className=" pb-20 pt-8 bg-white">
-        <Container size="xs" className="flex items-center pt-10">
-          <div className="w-full">
-            <H3 className="text-center pb-8">Live incident map</H3>
-            <Link href={"/maps/live-incident-map"} className="">
-              <div className="relative isolate group">
-                <Image
-                  src={"/images/live-incident-map.png"}
-                  alt={""}
-                  width={1000}
-                  height={700}
-                  className="aspect-wideo rounded-lg w-full object-cover"
-                  draggable={false}
-                />
-              </div>
-              <div className="flex justify-center pt-8 md:pt-0">
-                <Button size={"lg"} className="hover:scale-105">
-                  <span>Go to map</span>
-                  <MoveRight size={16} />
-                </Button>
-              </div>
-            </Link>
-          </div>
-          {/* <div className=" w-1/2 px-20">
-            <H3 >Live incident map</H3>
-            <TextComponent className="pt-8 pb-12">
-              View events in real-time as they are
-              documented by users. See where incidents are occurring and how
-              they are affecting communities on the ground. This map helps
-              everyone understand what's happening and where help is needed.
-            </TextComponent>
-            <Link
-              href={""}
-              className={cn(buttonVariants({ variant: "default", size:"lg" }))}
-            >
-              Go to map
-            </Link>
-          </div> */}
-        </Container>
-      </section>
+      <MapsHero />
 
-      {/* Dynamic Thematic Maps Section */}
       <DynamicThematicMaps />
 
-      <section className="pb-20">
-        <Container size="xs">
-          <CallToAction
-            callToAction={{
-              title: "Dig deeper",
-              description:
-                "Ask questions through our chat assistant or sign up for timely alerts and updates to stay informed on emerging issues or trends.",
-              variant: "secondary",
-              button1: {
-                title: "Chat with Esi",
-                link: "/chat",
-              },
-              button2: {
-                title: "Signup for alerts",
-                link: "/alerts",
-              },
-            }}
-            color="primary"
-          />
-        </Container>
+      {/* Dig deeper */}
+      <section className="relative isolate overflow-hidden bg-white [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        </div>
+        <Image
+          src="/brand/Pattern.svg"
+          alt=""
+          width={1378}
+          height={617}
+          className="pointer-events-none absolute -bottom-24 left-0 -z-10 h-auto w-full invert"
+        />
+        <div className="mx-auto max-w-xl px-6 py-20 text-center md:py-28">
+          <h2 className="font-title text-4xl font-semibold leading-tight text-dark md:text-5xl">
+            {t("digDeeperTitle")}
+          </h2>
+          <p className="mx-auto mt-4 max-w-md text-dark/60 leading-snug">
+            {t("digDeeperDescription")}
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href="/chat"
+              className={cn(
+                buttonVariants({ variant: "secondary", size: "lg" }),
+                "border border-sky-400 bg-white font-title font-medium hover:bg-sky-50",
+              )}
+            >
+              {t("chatWithEsi")}
+              <Bot className="text-sky-500" />
+            </Link>
+            <Link
+              href="/maps/live-incident-map"
+              className={cn(
+                buttonVariants({ variant: "default", size: "lg" }),
+                "bg-dark font-title font-medium text-white hover:bg-dark/90",
+              )}
+            >
+              {t("viewLiveMap")}
+              <ChevronRight />
+            </Link>
+          </div>
+        </div>
       </section>
+
+      <section className="relative isolate bg-primary py-4 text-white [zoom:var(--viewport-scale)]">
+        <div className="flex flex-wrap items-center justify-center gap-3 px-4 text-center text-sm font-medium md:px-8 xl:px-16">
+          <span>{tBanner("message")}</span>
+          <Link
+            href="/anonymous-reports"
+            className="rounded-full border border-white/70 px-3 py-1 text-xs font-medium transition-colors hover:bg-white/10"
+          >
+            {tBanner("cta")}
+          </Link>
+        </div>
+      </section>
+
+      <Footer />
     </>
   );
 };

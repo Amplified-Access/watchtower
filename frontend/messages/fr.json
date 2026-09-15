@@ -203,6 +203,24 @@
     "incidentTypes": "Types d'incidents",
     "regions": "Régions"
   },
+  "MapsPage": {
+    "eyebrow": "Cartes",
+    "heroTitleLine1": "Voyez ce qui se passe.",
+    "heroTitleLine2": "Voyez où cela se passe.",
+    "heroDescription": "Parcourez des cartes interactives en direct pour explorer les problèmes signalés par les communautés, selon les lieux et dans le temps.",
+    "exploreLiveMap": "Explorer la carte en direct",
+    "openLiveMap": "Ouvrir la carte des incidents en direct",
+    "thematicLabel": "Cartes thématiques",
+    "thematicHeading": "Explorez les enjeux qui façonnent les communautés.",
+    "thematicDescription": "Allez au-delà des incidents individuels et explorez les signalements autour de problèmes, de lieux et de thèmes précis.",
+    "exploreMap": "Explorer la carte",
+    "thematicEmpty": "Aucun type d'incident n'est actuellement disponible pour la cartographie.",
+    "thematicError": "Impossible de charger les types d'incidents. Veuillez réessayer plus tard.",
+    "digDeeperTitle": "Allez plus loin",
+    "digDeeperDescription": "Posez vos questions à notre assistant ou inscrivez-vous aux alertes pour rester informé des problèmes et tendances émergents.",
+    "chatWithEsi": "Discuter avec Esi",
+    "viewLiveMap": "Voir la carte en direct"
+  },
   "Dashboard": {
     "overview": "Aperçu",
     "recentActivity": "Activité récente",

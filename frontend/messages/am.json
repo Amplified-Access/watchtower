@@ -203,6 +203,24 @@
     "incidentTypes": "የክስተት ዓይነቶች",
     "regions": "ክልሎች"
   },
+  "MapsPage": {
+    "eyebrow": "ካርታዎች",
+    "heroTitleLine1": "ምን እየሆነ እንዳለ ይመልከቱ።",
+    "heroTitleLine2": "የት እየሆነ እንዳለ ይመልከቱ።",
+    "heroDescription": "በማህበረሰቦች የተዘገቡ ጉዳዮችን በቦታና በጊዜ ለመቃኘት የቀጥታ በይነተገናኝ ካርታዎችን ይጠቀሙ።",
+    "exploreLiveMap": "የቀጥታ ካርታውን ያስሱ",
+    "openLiveMap": "የቀጥታ የክስተቶች ካርታውን ይክፈቱ",
+    "thematicLabel": "ጭብጣዊ ካርታዎች",
+    "thematicHeading": "ማህበረሰቦችን የሚቀርጹ ጉዳዮችን ያስሱ።",
+    "thematicDescription": "ከነጠላ ክስተቶች ባሻገር በተወሰኑ ጉዳዮች፣ ቦታዎችና ጭብጦች ዙሪያ የቀረቡ ሪፖርቶችን ያስሱ።",
+    "exploreMap": "ካርታውን ያስሱ",
+    "thematicEmpty": "በአሁኑ ጊዜ ለካርታ የሚገኙ የክስተት ዓይነቶች የሉም።",
+    "thematicError": "የክስተት ዓይነቶችን መጫን አልተቻለም። እባክዎ ቆይተው እንደገና ይሞክሩ።",
+    "digDeeperTitle": "በጥልቀት ይመርምሩ",
+    "digDeeperDescription": "በውይይት ረዳታችን በኩል ጥያቄዎችን ይጠይቁ ወይም ስለ አዳዲስ ጉዳዮችና አዝማሚያዎች ለማወቅ ለማንቂያዎች ይመዝገቡ።",
+    "chatWithEsi": "ከኤሲ ጋር ይወያዩ",
+    "viewLiveMap": "የቀጥታ ካርታውን ይመልከቱ"
+  },
   "Dashboard": {
     "overview": "አጠቃላይ እይታ",
     "recentActivity": "የቅርብ ጊዜ እንቅስቃሴ",
