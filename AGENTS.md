@@ -103,6 +103,8 @@ pnpm test         # Jest
 pnpm test:watch   # Jest watch mode
 ```
 
+**Local env:** every tRPC request builds its context through Better Auth, which imports the Neon DB client — so without `DATABASE_URL` *all* tRPC calls (even `publicProcedure` ones) return 500, and pages silently render empty/error states. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
+
 ## Backend architecture — Clean Architecture (strict)
 
 Layers, in dependency order (inner layers must not import outer):
