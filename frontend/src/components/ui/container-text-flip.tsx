@@ -16,6 +16,13 @@ export interface ContainerTextFlipProps {
   textClassName?: string;
   /** Duration of the transition animation in milliseconds */
   animationDuration?: number;
+  /**
+   * Animate the container between each word's width. This is what makes the
+   * text appear to slide sideways, because the box is centred and its edges
+   * move under the text. Off, each word simply sizes to its content and only
+   * the per-letter reveal animates.
+   */
+  morphWidth?: boolean;
 }
 
 export function ContainerTextFlip({
@@ -24,6 +31,7 @@ export function ContainerTextFlip({
   className,
   textClassName,
   animationDuration = 700,
+  morphWidth = true,
 }: ContainerTextFlipProps) {
   const id = useId();
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -40,9 +48,9 @@ export function ContainerTextFlip({
   };
 
   useEffect(() => {
-    // Update width whenever the word changes
-    updateWidthForWord();
-  }, [currentWordIndex]);
+    // Only needed to animate the container; skipped when it sizes to content.
+    if (morphWidth) updateWidthForWord();
+  }, [currentWordIndex, morphWidth]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -67,9 +75,11 @@ export function ContainerTextFlip({
 
   return (
     <motion.div
-      layout
-      layoutId={`words-here-${id}`}
-      animate={{ width }}
+      // layout/layoutId drive Framer's projection, which translates the box
+      // between renders — the other half of the sideways movement.
+      {...(morphWidth
+        ? { layout: true as const, layoutId: `words-here-${id}`, animate: { width } }
+        : {})}
       transition={{ duration: animationDuration / 2000 }}
       className={cn(
         "relative inline-block rounded-lg pt-2 pb-3 text-center text-4xl font-semibold text-black md:text-5xl dark:text-white",
@@ -90,7 +100,7 @@ export function ContainerTextFlip({
         }}
         className={cn("inline-block", textClassName)}
         ref={textRef}
-        layoutId={`word-div-${currentWord}-${id}`}
+        {...(morphWidth ? { layoutId: `word-div-${currentWord}-${id}` } : {})}
       >
         <motion.div className="inline-block font-title">
           {complex ? (
