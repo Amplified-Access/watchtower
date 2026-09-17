@@ -48,7 +48,12 @@ const Header = () => {
     }
   };
 
-  if (pathname == "/maps/live-incident-map") {
+  // Full-screen map routes (the live map and every thematic /maps/<slug> map)
+  // render their own header with the map's search and filter controls. The
+  // marketing header would sit on top of it at a higher z-index and swallow
+  // that search. /maps itself is the landing page and keeps this header.
+  const isFullScreenMap = pathname !== "/maps" && pathname.startsWith("/maps/");
+  if (isFullScreenMap) {
     return null;
   }
 
