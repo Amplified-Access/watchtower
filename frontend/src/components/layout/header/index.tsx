@@ -53,7 +53,10 @@ const Header = () => {
   // marketing header would sit on top of it at a higher z-index and swallow
   // that search. /maps itself is the landing page and keeps this header.
   const isFullScreenMap = pathname !== "/maps" && pathname.startsWith("/maps/");
-  if (isFullScreenMap) {
+  // The conversation view is a full-height thread with its own back button, so
+  // it reclaims the header's vertical space too.
+  const isConversation = pathname.startsWith("/chat/conversation");
+  if (isFullScreenMap || isConversation) {
     return null;
   }
 
