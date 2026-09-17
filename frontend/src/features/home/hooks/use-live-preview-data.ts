@@ -29,9 +29,44 @@ export interface TopChip {
 export interface LivePreviewFilters {
   timePeriod: TimePeriod;
   customRange: DateRange;
-  categoryId: string | null;
+  /**
+   * Categories switched off in the filter panel. Tracking what is hidden rather
+   * than what is shown means the default (nothing hidden, everything visible)
+   * does not have to wait for the incident type list to load.
+   */
+  hiddenCategoryIds: string[];
   search: string;
 }
+
+/** Flip one category's toggle. */
+export const toggleCategoryVisibility = (hiddenCategoryIds: string[], id: string) =>
+  hiddenCategoryIds.includes(id)
+    ? hiddenCategoryIds.filter((hidden) => hidden !== id)
+    : [...hiddenCategoryIds, id];
+
+/** True when `id` is the only category left visible. */
+export const isCategorySoloed = (
+  hiddenCategoryIds: string[],
+  incidentTypes: { id: string }[],
+  id: string,
+) =>
+  incidentTypes.length > 1 &&
+  !hiddenCategoryIds.includes(id) &&
+  incidentTypes.every((type) => type.id === id || hiddenCategoryIds.includes(type.id));
+
+/**
+ * Category chips solo a category rather than toggling it, which keeps their
+ * "off by default, one lights up when you pick it" behaviour now that the panel
+ * toggles share the same state.
+ */
+export const soloCategory = (
+  hiddenCategoryIds: string[],
+  incidentTypes: { id: string }[],
+  id: string,
+) =>
+  isCategorySoloed(hiddenCategoryIds, incidentTypes, id)
+    ? []
+    : incidentTypes.filter((type) => type.id !== id).map((type) => type.id);
 
 const PERIOD_MS: Record<Exclude<TimePeriod, "custom">, number> = {
   "24h": 24 * 60 * 60 * 1000,
@@ -79,7 +114,7 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
         }
       }
 
-      if (filters.categoryId && r.incidentTypeId !== filters.categoryId) {
+      if (r.incidentTypeId && filters.hiddenCategoryIds.includes(r.incidentTypeId)) {
         return false;
       }
 

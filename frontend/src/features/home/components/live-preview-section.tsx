@@ -3,7 +3,12 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Locate } from "lucide-react";
-import { useLivePreviewData } from "../hooks/use-live-preview-data";
+import {
+  isCategorySoloed,
+  soloCategory,
+  toggleCategoryVisibility,
+  useLivePreviewData,
+} from "../hooks/use-live-preview-data";
 import type {
   DateRange,
   TimePeriod,
@@ -20,18 +25,18 @@ const LivePreviewSection = () => {
   const [viewMode, setViewMode] = useState<"globe" | "map">("globe");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("30d");
   const [customRange, setCustomRange] = useState<DateRange>({});
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [hiddenCategoryIds, setHiddenCategoryIds] = useState<string[]>([]);
   const [country, setCountry] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [layers, setLayers] = useState({
-    reports: false,
-    clusters: true,
-    heatmap: false,
-    boundaries: true,
-  });
+  // The map-layer toggles are gone from the panel, so these are fixed for now.
+  const layers = { reports: false, clusters: true, heatmap: false, boundaries: true };
 
   const { incidentTypes, filteredReports, bubbles, stats, topChips } =
-    useLivePreviewData({ timePeriod, customRange, categoryId, search });
+    useLivePreviewData({ timePeriod, customRange, hiddenCategoryIds, search });
+
+  const soloedCategoryId =
+    incidentTypes.find((type) => isCategorySoloed(hiddenCategoryIds, incidentTypes, type.id))?.id ??
+    null;
 
   const visibleReports = country
     ? filteredReports.filter((r) => r.country === country)
@@ -49,14 +54,14 @@ const LivePreviewSection = () => {
     if (chip.kind === "country") {
       setCountry((current) => (current === chip.value ? null : chip.value));
     } else {
-      setCategoryId((current) => (current === chip.value ? null : chip.value));
+      setHiddenCategoryIds((current) => soloCategory(current, incidentTypes, chip.value));
     }
   };
 
   const handleReset = () => {
     setTimePeriod("30d");
     setCustomRange({});
-    setCategoryId(null);
+    setHiddenCategoryIds([]);
     setCountry(null);
     setSearch("");
   };
@@ -89,7 +94,7 @@ const LivePreviewSection = () => {
                 onSearchChange={setSearch}
                 chips={topChips}
                 activeCountry={country}
-                activeCategoryId={categoryId}
+                activeCategoryId={soloedCategoryId}
                 onToggleChip={handleToggleChip}
               />
             </div>
@@ -134,11 +139,11 @@ const LivePreviewSection = () => {
               onTimePeriodChange={setTimePeriod}
               customRange={customRange}
               onCustomRangeChange={setCustomRange}
-              categoryId={categoryId}
-              onCategoryChange={setCategoryId}
               incidentTypes={incidentTypes}
-              layers={layers}
-              onLayersChange={setLayers}
+              hiddenCategoryIds={hiddenCategoryIds}
+              onToggleCategory={(id) =>
+                setHiddenCategoryIds((current) => toggleCategoryVisibility(current, id))
+              }
               totalReports={stats.totalReports}
               onReset={handleReset}
             />

@@ -17,6 +17,9 @@ import ExploreSidebar from "@/features/home/components/explore-sidebar";
 import FilterPanel from "@/features/home/components/filter-panel";
 import GlobeMap, { type GlobeMapHandle } from "@/features/home/components/globe-map";
 import {
+  isCategorySoloed,
+  soloCategory,
+  toggleCategoryVisibility,
   useLivePreviewData,
   type DateRange,
   type TimePeriod,
@@ -44,15 +47,16 @@ const LiveMap = () => {
   const [viewMode, setViewMode] = useState<"globe" | "map">("globe");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("30d");
   const [customRange, setCustomRange] = useState<DateRange>({});
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [hiddenCategoryIds, setHiddenCategoryIds] = useState<string[]>([]);
   const [country, setCountry] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [layers, setLayers] = useState(DEFAULT_LAYERS);
+  // The map-layer toggles are gone from the panel, so these are fixed for now.
+  const layers = DEFAULT_LAYERS;
 
   const { incidentTypes, filteredReports, bubbles, stats, topChips } = useLivePreviewData({
     timePeriod,
     customRange,
-    categoryId,
+    hiddenCategoryIds,
     search,
   });
 
@@ -74,17 +78,18 @@ const LiveMap = () => {
     if (chip.kind === "country") {
       setCountry((current) => (current === chip.value ? null : chip.value));
     } else {
-      setCategoryId((current) => (current === chip.value ? null : chip.value));
+      setHiddenCategoryIds((current) => soloCategory(current, incidentTypes, chip.value));
     }
   };
   const isChipActive = (chip: TopChip) =>
-    chip.kind === "country" ? country === chip.value : categoryId === chip.value;
+    chip.kind === "country"
+      ? country === chip.value
+      : isCategorySoloed(hiddenCategoryIds, incidentTypes, chip.value);
 
   const resetFilters = () => {
     setTimePeriod("30d");
     setCustomRange({});
-    setCategoryId(null);
-    setLayers(DEFAULT_LAYERS);
+    setHiddenCategoryIds([]);
     setCountry(null);
     setSearch("");
   };
@@ -293,11 +298,11 @@ const LiveMap = () => {
               onTimePeriodChange={setTimePeriod}
               customRange={customRange}
               onCustomRangeChange={setCustomRange}
-              categoryId={categoryId}
-              onCategoryChange={setCategoryId}
+              hiddenCategoryIds={hiddenCategoryIds}
+              onToggleCategory={(id) =>
+                setHiddenCategoryIds((current) => toggleCategoryVisibility(current, id))
+              }
               incidentTypes={incidentTypes}
-              layers={layers}
-              onLayersChange={setLayers}
               totalReports={visibleReports.length}
               onReset={resetFilters}
               onViewReports={() => setIsFiltersOpen(false)}
