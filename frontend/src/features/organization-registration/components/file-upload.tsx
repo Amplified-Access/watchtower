@@ -75,7 +75,9 @@ export default function Component({ file, setFile }: any) {
           >
             <UploadIcon className="size-4 opacity-60" />
           </div>
-          <p className="mb-1.5 text-sm font-medium">Cretificate of incorporation</p>
+          <p className="mb-1.5 font-title text-sm font-medium text-dark">
+            Drop your file here
+          </p>
           <p className="text-muted-foreground text-xs">
             Drag & drop or click to browse (max. {formatBytes(maxSize)})
           </p>

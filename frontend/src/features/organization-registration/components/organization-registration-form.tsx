@@ -22,6 +22,7 @@ import { trpc } from "@/_trpc/client";
 import Loader from "@/components/common/loader";
 import { toast } from "sonner";
 import FileUpload from "./file-upload";
+import Link from "next/link";
 
 const OrganizationRegistrationForm = ({
   className,
@@ -126,32 +127,32 @@ const OrganizationRegistrationForm = ({
   };
 
   return (
-    <div
-      className={cn(
-        "w-full max-w-lg px-10 flex flex-col gap-4 rounded-2xl ",
-        className,
-      )}
-      {...props}
-    >
-      <h1 className="text-3xl font-semibold font-title w-full leading-tight">
-        Register organization
+    <div className={cn("flex flex-col", className)} {...props}>
+      <h1 className="text-center font-title text-4xl font-medium text-dark md:text-5xl">
+        Register organisation
       </h1>
+      <p className="mt-3 text-center text-dark/60 md:text-lg">
+        Apply to bring your organisation onto WatchTower.
+      </p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-3">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 md:mt-10">
+          <div className="flex flex-col gap-6">
             <FormField
               control={form.control}
               name="organizationName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="gap-3">
                   <div className="flex justify-between">
-                    {/* <FormLabel>Organization Name</FormLabel> */}
-                    {/* <FormMessage /> */}
+                    <FormLabel className="font-title text-base font-medium text-dark">
+                      Organisation name
+                    </FormLabel>
+                    <FormMessage />
                   </div>
                   <FormControl>
                     <Input
                       id="organizationName"
-                      placeholder="Organization name"
+                      autoComplete="organization"
+                      className="h-12 bg-white px-4 shadow-none md:text-base"
                       {...field}
                     />
                   </FormControl>
@@ -162,15 +163,18 @@ const OrganizationRegistrationForm = ({
               control={form.control}
               name="applicantName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="gap-3">
                   <div className="flex justify-between">
-                    {/* <FormLabel>Applicant Name</FormLabel>
-                    <FormMessage /> */}
+                    <FormLabel className="font-title text-base font-medium text-dark">
+                      Applicant name
+                    </FormLabel>
+                    <FormMessage />
                   </div>
                   <FormControl>
                     <Input
                       id="applicantName"
-                      placeholder="Applicant name"
+                      autoComplete="name"
+                      className="h-12 bg-white px-4 shadow-none md:text-base"
                       {...field}
                     />
                   </FormControl>
@@ -181,16 +185,19 @@ const OrganizationRegistrationForm = ({
               control={form.control}
               name="applicantEmail"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="gap-3">
                   <div className="flex justify-between">
-                    {/* <FormLabel>Applicant Email</FormLabel>
-                    <FormMessage /> */}
+                    <FormLabel className="font-title text-base font-medium text-dark">
+                      Email
+                    </FormLabel>
+                    <FormMessage />
                   </div>
                   <FormControl>
                     <Input
                       id="applicantEmail"
                       type="email"
-                      placeholder="E-mail"
+                      autoComplete="email"
+                      className="h-12 bg-white px-4 shadow-none md:text-base"
                       {...field}
                     />
                   </FormControl>
@@ -201,31 +208,48 @@ const OrganizationRegistrationForm = ({
               control={form.control}
               name="website"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="gap-3">
                   <div className="flex justify-between">
-                    {/* <FormLabel>Organization website</FormLabel>
-                    <FormMessage /> */}
+                    <FormLabel className="font-title text-base font-medium text-dark">
+                      Website
+                    </FormLabel>
+                    <FormMessage />
                   </div>
                   <FormControl>
-                    <Input id="website" placeholder="Website" {...field} />
+                    <Input
+                      id="website"
+                      inputMode="url"
+                      placeholder="https://"
+                      className="h-12 bg-white px-4 shadow-none md:text-base"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
-            <div className="mt-2">
-              <FormItem>
-                {/* <FormLabel>Certificate of incorporation</FormLabel> */}
-                <FileUpload file={file} setFile={setFile} />
-              </FormItem>
-            </div>
+            <FormItem className="gap-3">
+              <FormLabel className="font-title text-base font-medium text-dark">
+                Certificate of incorporation
+              </FormLabel>
+              <FileUpload file={file} setFile={setFile} />
+            </FormItem>
             <Button
               type="submit"
-              className="w-full font-medium mt-4"
               disabled={isLoading}
+              className="h-11 w-full rounded-full font-title text-base hover:cursor-pointer"
             >
-              {isLoading ? <Loader /> : "Submit"}
+              {isLoading ? <Loader /> : <span>Submit application</span>}
             </Button>
           </div>
+          <p className="mt-3 text-center font-title text-dark md:text-lg">
+            Already have an account?{" "}
+            <Link
+              href="/sign-in"
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              Sign in
+            </Link>
+          </p>
         </form>
       </Form>
     </div>
