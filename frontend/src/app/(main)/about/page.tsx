@@ -44,21 +44,32 @@ const Page = () => {
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-primary [zoom:var(--viewport-scale)]">
         <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
-          <div className="absolute inset-y-0 left-4 w-px bg-white/20 md:left-8 xl:left-16" />
-          <div className="absolute inset-y-0 right-4 w-px bg-white/20 md:right-8 xl:right-16" />
-          <div className="absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-white/20 md:block" />
+          <div className="absolute inset-y-0 left-4 w-px bg-white md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-white md:right-8 xl:right-16" />
+          <div className="absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-white md:block" />
+          {/* Watermark rides with the rails so it tucks just inside the right
+              one at every breakpoint, instead of drifting across it on wide
+              screens and getting sheared off by the section's overflow-hidden. */}
+          <Image
+            src="/brand/icon-white.svg"
+            alt=""
+            width={40}
+            height={37}
+            className="absolute bottom-0 right-24 h-16 md:h-24 "
+          />
         </div>
-        <div className="py-16 md:py-20">
+        <div className="py-16 md:pt-20 md:pb-4">
           <Container className="px-8 md:px-14 xl:px-24">
-            <div className="grid divide-y divide-white/20 md:grid-cols-2 md:items-center md:divide-y-0">
+            <div className="grid divide-y divide-white md:grid-cols-2 md:items-center md:divide-y-0">
               <div className="py-10 md:pb-0 md:pr-12 xl:pr-16">
                 <p className="mb-4 font-title text-xs font-semibold uppercase tracking-widest text-white/70">
                   {tNav("about")} WatchTower
                 </p>
-                <h1 className="max-w-xl font-title text-4xl font-semibold leading-tight text-white md:text-5xl">
+                <h1 className="max-w-xl font-title text-4xl font-semibold text-white md:text-5xl">
                   {t("heroTitle")}
                 </h1>
-                <div className="mt-8 flex max-w-lg flex-col gap-4 border-t border-white/20 pt-8">
+                <div className="mt-8 -ml-4 -mr-4 h-px bg-white md:-ml-6 md:-mr-12 xl:-ml-8 xl:-mr-16" />
+                <div className="mt-8 flex max-w-lg flex-col gap-4">
                   <TextComponent className="text-white/70">
                     {t("heroDescription")}
                   </TextComponent>
@@ -80,13 +91,6 @@ const Page = () => {
             </div>
           </Container>
         </div>
-        <Image
-          src="/brand/icon-white.svg"
-          alt=""
-          width={120}
-          height={120}
-          className="pointer-events-none absolute -bottom-6 right-6 h-16 w-auto opacity-10 md:h-24"
-        />
       </section>
       <section className="bg-white">
         <LanguageMarquee />
@@ -154,7 +158,7 @@ const Page = () => {
                     alt=""
                     width={677}
                     height={561}
-                    className="h-auto w-full rounded-2xl"
+                    className="h-auto w-full rounded-lg"
                   />
                 </div>
                 <div className={cn(index % 2 === 1 && "md:order-1")}>
@@ -188,15 +192,9 @@ const Page = () => {
           alt=""
           width={1378}
           height={617}
-          className="pointer-events-none absolute -top-16 right-0 -z-10 h-auto w-full rotate-180 opacity-50 mix-blend-overlay"
+          className="pointer-events-none absolute -bottom-30 right-0 -z-10 h-auto w-full rotate-180 invert"
         />
-        <Image
-          src="/brand/Pattern.svg"
-          alt=""
-          width={1378}
-          height={617}
-          className="pointer-events-none absolute -bottom-16 left-0 -z-10 h-auto w-full opacity-50 mix-blend-overlay"
-        />
+        
         <div className="pt-20 pb-16 md:pt-28 md:pb-20">
           <Container size="xs" className="text-center">
             <HeadingTwo className="text-4xl text-white md:text-5xl">
@@ -234,13 +232,13 @@ const Page = () => {
       </section>
 
       {/* Impact */}
-      <section className="relative isolate border-y border-border bg-white [zoom:var(--viewport-scale)]">
+      <section className="relative isolate border-t border-border bg-white [zoom:var(--viewport-scale)]">
         <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
           <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
-        <Container size="xs" className="py-16 md:py-24">
-          <div className="text-center mb-12 md:mb-16">
+        <Container size="xs" className="pt-16 md:pt-24">
+          <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-semibold font-title leading-tight">
               {tHome("impactTitle")}
             </h2>
@@ -248,7 +246,13 @@ const Page = () => {
               {tHome("impactDescription")}
             </TextComponent>
           </div>
-          <div className="grid grid-cols-2 divide-x divide-y divide-border md:grid-cols-4 md:divide-y-0">
+        </Container>
+        {/* Rail width, matching the dark block below, and no bottom padding so
+            the cells butt straight up against it. The top rule lives on each
+            cell rather than on the grid: that way it also serves as the row
+            divider in the 2-col layout without doubling up on the first row. */}
+        <div className="mx-auto mt-12 max-w-360 px-4 md:mt-16 md:px-8 xl:px-16">
+          <div className="grid grid-cols-2 divide-x divide-border md:grid-cols-4">
             {[
               { value: "2,000+", label: tHome("statWeeklyUsers") },
               { value: "22", label: tHome("statDeployments") },
@@ -257,7 +261,7 @@ const Page = () => {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="flex flex-col items-center justify-center gap-1 py-8 text-center md:py-10"
+                className="flex flex-col items-center justify-center gap-1 border-t border-border py-8 text-center md:py-10"
               >
                 <span className="font-title text-3xl font-semibold text-dark md:text-4xl">
                   {stat.value}
@@ -266,7 +270,7 @@ const Page = () => {
               </div>
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* The Organisation */}
@@ -432,9 +436,9 @@ const Page = () => {
           alt=""
           width={1378}
           height={617}
-          className="pointer-events-none absolute -bottom-16 left-0 -z-10 h-auto w-full opacity-30"
+          className="pointer-events-none absolute -bottom-60 left-0 -z-10 h-auto w-full invert"
         />
-        <Container size="xs" className="py-20 text-center md:py-28">
+        <Container size="xs" className="py-16 text-center md:py-20">
           <HeadingTwo className="text-center">{t("ctaTitle")}</HeadingTwo>
           <TextComponent className="mx-auto mt-4 max-w-md text-center">
             {t("ctaDescription")}
