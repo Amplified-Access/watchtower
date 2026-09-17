@@ -11,7 +11,9 @@ export default function LogoCloud() {
   const t = useTranslations("LogoCloud");
 
   return (
-    <section className="relative bg-white overflow-hidden py-10 [zoom:var(--viewport-scale)]">
+    // The preceding section ends with its own 64px white strip (pb-16), so this
+    // one adds no top padding — that keeps the row optically centred in the gap.
+    <section className="relative bg-white overflow-hidden pb-16 [zoom:var(--viewport-scale)]">
       <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
         <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
         <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
@@ -19,7 +21,7 @@ export default function LogoCloud() {
       <Container size="lg" className="group relative px-8 md:px-12 xl:px-20">
         <div className="flex flex-col items-center md:flex-row">
           <div className="md:max-w-44 shrink-0 md:border-r md:pr-6">
-            <H4 className="text-3xl md:text-lg text-center md:text-left pt-8 pb-4">
+            <H4 className="text-3xl md:text-lg text-center md:text-left py-6">
               {t("heading")}
             </H4>
           </div>
