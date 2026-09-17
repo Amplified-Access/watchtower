@@ -9,8 +9,23 @@ import type { ReportBubble } from "../hooks/use-live-preview-data";
 
 const DEFAULT_CENTER: [number, number] = [25, 8];
 const DEFAULT_ZOOM = 1.4;
+// Tightly clustered data would otherwise fit to street level, which reads as a
+// bug on a world map. Cap it so the opening view still shows a region.
+const FIT_MAX_ZOOM = 4.5;
+// The opening move crosses most of the globe, so it gets a longer, gentler
+// flight than the recenter button, which is usually a short correction.
+const INITIAL_FIT_DURATION = 1800;
+const RECENTER_DURATION = 900;
 const HEATMAP_SOURCE_ID = "live-preview-reports";
 const HEATMAP_LAYER_ID = "live-preview-reports-heat";
+const CLUSTER_SOURCE_ID = "live-preview-clusters";
+const CLUSTER_GLOW_LAYER_ID = "live-preview-cluster-glow";
+const CLUSTER_LAYER_ID = "live-preview-clusters";
+const CLUSTER_COUNT_LAYER_ID = "live-preview-cluster-count";
+const POINT_GLOW_LAYER_ID = "live-preview-point-glow";
+const POINT_LAYER_ID = "live-preview-point";
+const BRAND_BLUE = "#0042e7";
+const RING = "rgba(255,255,255,0.85)";
 
 // Above lg, the sidebar/search/filter cards float on top of the map, so the
 // visual "center" needs to be biased into the area they leave uncovered.
@@ -20,6 +35,22 @@ const MOBILE_PADDING = { top: 16, bottom: 16, left: 16, right: 16 };
 // Docked panels sit beside the map rather than over it, so no bias is needed.
 const getMapPadding = (docked: boolean) =>
   !docked && window.matchMedia("(min-width: 1024px)").matches ? DESKTOP_PADDING : MOBILE_PADDING;
+
+// Bounds covering every marker the map can draw, so the opening view frames the
+// data rather than the whole globe. Returns null when there is nothing to frame.
+const getDataBounds = (bubbles: ReportBubble[], points: MapReportPoint[]) => {
+  const coords = [
+    ...bubbles.map((b) => [b.lon, b.lat] as [number, number]),
+    ...points.map((p) => [p.lon, p.lat] as [number, number]),
+  ].filter(([lon, lat]) => Number.isFinite(lon) && Number.isFinite(lat));
+
+  if (coords.length === 0) return null;
+
+  return coords.reduce(
+    (bounds, coord) => bounds.extend(coord),
+    new mapboxgl.LngLatBounds(coords[0], coords[0]),
+  );
+};
 
 export interface MapReportPoint {
   lat: number;
@@ -77,7 +108,6 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
   const locale = useLocale();
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const boundaryLayerIdRef = useRef<string | null>(null);
 
@@ -134,6 +164,92 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
         },
       });
 
+      // Supercluster-backed source: groups merge as you zoom out and split as
+      // you zoom in. Paint properties mirror the brand marker (blue fill, white
+      // ring, soft halo) because only a GL source can cluster.
+      map.addSource(CLUSTER_SOURCE_ID, {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+        cluster: true,
+        clusterRadius: 50,
+        clusterMaxZoom: 14,
+      });
+      map.addLayer({
+        id: CLUSTER_GLOW_LAYER_ID,
+        type: "circle",
+        source: CLUSTER_SOURCE_ID,
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-color": BRAND_BLUE,
+          "circle-opacity": 0.25,
+          "circle-radius": ["step", ["get", "point_count"], 21, 10, 25, 30, 30, 50, 35],
+        },
+      });
+      map.addLayer({
+        id: CLUSTER_LAYER_ID,
+        type: "circle",
+        source: CLUSTER_SOURCE_ID,
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-color": BRAND_BLUE,
+          "circle-radius": ["step", ["get", "point_count"], 16, 10, 20, 30, 25, 50, 30],
+          "circle-stroke-width": 2,
+          "circle-stroke-color": RING,
+        },
+      });
+      map.addLayer({
+        id: CLUSTER_COUNT_LAYER_ID,
+        type: "symbol",
+        source: CLUSTER_SOURCE_ID,
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": ["get", "point_count_abbreviated"],
+          "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+          "text-size": ["step", ["get", "point_count"], 11, 30, 14],
+        },
+        paint: { "text-color": "#ffffff" },
+      });
+      // Single reports stay unlabelled: a count of 1 is noise.
+      map.addLayer({
+        id: POINT_GLOW_LAYER_ID,
+        type: "circle",
+        source: CLUSTER_SOURCE_ID,
+        filter: ["!", ["has", "point_count"]],
+        paint: { "circle-color": BRAND_BLUE, "circle-opacity": 0.25, "circle-radius": 11 },
+      });
+      map.addLayer({
+        id: POINT_LAYER_ID,
+        type: "circle",
+        source: CLUSTER_SOURCE_ID,
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+          "circle-color": BRAND_BLUE,
+          "circle-radius": 7,
+          "circle-stroke-width": 2,
+          "circle-stroke-color": RING,
+        },
+      });
+
+      // Clicking a cluster zooms to where it breaks apart.
+      map.on("click", CLUSTER_LAYER_ID, (event) => {
+        const feature = event.features?.[0];
+        const clusterId = feature?.properties?.cluster_id;
+        if (clusterId == null) return;
+        const source = map.getSource(CLUSTER_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
+        source?.getClusterExpansionZoom(clusterId as number, (error, zoom) => {
+          if (error || zoom == null) return;
+          map.easeTo({
+            center: (feature!.geometry as GeoJSON.Point).coordinates as [number, number],
+            zoom,
+            duration: 600,
+          });
+        });
+      });
+      for (const id of [CLUSTER_LAYER_ID, POINT_LAYER_ID]) {
+        map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
+        map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
+      }
+
       setIsLoaded(true);
     });
 
@@ -142,8 +258,6 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     return () => {
       window.removeEventListener("resize", handleResize);
       resizeObserver.disconnect();
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = [];
       map.remove();
       mapRef.current = null;
       setIsLoaded(false);
@@ -151,72 +265,72 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [container]);
 
-  // Markers: country bubbles (clusters) + individual report pins
+  // Feed the clustered source and toggle what it draws. The country-grouped
+  // `bubbles` are no longer rendered: they were a fixed grouping that never
+  // responded to zoom, which is what Supercluster is for. Clustering the raw
+  // reports means the counts are real and break apart as you zoom in.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !isLoaded) return;
 
-    markersRef.current.forEach((marker) => marker.remove());
-    markersRef.current = [];
+    const source = map.getSource(CLUSTER_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
+    source?.setData({
+      type: "FeatureCollection",
+      features: points.map((point) => ({
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [point.lon, point.lat] },
+        properties: {
+          title: point.title ?? "",
+          description: point.description ?? "",
+          createdAt: point.createdAt ?? "",
+        },
+      })),
+    });
 
-    if (layers.clusters) {
-      for (const bubble of bubbles) {
-        const size = Math.max(28, Math.min(56, 24 + Math.log(bubble.count + 1) * 10));
-        const el = document.createElement("div");
-        el.style.width = `${size}px`;
-        el.style.height = `${size}px`;
-        el.style.borderRadius = "50%";
-        el.style.display = "flex";
-        el.style.alignItems = "center";
-        el.style.justifyContent = "center";
-        el.style.backgroundColor = "var(--primary)";
-        el.style.border = "2px solid rgba(255,255,255,0.85)";
-        el.style.boxShadow = "0 0 0 4px rgba(0,66,231,0.25)";
-        el.style.color = "#fff";
-        el.style.fontWeight = "600";
-        el.style.fontSize = size > 40 ? "14px" : "11px";
-        el.textContent = String(bubble.count);
-
-        const marker = new mapboxgl.Marker(el)
-          .setLngLat([bubble.lon, bubble.lat])
-          .addTo(map);
-        markersRef.current.push(marker);
-      }
+    const visibility = (on: boolean) => (on ? "visible" : "none");
+    for (const id of [CLUSTER_GLOW_LAYER_ID, CLUSTER_LAYER_ID, CLUSTER_COUNT_LAYER_ID]) {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", visibility(layers.clusters));
     }
-
-    if (layers.reports) {
-      for (const point of points) {
-        const el = document.createElement("div");
-        el.style.width = "6px";
-        el.style.height = "6px";
-        el.style.borderRadius = "50%";
-        el.style.backgroundColor = "#fff";
-        el.style.border = "1px solid var(--primary)";
-        el.style.opacity = "0.85";
-
-        const marker = new mapboxgl.Marker(el).setLngLat([point.lon, point.lat]);
-        if (point.title || point.description) {
-          el.style.cursor = "pointer";
-          const dateLine = point.createdAt
-            ? t("reportDate", {
-                date: new Date(point.createdAt).toLocaleDateString(locale, {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                }),
-              })
-            : undefined;
-          marker.setPopup(
-            new mapboxgl.Popup({ offset: 10, maxWidth: "260px" }).setDOMContent(
-              buildReportPopup(point, dateLine),
-            ),
-          );
-        }
-        marker.addTo(map);
-        markersRef.current.push(marker);
-      }
+    for (const id of [POINT_GLOW_LAYER_ID, POINT_LAYER_ID]) {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", visibility(layers.reports));
     }
-  }, [bubbles, points, layers.clusters, layers.reports, isLoaded, locale, t]);
+  }, [points, layers.clusters, layers.reports, isLoaded]);
+
+  // Popups for single reports, bound here so they pick up the current locale.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isLoaded) return;
+
+    const handleClick = (event: mapboxgl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      const props = feature.properties ?? {};
+      const title = String(props.title ?? "");
+      const description = String(props.description ?? "");
+      if (!title && !description) return;
+
+      const createdAt = String(props.createdAt ?? "");
+      const dateLine = createdAt
+        ? t("reportDate", {
+            date: new Date(createdAt).toLocaleDateString(locale, {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }),
+          })
+        : undefined;
+
+      new mapboxgl.Popup({ offset: 10, maxWidth: "260px" })
+        .setLngLat((feature.geometry as GeoJSON.Point).coordinates as [number, number])
+        .setDOMContent(buildReportPopup({ lat: 0, lon: 0, title, description }, dateLine))
+        .addTo(map);
+    };
+
+    map.on("click", POINT_LAYER_ID, handleClick);
+    return () => {
+      map.off("click", POINT_LAYER_ID, handleClick);
+    };
+  }, [isLoaded, locale, t]);
 
   // Heatmap data + visibility
   useEffect(() => {
@@ -260,7 +374,46 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     map.setProjection({ name: viewMode === "globe" ? "globe" : "mercator" });
   }, [viewMode, isLoaded]);
 
+  // flyTo rather than fitBounds so the camera arcs out and back down instead of
+  // easing flatly across the globe. Deliberately not `essential`, which leaves
+  // Mapbox free to skip the flight for prefers-reduced-motion users.
+  const fitToData = (duration: number) => {
+    const map = mapRef.current;
+    if (!map) return false;
+    const bounds = getDataBounds(bubbles, points);
+    if (!bounds) return false;
+
+    const padding = getMapPadding(docked);
+    const camera = map.cameraForBounds(bounds, { padding });
+    if (!camera?.center) {
+      map.fitBounds(bounds, { padding, maxZoom: FIT_MAX_ZOOM, duration });
+      return true;
+    }
+
+    map.flyTo({
+      center: camera.center,
+      zoom: Math.min(camera.zoom ?? FIT_MAX_ZOOM, FIT_MAX_ZOOM),
+      padding,
+      duration,
+      curve: 1.42,
+    });
+    return true;
+  };
+
+  // Fly to the data once, as soon as both the style and the reports are ready.
+  // Reports arrive after the map, so this has to wait for a non-empty set; the
+  // ref keeps it to the opening view and stops it fighting the user's panning
+  // when filters later change the marker set.
+  const hasFitToDataRef = useRef(false);
+  useEffect(() => {
+    if (!isLoaded || hasFitToDataRef.current) return;
+    if (fitToData(INITIAL_FIT_DURATION)) hasFitToDataRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, bubbles, points]);
+
   const recenter = () => {
+    // Falls back to the whole-globe view only when there is no data to frame.
+    if (fitToData(RECENTER_DURATION)) return;
     mapRef.current?.flyTo({
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
