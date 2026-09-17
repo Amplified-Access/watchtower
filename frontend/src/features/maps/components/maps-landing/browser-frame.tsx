@@ -4,6 +4,9 @@ interface BrowserFrameProps {
   children: React.ReactNode;
   className?: string;
   contentClassName?: string;
+  // The url pill is sized as a fraction of the frame, so the small decorative
+  // frames need a wider one to fit the same text legibly.
+  urlClassName?: string;
   url?: string;
 }
 
@@ -13,6 +16,7 @@ const BrowserFrame = ({
   children,
   className,
   contentClassName,
+  urlClassName,
   url = "www.thewatchtower.tech",
 }: BrowserFrameProps) => {
   return (
@@ -28,7 +32,12 @@ const BrowserFrame = ({
           <span className="size-2.5 rounded-full bg-white md:size-3" />
           <span className="size-2.5 rounded-full bg-white md:size-3" />
         </div>
-        <div className="absolute left-1/2 hidden h-full w-2/5 -translate-x-1/2 items-center justify-center rounded-full bg-white/60 text-[10px] text-dark/60 sm:flex md:text-xs">
+        <div
+          className={cn(
+            "absolute left-1/2 hidden h-full w-2/5 -translate-x-1/2 items-center justify-center rounded-full bg-white/60 text-[10px] text-dark/60 sm:flex md:text-xs",
+            urlClassName,
+          )}
+        >
           {url}
         </div>
       </div>
