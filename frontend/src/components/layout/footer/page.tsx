@@ -114,7 +114,7 @@ const Footer = () => {
         </div>
 
         {/* Watermark */}
-        <div className="relative border-t border-white/10 pt-10 ">
+        <div className="relative border-t border-white/10 pt-8">
           <Image
             src="/brand/Pattern.svg"
             alt=""
@@ -123,21 +123,23 @@ const Footer = () => {
             className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
           />
           <div className="px-4">
+            {/* h-auto, not a fixed height or an aspect-* class: the box then
+                takes its height straight from the viewBox, so x and y scale by
+                the same factor. The old width/height attributes plus
+                preserveAspectRatio="none" squashed the glyphs vertically to
+                roughly 80% and left dead space under the rule. */}
             <svg
               aria-hidden
               viewBox="0 0 1000 130"
-              width="1283"
-              height="184"
-              preserveAspectRatio="none"
-              className="pointer-events-none -mb-4 aspect-1000/130 w-full object-contain shrink-0 select-none"
+              className="pointer-events-none h-auto w-full shrink-0 select-none"
             >
               <text
                 x="0"
-                y="105"
+                y="122"
                 textLength="1000"
                 lengthAdjust="spacingAndGlyphs"
                 className="fill-white/20 font-title font-semibold"
-                fontSize="110"
+                fontSize="168"
               >
                 {t("watchtower")}
               </text>
