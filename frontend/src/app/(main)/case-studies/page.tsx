@@ -12,21 +12,28 @@ const Page = () => {
 
   return (
     <>
-      {/* Full-bleed grid hero with no gutter lines, matching the maps hero.
-          Starts under the fixed header; the top padding clears header + banner. */}
-      <section className="relative isolate border-b border-border bg-[#f4f4f4] [zoom:var(--viewport-scale)]">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgb(0_0_0/0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgb(0_0_0/0.06)_1px,transparent_1px)] bg-size-[46px_46px]" />
-        <div className="mx-auto max-w-4xl px-6 pt-40 pb-16 text-center md:pt-48 md:pb-20">
+      {/* Starts under the fixed header; the top padding clears header + banner. */}
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
+        {/* The grid panel stops at the same gutters the next section runs its
+            rails down, rather than bleeding to the viewport edge. */}
+        <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
+          <div className="relative isolate overflow-hidden border-b border-border bg-[#f4f4f4]">
+            {/* Radial mask so the grid reads through the middle and falls away
+                at the edges instead of tiling flat across the whole panel. */}
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgb(0_0_0/0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgb(0_0_0/0.06)_1px,transparent_1px)] bg-size-[46px_46px] mask-[radial-gradient(ellipse_at_center,black_10%,transparent_75%)]" />
+            <div className="mx-auto max-w-4xl px-6 pt-28 pb-16 text-center md:pt-36 md:pb-20">
           <p className="mb-4 font-title text-sm font-medium uppercase tracking-wide text-primary">
             {t("eyebrow")}
           </p>
-          <h1 className="font-title text-4xl font-semibold leading-tight text-dark md:text-5xl">
+          <h1 className="font-title text-4xl font-semibold text-dark md:text-5xl">
             <span className="block">{t("heroTitleLine1")}</span>
             <span className="block">{t("heroTitleLine2")}</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-dark leading-snug">
-            {t("heroDescription")}
-          </p>
+              <p className="mx-auto mt-6 max-w-3xl text-dark leading-snug">
+                {t("heroDescription")}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
