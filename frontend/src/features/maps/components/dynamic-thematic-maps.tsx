@@ -26,9 +26,14 @@ const MapMockup = ({ children }: { children: React.ReactNode }) => (
     <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-[radial-gradient(var(--primary)_1.5px,transparent_1.5px)] bg-size-[10px_10px] opacity-40 mask-[linear-gradient(to_right,black,transparent)]" />
     <BrowserFrame
       className="absolute top-[12%] -right-6 bottom-0 left-[10%] flex flex-col transition-transform duration-300 group-hover:-translate-y-1"
-      contentClassName="min-h-0 flex-1 rounded-tl-md p-3 pr-0 pb-0 md:p-4 md:pr-0 md:pb-0"
+      contentClassName="min-h-0 flex-1 rounded-tl-xl p-3 pr-0 pb-0 md:p-4 md:pr-0 md:pb-0"
     >
-      {children}
+      {/* The content box is padded, so the thumbnail sits inside its corner
+          radius and shows a square corner of its own unless it is clipped too.
+          The radius lives here rather than on the thumbnail's wrapper because
+          that wrapper is zoomed, which would scale the radius out of step with
+          the frame around it. */}
+      <div className="h-full overflow-hidden rounded-tl-lg">{children}</div>
     </BrowserFrame>
   </div>
 );
