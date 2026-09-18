@@ -53,12 +53,13 @@ const LiveMap = () => {
   // The map-layer toggles are gone from the panel, so these are fixed for now.
   const layers = DEFAULT_LAYERS;
 
-  const { incidentTypes, filteredReports, bubbles, stats, topChips } = useLivePreviewData({
-    timePeriod,
-    customRange,
-    hiddenCategoryIds,
-    search,
-  });
+  const { incidentTypes, categoryIds, filteredReports, bubbles, stats, topChips } =
+    useLivePreviewData({
+      timePeriod,
+      customRange,
+      hiddenCategoryIds,
+      search,
+    });
 
   const visibleReports = country
     ? filteredReports.filter((r) => r.country === country)
@@ -78,13 +79,13 @@ const LiveMap = () => {
     if (chip.kind === "country") {
       setCountry((current) => (current === chip.value ? null : chip.value));
     } else {
-      setHiddenCategoryIds((current) => soloCategory(current, incidentTypes, chip.value));
+      setHiddenCategoryIds((current) => soloCategory(current, categoryIds, chip.value));
     }
   };
   const isChipActive = (chip: TopChip) =>
     chip.kind === "country"
       ? country === chip.value
-      : isCategorySoloed(hiddenCategoryIds, incidentTypes, chip.value);
+      : isCategorySoloed(hiddenCategoryIds, categoryIds, chip.value);
 
   const resetFilters = () => {
     setTimePeriod("30d");

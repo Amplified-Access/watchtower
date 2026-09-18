@@ -31,11 +31,11 @@ const LivePreviewSection = () => {
   // The map-layer toggles are gone from the panel, so these are fixed for now.
   const layers = { reports: false, clusters: true, heatmap: false, boundaries: true };
 
-  const { incidentTypes, filteredReports, bubbles, stats, topChips } =
+  const { incidentTypes, categoryIds, filteredReports, bubbles, stats, topChips } =
     useLivePreviewData({ timePeriod, customRange, hiddenCategoryIds, search });
 
   const soloedCategoryId =
-    incidentTypes.find((type) => isCategorySoloed(hiddenCategoryIds, incidentTypes, type.id))?.id ??
+    incidentTypes.find((type) => isCategorySoloed(hiddenCategoryIds, categoryIds, type.id))?.id ??
     null;
 
   const visibleReports = country
@@ -54,7 +54,7 @@ const LivePreviewSection = () => {
     if (chip.kind === "country") {
       setCountry((current) => (current === chip.value ? null : chip.value));
     } else {
-      setHiddenCategoryIds((current) => soloCategory(current, incidentTypes, chip.value));
+      setHiddenCategoryIds((current) => soloCategory(current, categoryIds, chip.value));
     }
   };
 

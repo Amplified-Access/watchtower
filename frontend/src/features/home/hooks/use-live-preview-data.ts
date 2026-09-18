@@ -47,12 +47,12 @@ export const toggleCategoryVisibility = (hiddenCategoryIds: string[], id: string
 /** True when `id` is the only category left visible. */
 export const isCategorySoloed = (
   hiddenCategoryIds: string[],
-  incidentTypes: { id: string }[],
+  categoryIds: string[],
   id: string,
 ) =>
-  incidentTypes.length > 1 &&
+  categoryIds.length > 1 &&
   !hiddenCategoryIds.includes(id) &&
-  incidentTypes.every((type) => type.id === id || hiddenCategoryIds.includes(type.id));
+  categoryIds.every((categoryId) => categoryId === id || hiddenCategoryIds.includes(categoryId));
 
 /**
  * Category chips solo a category rather than toggling it, which keeps their
@@ -61,12 +61,12 @@ export const isCategorySoloed = (
  */
 export const soloCategory = (
   hiddenCategoryIds: string[],
-  incidentTypes: { id: string }[],
+  categoryIds: string[],
   id: string,
 ) =>
-  isCategorySoloed(hiddenCategoryIds, incidentTypes, id)
+  isCategorySoloed(hiddenCategoryIds, categoryIds, id)
     ? []
-    : incidentTypes.filter((type) => type.id !== id).map((type) => type.id);
+    : categoryIds.filter((categoryId) => categoryId !== id);
 
 const PERIOD_MS: Record<Exclude<TimePeriod, "custom">, number> = {
   "24h": 24 * 60 * 60 * 1000,
@@ -176,6 +176,14 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
     };
   }, [allReports, orgsQuery.data, now]);
 
+  const categoryIds = useMemo(() => {
+    const ids = new Set(incidentTypes.map((type) => type.id));
+    for (const report of allReports) {
+      if (report.incidentTypeId) ids.add(report.incidentTypeId);
+    }
+    return Array.from(ids);
+  }, [incidentTypes, allReports]);
+
   const topChips = useMemo<TopChip[]>(() => {
     const byCountry = new Map<string, number>();
     for (const r of allReports) {
@@ -216,6 +224,7 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
   return {
     isLoading: reportsQuery.isLoading || typesQuery.isLoading || orgsQuery.isLoading,
     incidentTypes,
+    categoryIds,
     filteredReports,
     bubbles,
     stats,
