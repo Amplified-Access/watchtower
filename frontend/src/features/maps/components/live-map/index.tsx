@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
-  Layers,
   LocateFixed,
   PanelLeftClose,
   PanelLeftOpen,
@@ -18,6 +17,9 @@ import ExploreSidebar from "@/features/home/components/explore-sidebar";
 import FilterPanel from "@/features/home/components/filter-panel";
 import GlobeMap, { type GlobeMapHandle } from "@/features/home/components/globe-map";
 import {
+  isCategorySoloed,
+  soloCategory,
+  toggleCategoryVisibility,
   useLivePreviewData,
   type DateRange,
   type TimePeriod,
@@ -30,7 +32,7 @@ const panelToggleClassName =
   "flex size-8 items-center justify-center rounded-md text-dark transition-colors hover:bg-dark/5";
 
 const floatingButtonClassName =
-  "flex items-center justify-center rounded-full bg-white text-dark shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-colors hover:bg-dark/5";
+  "flex cursor-pointer items-center justify-center rounded-full bg-white text-dark shadow-[0_4px_16px_rgba(0,0,0,0.15)]";
 
 // Full-screen live incident map: a top bar with search, an optional Explore
 // panel on the left, the map with its floating controls, and optional filters
@@ -45,17 +47,19 @@ const LiveMap = () => {
   const [viewMode, setViewMode] = useState<"globe" | "map">("globe");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("30d");
   const [customRange, setCustomRange] = useState<DateRange>({});
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [hiddenCategoryIds, setHiddenCategoryIds] = useState<string[]>([]);
   const [country, setCountry] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [layers, setLayers] = useState(DEFAULT_LAYERS);
+  // The map-layer toggles are gone from the panel, so these are fixed for now.
+  const layers = DEFAULT_LAYERS;
 
-  const { incidentTypes, filteredReports, bubbles, stats, topChips } = useLivePreviewData({
-    timePeriod,
-    customRange,
-    categoryId,
-    search,
-  });
+  const { incidentTypes, categoryIds, filteredReports, bubbles, stats, topChips } =
+    useLivePreviewData({
+      timePeriod,
+      customRange,
+      hiddenCategoryIds,
+      search,
+    });
 
   const visibleReports = country
     ? filteredReports.filter((r) => r.country === country)
@@ -75,25 +79,28 @@ const LiveMap = () => {
     if (chip.kind === "country") {
       setCountry((current) => (current === chip.value ? null : chip.value));
     } else {
-      setCategoryId((current) => (current === chip.value ? null : chip.value));
+      setHiddenCategoryIds((current) => soloCategory(current, categoryIds, chip.value));
     }
   };
   const isChipActive = (chip: TopChip) =>
-    chip.kind === "country" ? country === chip.value : categoryId === chip.value;
+    chip.kind === "country"
+      ? country === chip.value
+      : isCategorySoloed(hiddenCategoryIds, categoryIds, chip.value);
 
   const resetFilters = () => {
     setTimePeriod("30d");
     setCustomRange({});
-    setCategoryId(null);
+    setHiddenCategoryIds([]);
     setCountry(null);
     setSearch("");
-    setLayers(DEFAULT_LAYERS);
   };
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-white">
       <header className="relative z-30 border-b border-border bg-white">
-        <div className="flex h-16 items-center gap-4 px-4 md:h-19 md:px-8 [zoom:var(--viewport-scale)]">
+        {/* lg:pl-12 matches the collapsed rail's w-12 below, so the logo starts
+            on the same vertical line the rail ends on. Keep the two in step. */}
+        <div className="flex h-16 items-center gap-4 px-4 md:h-19 md:px-8 lg:pl-12">
           <Link href="/" aria-label="WatchTower home" className="shrink-0">
             <Image
               src="/brand/logo-black.svg"
@@ -125,7 +132,7 @@ const LiveMap = () => {
           hidden={!isExploreOpen}
           className="absolute inset-y-0 left-0 z-20 w-full max-w-sm overflow-y-auto border-r border-border bg-white shadow-xl lg:static lg:w-[26rem] lg:max-w-none lg:shrink-0 lg:shadow-none"
         >
-          <div className="h-full [zoom:var(--viewport-scale)]">
+          <div className="h-full">
             <ExploreSidebar
               stats={stats}
               variant="light"
@@ -145,6 +152,25 @@ const LiveMap = () => {
           </div>
         </aside>
 
+        {/* Collapsed, a panel becomes a rail rather than vanishing: the map
+            keeps a defined edge and the toggle stays in the chrome instead of
+            floating over the map. Below lg the panels overlay the map, so the
+            floating toggles still apply there. */}
+        {!isExploreOpen && (
+          <div className="hidden w-12 shrink-0 flex-col items-center border-r border-border bg-white pt-3 lg:flex">
+            <button
+              type="button"
+              onClick={() => setIsExploreOpen(true)}
+              aria-label={t("showExplore")}
+              aria-controls="live-map-explore"
+              aria-expanded={false}
+              className={panelToggleClassName}
+            >
+              <PanelLeftOpen className="size-5" />
+            </button>
+          </div>
+        )}
+
         {/* Map and floating controls */}
         <div className="relative min-w-0 flex-1">
           <GlobeMap
@@ -157,7 +183,7 @@ const LiveMap = () => {
             docked
           />
 
-          <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3 md:p-4 [zoom:var(--viewport-scale)]">
+          <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3 md:p-4">
             <div className="flex items-start gap-3">
               {!isExploreOpen && (
                 <button
@@ -166,7 +192,7 @@ const LiveMap = () => {
                   aria-label={t("showExplore")}
                   aria-controls="live-map-explore"
                   aria-expanded={false}
-                  className={cn(panelToggleClassName, "pointer-events-auto bg-white shadow-md")}
+                  className={cn(panelToggleClassName, "pointer-events-auto bg-white shadow-md lg:hidden")}
                 >
                   <PanelLeftOpen className="size-5" />
                 </button>
@@ -179,40 +205,31 @@ const LiveMap = () => {
                     onClick={() => toggleChip(chip)}
                     aria-pressed={isChipActive(chip)}
                     className={cn(
-                      "rounded-full border px-3 py-1 font-title text-sm shadow-sm transition-colors md:px-4 md:py-1.5 md:text-lg",
+                      "cursor-pointer rounded-full border px-3 py-1 font-title text-sm shadow-sm transition-colors md:px-4 md:py-1.5 md:text-lg",
                       isChipActive(chip)
                         ? "border-primary bg-primary text-white"
-                        : "border-dark/5 bg-white text-dark hover:bg-dark/5",
+                        : "border-dark/5 bg-white text-dark",
                     )}
                   >
                     {chip.label}
                   </button>
                 ))}
               </div>
-              <div className="pointer-events-auto flex flex-col items-center gap-3">
-                {!isFiltersOpen && (
-                  <button
-                    type="button"
-                    onClick={() => setIsFiltersOpen(true)}
-                    aria-label={t("showFilters")}
-                    aria-controls="live-map-filters"
-                    aria-expanded={false}
-                    className={cn(panelToggleClassName, "bg-white shadow-md")}
-                  >
-                    <PanelRightOpen className="size-5" />
-                  </button>
-                )}
+              {!isFiltersOpen && (
                 <button
                   type="button"
-                  onClick={() => setIsFiltersOpen((open) => !open)}
-                  aria-label={t("mapLayersButton")}
+                  onClick={() => setIsFiltersOpen(true)}
+                  aria-label={t("showFilters")}
                   aria-controls="live-map-filters"
-                  aria-expanded={isFiltersOpen}
-                  className={cn(floatingButtonClassName, "size-12 md:size-14")}
+                  aria-expanded={false}
+                  className={cn(
+                    panelToggleClassName,
+                    "pointer-events-auto bg-white shadow-md lg:hidden",
+                  )}
                 >
-                  <Layers className="size-6" />
+                  <PanelRightOpen className="size-5" />
                 </button>
-              </div>
+              )}
             </div>
 
             <div className="flex items-end justify-between gap-3">
@@ -246,13 +263,28 @@ const LiveMap = () => {
                 type="button"
                 onClick={() => mapHandleRef.current?.recenter()}
                 aria-label={t("recenterMap")}
-                className={cn(floatingButtonClassName, "pointer-events-auto size-14 md:size-20")}
+                className={cn(floatingButtonClassName, "pointer-events-auto size-12 md:size-14")}
               >
-                <LocateFixed className="size-7 stroke-[1.5] md:size-9" />
+                <LocateFixed className="size-6 stroke-[1.5]" />
               </button>
             </div>
           </div>
         </div>
+
+        {!isFiltersOpen && (
+          <div className="hidden w-12 shrink-0 flex-col items-center border-l border-border bg-white pt-3 lg:flex">
+            <button
+              type="button"
+              onClick={() => setIsFiltersOpen(true)}
+              aria-label={t("showFilters")}
+              aria-controls="live-map-filters"
+              aria-expanded={false}
+              className={panelToggleClassName}
+            >
+              <PanelRightOpen className="size-5" />
+            </button>
+          </div>
+        )}
 
         {/* Filters panel */}
         <aside
@@ -260,18 +292,18 @@ const LiveMap = () => {
           hidden={!isFiltersOpen}
           className="absolute inset-y-0 right-0 z-20 w-full max-w-sm overflow-y-auto border-l border-border bg-white shadow-xl lg:static lg:w-[23rem] lg:max-w-none lg:shrink-0 lg:shadow-none"
         >
-          <div className="min-h-full [zoom:var(--viewport-scale)]">
+          <div className="min-h-full">
             <FilterPanel
               variant="light"
               timePeriod={timePeriod}
               onTimePeriodChange={setTimePeriod}
               customRange={customRange}
               onCustomRangeChange={setCustomRange}
-              categoryId={categoryId}
-              onCategoryChange={setCategoryId}
+              hiddenCategoryIds={hiddenCategoryIds}
+              onToggleCategory={(id) =>
+                setHiddenCategoryIds((current) => toggleCategoryVisibility(current, id))
+              }
               incidentTypes={incidentTypes}
-              layers={layers}
-              onLayersChange={setLayers}
               totalReports={visibleReports.length}
               onReset={resetFilters}
               onViewReports={() => setIsFiltersOpen(false)}

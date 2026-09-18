@@ -8,7 +8,7 @@ const TextComponent = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("text-base md:text-lg text-dark/65 font-medium", className)}>
+    <div className={cn("text-base  text-dark/65 font-medium", className)}>
       {children}
     </div>
   );

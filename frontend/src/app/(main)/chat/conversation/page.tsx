@@ -24,6 +24,7 @@ import Link from "next/link";
 import Container from "@/components/common/container";
 import TextComponent from "@/components/common/text-component";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import Loader from "@/components/ai/chat/loader";
 import { toast } from "sonner";
@@ -255,10 +256,31 @@ function ChatContent() {
         </Container>
       </section> */}
 
-      <div className="mt-16">
-        <div className="flex flex-col justify-between h-[calc(100dvh-130px)] relative">
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
+        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
+          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
+          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
+        </div>
+        {/* The site header is suppressed on this route, so the conversation
+            owns the full viewport and this slim bar carries the way back. */}
+        {/* The scroller spans the full width so its scrollbar rides the edge of
+            the screen rather than cutting down the middle of the thread; the
+            column width is applied to the content inside it instead. */}
+        <div className="relative flex h-[calc(100dvh/var(--viewport-scale))] flex-col">
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10">
+            <div className="mx-auto max-w-3xl px-6 pt-4">
+              <Link
+                href="/chat"
+                aria-label="Back to chat"
+                title="Back to chat"
+                className="pointer-events-auto flex size-9 cursor-pointer items-center justify-center rounded-full bg-white/80 text-dark backdrop-blur transition-colors hover:bg-dark/5"
+              >
+                <ArrowLeft className="size-5" />
+              </Link>
+            </div>
+          </div>
           <div ref={chatRef} className="flex-1 overflow-y-auto chat-scrollbar">
-            <div className="mx-auto max-w-4xl px-4 py-6">
+            <div className="mx-auto max-w-3xl px-6 pt-16 pb-6">
               <div className="space-y-6">
                 {/* {messages.length === 0 && starter && (
                   <div className="flex justify-center">
@@ -298,11 +320,12 @@ function ChatContent() {
                       }`}
                     >
                       <div
-                        className={`max-w-[80%] rounded-xl px-4 py-3 ${
+                        className={cn(
+                          "max-w-[80%] rounded-2xl text-dark",
                           message.role === "user"
-                            ? "bg-white text-dark border"
-                            : "bg-gray-100 text-gray-900"
-                        }`}
+                            ? "bg-muted/10 px-4 py-3"
+                            : "bg-transparent py-1",
+                        )}
                       >
                         {/* <div className="font-medium text-xs mb-2 opacity-75">
                         {message.role === "user" ? "" : ""}
@@ -415,7 +438,6 @@ function ChatContent() {
               <div ref={bottomRef} className="h-1" />
             </div>
           </div>
-        </div>
 
         {/* Scroll to bottom button - only show when there are messages */}
         {/* {messages.length > 0 && (
@@ -431,7 +453,7 @@ function ChatContent() {
           </div>
         )} */}
 
-        <div className="mx-auto max-w-4xl px-4 sticky bottom-6 md:bottom-4 ">
+          <div className="mx-auto w-full max-w-3xl shrink-0 px-6 pt-3 pb-6">
           <form
             ref={formRef}
             onSubmit={async (e) => {
@@ -472,21 +494,9 @@ function ChatContent() {
                 setIsLoading(false);
               }
             }}
-            className="flex space-x-2 px-2"
+            className="w-full"
           >
-            <div className="relative w-full rounded-full">
-              <Button
-                type="button"
-                variant={"ghost"}
-                className="absolute bottom-1/2 translate-y-1/2 left-2 text-muted-foreground hover:text-foreground"
-                onClick={() => {
-                  // Media attachment functionality to be implemented later
-                  console.log("Media attachment clicked");
-                }}
-                disabled={isLoading}
-              >
-                <Paperclip className="h-5 w-5" />
-              </Button>
+            <div className="w-full rounded-lg border border-dark/5 bg-[#fafafa] p-3 shadow-[0_6px_24px_-8px_rgba(0,153,153,0.25)] md:p-4">
               <Textarea
                 value={input}
                 placeholder="Ask me about WatchTower"
@@ -526,13 +536,28 @@ function ChatContent() {
                   }
                 }}
                 disabled={isLoading}
-                className="flex-1 bg-white resize-none min-h-14 rounded-lg py-4 font-medium px-12 pe-14"
+                className="min-h-12 resize-none border-none bg-transparent px-1 font-title text-base text-dark shadow-none placeholder:text-dark/70 focus-visible:ring-0 md:text-lg"
               />
+              <div className="mt-2 flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  className="order-1 size-8 cursor-pointer text-dark hover:bg-dark/5"
+                  onClick={() => {
+                    // Media attachment functionality to be implemented later
+                    console.log("Media attachment clicked");
+                  }}
+                  disabled={isLoading}
+                >
+                  <Paperclip className="h-5 w-5" />
+                </Button>
+                </div>
               {input.trim() ? (
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="bg-primary hover:bg-primary text-white absolute right-3 rounded-sm bottom-2.5"
+                  className="size-10 cursor-pointer rounded-full bg-primary text-white hover:bg-primary/90"
                   size={"icon"}
                 >
                   <MoveUp />
@@ -541,9 +566,10 @@ function ChatContent() {
                 <Button
                   type="button"
                   variant={"ghost"}
-                  className={`absolute right-3 bottom-2.5 text-muted-foreground hover:text-foreground ${
-                    isListening ? "text-red-500 animate-pulse" : ""
-                  }`}
+                  className={cn(
+                    "size-10 cursor-pointer rounded-full text-white hover:bg-primary/90",
+                    isListening ? "animate-pulse bg-red-500 hover:bg-red-600" : "bg-primary",
+                  )}
                   size={"icon"}
                   onClick={handleVoiceInput}
                   disabled={isLoading}
@@ -556,10 +582,12 @@ function ChatContent() {
                   )}
                 </Button>
               )}
+              </div>
             </div>
           </form>
+          </div>
         </div>
-      </div>
+      </section>
     </>
   );
 }

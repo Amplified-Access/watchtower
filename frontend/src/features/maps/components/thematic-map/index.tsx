@@ -1,8 +1,20 @@
 "use client";
-import Map, { Marker, Popup } from "react-map-gl/mapbox";
+import Map, {
+  Layer,
+  Popup,
+  Source,
+  type MapMouseEvent,
+  type MapRef,
+} from "react-map-gl/mapbox";
+import type {
+  CircleLayerSpecification,
+  GeoJSONSource,
+  SymbolLayerSpecification,
+} from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Input } from "@/components/ui/input";
 import { Funnel, Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import {
   SidebarInset,
@@ -12,12 +24,87 @@ import {
 import Link from "next/link";
 import { ThematicMapSidebar } from "./thematic-map-sidebar";
 import { trpc } from "@/_trpc/client";
-import { Fragment, useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import Loader from "@/components/common/loader";
 import { useQueryState } from "nuqs";
 import Logo from "@/components/logo";
 import { generateIncidentTypeAssets } from "@/utils/generate-incident-type-assets";
+import { buildLiveIncidentGeoJson } from "@/features/maps/application/use-cases/build-live-incident-geojson";
+import type { CombinedIncidentReport } from "@/features/maps/domain/map-report";
+
+const BRAND_BLUE = "#0042e7";
+const RING = "rgba(255,255,255,0.85)";
+
+// Step boundaries shared by the cluster circle and its glow, so the halo always
+// tracks the bubble it sits behind.
+const CLUSTER_RADIUS: CircleLayerSpecification["paint"] = {
+  "circle-color": BRAND_BLUE,
+  "circle-radius": ["step", ["get", "point_count"], 16, 10, 20, 30, 25, 50, 30],
+  "circle-stroke-width": 2,
+  "circle-stroke-color": RING,
+};
+
+const clusterGlowLayer: Omit<CircleLayerSpecification, "source"> = {
+  id: "cluster-glow",
+  type: "circle",
+  filter: ["has", "point_count"],
+  paint: {
+    "circle-color": BRAND_BLUE,
+    "circle-opacity": 0.25,
+    "circle-radius": ["step", ["get", "point_count"], 21, 10, 25, 30, 30, 50, 35],
+  },
+};
+
+const clusterLayer: Omit<CircleLayerSpecification, "source"> = {
+  id: "clusters",
+  type: "circle",
+  filter: ["has", "point_count"],
+  paint: CLUSTER_RADIUS,
+};
+
+const clusterCountLayer: Omit<SymbolLayerSpecification, "source"> = {
+  id: "cluster-count",
+  type: "symbol",
+  filter: ["has", "point_count"],
+  layout: {
+    "text-field": ["get", "point_count_abbreviated"],
+    "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+    "text-size": ["step", ["get", "point_count"], 11, 30, 14],
+  },
+  paint: { "text-color": "#ffffff" },
+};
+
+// Single reports: same treatment, smaller, and deliberately unlabelled — a
+// count of 1 is noise.
+const pointGlowLayer: Omit<CircleLayerSpecification, "source"> = {
+  id: "unclustered-glow",
+  type: "circle",
+  filter: ["!", ["has", "point_count"]],
+  paint: { "circle-color": BRAND_BLUE, "circle-opacity": 0.25, "circle-radius": 11 },
+};
+
+const pointLayer: Omit<CircleLayerSpecification, "source"> = {
+  id: "unclustered-point",
+  type: "circle",
+  filter: ["!", ["has", "point_count"]],
+  paint: {
+    "circle-color": BRAND_BLUE,
+    "circle-radius": 7,
+    "circle-stroke-width": 2,
+    "circle-stroke-color": RING,
+  },
+};
+
+interface PopupInfo {
+  longitude: number;
+  latitude: number;
+  displayName: string;
+  totalReports: number;
+  totalInjuries: number;
+  totalFatalities: number;
+  incidentTypeDescriptions: string;
+}
 
 interface ThematicMapProps {
   theme: string;
@@ -26,8 +113,7 @@ interface ThematicMapProps {
 }
 
 const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
-  const [hoveredMarker, setHoveredMarker] = useState<number | null>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [name] = useQueryState("country");
   const [searchTerm, setSearchTerm] = useQueryState("search", {
     defaultValue: "",
@@ -66,46 +152,76 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
       timeframe: timeframe || undefined,
     });
 
-  // Debug: Log the data received
-  useEffect(() => {
-    if (anonymousIncidentReports.data) {
-      console.log(`🗺️ Thematic Map [${theme}] - Data received:`, {
-        totalReports: anonymousIncidentReports.data?.data?.length,
-        reports: anonymousIncidentReports.data?.data,
-        filters: {
-          country: name,
-          category: theme,
-          search: searchTerm,
-          timeframe,
-        },
-      });
-    }
-  }, [anonymousIncidentReports.data, theme, name, searchTerm, timeframe]);
-
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
     };
   }, []);
 
-  const handleMouseEnter = (idx: number) => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    setHoveredMarker(idx);
-  };
+  const geojsonData = useMemo(
+    () =>
+      buildLiveIncidentGeoJson(
+        anonymousIncidentReports.data?.data as CombinedIncidentReport[] | undefined,
+      ),
+    [anonymousIncidentReports.data],
+  );
 
-  const handleMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setHoveredMarker(null);
-    }, 100); // Small delay to prevent flickering
-  };
+  // Clicking a cluster zooms to the level where Supercluster splits it, which
+  // is how the group breaks apart into its members. Clicking a single report
+  // opens its popup.
+  const handleMapClick = useCallback((event: MapMouseEvent) => {
+    const feature = event.features?.[0];
+    if (!feature) {
+      setPopupInfo(null);
+      return;
+    }
+
+    const [longitude, latitude] = (feature.geometry as GeoJSON.Point).coordinates as [
+      number,
+      number,
+    ];
+
+    if (feature.properties?.cluster) {
+      const source = event.target.getSource("incidents") as GeoJSONSource | undefined;
+      source?.getClusterExpansionZoom(
+        feature.properties.cluster_id as number,
+        (error, zoom) => {
+          if (error || zoom == null) return;
+          event.target.easeTo({ center: [longitude, latitude], zoom, duration: 600 });
+        },
+      );
+      return;
+    }
+
+    const props = feature.properties ?? {};
+    setPopupInfo({
+      longitude,
+      latitude,
+      displayName: String(props.displayName ?? "Unknown Location"),
+      totalReports: Number(props.totalReports) || 0,
+      totalInjuries: Number(props.totalInjuries) || 0,
+      totalFatalities: Number(props.totalFatalities) || 0,
+      incidentTypeDescriptions: String(props.incidentTypeDescriptions ?? ""),
+    });
+  }, []);
+
+  // Mapbox sizes its canvas at init, before this container has settled into its
+  // full height, and then never rechecks: without this the canvas stays short
+  // and leaves a strip of background under the map. Same reason the live map
+  // keeps a ResizeObserver on its container.
+  const mapRef = useRef<MapRef | null>(null);
+  const handleMapLoad = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.resize();
+    const observer = new ResizeObserver(() => map.resize());
+    observer.observe(map.getContainer());
+    resizeObserverRef.current = observer;
+  }, []);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  useEffect(() => () => resizeObserverRef.current?.disconnect(), []);
 
   const handleSubmitSearchTerm = (formData: FormData) => {
     const searchValue = formData.get("searchTerm") as string;
@@ -143,12 +259,26 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
 
   return (
     <>
-      <section>
-        <SidebarProvider defaultOpen={true}>
-          <SidebarInset>
-            <header className="fixed w-full bg-background top-0 z-20 flex h-16 shrink-0 items-center border-0">
-              <div className="flex items-center gap-2 px-3 w-full justify-between">
-                <Logo color={"white"} />
+      {/* Pin to the viewport like the live map, so the map fills the screen
+          instead of leaving a strip under it. */}
+      <section className="h-dvh overflow-hidden">
+        {/* h-full/min-h-0 the whole way down: SidebarProvider only sets
+            min-h-svh, which is not a definite height, so the map's height:100%
+            had nothing to resolve against and left a strip below it. */}
+        <SidebarProvider defaultOpen={true} className="h-full min-h-0">
+          <SidebarInset className="relative h-full min-h-0">
+            <header className="fixed top-0 z-20 w-full shrink-0 border-b border-border bg-white">
+              <div className="flex h-16 w-full items-center justify-between gap-4 px-4 md:h-19 md:px-8">
+                <Link href="/" aria-label="WatchTower home" className="shrink-0">
+                  <Image
+                    src="/brand/logo-black.svg"
+                    alt="WatchTower"
+                    width={219}
+                    height={37}
+                    priority
+                    className="h-6 w-auto md:h-8"
+                  />
+                </Link>
                 {/* <div className="flex flex-col items-center">
                   <h1 className="text-lg font-semibold text-gray-900">
                     {title}
@@ -164,9 +294,10 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
                       name="searchTerm"
                       defaultValue={searchTerm}
                       onChange={(e) => handleSearchInput(e.target.value)}
-                      className={`rounded-full shadow-none bg-white mx-auto pr-16 ${
-                        searchTerm ? "ring-2 ring-blue-500/20 bg-blue-50" : ""
-                      }`}
+                      className={cn(
+                        "mx-auto h-11 rounded-full border-0 bg-dark/5 pr-16 font-title text-dark shadow-none placeholder:text-dark/60 focus-visible:ring-0",
+                        searchTerm && "bg-primary/10",
+                      )}
                     />
                     {searchTerm && (
                       <button
@@ -187,12 +318,13 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
                     </button>
                   </form>
                 </div>
-                <SidebarTrigger className="rounded-full bg-primary hover:text-white hover:bg-primary text-white">
+                <SidebarTrigger className="size-10 shrink-0 cursor-pointer rounded-full bg-primary text-white hover:bg-primary hover:text-white">
                   <Funnel />
                 </SidebarTrigger>
               </div>
             </header>
             <Map
+              ref={mapRef}
               mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
               initialViewState={{
                 longitude: 36.817223,
@@ -200,7 +332,10 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
                 zoom: 5.3,
               }}
               style={{ width: "100%", height: "100%" }}
-              mapStyle="mapbox://styles/mapbox/streets-v9"
+              onLoad={handleMapLoad}
+              interactiveLayerIds={["clusters", "unclustered-point"]}
+              onClick={handleMapClick}
+              mapStyle="mapbox://styles/mapbox/outdoors-v12"
             >
               <div className="absolute top-20 -translate-x-1/2 left-1/2 max-w-86 w-full mr-32 md:hidden">
                 <form action={handleSubmitSearchTerm}>
@@ -209,9 +344,10 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
                     name="searchTerm"
                     defaultValue={searchTerm}
                     onChange={(e) => handleSearchInput(e.target.value)}
-                    className={`rounded-full placeholder:text-sm shadow-none bg-white mx-auto pr-16 ${
-                      searchTerm ? "ring-2 ring-blue-500/20 bg-blue-50" : ""
-                    }`}
+                    className={cn(
+                      "mx-auto h-11 rounded-full border-0 bg-white pr-16 font-title text-dark shadow-md placeholder:text-sm placeholder:text-dark/60 focus-visible:ring-0",
+                      searchTerm && "bg-primary/10",
+                    )}
                   />
                   {searchTerm && (
                     <button
@@ -232,144 +368,87 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
                   </button>
                 </form>
               </div>
-              {anonymousIncidentReports.data?.data.map((report, idx) => {
-                if (!report.lat || !report.lon) return null;
+              {/* Real clustering: Mapbox groups the points with Supercluster,
+                  so they merge as you zoom out and split as you zoom in. The
+                  glow + ring + count styling matches the brand marker; it is
+                  drawn with paint properties rather than DOM nodes because only
+                  a GL source can cluster. */}
+              <Source
+                id="incidents"
+                type="geojson"
+                data={geojsonData}
+                cluster
+                clusterMaxZoom={14}
+                clusterRadius={50}
+              >
+                <Layer {...clusterGlowLayer} />
+                <Layer {...clusterLayer} />
+                <Layer {...clusterCountLayer} />
+                <Layer {...pointGlowLayer} />
+                <Layer {...pointLayer} />
+              </Source>
 
-                // Scale marker size based on number of reports
-                const reportCount = Number(report.totalReports) || 1;
-                const baseSize = 16; // Base size in pixels
-                const maxSize = 32; // Maximum size
-                const scaleFactor = Math.min(
-                  Math.log(reportCount + 1) * 0.5,
-                  2,
-                ); // Logarithmic scaling
-                const markerSize = Math.min(
-                  baseSize + reportCount * 2,
-                  maxSize,
-                );
+              {popupInfo && (
+                <Popup
+                  longitude={popupInfo.longitude}
+                  latitude={popupInfo.latitude}
+                  anchor="top"
+                  closeButton={false}
+                  closeOnClick={false}
+                  focusAfterOpen={false}
+                  className="incident-popup"
+                  maxWidth="320px"
+                  offset={15}
+                  onClose={() => setPopupInfo(null)}
+                >
+                  <div className="min-w-0 p-4 font-body">
+                    <h3 className="mb-2 font-title text-sm font-semibold text-dark">
+                      {theme} in{" "}
+                      {searchTerm
+                        ? highlightSearchTerm(popupInfo.displayName, searchTerm)
+                        : popupInfo.displayName}
+                    </h3>
 
-                // Pre-process the data to ensure proper typing
-                const totalReports = String(report.totalReports || 0);
-                const totalInjuries = String(report.totalInjuries || 0);
-                const totalFatalities = String(report.totalFatalities || 0);
-                const displayName = String(
-                  report.displayName || "Unknown Location",
-                );
+                    <div className="mb-3 flex flex-wrap gap-2 text-xs text-dark/60">
+                      <span className="rounded-full bg-primary/10 px-2 py-1 font-title font-medium text-primary">
+                        {popupInfo.totalReports} reports
+                      </span>
+                      {popupInfo.totalInjuries > 0 ? (
+                        <span className="rounded-full bg-orange-100 px-2 py-1 text-orange-800">
+                          {popupInfo.totalInjuries} injuries
+                        </span>
+                      ) : null}
+                      {popupInfo.totalFatalities > 0 ? (
+                        <span className="rounded-full bg-red-100 px-2 py-1 text-red-800">
+                          {popupInfo.totalFatalities} fatalities
+                        </span>
+                      ) : null}
+                    </div>
 
-                // Use the incident type color from database, fallback to theme color
-                const markerColor: string =
-                  (report.incidentTypeColor as string) ||
-                  themeColor ||
-                  "#ef4444";
-
-                return (
-                  <Fragment key={idx}>
-                    <Marker
-                      longitude={Number(report.lon)}
-                      latitude={Number(report.lat)}
-                      anchor="bottom"
-                    >
-                      <div
-                        onMouseEnter={() => handleMouseEnter(idx)}
-                        onMouseLeave={handleMouseLeave}
-                        className="cursor-pointer hover:scale-110 transition-transform duration-200 grid place-items-center animate-pulse rounded-full bg-radial from-current via-current/20 to-transparent relative"
-                        style={{
-                          width: `${markerSize * 0.75}px`,
-                          height: `${markerSize * 0.75}px`,
-                          backgroundColor: `${markerColor}33`, // 20% opacity
-                          backgroundImage: `radial-gradient(circle, ${markerColor}, ${markerColor}33, transparent)`,
-                        }}
-                      >
-                        <div
-                          className="rounded-full"
-                          style={{
-                            width: `${markerSize * 0.25}px`,
-                            height: `${markerSize * 0.25}px`,
-                            backgroundColor: markerColor,
-                          }}
-                        />
-                      </div>
-                    </Marker>
-                    {hoveredMarker === idx && (
-                      <Popup
-                        longitude={Number(report.lon)}
-                        latitude={Number(report.lat)}
-                        anchor="top"
-                        closeButton={false}
-                        closeOnClick={false}
-                        focusAfterOpen={false}
-                        className="incident-popup"
-                        maxWidth="320px"
-                        offset={15}
-                      >
-                        <div className="p-4 min-w-0 font-body">
-                          <h3 className="font-semibold text-sm mb-2 text-gray-800 font-title">
-                            {theme} in{" "}
-                            {searchTerm
-                              ? highlightSearchTerm(displayName, searchTerm)
-                              : displayName}
-                          </h3>
-
-                          <div className="text-xs text-gray-600 mb-3 flex gap-2 flex-wrap">
-                            <span className="bg-blue-100 text-blue-800 rounded-full py-1 px-2">
-                              {totalReports} reports
-                            </span>
-                            {Number(totalInjuries) > 0 ? (
-                              <span className="bg-orange-100 text-orange-800 rounded-full py-1 px-2">
-                                {totalInjuries} injuries
-                              </span>
-                            ) : null}
-                            {Number(totalFatalities) > 0 ? (
-                              <span className="bg-red-100 text-red-800 rounded-full py-1 px-2">
-                                {totalFatalities} fatalities
-                              </span>
-                            ) : null}
-                          </div>
-
-                          <Fragment>
-                            {report.incidentTypeDescriptions && (
-                              <div className="space-y-1">
-                                <h4 className="text-xs font-medium text-gray-700 mb-1">
-                                  Details:
-                                </h4>
-                                <div className="text-xs text-gray-700 bg-gray-50 rounded p-2">
-                                  {searchTerm
-                                    ? highlightSearchTerm(
-                                        String(report.incidentTypeDescriptions),
-                                        searchTerm,
-                                      )
-                                    : String(report.incidentTypeDescriptions)}
-                                </div>
-                              </div>
-                            )}
-                          </Fragment>
-
-                          <div className="mt-3 pt-2 border-t border-gray-200">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="w-3 h-3 rounded-full"
-                                style={{
-                                  backgroundColor: (anonymousIncidentReports
-                                    ?.data?.data &&
-                                  anonymousIncidentReports.data.data.length > 0
-                                    ? (anonymousIncidentReports.data.data[0]
-                                        .incidentTypeColor as string) ||
-                                      themeColor ||
-                                      "#ef4444"
-                                    : themeColor || "#ef4444") as string,
-                                }}
-                              ></div>
-                              <span className="text-xs font-medium text-gray-700">
-                                {theme}
-                              </span>
-                            </div>
-                          </div>
+                    {popupInfo.incidentTypeDescriptions && (
+                      <div className="space-y-1">
+                        <h4 className="mb-1 font-title text-xs font-medium text-dark/70">
+                          Details:
+                        </h4>
+                        <div className="rounded bg-dark/5 p-2 text-xs text-dark/70">
+                          {searchTerm
+                            ? highlightSearchTerm(popupInfo.incidentTypeDescriptions, searchTerm)
+                            : popupInfo.incidentTypeDescriptions}
                         </div>
-                      </Popup>
+                      </div>
                     )}
-                  </Fragment>
-                );
-              })}
+
+                    <div className="mt-3 border-t border-border pt-2">
+                      <div className="flex items-center gap-2">
+                        <div className="size-3 rounded-full bg-primary" />
+                        <span className="font-title text-xs font-medium text-dark/70">
+                          {theme}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Popup>
+              )}
               {anonymousIncidentReports.isPending && (
                 <div className="absolute z-10 w-full h-full backdrop-blur-sm grid place-items-center">
                   <Loader className="text-dark" size="24" />

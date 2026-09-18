@@ -29,9 +29,44 @@ export interface TopChip {
 export interface LivePreviewFilters {
   timePeriod: TimePeriod;
   customRange: DateRange;
-  categoryId: string | null;
+  /**
+   * Categories switched off in the filter panel. Tracking what is hidden rather
+   * than what is shown means the default (nothing hidden, everything visible)
+   * does not have to wait for the incident type list to load.
+   */
+  hiddenCategoryIds: string[];
   search: string;
 }
+
+/** Flip one category's toggle. */
+export const toggleCategoryVisibility = (hiddenCategoryIds: string[], id: string) =>
+  hiddenCategoryIds.includes(id)
+    ? hiddenCategoryIds.filter((hidden) => hidden !== id)
+    : [...hiddenCategoryIds, id];
+
+/** True when `id` is the only category left visible. */
+export const isCategorySoloed = (
+  hiddenCategoryIds: string[],
+  categoryIds: string[],
+  id: string,
+) =>
+  categoryIds.length > 1 &&
+  !hiddenCategoryIds.includes(id) &&
+  categoryIds.every((categoryId) => categoryId === id || hiddenCategoryIds.includes(categoryId));
+
+/**
+ * Category chips solo a category rather than toggling it, which keeps their
+ * "off by default, one lights up when you pick it" behaviour now that the panel
+ * toggles share the same state.
+ */
+export const soloCategory = (
+  hiddenCategoryIds: string[],
+  categoryIds: string[],
+  id: string,
+) =>
+  isCategorySoloed(hiddenCategoryIds, categoryIds, id)
+    ? []
+    : categoryIds.filter((categoryId) => categoryId !== id);
 
 const PERIOD_MS: Record<Exclude<TimePeriod, "custom">, number> = {
   "24h": 24 * 60 * 60 * 1000,
@@ -79,7 +114,7 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
         }
       }
 
-      if (filters.categoryId && r.incidentTypeId !== filters.categoryId) {
+      if (r.incidentTypeId && filters.hiddenCategoryIds.includes(r.incidentTypeId)) {
         return false;
       }
 
@@ -141,6 +176,14 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
     };
   }, [allReports, orgsQuery.data, now]);
 
+  const categoryIds = useMemo(() => {
+    const ids = new Set(incidentTypes.map((type) => type.id));
+    for (const report of allReports) {
+      if (report.incidentTypeId) ids.add(report.incidentTypeId);
+    }
+    return Array.from(ids);
+  }, [incidentTypes, allReports]);
+
   const topChips = useMemo<TopChip[]>(() => {
     const byCountry = new Map<string, number>();
     for (const r of allReports) {
@@ -181,6 +224,7 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
   return {
     isLoading: reportsQuery.isLoading || typesQuery.isLoading || orgsQuery.isLoading,
     incidentTypes,
+    categoryIds,
     filteredReports,
     bubbles,
     stats,

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useId } from "react";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface ContainerTextFlipProps {
@@ -16,6 +16,13 @@ export interface ContainerTextFlipProps {
   textClassName?: string;
   /** Duration of the transition animation in milliseconds */
   animationDuration?: number;
+  /**
+   * Animate the container between each word's width. This is what makes the
+   * text appear to slide sideways, because the box is centred and its edges
+   * move under the text. Off, each word simply sizes to its content and only
+   * the per-letter reveal animates.
+   */
+  morphWidth?: boolean;
 }
 
 export function ContainerTextFlip({
@@ -24,8 +31,12 @@ export function ContainerTextFlip({
   className,
   textClassName,
   animationDuration = 700,
+  morphWidth = true,
 }: ContainerTextFlipProps) {
   const id = useId();
+  // Every effect here is decorative, so under prefers-reduced-motion the word
+  // is rendered at its final state rather than blurred and staggered in.
+  const reduceMotion = useReducedMotion();
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [width, setWidth] = useState(100);
   const textRef = React.useRef(null);
@@ -40,9 +51,9 @@ export function ContainerTextFlip({
   };
 
   useEffect(() => {
-    // Update width whenever the word changes
-    updateWidthForWord();
-  }, [currentWordIndex]);
+    // Only needed to animate the container; skipped when it sizes to content.
+    if (morphWidth && !reduceMotion) updateWidthForWord();
+  }, [currentWordIndex, morphWidth, reduceMotion]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -67,9 +78,11 @@ export function ContainerTextFlip({
 
   return (
     <motion.div
-      layout
-      layoutId={`words-here-${id}`}
-      animate={{ width }}
+      // layout/layoutId drive Framer's projection, which translates the box
+      // between renders — the other half of the sideways movement.
+      {...(morphWidth && !reduceMotion
+        ? { layout: true as const, layoutId: `words-here-${id}`, animate: { width } }
+        : {})}
       transition={{ duration: animationDuration / 2000 }}
       className={cn(
         "relative inline-block rounded-lg pt-2 pb-3 text-center text-4xl font-semibold text-black md:text-5xl dark:text-white",
@@ -90,14 +103,16 @@ export function ContainerTextFlip({
         }}
         className={cn("inline-block", textClassName)}
         ref={textRef}
-        layoutId={`word-div-${currentWord}-${id}`}
+        {...(morphWidth && !reduceMotion
+          ? { layoutId: `word-div-${currentWord}-${id}` }
+          : {})}
       >
         <motion.div className="inline-block font-title">
           {complex ? (
             <motion.span
-              initial={{ opacity: 0, filter: "blur(10px)" }}
+              initial={reduceMotion ? false : { opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: animationDuration / 1000 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: animationDuration / 1000 }}
               style={rtl ? { direction: "rtl" } : undefined}
             >
               {currentWord}
@@ -106,17 +121,16 @@ export function ContainerTextFlip({
             currentWord.split("").map((letter, index) => (
               <motion.span
                 key={index}
-                initial={{
-                  opacity: 0,
-                  filter: "blur(10px)",
-                }}
+                initial={
+                  reduceMotion ? false : { opacity: 0, filter: "blur(10px)" }
+                }
                 animate={{
                   opacity: 1,
                   filter: "blur(0px)",
                 }}
-                transition={{
-                  delay: index * 0.02,
-                }}
+                transition={
+                  reduceMotion ? { duration: 0 } : { delay: index * 0.02 }
+                }
               >
                 {letter}
               </motion.span>

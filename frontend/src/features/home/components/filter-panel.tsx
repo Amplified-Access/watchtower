@@ -4,13 +4,6 @@ import { useTranslations } from "next-intl";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import {
   Popover,
@@ -29,23 +22,15 @@ interface IncidentTypeOption {
   name: string;
 }
 
-interface LayerToggles {
-  reports: boolean;
-  clusters: boolean;
-  heatmap: boolean;
-  boundaries: boolean;
-}
-
 interface FilterPanelProps {
   timePeriod: TimePeriod;
   onTimePeriodChange: (period: TimePeriod) => void;
   customRange: DateRange;
   onCustomRangeChange: (range: DateRange) => void;
-  categoryId: string | null;
-  onCategoryChange: (id: string | null) => void;
   incidentTypes: IncidentTypeOption[];
-  layers: LayerToggles;
-  onLayersChange: (layers: LayerToggles) => void;
+  /** Categories switched off; everything not listed here is on. */
+  hiddenCategoryIds: string[];
+  onToggleCategory: (id: string) => void;
   totalReports: number;
   onReset: () => void;
   /** "dark" floats over the homepage preview; "light" is the docked live map panel. */
@@ -66,7 +51,6 @@ const STYLES = {
     popover: "bg-dark text-white",
     dateLabel: "text-white/60",
     dateInput: "border-white/15 bg-white/5 text-white",
-    select: "border-white/15 bg-white/5 text-white",
     verification: "w-fit gap-1 rounded-full bg-white/5 p-1",
     verificationItem: "rounded-full px-3 py-1 text-xs font-medium",
     verificationActive: "bg-white/10 text-white",
@@ -83,7 +67,6 @@ const STYLES = {
     popover: "",
     dateLabel: "text-dark/60",
     dateInput: "border-input bg-white text-dark",
-    select: "h-12 border-dark/30 bg-white font-title text-dark data-[size=default]:h-12",
     verification: "grid grid-cols-3 gap-3",
     verificationItem: "rounded-sm border px-2 py-1.5 text-center font-title text-sm",
     verificationActive: "border-primary bg-primary text-white",
@@ -104,11 +87,9 @@ const FilterPanel = ({
   onTimePeriodChange,
   customRange,
   onCustomRangeChange,
-  categoryId,
-  onCategoryChange,
   incidentTypes,
-  layers,
-  onLayersChange,
+  hiddenCategoryIds,
+  onToggleCategory,
   totalReports,
   onReset,
   variant = "dark",
@@ -117,13 +98,6 @@ const FilterPanel = ({
 }: FilterPanelProps) => {
   const t = useTranslations("HomeLivePreview");
   const s = STYLES[variant];
-
-  const layerRows: { key: keyof LayerToggles; labelKey: string }[] = [
-    { key: "reports", labelKey: "layerReports" },
-    { key: "clusters", labelKey: "layerClusters" },
-    { key: "heatmap", labelKey: "layerHeatmap" },
-    { key: "boundaries", labelKey: "layerCountryBoundaries" },
-  ];
 
   return (
     <div className={cn("flex h-full w-full shrink-0 flex-col", s.root)}>
@@ -202,26 +176,20 @@ const FilterPanel = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <span className={s.label}>
           {t("issuesCategory")}
         </span>
-        <Select
-          value={categoryId ?? "all"}
-          onValueChange={(value) => onCategoryChange(value === "all" ? null : value)}
-        >
-          <SelectTrigger className={cn("w-full", s.select)}>
-            <SelectValue placeholder={t("allIssues")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("allIssues")}</SelectItem>
-            {incidentTypes.map((type) => (
-              <SelectItem key={type.id} value={type.id}>
-                {type.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {incidentTypes.map((type) => (
+          <div key={type.id} className="flex items-center justify-between gap-3">
+            <span className={s.layerLabel}>{type.name}</span>
+            <Switch
+              checked={!hiddenCategoryIds.includes(type.id)}
+              onCheckedChange={() => onToggleCategory(type.id)}
+              aria-label={type.name}
+            />
+          </div>
+        ))}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -249,23 +217,6 @@ const FilterPanel = ({
           </TooltipTrigger>
           <TooltipContent>{t("verificationUnavailable")}</TooltipContent>
         </Tooltip>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <span className={s.label}>
-          {t("mapLayers")}
-        </span>
-        {layerRows.map((row) => (
-          <div key={row.key} className="flex items-center justify-between">
-            <span className={s.layerLabel}>{t(row.labelKey)}</span>
-            <Switch
-              checked={layers[row.key]}
-              onCheckedChange={(checked) =>
-                onLayersChange({ ...layers, [row.key]: checked })
-              }
-            />
-          </div>
-        ))}
       </div>
 
       {onViewReports ? (

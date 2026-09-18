@@ -221,7 +221,7 @@ const Page = () => {
                     alt=""
                     width={677}
                     height={561}
-                    className="h-auto w-full rounded-2xl"
+                    className="h-auto w-full"
                   />
                 </div>
                 <div className={cn(index % 2 === 1 && "md:order-1")}>
