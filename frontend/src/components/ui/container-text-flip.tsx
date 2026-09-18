@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useId } from "react";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface ContainerTextFlipProps {
@@ -34,6 +34,9 @@ export function ContainerTextFlip({
   morphWidth = true,
 }: ContainerTextFlipProps) {
   const id = useId();
+  // Every effect here is decorative, so under prefers-reduced-motion the word
+  // is rendered at its final state rather than blurred and staggered in.
+  const reduceMotion = useReducedMotion();
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [width, setWidth] = useState(100);
   const textRef = React.useRef(null);
@@ -49,8 +52,8 @@ export function ContainerTextFlip({
 
   useEffect(() => {
     // Only needed to animate the container; skipped when it sizes to content.
-    if (morphWidth) updateWidthForWord();
-  }, [currentWordIndex, morphWidth]);
+    if (morphWidth && !reduceMotion) updateWidthForWord();
+  }, [currentWordIndex, morphWidth, reduceMotion]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -77,7 +80,7 @@ export function ContainerTextFlip({
     <motion.div
       // layout/layoutId drive Framer's projection, which translates the box
       // between renders — the other half of the sideways movement.
-      {...(morphWidth
+      {...(morphWidth && !reduceMotion
         ? { layout: true as const, layoutId: `words-here-${id}`, animate: { width } }
         : {})}
       transition={{ duration: animationDuration / 2000 }}
@@ -100,14 +103,16 @@ export function ContainerTextFlip({
         }}
         className={cn("inline-block", textClassName)}
         ref={textRef}
-        {...(morphWidth ? { layoutId: `word-div-${currentWord}-${id}` } : {})}
+        {...(morphWidth && !reduceMotion
+          ? { layoutId: `word-div-${currentWord}-${id}` }
+          : {})}
       >
         <motion.div className="inline-block font-title">
           {complex ? (
             <motion.span
-              initial={{ opacity: 0, filter: "blur(10px)" }}
+              initial={reduceMotion ? false : { opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: animationDuration / 1000 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: animationDuration / 1000 }}
               style={rtl ? { direction: "rtl" } : undefined}
             >
               {currentWord}
@@ -116,17 +121,16 @@ export function ContainerTextFlip({
             currentWord.split("").map((letter, index) => (
               <motion.span
                 key={index}
-                initial={{
-                  opacity: 0,
-                  filter: "blur(10px)",
-                }}
+                initial={
+                  reduceMotion ? false : { opacity: 0, filter: "blur(10px)" }
+                }
                 animate={{
                   opacity: 1,
                   filter: "blur(0px)",
                 }}
-                transition={{
-                  delay: index * 0.02,
-                }}
+                transition={
+                  reduceMotion ? { duration: 0 } : { delay: index * 0.02 }
+                }
               >
                 {letter}
               </motion.span>
