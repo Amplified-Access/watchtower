@@ -150,7 +150,6 @@ const OrganizationRegistrationForm = ({
                   </div>
                   <FormControl>
                     <Input
-                      id="organizationName"
                       autoComplete="organization"
                       className="h-12 bg-white px-4 shadow-none md:text-base"
                       {...field}
@@ -172,7 +171,6 @@ const OrganizationRegistrationForm = ({
                   </div>
                   <FormControl>
                     <Input
-                      id="applicantName"
                       autoComplete="name"
                       className="h-12 bg-white px-4 shadow-none md:text-base"
                       {...field}
@@ -194,7 +192,6 @@ const OrganizationRegistrationForm = ({
                   </div>
                   <FormControl>
                     <Input
-                      id="applicantEmail"
                       type="email"
                       autoComplete="email"
                       className="h-12 bg-white px-4 shadow-none md:text-base"
@@ -217,7 +214,6 @@ const OrganizationRegistrationForm = ({
                   </div>
                   <FormControl>
                     <Input
-                      id="website"
                       inputMode="url"
                       placeholder="https://"
                       className="h-12 bg-white px-4 shadow-none md:text-base"
