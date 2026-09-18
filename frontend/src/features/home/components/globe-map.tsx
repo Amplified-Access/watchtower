@@ -291,8 +291,12 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     for (const id of [CLUSTER_GLOW_LAYER_ID, CLUSTER_LAYER_ID, CLUSTER_COUNT_LAYER_ID]) {
       if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", visibility(layers.clusters));
     }
+    // Clustering leaves singletons and expanded children in this layer, so it
+    // has to stay on whenever either toggle is.
     for (const id of [POINT_GLOW_LAYER_ID, POINT_LAYER_ID]) {
-      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", visibility(layers.reports));
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, "visibility", visibility(layers.clusters || layers.reports));
+      }
     }
   }, [points, layers.clusters, layers.reports, isLoaded]);
 
