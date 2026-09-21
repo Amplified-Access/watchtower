@@ -56,7 +56,9 @@ const Page = () => {
             alt=""
             width={40}
             height={37}
-            className="absolute bottom-0 right-23 h-10 w-10 mb-6"
+            // 24px from the marquee below and 24px inside the right rail
+            // (right-4 / md:right-8 / xl:right-16) at every breakpoint.
+            className="absolute right-10 bottom-6 h-10 w-10 md:right-14 xl:right-22"
           />
         </div>
         <div className="py-16 md:pt-20 md:pb-4">
