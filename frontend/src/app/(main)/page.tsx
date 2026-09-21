@@ -20,7 +20,7 @@ import { trpc } from "@/_trpc/client";
 
 import Footer from "@/components/layout/footer/page";
 import LanguageMarquee from "@/components/common/language-marquee";
-import ScrollFadeText from "@/components/common/scroll-fade-text";
+// import ScrollFadeText from "@/components/common/scroll-fade-text";
 import LivePreviewSection from "@/features/home/components/live-preview-section";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
@@ -132,24 +132,26 @@ const Page = () => {
           <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
-        <div className="border-b border-border">
+        {/* commented out while trying hero/mission configurations */}
+        {/* <div className="border-b border-border">
           <Container size="xs" className="py-16 md:py-24">
             <ScrollFadeText
               text={t("missionStatement")}
               className="text-2xl font-title font-semibold leading-snug md:text-4xl"
             />
           </Container>
-        </div>
-        <Container size="xs" className="pt-16 pb-8 text-center md:pt-24">
-          <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+        </div> */}
+        <Container size="xs" className="py-12 text-center md:py-16">
+          <h3 className="mt-4 max-w-sm mx-auto font-title text-2xl font-semibold text-dark md:text-3xl">
             {t("exploreLabel")}
-          </p>
-          <TextComponent className="mx-auto max-w-xl">
+          </h3>
+          <TextComponent className="mt-4 mx-auto max-w-xl">
             {t("exploreDescription")}
           </TextComponent>
-          <h3 className="mt-4 max-w-sm mx-auto font-title text-2xl font-semibold text-dark md:text-3xl">
-            {t("exploreHeading")}
-          </h3>
+          {/* commented out while trying explore-section configurations */}
+          {/* <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+            {t("exploreLabel")}
+          </p> */}
         </Container>
       </section>
       <LivePreviewSection />
