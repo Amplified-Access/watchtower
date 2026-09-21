@@ -74,8 +74,10 @@ const Footer = () => {
       <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
       <div className="relative isolate overflow-hidden bg-dark text-white @container">
         <div className="relative px-4">
-          <div className="flex w-full flex-wrap justify-between gap-x-12 gap-y-10 py-8">
-            <div className="self-start">
+          {/* Mobile: logo on its own row, then the four columns as a 2x2 grid,
+              instead of wrapping and leaving a gap beside the logo. */}
+          <div className="grid w-full grid-cols-2 gap-x-6 gap-y-10 py-8 md:flex md:flex-wrap md:justify-between md:gap-x-12">
+            <div className="col-span-2 self-start">
               <Logo color="primary" className="w-40 shrink-0" />
             </div>
             {columns.map((column) => (

@@ -9,8 +9,12 @@ const AnnouncementBanner = ({ onDismiss }: { onDismiss: () => void }) => {
   const tCommon = useTranslations("Common");
 
   return (
-    <div className="relative flex h-11 items-center justify-center bg-primary px-4 text-white md:px-8 xl:px-16 [zoom:var(--viewport-scale)]">
-      <div className="flex items-center gap-3 text-sm font-medium">
+    // The button wraps under the message only when the row runs out of room,
+    // so wider phones keep one line. Left-aligned on mobile (pr-10 keeps it
+    // clear of the close button), centred from md. The height varies with the
+    // wrap, so the header measures it rather than assuming h-11.
+    <div className="relative flex min-h-11 items-center bg-primary py-2 pr-10 pl-4 text-white md:justify-center md:px-8 xl:px-16 [zoom:var(--viewport-scale)]">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm font-medium">
         <span>{t("message")}</span>
         <Link
           href="/anonymous-reports"

@@ -35,11 +35,13 @@ const MobileNavigation = () => {
         <SheetHeader className="">
           <Logo className="object-contain object-left" color={"primary"} />
         </SheetHeader>
-        <div className="grid gap-4 px-8 pt-8">
+        {/* px-4 matches the sheet header and footer padding, so the links line
+            up with the logo above and the buttons below. */}
+        <div className="grid gap-2 px-4 pt-8">
           <SheetClose asChild>
             <Link
               href={"/about"}
-              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
+              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-3 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
               {t("about")}
             </Link>
@@ -47,7 +49,7 @@ const MobileNavigation = () => {
           <SheetClose asChild>
             <Link
               href={"/maps"}
-              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
+              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-3 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
               {t("maps")}
             </Link>
@@ -55,7 +57,7 @@ const MobileNavigation = () => {
           <SheetClose asChild>
             <Link
               href={"/case-studies"}
-              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
+              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-3 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
               {t("caseStudies")}
             </Link>
@@ -63,7 +65,7 @@ const MobileNavigation = () => {
           <SheetClose asChild>
             <Link
               href={"/chat"}
-              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
+              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-3 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
               {t("chat")}
             </Link>
@@ -71,7 +73,7 @@ const MobileNavigation = () => {
           <SheetClose asChild>
             <Link
               href={"/alerts"}
-              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
+              className=" flex flex-1 items-start justify-between gap-4 rounded-md py-3 text-left text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180 font-title"
             >
               {t("alerts")}
             </Link>

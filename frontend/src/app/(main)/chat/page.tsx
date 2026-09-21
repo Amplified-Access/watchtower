@@ -19,8 +19,9 @@ const Page = () => {
       </div>
       {/* Fills the viewport under the fixed header: greeting centred in the
           free space, composer anchored towards the bottom like the design.
-          2.75rem is the header's banner spacer, which sits outside this section. */}
-      <div className="mx-auto flex min-h-[calc((100dvh-2.75rem)/var(--viewport-scale))] max-w-2xl flex-col px-8 pt-36 pb-10 md:pt-40 md:pb-12">
+          --banner-height is the header's banner spacer (set by the header from
+          the banner's rendered height), which sits outside this section. */}
+      <div className="mx-auto flex min-h-[calc((100dvh-var(--banner-height))/var(--viewport-scale))] max-w-2xl flex-col px-8 pt-36 pb-10 md:pt-40 md:pb-12">
         <div className="flex flex-1 items-center justify-center py-10">
           <ChatGreeting />
         </div>
