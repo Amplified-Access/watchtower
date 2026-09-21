@@ -12,7 +12,7 @@ const SECTIONS = [
   'Datasets', 'Insights', 'MapsPage', 'Organizations', 'Reports', 'ChatPage'
 ];
 
-const IGNORED_KEYS = new Set(['appName', 'watchtower', 'faqsLabel']);
+const IGNORED_KEYS = new Set(['appName', 'watchtower']);
 const IGNORED_KEY_RE = /^(lang|region)[A-Z]/;
 
 // Values that are genuinely identical to English in a given language
