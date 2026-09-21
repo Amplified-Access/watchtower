@@ -5,14 +5,21 @@ import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 
 // Greetings stay in their own languages whatever the UI locale — rotating
 // through them signals that Esi can talk in any of them.
+// Each in its own script: Amharic in Ge'ez, Punjabi in Gurmukhi and Urdu in
+// Arabic script, which ContainerTextFlip writes on right to left.
 const GREETINGS = [
-  "Habari!",
-  "Hello!",
-  "Oli otya?",
-  "Selam!",
-  "Muraho!",
-  "Bonjour!",
-  "Salaam!",
+  "Habari!", // Swahili
+  "Hello!", // English
+  "Oli otya?", // Luganda
+  "ሰላም!", // Amharic
+  "Muraho!", // Kinyarwanda
+  "Bonjour!", // French
+  "سلام!", // Urdu
+  "ਸਤ ਸ੍ਰੀ ਅਕਾਲ!", // Punjabi
+  "Akkam!", // Oromo
+  "Wĩmwega!", // Kikuyu
+  "Misawa!", // Luo
+  "Mwangaluka!", // Sukuma
 ];
 
 const ChatGreeting = () => {
