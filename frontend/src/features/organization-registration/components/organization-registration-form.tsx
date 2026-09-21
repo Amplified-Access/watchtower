@@ -128,10 +128,10 @@ const OrganizationRegistrationForm = ({
 
   return (
     <div className={cn("flex flex-col", className)} {...props}>
-      <h1 className="text-center font-title text-4xl font-medium text-dark md:text-5xl">
+      <h1 className="text-center font-title text-4xl font-semibold leading-tight text-dark">
         Register organisation
       </h1>
-      <p className="mt-3 text-center text-dark/60 md:text-lg">
+      <p className="mt-4 text-center text-base text-dark/60">
         Apply to bring your organisation onto WatchTower.
       </p>
       <Form {...form}>
@@ -237,7 +237,7 @@ const OrganizationRegistrationForm = ({
               {isLoading ? <Loader /> : <span>Submit application</span>}
             </Button>
           </div>
-          <p className="mt-3 text-center font-title text-dark md:text-lg">
+          <p className="mt-4 text-center font-title text-base text-dark">
             Already have an account?{" "}
             <Link
               href="/sign-in"

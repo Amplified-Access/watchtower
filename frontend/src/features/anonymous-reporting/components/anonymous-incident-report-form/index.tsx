@@ -222,7 +222,7 @@ const AnonymousIncidentReportForm = () => {
         <Button
           type="submit"
           disabled={form.formState.isSubmitting}
-          className="mt-4 h-12 w-full rounded-full font-title text-base md:text-lg"
+          className="mt-4 h-12 w-full rounded-full font-title text-base"
         >
           {form.formState.isSubmitting ? (
             <Loader />
@@ -234,7 +234,7 @@ const AnonymousIncidentReportForm = () => {
           )}
         </Button>
 
-        <p className="font-title text-lg text-dark md:text-xl">
+        <p className="font-title text-base text-dark">
           {t.rich("reviewPrompt", {
             review: (chunks) => (
               <button

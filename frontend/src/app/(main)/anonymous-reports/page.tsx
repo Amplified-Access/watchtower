@@ -26,7 +26,7 @@ const Page = () => {
         />
         <div className="mx-auto max-w-360 px-8 pt-40 pb-24 md:px-16 md:pt-44 md:pb-40">
           <div className="mx-auto max-w-xl">
-            <h1 className="text-center font-title text-4xl font-medium leading-tight text-dark md:text-6xl">
+            <h1 className="text-center font-title text-4xl font-semibold leading-tight text-dark">
               {t("pageTitle")}
             </h1>
             <div className="mt-8 md:mt-10">

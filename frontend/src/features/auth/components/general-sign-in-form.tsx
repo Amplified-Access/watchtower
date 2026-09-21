@@ -82,7 +82,7 @@ export function GeneralSignInForm({
 
   return (
     <div className={cn("flex flex-col", className)} {...props}>
-      <h1 className="text-center font-title text-4xl font-medium text-dark md:text-5xl">
+      <h1 className="text-center font-title text-4xl font-semibold leading-tight text-dark">
         {t("signInHeading")}
       </h1>
       <Form {...form}>
@@ -135,7 +135,7 @@ export function GeneralSignInForm({
             />
             <Link
               href="/forgot-password"
-              className="-mt-1 w-fit font-title text-lg text-primary underline-offset-4 hover:underline md:text-xl"
+              className="-mt-1 w-fit font-title text-sm text-primary underline-offset-4 hover:underline"
             >
               {t("forgotPassword")}
             </Link>
@@ -153,7 +153,7 @@ export function GeneralSignInForm({
               )}
             </Button>
           </div>
-          <p className="mt-3 text-center font-title text-dark md:text-lg">
+          <p className="mt-4 text-center font-title text-base text-dark">
             {t("noAccount")}{" "}
             <Link
               href="/register-organization"
