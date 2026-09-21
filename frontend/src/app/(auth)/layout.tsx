@@ -44,7 +44,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       </main>
 
       <footer className="border-t border-border [zoom:var(--viewport-scale)]">
-        <nav className="flex items-center justify-center gap-2 py-5 font-title text-primary md:text-lg">
+        <nav className="flex items-center justify-center gap-2 py-5 font-title text-sm text-primary">
           <Link href="/privacy-policy" className="hover:underline">
             {t("privacy")}
           </Link>
