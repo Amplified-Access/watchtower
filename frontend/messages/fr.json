@@ -264,6 +264,8 @@
     "heroDescription": "Parcourez des cartes interactives en direct pour explorer les problèmes signalés par les communautés, selon les lieux et dans le temps.",
     "exploreLiveMap": "Explorer la carte en direct",
     "openLiveMap": "Ouvrir la carte des incidents en direct",
+    "liveMapTitle": "Carte d'incidents en direct",
+    "liveMapDescription": "Suivez les incidents civiques au fil des signalements, cartographiés par lieu, thème, langue et période.",
     "thematicLabel": "Cartes thématiques",
     "thematicHeading": "Explorez les enjeux qui façonnent les communautés.",
     "thematicDescription": "Allez au-delà des incidents individuels et explorez les signalements autour de problèmes, de lieux et de thèmes précis.",

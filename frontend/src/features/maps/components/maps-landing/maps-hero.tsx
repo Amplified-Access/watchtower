@@ -48,7 +48,6 @@ const SidePageCard = ({ className }: { className?: string }) => {
 
 const MapsHero = () => {
   const t = useTranslations("MapsPage");
-  const tHome = useTranslations("Home");
 
   return (
     // The gradient and pattern sit inside the page container, so the hero's
@@ -103,15 +102,11 @@ const MapsHero = () => {
             <BrowserFrame className="relative">
               <div className="px-6 py-10 text-center md:py-12">
                 <h2 className="mx-auto mt-4 max-w-md font-title text-2xl font-semibold leading-tight text-dark md:text-4xl">
-                  {tHome("exploreLabel")}
+                  {t("liveMapTitle")}
                 </h2>
                 <p className="mt-4 mx-auto max-w-md text-sm text-dark/60 md:text-base">
-                  {tHome("exploreDescription")}
+                  {t("liveMapDescription")}
                 </p>
-                {/* commented out while trying explore-section configurations */}
-                {/* <p className="mb-3 font-title text-sm font-medium uppercase tracking-wide text-primary">
-                  {tHome("exploreLabel")}
-                </p> */}
               </div>
 
               {/* The real live preview (live data) as a clipped teaser. It's

@@ -264,6 +264,8 @@
     "heroDescription": "Navigate live interactive maps to explore community-reported issues across locations and over time.",
     "exploreLiveMap": "Explore Live Map",
     "openLiveMap": "Open the live incident map",
+    "liveMapTitle": "Mepe ya Mũthenya Wothe",
+    "liveMapDescription": "Follow civic incidents as they're reported, mapped across places, issues, languages and time.",
     "thematicLabel": "Thematic Maps",
     "thematicHeading": "Explore the issues shaping communities.",
     "thematicDescription": "Go beyond individual incidents and explore reporting around specific issues, locations and themes.",
