@@ -55,7 +55,7 @@ const Page = () => {
             alt=""
             width={40}
             height={37}
-            className="absolute bottom-0 right-24 h-16 w-auto md:h-24"
+            className="absolute bottom-0 right-23 h-10 w-10 mb-6"
           />
         </div>
         <div className="py-16 md:pt-20 md:pb-4">
