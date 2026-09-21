@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { trpc } from "@/_trpc/client";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -15,6 +16,10 @@ const toSentenceCase = (name: string) => {
   const s = name.replace(/_/g, " ").toLowerCase();
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
+
+// Each card renders its own live Mapbox thumbnail, so they're revealed a page
+// at a time rather than all at once.
+const PAGE_SIZE = 4;
 
 const cellClassName =
   "border-b border-border px-6 py-10 md:px-10 md:py-12 md:odd:border-r";
@@ -46,7 +51,11 @@ const DynamicThematicMaps = () => {
     error,
   } = trpc.anonymousReports.getActiveIncidentTypesForMaps.useQuery();
 
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
   const incidentTypes = incidentTypesData?.data ?? [];
+  const visibleTypes = incidentTypes.slice(0, visibleCount);
+  const hasMore = visibleCount < incidentTypes.length;
   const failed = !isLoading && (error || !incidentTypesData?.success);
 
   return (
@@ -67,7 +76,7 @@ const DynamicThematicMaps = () => {
 
         {isLoading && (
           <div className="grid md:grid-cols-2">
-            {[...Array(4)].map((_, index) => (
+            {[...Array(PAGE_SIZE)].map((_, index) => (
               <div key={index} className={cellClassName}>
                 <div className="grid gap-4 xl:grid-cols-2">
                   <Skeleton className="h-12 w-3/4" />
@@ -97,7 +106,7 @@ const DynamicThematicMaps = () => {
 
         {!isLoading && !failed && incidentTypes.length > 0 && (
           <div className="grid md:grid-cols-2">
-            {incidentTypes.map((incidentType) => {
+            {visibleTypes.map((incidentType) => {
               const href = `/maps/${generateIncidentTypeSlug(incidentType.name)}`;
               const label = toSentenceCase(incidentType.name);
 
@@ -150,6 +159,22 @@ const DynamicThematicMaps = () => {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {!isLoading && !failed && hasMore && (
+          <div className="flex justify-center border-b border-border py-10 md:py-12">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+              className={cn(
+                buttonVariants({ variant: "secondary", size: "lg" }),
+                "font-title font-medium",
+              )}
+            >
+              {t("loadMore")}
+              <ChevronDown />
+            </button>
           </div>
         )}
       </div>

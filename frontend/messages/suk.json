@@ -270,6 +270,7 @@
     "thematicHeading": "Explore the issues shaping communities.",
     "thematicDescription": "Go beyond individual incidents and explore reporting around specific issues, locations and themes.",
     "exploreMap": "Explore Map",
+    "loadMore": "Load more",
     "thematicEmpty": "No incident types are currently available for mapping.",
     "thematicError": "Unable to load incident types. Please try again later.",
     "digDeeperTitle": "Dig deeper",
