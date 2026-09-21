@@ -17,12 +17,12 @@ import CaseStudyCard from "./case-study-card";
 import { useCategoryLabel } from "../hooks/use-category-label";
 import {
   CASE_STUDY_CATEGORIES,
-  PLACEHOLDER_CASE_STUDIES,
+  LISTED_CASE_STUDIES,
 } from "../data/placeholder-case-studies";
 
 const PAGE_SIZE = 6;
 
-const LOCATIONS = [...new Set(PLACEHOLDER_CASE_STUDIES.map((c) => c.location))].sort();
+const LOCATIONS = [...new Set(LISTED_CASE_STUDIES.map((c) => c.location))].sort();
 
 // 1 2 3 4 5 … 21 near the start, 1 … 9 10 11 … 21 in the middle, etc.
 const getPageItems = (current: number, total: number): (number | "ellipsis")[] => {
@@ -54,7 +54,7 @@ const CaseStudiesList = () => {
   const [location, setLocation] = useQueryState("location", parseAsString);
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
-  const filtered = PLACEHOLDER_CASE_STUDIES.filter(
+  const filtered = LISTED_CASE_STUDIES.filter(
     (c) => (!category || c.category === category) && (!location || c.location === location),
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));

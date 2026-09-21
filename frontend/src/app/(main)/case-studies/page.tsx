@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import Footer from "@/components/layout/footer/page";
 import CaseStudiesList from "@/features/case-studies/components/case-studies-list";
+import FeaturedCaseStudies from "@/features/case-studies/components/featured-case-studies";
 
 const Page = () => {
   const t = useTranslations("CaseStudiesPage");
@@ -39,9 +40,12 @@ const Page = () => {
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
         <div className="mx-auto max-w-360 px-8 py-12 md:px-16 md:py-16 xl:px-28">
-          <Suspense>
-            <CaseStudiesList />
-          </Suspense>
+          <FeaturedCaseStudies />
+          <div className="pt-16 md:pt-24">
+            <Suspense>
+              <CaseStudiesList />
+            </Suspense>
+          </div>
         </div>
       </section>
 
