@@ -18,10 +18,10 @@ const AlertsPage = () => {
         </div>
         <div className="mx-auto max-w-360 px-8 pt-40 pb-20 md:px-16 md:pt-44 md:pb-28">
           <div className="mx-auto max-w-4xl text-center">
-            <h1 className="font-title text-4xl font-medium leading-tight text-dark md:text-6xl">
+            <h1 className="font-title text-4xl font-semibold leading-tight text-dark">
               {t("heading")}
             </h1>
-            <p className="mx-auto mt-3 max-w-2xl text-dark/60 leading-snug md:text-xl">
+            <p className="mx-auto mt-4 max-w-md text-dark/60 leading-snug">
               {t("subheading")}
             </p>
           </div>

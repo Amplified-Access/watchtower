@@ -66,7 +66,7 @@ interface SelectedLocation {
   lon: number;
 }
 
-const labelClassName = "font-title text-base font-medium text-dark md:text-lg";
+const labelClassName = "font-title text-base font-medium text-dark";
 const fieldClassName =
   "h-12 w-full rounded-md border-input bg-white px-4 font-title text-sm text-dark shadow-none placeholder:text-dark/70 md:text-base";
 
@@ -493,7 +493,7 @@ const AlertSubscriptionForm: React.FC = () => {
         <Button
           type="submit"
           disabled={createSubscription.isPending}
-          className="h-12 w-full rounded-full font-title text-base md:text-lg"
+          className="h-12 w-full rounded-full font-title text-base"
         >
           {createSubscription.isPending ? (
             <>
