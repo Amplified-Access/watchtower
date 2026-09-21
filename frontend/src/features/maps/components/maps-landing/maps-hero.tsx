@@ -11,8 +11,9 @@ import BrowserFrame from "./browser-frame";
 
 const LIVE_MAP_HREF = "/maps/live-incident-map";
 
-// Tilted "homepage" windows peeking out behind the main frame. Decorative only.
-const TiltedPageCard = ({ className }: { className?: string }) => {
+// Upright "homepage" windows peeking out behind the main frame. Kept unrotated
+// for a more professional feel. Decorative only.
+const SidePageCard = ({ className }: { className?: string }) => {
   const tHome = useTranslations("Home");
 
   return (
@@ -47,30 +48,30 @@ const TiltedPageCard = ({ className }: { className?: string }) => {
 
 const MapsHero = () => {
   const t = useTranslations("MapsPage");
-  const tHome = useTranslations("Home");
 
   return (
-    // Gradient and pattern stay full-bleed. The frame container is narrower than
-    // the gutters so the tilted cards, which hang off its sides, land inside the
-    // viewport instead of being sliced by the section's overflow-hidden.
-    <section className="relative isolate overflow-hidden bg-white [zoom:var(--viewport-scale)]">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-primary via-primary/80 to-primary/40" />
-      <Image
-        src="/brand/Pattern.svg"
-        alt=""
-        width={1378}
-        height={617}
-        className="pointer-events-none absolute top-64 -left-1/4 -z-10 h-auto w-full scale-150 invert"
-      />
-      <Image
-        src="/brand/Pattern.svg"
-        alt=""
-        width={1378}
-        height={617}
-        className="pointer-events-none absolute top-96 -right-1/3 -z-10 h-auto w-full rotate-180 scale-150 invert"
-      />
+    // The gradient and pattern sit inside the page container, so the hero's
+    // edges line up with the header and the guide lines of the sections below.
+    // The frame is narrower than that box so the side cards, which hang off
+    // it, land inside the box instead of being sliced by its overflow-hidden.
+    <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
       <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
-        <div className="relative">
+        <div className="relative isolate overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-primary via-primary/80 to-primary/40" />
+          <Image
+            src="/brand/Pattern.svg"
+            alt=""
+            width={1378}
+            height={617}
+            className="pointer-events-none absolute top-64 -left-1/4 -z-10 h-auto w-full scale-150 invert"
+          />
+          <Image
+            src="/brand/Pattern.svg"
+            alt=""
+            width={1378}
+            height={617}
+            className="pointer-events-none absolute top-96 -right-1/3 -z-10 h-auto w-full rotate-180 scale-150 invert"
+          />
 
           <div className="px-6 pt-32 pb-12 text-center md:pb-16">
             <h1 className="mx-auto max-w-2xl font-title text-4xl font-semibold leading-tight text-white md:text-[2.5rem]">
@@ -79,7 +80,9 @@ const MapsHero = () => {
             <p className="mx-auto mt-4 max-w-md text-white/90 leading-snug">
               {t("heroDescription")}
             </p>
-            <Link
+            {/* commented out while trying the hero without it: the live map
+                preview below already links there on hover */}
+            {/* <Link
               href={LIVE_MAP_HREF}
               className={cn(
                 buttonVariants({ variant: "secondary", size: "lg" }),
@@ -88,25 +91,24 @@ const MapsHero = () => {
             >
               {t("exploreLiveMap")}
               <ChevronRight />
-            </Link>
+            </Link> */}
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 md:px-10">
-            <TiltedPageCard className="-left-40 top-28 -rotate-12" />
-            <TiltedPageCard className="-right-28 top-36 rotate-28" />
+            {/* Offsets stay inside the gap between the frame and the box edge
+                (32px at lg, 128px from xl, where the zoom keeps it fixed) so
+                the windows' outer edges are never clipped. */}
+            <SidePageCard className="-left-6 top-28 xl:-left-24" />
+            <SidePageCard className="-right-6 top-28 xl:-right-24" />
 
             <BrowserFrame className="relative">
               <div className="px-6 py-10 text-center md:py-12">
                 <h2 className="mx-auto mt-4 max-w-md font-title text-2xl font-semibold leading-tight text-dark md:text-4xl">
-                  {tHome("exploreLabel")}
+                  {t("liveMapTitle")}
                 </h2>
                 <p className="mt-4 mx-auto max-w-md text-sm text-dark/60 md:text-base">
-                  {tHome("exploreDescription")}
+                  {t("liveMapDescription")}
                 </p>
-                {/* commented out while trying explore-section configurations */}
-                {/* <p className="mb-3 font-title text-sm font-medium uppercase tracking-wide text-primary">
-                  {tHome("exploreLabel")}
-                </p> */}
               </div>
 
               {/* The real live preview (live data) as a clipped teaser. It's

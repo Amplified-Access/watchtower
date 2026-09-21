@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Bot, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import Footer from "@/components/layout/footer/page";
@@ -33,11 +33,11 @@ const Page = () => {
           height={617}
           className="pointer-events-none absolute -bottom-24 left-0 -z-10 h-auto w-full invert"
         />
-        <div className="mx-auto max-w-xl px-6 py-20 text-center md:py-28">
-          <h2 className="font-title text-4xl font-semibold leading-tight text-dark md:text-5xl">
+        <div className="mx-auto max-w-3xl px-6 py-20 text-center md:py-28">
+          <h2 className="font-title text-3xl font-semibold leading-tight text-dark md:text-4xl">
             {t("digDeeperTitle")}
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-dark/60 leading-snug">
+          <p className="mx-auto mt-4 max-w-xl text-dark/60 leading-snug">
             {t("digDeeperDescription")}
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -45,11 +45,11 @@ const Page = () => {
               href="/chat"
               className={cn(
                 buttonVariants({ variant: "secondary", size: "lg" }),
-                "border border-sky-400 bg-white font-title font-medium hover:bg-sky-50",
+                "font-title font-medium",
               )}
             >
               {t("chatWithEsi")}
-              <Bot className="text-sky-500" />
+              <ChevronRight />
             </Link>
             <Link
               href="/maps/live-incident-map"
