@@ -33,6 +33,8 @@ export interface CaseStudy {
   deployment?: string;
   /** Full write-up. Studies without one show their summary as the introduction. */
   body?: CaseStudyBlock[];
+  /** Shown in the featured block above the filters instead of the main list. */
+  featured?: boolean;
 }
 
 export const CASE_STUDY_CATEGORIES: CaseStudyCategory[] = [
@@ -74,6 +76,7 @@ const CHILDREN_IMAGE = {
 export const PLACEHOLDER_CASE_STUDIES: CaseStudy[] = [
   {
     slug: "water-access-kampala",
+    featured: true,
     title: "When access to water becomes uncertain",
     summary: "Listening to what communities are reporting about water access in Kampala",
     category: "water-sanitation",
@@ -194,6 +197,7 @@ export const PLACEHOLDER_CASE_STUDIES: CaseStudy[] = [
   },
   {
     slug: "changing-seasons-everyday-life",
+    featured: true,
     title: "When changing seasons reshape everyday life",
     summary:
       "How community voices are helping build a clearer picture of changing climate conditions.",
@@ -273,3 +277,12 @@ export const PLACEHOLDER_CASE_STUDIES: CaseStudy[] = [
     ...COMMUNITY_IMAGE,
   },
 ];
+
+export const FEATURED_CASE_STUDIES = PLACEHOLDER_CASE_STUDIES.filter(
+  (caseStudy) => caseStudy.featured,
+);
+
+// Everything the filtered list shows: featured studies already appear above it.
+export const LISTED_CASE_STUDIES = PLACEHOLDER_CASE_STUDIES.filter(
+  (caseStudy) => !caseStudy.featured,
+);
