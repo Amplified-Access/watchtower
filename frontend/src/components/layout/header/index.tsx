@@ -27,6 +27,27 @@ const Header = () => {
     }
   }, []);
 
+  // Publishes the banner's rendered height as --banner-height for the spacer
+  // below and for full-height pages. It wraps to two lines on narrow screens,
+  // so a fixed value would leave the header overlapping content.
+  const [bannerEl, setBannerEl] = useState<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const root = document.documentElement.style;
+    if (!bannerEl) {
+      root.setProperty("--banner-height", "0px");
+      return;
+    }
+    const update = () =>
+      root.setProperty("--banner-height", `${bannerEl.getBoundingClientRect().height}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(bannerEl);
+    return () => {
+      observer.disconnect();
+      root.setProperty("--banner-height", "0px");
+    };
+  }, [bannerEl]);
+
   const dismissBanner = () => {
     setShowBanner(false);
     localStorage.setItem(BANNER_DISMISSED_KEY, "1");
@@ -63,7 +84,11 @@ const Header = () => {
   return (
     <>
       <div className="fixed top-0 inset-x-0 z-30">
-        {showBanner && <AnnouncementBanner onDismiss={dismissBanner} />}
+        {showBanner && (
+          <div ref={setBannerEl}>
+            <AnnouncementBanner onDismiss={dismissBanner} />
+          </div>
+        )}
         <header className="flex items-center w-full bg-white border-b border-border py-4">
           <div
             className={cn(
@@ -112,7 +137,7 @@ const Header = () => {
           </div>
         </header>
       </div>
-      {showBanner && <div className="h-11" />}
+      {showBanner && <div className="h-(--banner-height)" />}
     </>
   );
 };
