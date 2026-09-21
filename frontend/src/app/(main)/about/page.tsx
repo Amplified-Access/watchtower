@@ -65,7 +65,7 @@ const Page = () => {
                 <p className="mb-4 font-title text-xs font-semibold uppercase tracking-widest text-white/70">
                   {tNav("about")} WatchTower
                 </p>
-                <h1 className="max-w-xl font-title text-4xl font-semibold text-white md:text-5xl">
+                <h1 className="max-w-xl font-title text-4xl font-semibold leading-tight text-white">
                   {t("heroTitle")}
                 </h1>
                 <div className="mt-8 -ml-4 -mr-4 h-px bg-white md:-ml-6 md:-mr-12 xl:-ml-8 xl:-mr-16" />
@@ -198,7 +198,7 @@ const Page = () => {
         
         <div className="pt-20 pb-16 md:pt-28 md:pb-20">
           <Container size="xs" className="text-center">
-            <HeadingTwo className="text-4xl text-white md:text-5xl">
+            <HeadingTwo className="text-white">
               {t("languagesTitle")}
             </HeadingTwo>
             <TextComponent className="mx-auto mt-4 max-w-xl text-center text-white/70">
