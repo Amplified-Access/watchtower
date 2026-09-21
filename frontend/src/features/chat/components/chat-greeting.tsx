@@ -32,13 +32,13 @@ const ChatGreeting = () => {
           greeting animates in place rather than sliding as the box resizes.
           Decorative motion, so it is hidden from assistive tech and the
           subtitle below carries the heading. */}
-      <div aria-hidden className="flex h-16 items-center justify-center md:h-24">
+      <div aria-hidden className="flex h-14 items-center justify-center md:h-20">
         <ContainerTextFlip
           words={GREETINGS}
           interval={3000}
           animationDuration={700}
           morphWidth={false}
-          className="rounded-none p-0 font-title text-5xl font-medium text-dark md:text-7xl"
+          className="rounded-none p-0 font-title text-4xl font-medium text-dark md:text-6xl"
           textClassName="font-title"
         />
       </div>
