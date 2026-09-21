@@ -119,11 +119,12 @@ const Page = () => {
       <section className="bg-white py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
         <Container size="lg">
           <div className="text-center mb-14 md:mb-20">
-            <p className="mb-3 font-title text-xs  font-semibold uppercase tracking-widest text-primary">
+            {/* commented out while trying how-it-works configurations */}
+            {/* <p className="mb-3 font-title text-xs  font-semibold uppercase tracking-widest text-primary">
               {tHome("howItWorks")}
-            </p>
+            </p> */}
             <HeadingTwo className="text-center max-w-md mx-auto">
-              {tHome.rich("howItWorksHeading", { break: () => <br /> })}
+              {tHome("howItWorks")}
             </HeadingTwo>
             <TextComponent className="mt-4 max-w-xl mx-auto text-center">
               {tHome("howItWorksDescription")}

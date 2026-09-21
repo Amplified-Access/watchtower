@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "He rũpoti na rũthiomi rwaku.",
     "heroTitleLine2": "Ũiguuo!",
-    "heroDescription": "Rĩrĩa mĩcemanio ĩngĩhota kwaria, maũndũ nĩmagarũrũkaga. Watchtower nĩĩhotithagia andũ kũheana marũpoti ma mathĩna ma gĩthaka na mahĩtia ma kĩhooto na rũthiomi rũrĩa maragia, nĩguo o mũndũ ahote gũtonya wĩra-inĩ wa gĩthaka na ũrũgamĩrĩri wa andũ othe.",
+    "heroDescription": "Watchtower nĩĩhotithagia andũ kũheana marũpoti ma mathĩna ma gĩthaka na mahĩtia ma kĩhooto na rũthiomi rũrĩa maragia, nĩguo o mũndũ ahote gũtonya wĩra-inĩ wa gĩthaka na ũrũgamĩrĩri wa andũ othe.",
     "startReporting": "Tũma Rũpoti",
     "viewMaps": "Amba Wĩra",
     "howItWorks": "Ũrĩa gũtũmagĩra",
@@ -598,8 +598,8 @@
     "step2Description": "Nĩtwĩkaga na tũkĩgwatĩrĩria rũpoti o rũmwe, tũgĩthondeka mahitũko mepe-inĩ na kuonania mĩthiĩre ĩrĩa ĩngĩaga kũmenyeka. Ũhoro ũtathondeketwo ũtuĩkaga ũmenyo mũthingu na mũthondekeku ũrĩa ũheanaga ũhoro mũnene.",
     "step3Title": "Rehe Wĩra",
     "step3Description": "Mĩcemanio, thiritũ, na thĩinĩ ciamũrĩ ĩyũkagia ũmenyo ũyũ nĩguo ciake maũndũ, ciĩkĩrĩre arĩa marĩ na wĩra thĩinĩ wa kĩhooto, na ithũkũmagie ũgarũrũku ũrĩ na bata, ũtũĩkĩte na ũira wa ma kuuma thĩ.",
-    "speakNaturallyTitle": "Speak naturally. WatchTower helps others understand.",
-    "speakNaturallyDescription": "Report by voice or text in the language you're most comfortable using. WatchTower helps transcribe, translate and structure reports so information can be understood across languages.",
+    "speakNaturallyTitle": "Report naturally<break></break>in your language.",
+    "speakNaturallyDescription": "WatchTower transcribes, translates and structures reports so information can be understood, no matter the language used to report an incident.",
     "speakNaturallyCta": "Start a Report",
     "insightsLabel": "Insights & Stories",
     "insightsHeading": "Ideas, stories and insights from the field.",
@@ -693,6 +693,8 @@
     "recenterMap": "Recenter map",
     "mapLayersButton": "Map layers",
     "reportDate": "Reported {date}",
-    "closePopup": "Close"
+    "closePopup": "Close",
+    "scrollZoomHint": "Use {key} + scroll to zoom the map",
+    "touchPanHint": "Use two fingers to move the map"
   }
 }

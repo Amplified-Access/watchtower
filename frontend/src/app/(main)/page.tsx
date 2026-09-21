@@ -20,7 +20,8 @@ import { trpc } from "@/_trpc/client";
 
 import Footer from "@/components/layout/footer/page";
 import LanguageMarquee from "@/components/common/language-marquee";
-import ScrollFadeText from "@/components/common/scroll-fade-text";
+import StepConnector from "@/components/common/step-connector";
+// import ScrollFadeText from "@/components/common/scroll-fade-text";
 import LivePreviewSection from "@/features/home/components/live-preview-section";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
@@ -132,24 +133,26 @@ const Page = () => {
           <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
-        <div className="border-b border-border">
+        {/* commented out while trying hero/mission configurations */}
+        {/* <div className="border-b border-border">
           <Container size="xs" className="py-16 md:py-24">
             <ScrollFadeText
               text={t("missionStatement")}
               className="text-2xl font-title font-semibold leading-snug md:text-4xl"
             />
           </Container>
-        </div>
-        <Container size="xs" className="pt-16 pb-8 text-center md:pt-24">
-          <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+        </div> */}
+        <Container size="xs" className="py-12 text-center md:py-16">
+          <h3 className="mt-4 max-w-sm mx-auto font-title text-2xl font-semibold text-dark md:text-3xl">
             {t("exploreLabel")}
-          </p>
-          <TextComponent className="mx-auto max-w-xl">
+          </h3>
+          <TextComponent className="mt-4 mx-auto max-w-xl">
             {t("exploreDescription")}
           </TextComponent>
-          <h3 className="mt-4 max-w-sm mx-auto font-title text-2xl font-semibold text-dark md:text-3xl">
-            {t("exploreHeading")}
-          </h3>
+          {/* commented out while trying explore-section configurations */}
+          {/* <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+            {t("exploreLabel")}
+          </p> */}
         </Container>
       </section>
       <LivePreviewSection />
@@ -182,18 +185,20 @@ const Page = () => {
       <section className="bg-white py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
         <Container size="lg">
           <div className="text-center mb-14 md:mb-20">
-            <p className="mb-3 font-title text-xs  font-semibold uppercase tracking-widest text-primary">
+            {/* commented out while trying how-it-works configurations */}
+            {/* <p className="mb-3 font-title text-xs  font-semibold uppercase tracking-widest text-primary">
               {t("howItWorks")}
-            </p>
+            </p> */}
             <HeadingTwo className="text-center max-w-md mx-auto">
-              {t.rich("howItWorksHeading", { break: () => <br /> })}
+              {t("howItWorks")}
             </HeadingTwo>
             <TextComponent className="mt-4 max-w-xl mx-auto text-center">
               {t("howItWorksDescription")}
             </TextComponent>
           </div>
 
-          <div className="flex flex-col gap-16 md:gap-24">
+          {/* Row gap matches the StepConnector height so the line spans it exactly */}
+          <div className="flex flex-col gap-16 md:gap-24 lg:gap-40">
             {[
               {
                 number: 1,
@@ -213,8 +218,14 @@ const Page = () => {
             ].map((step, index) => (
               <div
                 key={step.number}
-                className="grid items-center gap-10 md:grid-cols-2 md:gap-16"
+                className="relative grid items-center gap-10 md:grid-cols-2 md:gap-16"
               >
+                {index < 2 && (
+                  <StepConnector
+                    from={index % 2 === 0 ? "left" : "right"}
+                    className="top-full hidden h-40 lg:block"
+                  />
+                )}
                 <div className={cn(index % 2 === 1 && "md:order-2")}>
                   <Image
                     src="/placeholder.png"
@@ -258,17 +269,26 @@ const Page = () => {
         <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
           <div className="relative isolate overflow-hidden bg-dark px-6 py-16 md:px-16 md:py-20">
             <Image
+              src="/brand/Pattern.svg"
+              alt=""
+              width={1378}
+              height={617}
+              className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
+            />
+            <Image
               src="/asset.svg"
               alt=""
               width={552}
               height={594}
               className="pointer-events-none absolute inset-y-0 right-0 -top-10 -z-10 scale-125 h-full object-cover object-left md:w-48"
             />
-            <div className="relative z-10 grid gap-10 md:grid-cols-2 md:gap-16 md:items-center">
+            <div className="relative z-10 flex flex-col gap-10 md:flex-row md:items-center md:gap-40">
               <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
-                {t("speakNaturallyTitle")}
+                {t.rich("speakNaturallyTitle", {
+                  break: () => <br />,
+                })}
               </h2>
-              <div>
+              <div className="shrink-0">
                 <p className="max-w-xs text-white/60 leading-relaxed">
                   {t("speakNaturallyDescription")}
                 </p>
@@ -322,7 +342,9 @@ const Page = () => {
               {insights.map((insight) => (
                 <Link
                   key={insight.id}
-                  href={insight.slug ? `/insights/${insight.slug}` : "/insights"}
+                  href={
+                    insight.slug ? `/insights/${insight.slug}` : "/insights"
+                  }
                   className="group flex h-full flex-col"
                 >
                   <div className="aspect-video bg-dark/5">
@@ -362,7 +384,18 @@ const Page = () => {
         </section>
       )}
       <LogoCloud />
-      <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
+      <section className="relative isolate bg-white pb-16 [zoom:var(--viewport-scale)]">
+        {/* Pattern spans the full width and stops at the bottom rule; the
+            container is marked only by the guide lines drawn over it. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 bottom-16 -z-10 overflow-hidden">
+          <Image
+            src="/brand/Pattern.svg"
+            alt=""
+            width={1378}
+            height={617}
+            className="absolute inset-x-0 bottom-0 h-auto w-full opacity-40 invert"
+          />
+        </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-border" />
         <div className="pointer-events-none absolute inset-x-0 bottom-16 h-px bg-border" />
         <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
@@ -370,23 +403,16 @@ const Page = () => {
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
         <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
-          <div className="relative isolate overflow-hidden bg-dark px-6 py-16 md:px-16 md:py-20">
-            <Image
-              src="/brand/Pattern.svg"
-              alt=""
-              width={1378}
-              height={617}
-              className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
-            />
+          <div className="relative px-6 py-16 md:px-16 md:py-20">
             <div className="grid gap-12 md:grid-cols-2 md:gap-16">
               <div>
                 <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
                   {t("faqsLabel")}
                 </p>
-                <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
+                <h2 className="font-title text-3xl font-semibold leading-tight text-dark md:text-4xl">
                   {t("faqsHeading")}
                 </h2>
-                <p className="mt-4 max-w-xs text-white/60 leading-relaxed">
+                <p className="mt-4 max-w-xs text-dark/60 leading-relaxed">
                   {t("faqsDescription")}
                 </p>
               </div>
@@ -427,16 +453,16 @@ const Page = () => {
                   <AccordionItem
                     key={value}
                     value={value}
-                    className="border-white/15"
+                    className="border-dark/10"
                   >
-                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-white hover:no-underline [&>svg]:hidden">
+                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-dark hover:no-underline [&>svg]:hidden">
                       <span className="flex-1">{question}</span>
                       <span className="relative flex size-6 shrink-0 items-center justify-center rounded bg-primary">
                         <Plus className="size-3.5 text-white group-data-[state=open]:hidden" />
                         <Minus className="absolute size-3.5 text-white opacity-0 group-data-[state=open]:opacity-100" />
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-white/60">
+                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-dark/60">
                       {answer}
                     </AccordionContent>
                   </AccordionItem>

@@ -80,6 +80,7 @@ const LivePreviewSection = () => {
               layers={layers}
               viewMode={viewMode}
               onViewModeChange={setViewMode}
+              cooperativeGestures
             />
           </div>
 

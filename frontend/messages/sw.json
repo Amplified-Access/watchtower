@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "Ripoti kwa lugha yako.",
     "heroTitleLine2": "Sikika!",
-    "heroDescription": "Jamii zinapoweza kusema, mambo hubadilika. Watchtower inawawezesha watu kuripoti masuala ya ndani na ukiukaji wa haki katika lugha wanazozungumza ili kila mtu aweze kushiriki katika maisha ya kiraia na uwajibikaji wa umma.",
+    "heroDescription": "Watchtower inawawezesha watu kuripoti masuala ya ndani na ukiukaji wa haki katika lugha wanazozungumza ili kila mtu aweze kushiriki katika maisha ya kiraia na uwajibikaji wa umma.",
     "startReporting": "Wasilisha ripoti",
     "viewMaps": "Anzisha upelekaji",
     "howItWorks": "Jinsi hii inavyofanya kazi",
@@ -598,8 +598,8 @@
     "step2Description": "Tunachakata na kuthibitisha kila ripoti, tukiweka matukio kwenye ramani na kuibua mifumo ambayo vinginevyo isingegundulika. Taarifa ghafi zinakuwa maarifa yaliyo wazi na yaliyopangwa yanayosimulia hadithi kubwa zaidi.",
     "step3Title": "Leta hatua",
     "step3Description": "Jamii, mashirika na taasisi zinapata maarifa haya ili kujenga kesi, kuwawajibisha watu husika, na kusukuma mabadiliko yenye maana, yakiungwa mkono na ushahidi halisi kutoka uwanjani.",
-    "speakNaturallyTitle": "Speak naturally. WatchTower helps others understand.",
-    "speakNaturallyDescription": "Report by voice or text in the language you're most comfortable using. WatchTower helps transcribe, translate and structure reports so information can be understood across languages.",
+    "speakNaturallyTitle": "Report naturally<break></break>in your language.",
+    "speakNaturallyDescription": "WatchTower transcribes, translates and structures reports so information can be understood, no matter the language used to report an incident.",
     "speakNaturallyCta": "Start a Report",
     "insightsLabel": "Insights & Stories",
     "insightsHeading": "Ideas, stories and insights from the field.",
@@ -693,6 +693,8 @@
     "recenterMap": "Rudisha ramani katikati",
     "mapLayersButton": "Tabaka za ramani",
     "reportDate": "Iliripotiwa {date}",
-    "closePopup": "Funga"
+    "closePopup": "Funga",
+    "scrollZoomHint": "Tumia {key} + kusogeza ili kukuza ramani",
+    "touchPanHint": "Tumia vidole viwili kusogeza ramani"
   }
 }

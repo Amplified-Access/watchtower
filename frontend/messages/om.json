@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "Afaan keessaniin gabaasaa.",
     "heroTitleLine2": "Sagaleen keessan haa dhaga'amu!",
-    "heroDescription": "Hawaasonni yeroo dubbachuu danda'an, wanti ni jijjiirama. Watchtower namoonni dhimmoota naannoo fi cabiinsa mirgaa afaan dubbatanuun akka gabaasan dandeessisa, kanaanis namni hundi jireenya hawaasaa fi itti gaafatamummaa uummataa keessatti akka hirmaatu.",
+    "heroDescription": "Watchtower namoonni dhimmoota naannoo fi cabiinsa mirgaa afaan dubbatanuun akka gabaasan dandeessisa, kanaanis namni hundi jireenya hawaasaa fi itti gaafatamummaa uummataa keessatti akka hirmaatu.",
     "startReporting": "Gabaasa Ergi",
     "viewMaps": "Diriirsaa Uumi",
     "howItWorks": "Akkaataa Itti Hojjatu",
@@ -598,8 +598,8 @@
     "step2Description": "Gabaasa hunda ni qindeessina, ni mirkaneessina, dhimmoota kaartaa irratti ni argisiifna, fakkiiwwan otuu hin mul'atin hafan ifatti ni baafna. Odeeffannoon qullaa ta'e hubannoo qajeelaa fi ijaarame kan seenaa guddaa dubbatu ta'a.",
     "step3Title": "Tarkaanfii Fidi",
     "step3Description": "Hawaasonni, dhaabbileen, fi buufanni hubannoo kana fayyadamanii dhimmoota ijaaruu, warra itti gaafatamummaa qaban gaafachuu, fi ragaa dhugaa lafa irraa fudhatameen deggeramu jijjiirama barbaachisaa fiduuf ni fayyadamu.",
-    "speakNaturallyTitle": "Speak naturally. WatchTower helps others understand.",
-    "speakNaturallyDescription": "Report by voice or text in the language you're most comfortable using. WatchTower helps transcribe, translate and structure reports so information can be understood across languages.",
+    "speakNaturallyTitle": "Report naturally<break></break>in your language.",
+    "speakNaturallyDescription": "WatchTower transcribes, translates and structures reports so information can be understood, no matter the language used to report an incident.",
     "speakNaturallyCta": "Start a Report",
     "insightsLabel": "Insights & Stories",
     "insightsHeading": "Ideas, stories and insights from the field.",
@@ -693,6 +693,8 @@
     "recenterMap": "Recenter map",
     "mapLayersButton": "Map layers",
     "reportDate": "Reported {date}",
-    "closePopup": "Close"
+    "closePopup": "Close",
+    "scrollZoomHint": "Use {key} + scroll to zoom the map",
+    "touchPanHint": "Use two fingers to move the map"
   }
 }

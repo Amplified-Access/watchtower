@@ -100,10 +100,27 @@ interface GlobeMapProps {
    * controls: skip the floating-panel padding and the built-in overlay controls.
    */
   docked?: boolean;
+  /**
+   * For maps embedded in a scrolling page: plain scroll moves the page, and
+   * zooming needs Ctrl/⌘ + scroll (two fingers to pan on touch screens).
+   */
+  cooperativeGestures?: boolean;
 }
 
 const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
-  ({ bubbles, points, layers, viewMode, onViewModeChange, className, docked = false }, ref) => {
+  (
+    {
+      bubbles,
+      points,
+      layers,
+      viewMode,
+      onViewModeChange,
+      className,
+      docked = false,
+      cooperativeGestures = false,
+    },
+    ref,
+  ) => {
   const t = useTranslations("HomeLivePreview");
   const locale = useLocale();
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
@@ -124,6 +141,12 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       projection: { name: "globe" },
       attributionControl: false,
       logoPosition: "bottom-right",
+      cooperativeGestures,
+      locale: {
+        "ScrollZoomBlocker.CtrlMessage": t("scrollZoomHint", { key: "Ctrl" }),
+        "ScrollZoomBlocker.CmdMessage": t("scrollZoomHint", { key: "⌘" }),
+        "TouchPanBlocker.Message": t("touchPanHint"),
+      },
     });
     map.setPadding(getMapPadding(docked));
 

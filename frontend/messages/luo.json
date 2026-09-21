@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "Ripodh e dhogi.",
     "heroTitleLine2": "Winjri!",
-    "heroDescription": "Ka oganda nyalo wuoyo, gik moko lokore. Watchtower miyo ji teko mar ripodho weche mag alworni kod ketho mag ratiro e dhok ma giwuoyogo mondo ngʼato ka ngʼato riwre e ngima mar oganda kod miyo joma nigi diragruok luor.",
+    "heroDescription": "Watchtower miyo ji teko mar ripodho weche mag alworni kod ketho mag ratiro e dhok ma giwuoyogo mondo ngʼato ka ngʼato riwre e ngima mar oganda kod miyo joma nigi diragruok luor.",
     "startReporting": "Or Ripodho",
     "viewMaps": "Chak Tich",
     "howItWorks": "Kaka Otiyo",
@@ -598,8 +598,8 @@
     "step2Description": "Wanono kendo wasiro ripodho ka ripodho, ka waketo gik motimore e ramaki kendo wanyiso kit wach mane dhi bedo mopondo. Fweny manoko lokore ngʼeyo maler kendo mochanore maber manyiso wach maduongʼ.",
     "step3Title": "Kel Lokruok",
     "step3Description": "Oganda, riwruok, kod kanyakla yudo ngʼeyogi mondo giger weche, gimi joma nigi diragruok luor, kendo gidhi nyime gi lokruok makelo tich, kotenore gi ranyisi madier koa e piny.",
-    "speakNaturallyTitle": "Speak naturally. WatchTower helps others understand.",
-    "speakNaturallyDescription": "Report by voice or text in the language you're most comfortable using. WatchTower helps transcribe, translate and structure reports so information can be understood across languages.",
+    "speakNaturallyTitle": "Report naturally<break></break>in your language.",
+    "speakNaturallyDescription": "WatchTower transcribes, translates and structures reports so information can be understood, no matter the language used to report an incident.",
     "speakNaturallyCta": "Start a Report",
     "insightsLabel": "Insights & Stories",
     "insightsHeading": "Ideas, stories and insights from the field.",
@@ -693,6 +693,8 @@
     "recenterMap": "Recenter map",
     "mapLayersButton": "Map layers",
     "reportDate": "Reported {date}",
-    "closePopup": "Close"
+    "closePopup": "Close",
+    "scrollZoomHint": "Use {key} + scroll to zoom the map",
+    "touchPanHint": "Use two fingers to move the map"
   }
 }

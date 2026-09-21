@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "Waayo alipooti mu lulimi lwo.",
     "heroTitleLine2": "Owulirwe!",
-    "heroDescription": "Ebibiina bwe bisobola okwogera, ebintu bikyuka. Watchtower ekkiriza abantu okuwaayo alipooti ku nsonga z'ekitundu n'okutyoboola kwa ddembe mu nnimi zaabwe, buli omu n'asobola okwetaba mu bulamu bw'abannansi n'okuvunaanyizibwa mu lwatu.",
+    "heroDescription": "Watchtower ekkiriza abantu okuwaayo alipooti ku nsonga z'ekitundu n'okutyoboola kwa ddembe mu nnimi zaabwe, buli omu n'asobola okwetaba mu bulamu bw'abannansi n'okuvunaanyizibwa mu lwatu.",
     "startReporting": "Waayo alipooti",
     "viewMaps": "Tandika okussa",
     "howItWorks": "Engeri gye kikola",
@@ -598,8 +598,8 @@
     "step2Description": "Tukola era tukakasa buli alipooti, nga tussa ebikwata ku mmapu era tuzuula enkola ezaali zitalabika. Amawulire agatali gakolebwako gafuuka amagezi amanyi era amateekeddwa nga gategeeza olugero olusingako.",
     "step3Title": "Leeta enkyukakyuka",
     "step3Description": "Ebibiina, ebitongole n'amasomero bikozesa amagezi gano okuzimba emisango, okuvunaanyiza abavunaanyizibwa, era okusindika enkyukakyuka ey'amakulu, ng'ekakasibwa obukakafu obw'amazima okuva ku ttaka.",
-    "speakNaturallyTitle": "Speak naturally. WatchTower helps others understand.",
-    "speakNaturallyDescription": "Report by voice or text in the language you're most comfortable using. WatchTower helps transcribe, translate and structure reports so information can be understood across languages.",
+    "speakNaturallyTitle": "Report naturally<break></break>in your language.",
+    "speakNaturallyDescription": "WatchTower transcribes, translates and structures reports so information can be understood, no matter the language used to report an incident.",
     "speakNaturallyCta": "Start a Report",
     "insightsLabel": "Insights & Stories",
     "insightsHeading": "Ideas, stories and insights from the field.",
@@ -693,6 +693,8 @@
     "recenterMap": "Zzaayo maapu wakati",
     "mapLayersButton": "Emitendera gya maapu",
     "reportDate": "Kyaloopebwa {date}",
-    "closePopup": "Ggalawo"
+    "closePopup": "Ggalawo",
+    "scrollZoomHint": "Kozesa {key} + okusiba okugaziya maapu",
+    "touchPanHint": "Kozesa engalo bbiri okutambuza maapu"
   }
 }

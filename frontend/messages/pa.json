@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "ਆਪਣੀ ਭਾਸ਼ਾ ਵਿੱਚ ਰਿਪੋਰਟ ਕਰੋ।",
     "heroTitleLine2": "ਸੁਣੇ ਜਾਓ!",
-    "heroDescription": "ਜਦੋਂ ਭਾਈਚਾਰੇ ਬੋਲ ਸਕਦੇ ਹਨ, ਚੀਜ਼ਾਂ ਬਦਲਦੀਆਂ ਹਨ। Watchtower ਲੋਕਾਂ ਨੂੰ ਆਪਣੀ ਬੋਲੀ ਜਾਂਦੀ ਭਾਸ਼ਾ ਵਿੱਚ ਸਥਾਨਕ ਮੁੱਦਿਆਂ ਅਤੇ ਅਧਿਕਾਰਾਂ ਦੀ ਉਲੰਘਣਾ ਦੀ ਰਿਪੋਰਟ ਕਰਨ ਦੇ ਯੋਗ ਬਣਾਉਂਦਾ ਹੈ ਤਾਂ ਜੋ ਹਰ ਕੋਈ ਨਾਗਰਿਕ ਜੀਵਨ ਅਤੇ ਜਨਤਕ ਜਵਾਬਦੇਹੀ ਵਿੱਚ ਹਿੱਸਾ ਲੈ ਸਕੇ।",
+    "heroDescription": "Watchtower ਲੋਕਾਂ ਨੂੰ ਆਪਣੀ ਬੋਲੀ ਜਾਂਦੀ ਭਾਸ਼ਾ ਵਿੱਚ ਸਥਾਨਕ ਮੁੱਦਿਆਂ ਅਤੇ ਅਧਿਕਾਰਾਂ ਦੀ ਉਲੰਘਣਾ ਦੀ ਰਿਪੋਰਟ ਕਰਨ ਦੇ ਯੋਗ ਬਣਾਉਂਦਾ ਹੈ ਤਾਂ ਜੋ ਹਰ ਕੋਈ ਨਾਗਰਿਕ ਜੀਵਨ ਅਤੇ ਜਨਤਕ ਜਵਾਬਦੇਹੀ ਵਿੱਚ ਹਿੱਸਾ ਲੈ ਸਕੇ।",
     "startReporting": "ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਕਰੋ",
     "viewMaps": "ਤਾਇਨਾਤੀ ਬਣਾਓ",
     "howItWorks": "ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ",
@@ -598,8 +598,8 @@
     "step2Description": "ਅਸੀਂ ਹਰ ਰਿਪੋਰਟ ਦੀ ਪ੍ਰਕਿਰਿਆ ਅਤੇ ਪੁਸ਼ਟੀ ਕਰਦੇ ਹਾਂ, ਘਟਨਾਵਾਂ ਦਾ ਨਕਸ਼ਾ ਬਣਾਉਂਦੇ ਹਾਂ ਅਤੇ ਅਜਿਹੇ ਪੈਟਰਨਾਂ ਨੂੰ ਸਾਹਮਣੇ ਲਿਆਉਂਦੇ ਹਾਂ ਜੋ ਨਹੀਂ ਤਾਂ ਅਣਦੇਖੇ ਰਹਿ ਜਾਂਦੇ। ਕੱਚੀ ਜਾਣਕਾਰੀ ਸਪਸ਼ਟ, ਸੰਗਠਿਤ ਸੂਝ ਬਣ ਜਾਂਦੀ ਹੈ ਜੋ ਇੱਕ ਵੱਡੀ ਕਹਾਣੀ ਦੱਸਦੀ ਹੈ।",
     "step3Title": "ਕਾਰਵਾਈ ਨੂੰ ਅੱਗੇ ਵਧਾਓ",
     "step3Description": "ਭਾਈਚਾਰੇ, ਸੰਸਥਾਵਾਂ ਅਤੇ ਅਦਾਰੇ ਕੇਸ ਬਣਾਉਣ, ਜ਼ਿੰਮੇਵਾਰ ਲੋਕਾਂ ਨੂੰ ਜਵਾਬਦੇਹ ਬਣਾਉਣ, ਅਤੇ ਜ਼ਮੀਨੀ ਪੱਧਰ ਦੇ ਅਸਲ ਸਬੂਤਾਂ ਦੁਆਰਾ ਸਮਰਥਿਤ ਮਹੱਤਵਪੂਰਨ ਤਬਦੀਲੀ ਲਈ ਇਹਨਾਂ ਸੂਝਾਂ ਤੱਕ ਪਹੁੰਚ ਕਰਦੇ ਹਨ।",
-    "speakNaturallyTitle": "Speak naturally. WatchTower helps others understand.",
-    "speakNaturallyDescription": "Report by voice or text in the language you're most comfortable using. WatchTower helps transcribe, translate and structure reports so information can be understood across languages.",
+    "speakNaturallyTitle": "Report naturally<break></break>in your language.",
+    "speakNaturallyDescription": "WatchTower transcribes, translates and structures reports so information can be understood, no matter the language used to report an incident.",
     "speakNaturallyCta": "Start a Report",
     "insightsLabel": "Insights & Stories",
     "insightsHeading": "Ideas, stories and insights from the field.",
@@ -693,6 +693,8 @@
     "recenterMap": "ਨਕਸ਼ਾ ਕੇਂਦਰ ਵਿੱਚ ਲਿਆਓ",
     "mapLayersButton": "ਨਕਸ਼ੇ ਦੀਆਂ ਪਰਤਾਂ",
     "reportDate": "ਰਿਪੋਰਟ ਕੀਤਾ {date}",
-    "closePopup": "ਬੰਦ ਕਰੋ"
+    "closePopup": "ਬੰਦ ਕਰੋ",
+    "scrollZoomHint": "ਨਕਸ਼ੇ ਨੂੰ ਜ਼ੂਮ ਕਰਨ ਲਈ {key} + ਸਕ੍ਰੋਲ ਵਰਤੋ",
+    "touchPanHint": "ਨਕਸ਼ੇ ਨੂੰ ਹਿਲਾਉਣ ਲਈ ਦੋ ਉਂਗਲਾਂ ਵਰਤੋ"
   }
 }

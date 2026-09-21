@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "Report in your language.",
     "heroTitleLine2": "Be heard!",
-    "heroDescription": "When communities can speak up, things change. Watchtower enables people to report local issues and rights violations in the languages they speak so that everyone can participate in civic life and public accountability.",
+    "heroDescription": "Watchtower enables people to report local issues and rights violations in the languages they speak so that everyone can participate in civic life and public accountability.",
     "startReporting": "Submit a report",
     "viewMaps": "Create a deployment",
     "howItWorks": "How WatchTower works",
@@ -598,8 +598,8 @@
     "step2Description": "We process and verify every report, mapping incidents and surfacing patterns that would otherwise go unnoticed. Raw information becomes clear, structured intelligence that tells a bigger story.",
     "step3Title": "Drive action",
     "step3Description": "Communities, organizations and institutions access these insights to build cases, hold the right people accountable, and push for meaningful change, backed by real evidence from the ground.",
-    "speakNaturallyTitle": "Speak naturally. WatchTower helps others understand.",
-    "speakNaturallyDescription": "Report by voice or text in the language you're most comfortable using. WatchTower helps transcribe, translate and structure reports so information can be understood across languages.",
+    "speakNaturallyTitle": "Report naturally<break></break>in your language.",
+    "speakNaturallyDescription": "WatchTower transcribes, translates and structures reports so information can be understood, no matter the language used to report an incident.",
     "speakNaturallyCta": "Start a Report",
     "insightsLabel": "Insights & Stories",
     "insightsHeading": "Ideas, stories and insights from the field.",
@@ -634,7 +634,7 @@
     "ctaButton2": "Create a deployment",
     "missionStatement": "WatchTower helps communities report what is happening, understand patterns across reports and turn information from the ground into intelligence that can support action.",
     "exploreLabel": "Explore WatchTower",
-    "exploreDescription": "Explore reports across places, issues, languages and time to understand what's happening on the ground.",
+    "exploreDescription": "The reports across places, incidents, languages and time to understand what's happening on the ground.",
     "exploreHeading": "See what communities are reporting."
   },
   "HomeLivePreview": {
@@ -693,6 +693,8 @@
     "recenterMap": "Recenter map",
     "mapLayersButton": "Map layers",
     "reportDate": "Reported {date}",
-    "closePopup": "Close"
+    "closePopup": "Close",
+    "scrollZoomHint": "Use {key} + scroll to zoom the map",
+    "touchPanHint": "Use two fingers to move the map"
   }
 }
