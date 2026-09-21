@@ -97,7 +97,7 @@ const Header = () => {
             )}
           >
             <Logo color="white" className="object-contain object-left" />
-            <div className="hidden md:flex gap-6 font-title text-sm font-medium">
+            <div className="hidden lg:flex gap-6 font-title text-sm font-medium">
               <Link href={"/about"}>{t("about")}</Link>
               <Link href={"/maps"}>{t("maps")}</Link>
               <Link href={"/case-studies"}>{t("caseStudies")}</Link>
@@ -106,7 +106,7 @@ const Header = () => {
               <Link href={"/alerts"}>{t("alerts")}</Link>
               {/* <Link href={"/organizations"}>{t("organizations")}</Link> */}
             </div>
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4">
               <LanguageSelector
                 variant="compact"
                 className="border-border bg-white text-dark shadow-none hover:bg-background"
@@ -132,7 +132,7 @@ const Header = () => {
               </Link>
             </div>
           </div>
-          <div className="md:hidden flex justify-end pr-4">
+          <div className="lg:hidden flex justify-end pr-4 md:pr-8">
             <MobileNavigation />
           </div>
         </header>
