@@ -480,8 +480,8 @@
     "languageText": "We prefer all security communications to be in <strong>English</strong>."
   },
   "About": {
-    "heroTitle": "Every voice deserves to be understood.",
-    "heroDescription": "WatchTower is a community-centred, multilingual reporting and civic intelligence tool that enables people to report local issues and rights violations in the languages they speak.",
+    "heroTitle": "Every voice deserves to be heard.",
+    "heroDescription": "WatchTower is a community-centred, multilingual reporting and civic intelligence tool that enables people to report civic incidents and rights violations in the languages they speak.",
     "objectiveTitle": "Our Objective",
     "objectiveDescription": "By helping reports become understandable, organised and connected, WatchTower makes it easier to see what communities are experiencing and where patterns may be emerging.",
     "languagesTitle": "Supported languages",
@@ -521,7 +521,7 @@
     "faqVisibilityAnswer": "Reports are reviewed only by verified WatchTower administrators. Your submission is never shared publicly with any identifying information attached.",
     "faqDeviceQuestion": "Can I report from a shared or public device?",
     "faqDeviceAnswer": "Yes. WatchTower does not store session data or cookies tied to your submission. Reporting from a shared device does not put you at risk.",
-    "ctaTitle": "Ready to report?",
+    "ctaTitle": "Report an incident",
     "ctaDescription": "Submit a civic incident report in your language. No account needed, no personal information required.",
     "ctaButton1": "Submit a report",
     "ctaButton2": "View the live map"

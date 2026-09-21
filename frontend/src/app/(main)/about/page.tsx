@@ -8,6 +8,7 @@ import HeadingTwo from "@/components/common/heading-two";
 import TextComponent from "@/components/common/text-component";
 import Footer from "@/components/layout/footer/page";
 import LanguageMarquee from "@/components/common/language-marquee";
+import StepConnector from "@/components/common/step-connector";
 import { buttonVariants } from "@/components/ui/button";
 import { ChevronRight, Minus, Plus } from "lucide-react";
 import {
@@ -55,7 +56,7 @@ const Page = () => {
             alt=""
             width={40}
             height={37}
-            className="absolute bottom-0 right-24 h-16 w-auto md:h-24"
+            className="absolute bottom-0 right-23 h-10 w-10 mb-6"
           />
         </div>
         <div className="py-16 md:pt-20 md:pb-4">
@@ -65,7 +66,7 @@ const Page = () => {
                 <p className="mb-4 font-title text-xs font-semibold uppercase tracking-widest text-white/70">
                   {tNav("about")} WatchTower
                 </p>
-                <h1 className="max-w-xl font-title text-4xl font-semibold text-white md:text-5xl">
+                <h1 className="max-w-xl font-title text-4xl font-semibold leading-tight text-white">
                   {t("heroTitle")}
                 </h1>
                 <div className="mt-8 -ml-4 -mr-4 h-px bg-white md:-ml-6 md:-mr-12 xl:-ml-8 xl:-mr-16" />
@@ -79,7 +80,7 @@ const Page = () => {
                 </div>
               </div>
 
-              <div className="relative mx-auto aspect-square w-full max-w-sm pt-10 md:max-w-none md:pt-0 md:pl-12 xl:pl-16">
+              <div className="relative mx-auto aspect-square w-full max-w-xs pt-10 md:max-w-sm md:pt-0 md:pl-12 xl:pl-16">
                 <Image
                   src="/about-globe.png"
                   alt=""
@@ -131,7 +132,8 @@ const Page = () => {
             </TextComponent>
           </div>
 
-          <div className="flex flex-col gap-16 md:gap-24">
+          {/* Row gap matches the StepConnector height so the line spans it exactly */}
+          <div className="flex flex-col gap-16 md:gap-24 lg:gap-40">
             {[
               {
                 number: 1,
@@ -151,8 +153,14 @@ const Page = () => {
             ].map((step, index) => (
               <div
                 key={step.number}
-                className="grid items-center gap-10 md:grid-cols-2 md:gap-16"
+                className="relative grid items-center gap-10 md:grid-cols-2 md:gap-16"
               >
+                {index < 2 && (
+                  <StepConnector
+                    from={index % 2 === 0 ? "left" : "right"}
+                    className="top-full hidden h-40 lg:block"
+                  />
+                )}
                 <div className={cn(index % 2 === 1 && "md:order-2")}>
                   <Image
                     src="/placeholder.png"
@@ -198,7 +206,7 @@ const Page = () => {
         
         <div className="pt-20 pb-16 md:pt-28 md:pb-20">
           <Container size="xs" className="text-center">
-            <HeadingTwo className="text-4xl text-white md:text-5xl">
+            <HeadingTwo className="text-white">
               {t("languagesTitle")}
             </HeadingTwo>
             <TextComponent className="mx-auto mt-4 max-w-xl text-center text-white/70">
@@ -344,7 +352,18 @@ const Page = () => {
       </section> */}
 
       {/* Your Safety */}
-      <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
+      <section className="relative isolate bg-white pb-16 [zoom:var(--viewport-scale)]">
+        {/* Pattern spans the full width and stops at the bottom rule; the
+            container is marked only by the guide lines drawn over it. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 bottom-16 -z-10 overflow-hidden">
+          <Image
+            src="/brand/Pattern.svg"
+            alt=""
+            width={1378}
+            height={617}
+            className="absolute inset-x-0 bottom-0 h-auto w-full opacity-40 invert"
+          />
+        </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-border" />
         <div className="pointer-events-none absolute inset-x-0 bottom-16 h-px bg-border" />
         <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
@@ -352,20 +371,16 @@ const Page = () => {
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
         <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
-          <div className="relative isolate overflow-hidden bg-dark px-6 py-16 md:px-16 md:py-20">
-            <Image
-              src="/brand/Pattern.svg"
-              alt=""
-              width={1378}
-              height={617}
-              className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
-            />
+          <div className="relative px-6 py-16 md:px-16 md:py-20">
             <div className="grid gap-12 md:grid-cols-2 md:gap-16">
               <div>
-                <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
+                <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
+                  {tHome("faqsLabel")}
+                </p>
+                <h2 className="font-title text-3xl font-semibold leading-tight text-dark md:text-4xl">
                   {t.rich("safetyTitle", { break: () => <br /> })}
                 </h2>
-                <p className="mt-4 max-w-xs text-white/60 leading-relaxed">
+                <p className="mt-4 max-w-xs text-dark/60 leading-relaxed">
                   {t("safetyDescription")}
                 </p>
               </div>
@@ -406,16 +421,16 @@ const Page = () => {
                   <AccordionItem
                     key={value}
                     value={value}
-                    className="border-white/15"
+                    className="border-dark/10"
                   >
-                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-white hover:no-underline [&>svg]:hidden">
+                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-dark hover:no-underline [&>svg]:hidden">
                       <span className="flex-1">{question}</span>
                       <span className="relative flex size-6 shrink-0 items-center justify-center rounded bg-primary">
                         <Plus className="size-3.5 text-white group-data-[state=open]:hidden" />
                         <Minus className="absolute size-3.5 text-white opacity-0 group-data-[state=open]:opacity-100" />
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-white/60">
+                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-dark/60">
                       {answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -439,9 +454,12 @@ const Page = () => {
           height={617}
           className="pointer-events-none absolute -bottom-60 left-0 -z-10 h-auto w-full invert"
         />
-        <Container size="xs" className="py-16 text-center md:py-20">
+        {/* The FAQ section above ends with 64px of space below its rule, so the
+            top padding is trimmed and the bottom grown by the same amount:
+            same height, content centred between that rule and the ribbon. */}
+        <Container size="xs" className="pt-3 pb-29 text-center md:pt-7 md:pb-33">
           <HeadingTwo className="text-center">{t("ctaTitle")}</HeadingTwo>
-          <TextComponent className="mx-auto mt-4 max-w-md text-center">
+          <TextComponent className="mx-auto mt-4 max-w-xl text-center">
             {t("ctaDescription")}
           </TextComponent>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
