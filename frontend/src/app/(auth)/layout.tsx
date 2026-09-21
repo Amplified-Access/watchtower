@@ -9,16 +9,18 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex min-h-dvh flex-col bg-white">
-      <header className="border-b border-border">
-        <div className="mx-auto flex h-16 max-w-360 items-center px-4 md:h-20 md:px-8 xl:px-16 [zoom:var(--viewport-scale)]">
+      {/* Same height, padding and black wordmark as the main site header, so
+          moving between the site and these pages doesn't jump. */}
+      <header className="border-b border-border py-4">
+        <div className="mx-auto flex h-9 max-w-360 items-center px-4 md:px-8 xl:px-16 [zoom:var(--viewport-scale)]">
           <Link href="/" aria-label="WatchTower home">
             <Image
-              src="/brand/logo-blue.svg"
+              src="/brand/logo-black.svg"
               alt="WatchTower"
               width={219}
               height={37}
               priority
-              className="h-7 w-auto md:h-9"
+              className="h-7 w-auto"
             />
           </Link>
         </div>
