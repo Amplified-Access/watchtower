@@ -269,17 +269,26 @@ const Page = () => {
         <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
           <div className="relative isolate overflow-hidden bg-dark px-6 py-16 md:px-16 md:py-20">
             <Image
+              src="/brand/Pattern.svg"
+              alt=""
+              width={1378}
+              height={617}
+              className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
+            />
+            <Image
               src="/asset.svg"
               alt=""
               width={552}
               height={594}
               className="pointer-events-none absolute inset-y-0 right-0 -top-10 -z-10 scale-125 h-full object-cover object-left md:w-48"
             />
-            <div className="relative z-10 grid gap-10 md:grid-cols-2 md:gap-16 md:items-center">
+            <div className="relative z-10 flex flex-col gap-10 md:flex-row md:items-center md:gap-40">
               <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
-                {t("speakNaturallyTitle")}
+                {t.rich("speakNaturallyTitle", {
+                  break: () => <br />,
+                })}
               </h2>
-              <div>
+              <div className="shrink-0">
                 <p className="max-w-xs text-white/60 leading-relaxed">
                   {t("speakNaturallyDescription")}
                 </p>
