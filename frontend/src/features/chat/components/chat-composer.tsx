@@ -79,7 +79,7 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
         ))}
       </div>
 
-      <div className="mt-3 rounded-lg border border-dark/5 bg-[#fafafa] p-3 shadow-[0_6px_24px_-8px_rgba(0,153,153,0.25)] md:p-4">
+      <div className="mt-3 rounded-lg border border-dark/5 bg-[#fafafa] px-3 py-2.5 shadow-[0_6px_24px_-8px_rgba(0,153,153,0.25)]">
         <Textarea
           value={question}
           aria-label={t("placeholder")}
@@ -95,26 +95,26 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
               send(question);
             }
           }}
-          className="min-h-12 resize-none border-none bg-transparent px-1 font-title text-base text-dark shadow-none placeholder:text-dark/70 focus-visible:ring-0 md:text-base"
+          className="min-h-9 resize-none border-none bg-transparent px-1 py-1 font-title text-base text-dark shadow-none placeholder:text-dark/70 focus-visible:ring-0 md:text-base"
         />
-        <div className="mt-2 flex items-center justify-between">
+        <div className="mt-1 flex items-center justify-between">
           <div className="flex items-center gap-1">
             <button
               type="button"
               disabled
               title={t("attachComingSoon")}
               aria-label={t("attachComingSoon")}
-              className="flex size-8 items-center justify-center rounded-md text-dark disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex size-7 items-center justify-center rounded-md text-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <Paperclip className="size-5" />
+              <Paperclip className="size-4" />
             </button>
             <DropdownMenu>
               <DropdownMenuTrigger
                 aria-label={t("voiceLanguage")}
                 title={t("voiceLanguage")}
-                className="flex size-8 items-center justify-center rounded-md text-dark transition-colors hover:bg-dark/5"
+                className="flex size-7 items-center justify-center rounded-md text-dark transition-colors hover:bg-dark/5"
               >
-                <Globe className="size-5" />
+                <Globe className="size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="min-w-44">
                 <DropdownMenuLabel>{t("voiceLanguage")}</DropdownMenuLabel>
@@ -140,9 +140,9 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
               type="button"
               onClick={() => send(question)}
               aria-label={t("send")}
-              className="flex size-10 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90"
+              className="flex size-8 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90"
             >
-              <ArrowUp className="size-5" />
+              <ArrowUp className="size-4" />
             </button>
           ) : (
             <button
@@ -152,16 +152,16 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
               aria-label={dictation.isListening ? t("stopDictation") : t("startDictation")}
               title={dictation.isListening ? t("stopDictation") : t("startDictation")}
               className={cn(
-                "flex size-10 items-center justify-center rounded-full text-white transition-colors",
+                "flex size-8 items-center justify-center rounded-full text-white transition-colors",
                 dictation.isListening
                   ? "animate-pulse bg-red-500 hover:bg-red-600"
                   : "bg-primary hover:bg-primary/90",
               )}
             >
               {dictation.isListening ? (
-                <Square className="size-4 fill-current" />
+                <Square className="size-3 fill-current" />
               ) : (
-                <AudioLines className="size-5" />
+                <AudioLines className="size-4" />
               )}
             </button>
           )}
