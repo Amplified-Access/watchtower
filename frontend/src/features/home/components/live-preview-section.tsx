@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Locate } from "lucide-react";
 import {
@@ -81,14 +82,27 @@ const LivePreviewSection = () => {
               viewMode={viewMode}
               onViewModeChange={setViewMode}
               cooperativeGestures
+              overlayControls={false}
             />
           </div>
 
-          <div className="relative z-10 mx-4 overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 md:mx-8 lg:mx-0 lg:w-72 lg:shrink-0 lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
+          {/* Below lg the panels would stack under the map as a long column of
+              controls, so mobile gets just the globe and a way into the full
+              map instead. */}
+          <div className="px-4 pb-6 md:px-8 lg:hidden [zoom:var(--viewport-scale)]">
+            <Link
+              href="/maps"
+              className="flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 font-title font-medium text-white transition-colors hover:bg-primary/90"
+            >
+              {t("viewReportsCta", { count: stats.totalReports })}
+            </Link>
+          </div>
+
+          <div className="relative z-10 hidden overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 lg:block lg:w-72 lg:shrink-0 lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
             <ExploreSidebar stats={stats} />
           </div>
 
-          <div className="relative z-10 mx-4 min-w-0 md:mx-8 lg:mx-0 lg:flex lg:flex-1 lg:flex-col lg:self-stretch lg:pointer-events-none">
+          <div className="relative z-10 hidden min-w-0 lg:flex lg:flex-1 lg:flex-col lg:self-stretch lg:pointer-events-none">
             <div className="pointer-events-auto [zoom:var(--viewport-scale)]">
               <SearchAndChips
                 search={search}
@@ -134,7 +148,7 @@ const LivePreviewSection = () => {
             </div>
           </div>
 
-          <div className="relative z-10 mx-4 overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 md:mx-8 lg:mx-0 lg:w-72 lg:shrink-0 lg:self-stretch lg:overflow-y-auto lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
+          <div className="relative z-10 hidden overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 lg:block lg:w-72 lg:shrink-0 lg:self-stretch lg:overflow-y-auto lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
             <FilterPanel
               timePeriod={timePeriod}
               onTimePeriodChange={setTimePeriod}

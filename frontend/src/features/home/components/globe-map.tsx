@@ -105,6 +105,12 @@ interface GlobeMapProps {
    * zooming needs Ctrl/⌘ + scroll (two fingers to pan on touch screens).
    */
   cooperativeGestures?: boolean;
+  /**
+   * The Globe/Map switcher and recenter button drawn over the map below lg.
+   * The homepage turns them off: on mobile its preview is just the globe plus
+   * a link to the full map.
+   */
+  overlayControls?: boolean;
 }
 
 const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
@@ -118,6 +124,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       className,
       docked = false,
       cooperativeGestures = false,
+      overlayControls = true,
     },
     ref,
   ) => {
@@ -457,7 +464,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       {/* Below lg the map isn't covered by other cards, so it carries its own overlay controls.
           At lg+, the parent renders equivalent controls as flex siblings of the cards instead. */}
       <div
-        className={`absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-black/60 p-1 text-xs font-medium text-white ring-1 ring-white/10 backdrop-blur lg:hidden ${docked ? "hidden" : ""}`}
+        className={`absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-black/60 p-1 text-xs font-medium text-white ring-1 ring-white/10 backdrop-blur lg:hidden ${docked || !overlayControls ? "hidden" : ""}`}
       >
         <button
           type="button"
@@ -483,7 +490,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
         type="button"
         onClick={recenter}
         aria-label="Recenter map"
-        className={`absolute bottom-4 right-4 flex size-9 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/10 backdrop-blur transition-colors hover:bg-black/80 lg:hidden ${docked ? "hidden" : ""}`}
+        className={`absolute bottom-4 right-4 flex size-9 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/10 backdrop-blur transition-colors hover:bg-black/80 lg:hidden ${docked || !overlayControls ? "hidden" : ""}`}
       >
         <Locate className="size-4" />
       </button>
