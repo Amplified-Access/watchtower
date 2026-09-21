@@ -25,6 +25,11 @@ export interface ContainerTextFlipProps {
   morphWidth?: boolean;
 }
 
+const splitGraphemes = (text: string) =>
+  typeof Intl !== "undefined" && "Segmenter" in Intl
+    ? Array.from(new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text), (s) => s.segment)
+    : Array.from(text);
+
 export function ContainerTextFlip({
   words = ["better", "modern", "beautiful", "awesome"],
   interval = 5000,
@@ -109,16 +114,35 @@ export function ContainerTextFlip({
       >
         <motion.div className="inline-block font-title">
           {complex ? (
+            // Joined scripts can't be split into letters without breaking how
+            // they connect, so the word is wiped on as a whole instead, in its
+            // reading direction: right to left for Arabic/Urdu, left to right
+            // otherwise. The wipe keeps the write-on feel of the Latin words.
             <motion.span
-              initial={reduceMotion ? false : { opacity: 0, filter: "blur(10px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={reduceMotion ? { duration: 0 } : { duration: animationDuration / 1000 }}
+              className="inline-block"
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      filter: "blur(10px)",
+                      clipPath: rtl ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)",
+                    }
+              }
+              animate={{ opacity: 1, filter: "blur(0px)", clipPath: "inset(0 0 0 0)" }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : { duration: animationDuration / 1000, ease: "easeOut" }
+              }
               style={rtl ? { direction: "rtl" } : undefined}
             >
               {currentWord}
             </motion.span>
           ) : (
-            currentWord.split("").map((letter, index) => (
+            // Grapheme clusters rather than code units, so letters with
+            // combining marks (Kikuyu ĩ) stay in one piece.
+            splitGraphemes(currentWord).map((letter, index) => (
               <motion.span
                 key={index}
                 initial={
