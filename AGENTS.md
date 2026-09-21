@@ -101,6 +101,7 @@ pnpm build        # production build
 pnpm lint         # ESLint
 pnpm test         # Jest
 pnpm test:watch   # Jest watch mode
+pnpm i18n:check   # fail if any marketing string is still English (see frontend/docs/SCRIPTS.md)
 ```
 
 **Local env:** every tRPC request builds its context through Better Auth, which imports the Neon DB client — so without `DATABASE_URL` *all* tRPC calls (even `publicProcedure` ones) return 500, and pages silently render empty/error states. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
@@ -189,6 +190,6 @@ Always ensure `make test` and `pnpm test` pass before marking work done.
 - Common scopes: `auth`, `incidents`, `alerts`, `reports`, `insights`, `datasets`, `admin`, `superadmin`, `map`, `i18n`, `api`, `db`, `ci`
 - No attribution trailer in commits — do not add `Co-authored-by` or any AI attribution lines
 - New API routes require Swagger annotations — run `make swagger` after adding them.
-- New i18n strings must be added to all language files in `frontend/messages/`.
+- New i18n strings must be added to all language files in `frontend/messages/`. Run `pnpm i18n:check` (from `frontend/`) to catch English strings left in marketing sections.
 - Never commit `.env` files or credentials.
 - No business logic in adapter layer. No direct DB access from usecases (use repository interfaces).
