@@ -151,6 +151,7 @@ src/
 **Rules:**
 - All mutations go through a tRPC procedure. Never call the Go backend directly from a component.
 - `lib/api/` functions are called from tRPC routers, not from components.
+- The Epilogue font is declared in `src/app/globals.css`, not imported from `@fontsource-variable/epilogue`, so its vertical metrics can be overridden (`ascent-override`/`descent-override`) to centre capitals in every line box. Without that, text sits ~0.1em high in small pills and buttons. The woff2 files are copied into `public/fonts/epilogue/` because the bundler drops `@font-face` rules whose `url()` points into `node_modules`. Re-copy them when upgrading the package.
 - Server-only code (API keys, DB access) must import `server-only`.
 - State: Zustand for client state, React Query (via tRPC) for server state.
 

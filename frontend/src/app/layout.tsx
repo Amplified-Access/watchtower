@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "@fontsource-variable/epilogue";
+// Epilogue is declared in globals.css (with corrected vertical metrics).
 import Providers from "@/components/providers";
 import { Analytics } from "@vercel/analytics/next";
 import { NextIntlClientProvider } from "next-intl";
