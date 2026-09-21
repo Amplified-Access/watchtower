@@ -693,6 +693,8 @@
     "recenterMap": "نقشہ مرکز میں لائیں",
     "mapLayersButton": "نقشے کی تہیں",
     "reportDate": "رپورٹ کی تاریخ {date}",
-    "closePopup": "بند کریں"
+    "closePopup": "بند کریں",
+    "scrollZoomHint": "نقشہ زوم کرنے کے لیے {key} + اسکرول استعمال کریں",
+    "touchPanHint": "نقشہ ہلانے کے لیے دو انگلیاں استعمال کریں"
   }
 }

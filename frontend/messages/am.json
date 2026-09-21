@@ -693,6 +693,8 @@
     "recenterMap": "ካርታውን ወደ መሃል መልስ",
     "mapLayersButton": "የካርታ ንብርብሮች",
     "reportDate": "የተዘገበው {date}",
-    "closePopup": "ዝጋ"
+    "closePopup": "ዝጋ",
+    "scrollZoomHint": "ካርታውን ለማጉላት {key} + ማሸብለል ይጠቀሙ",
+    "touchPanHint": "ካርታውን ለማንቀሳቀስ ሁለት ጣቶችን ይጠቀሙ"
   }
 }

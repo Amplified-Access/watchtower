@@ -693,6 +693,8 @@
     "recenterMap": "Garura ikarita hagati",
     "mapLayersButton": "Ibice by'ikarita",
     "reportDate": "Byatanzwe {date}",
-    "closePopup": "Funga"
+    "closePopup": "Funga",
+    "scrollZoomHint": "Koresha {key} + kuzunguruka kugira ngo wegereze ikarita",
+    "touchPanHint": "Koresha intoki ebyiri kugira ngo wimure ikarita"
   }
 }

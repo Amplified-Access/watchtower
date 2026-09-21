@@ -693,6 +693,8 @@
     "recenterMap": "Zzaayo maapu wakati",
     "mapLayersButton": "Emitendera gya maapu",
     "reportDate": "Kyaloopebwa {date}",
-    "closePopup": "Ggalawo"
+    "closePopup": "Ggalawo",
+    "scrollZoomHint": "Kozesa {key} + okusiba okugaziya maapu",
+    "touchPanHint": "Kozesa engalo bbiri okutambuza maapu"
   }
 }

@@ -693,6 +693,8 @@
     "recenterMap": "Recentrer la carte",
     "mapLayersButton": "Couches de la carte",
     "reportDate": "Signalé le {date}",
-    "closePopup": "Fermer"
+    "closePopup": "Fermer",
+    "scrollZoomHint": "Utilisez {key} + molette pour zoomer sur la carte",
+    "touchPanHint": "Utilisez deux doigts pour déplacer la carte"
   }
 }

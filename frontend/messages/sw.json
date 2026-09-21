@@ -693,6 +693,8 @@
     "recenterMap": "Rudisha ramani katikati",
     "mapLayersButton": "Tabaka za ramani",
     "reportDate": "Iliripotiwa {date}",
-    "closePopup": "Funga"
+    "closePopup": "Funga",
+    "scrollZoomHint": "Tumia {key} + kusogeza ili kukuza ramani",
+    "touchPanHint": "Tumia vidole viwili kusogeza ramani"
   }
 }

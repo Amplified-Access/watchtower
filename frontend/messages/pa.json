@@ -693,6 +693,8 @@
     "recenterMap": "ਨਕਸ਼ਾ ਕੇਂਦਰ ਵਿੱਚ ਲਿਆਓ",
     "mapLayersButton": "ਨਕਸ਼ੇ ਦੀਆਂ ਪਰਤਾਂ",
     "reportDate": "ਰਿਪੋਰਟ ਕੀਤਾ {date}",
-    "closePopup": "ਬੰਦ ਕਰੋ"
+    "closePopup": "ਬੰਦ ਕਰੋ",
+    "scrollZoomHint": "ਨਕਸ਼ੇ ਨੂੰ ਜ਼ੂਮ ਕਰਨ ਲਈ {key} + ਸਕ੍ਰੋਲ ਵਰਤੋ",
+    "touchPanHint": "ਨਕਸ਼ੇ ਨੂੰ ਹਿਲਾਉਣ ਲਈ ਦੋ ਉਂਗਲਾਂ ਵਰਤੋ"
   }
 }

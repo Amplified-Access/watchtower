@@ -693,6 +693,8 @@
     "recenterMap": "Recenter map",
     "mapLayersButton": "Map layers",
     "reportDate": "Reported {date}",
-    "closePopup": "Close"
+    "closePopup": "Close",
+    "scrollZoomHint": "Use {key} + scroll to zoom the map",
+    "touchPanHint": "Use two fingers to move the map"
   }
 }
