@@ -79,7 +79,7 @@ const Page = () => {
                 </div>
               </div>
 
-              <div className="relative mx-auto aspect-square w-full max-w-sm pt-10 md:max-w-none md:pt-0 md:pl-12 xl:pl-16">
+              <div className="relative mx-auto aspect-square w-full max-w-xs pt-10 md:max-w-sm md:pt-0 md:pl-12 xl:pl-16">
                 <Image
                   src="/about-globe.png"
                   alt=""
