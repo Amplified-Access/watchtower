@@ -521,7 +521,7 @@
     "faqVisibilityAnswer": "Les signalements sont examinés uniquement par des administrateurs WatchTower vérifiés. Votre soumission n'est jamais partagée publiquement avec des informations d'identification jointes.",
     "faqDeviceQuestion": "Puis-je signaler depuis un appareil partagé ou public ?",
     "faqDeviceAnswer": "Oui. WatchTower ne stocke aucune donnée de session ni cookie lié à votre soumission. Signaler depuis un appareil partagé ne vous met pas en danger.",
-    "ctaTitle": "Prêt à signaler ?",
+    "ctaTitle": "Signaler un incident",
     "ctaDescription": "Soumettez un signalement d'incident civique dans votre langue. Aucun compte requis, aucune information personnelle nécessaire.",
     "ctaButton1": "Soumettre un signalement",
     "ctaButton2": "Voir la carte en direct"

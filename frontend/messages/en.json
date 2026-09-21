@@ -521,7 +521,7 @@
     "faqVisibilityAnswer": "Reports are reviewed only by verified WatchTower administrators. Your submission is never shared publicly with any identifying information attached.",
     "faqDeviceQuestion": "Can I report from a shared or public device?",
     "faqDeviceAnswer": "Yes. WatchTower does not store session data or cookies tied to your submission. Reporting from a shared device does not put you at risk.",
-    "ctaTitle": "Ready to report?",
+    "ctaTitle": "Report an incident",
     "ctaDescription": "Submit a civic incident report in your language. No account needed, no personal information required.",
     "ctaButton1": "Submit a report",
     "ctaButton2": "View the live map"

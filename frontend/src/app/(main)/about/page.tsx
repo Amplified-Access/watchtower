@@ -454,9 +454,12 @@ const Page = () => {
           height={617}
           className="pointer-events-none absolute -bottom-60 left-0 -z-10 h-auto w-full invert"
         />
-        <Container size="xs" className="py-16 text-center md:py-20">
+        {/* The FAQ section above ends with 64px of space below its rule, so the
+            top padding is trimmed and the bottom grown by the same amount:
+            same height, content centred between that rule and the ribbon. */}
+        <Container size="xs" className="pt-3 pb-29 text-center md:pt-7 md:pb-33">
           <HeadingTwo className="text-center">{t("ctaTitle")}</HeadingTwo>
-          <TextComponent className="mx-auto mt-4 max-w-md text-center">
+          <TextComponent className="mx-auto mt-4 max-w-xl text-center">
             {t("ctaDescription")}
           </TextComponent>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
