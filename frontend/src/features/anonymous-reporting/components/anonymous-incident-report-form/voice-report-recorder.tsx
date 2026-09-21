@@ -20,7 +20,7 @@ const VoiceReportRecorder = ({ recorder }: { recorder: VoiceRecorder }) => {
         <button
           type="button"
           onClick={recorder.stop}
-          className="flex h-12 w-full items-center justify-center gap-3 rounded-md bg-red-600 font-title text-base text-white transition-colors hover:bg-red-700 md:text-lg"
+          className="flex h-12 w-full items-center justify-center gap-3 rounded-md bg-red-600 font-title text-base text-white transition-colors hover:bg-red-700"
         >
           <Square className="size-4 fill-current" />
           {t("stopRecording")}
@@ -61,7 +61,7 @@ const VoiceReportRecorder = ({ recorder }: { recorder: VoiceRecorder }) => {
         <button
           type="button"
           onClick={() => void recorder.start()}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-dark font-title text-base text-white transition-colors hover:bg-dark/90 md:text-lg"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-dark font-title text-base text-white transition-colors hover:bg-dark/90"
         >
           <Mic className="size-5" />
           {t("recordVoiceReport")}
