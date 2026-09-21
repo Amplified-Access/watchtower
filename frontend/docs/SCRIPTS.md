@@ -51,3 +51,11 @@ pnpm test:coverage
 ```
 
 Runs Jest with coverage collection enabled (`jest --coverage`). Outputs a coverage summary to the terminal and writes a detailed HTML report to `coverage/`.
+
+## Internationalization
+
+```bash
+pnpm i18n:check
+```
+
+Runs `scripts/i18n-check.mjs`, which fails if any string in the public marketing sections (`Common`, `Navigation`, `Footer`, `Home`, `About`, `Alerts`, `MapsPage`, `CaseStudiesPage`, `ChatPage`, `HomeLivePreview`, `PrivacyPolicyPage`, etc.) is still identical to its `en.json` value. Brand names (`appName`, `watchtower`), `About.lang*`/`About.region*` proper nouns, and a small explicit per-language allowlist (`scripts/i18n-check.mjs`) are exempt. Add new translations to all files in `messages/` rather than adding exceptions.
