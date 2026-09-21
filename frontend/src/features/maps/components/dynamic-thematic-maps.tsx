@@ -57,11 +57,8 @@ const DynamicThematicMaps = () => {
       </div>
       <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
         <div className="border-b border-border px-6 py-16 text-center md:py-20">
-          <p className="mb-3 font-title text-sm font-medium uppercase tracking-wide text-primary">
+          <h2 className="mx-auto max-w-2xl font-title text-3xl font-semibold text-dark md:text-4xl">
             {t("thematicLabel")}
-          </p>
-          <h2 className="mx-auto max-w-2xl font-title text-3xl font-semibold leading-tight text-dark md:text-5xl">
-            {t("thematicHeading")}
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-dark/60 leading-snug">
             {t("thematicDescription")}
