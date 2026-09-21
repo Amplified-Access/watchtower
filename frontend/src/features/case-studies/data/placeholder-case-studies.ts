@@ -140,7 +140,7 @@ export const PLACEHOLDER_CASE_STUDIES: CaseStudy[] = [
       { type: "subheading", text: "Connecting related reports:" },
       {
         type: "paragraph",
-        text: "Reports could then be explored across location, time and issue, helping recurring reporting patterns become easier to identify.",
+        text: "Reports could then be explored across location, time and incident type, helping recurring reporting patterns become easier to identify.",
       },
       { type: "subheading", text: "Privacy by design:" },
       {
@@ -183,7 +183,7 @@ export const PLACEHOLDER_CASE_STUDIES: CaseStudy[] = [
       { type: "heading", text: "Why it matters" },
       {
         type: "paragraph",
-        text: "The people closest to an issue often understand dimensions of it that aggregate numbers alone cannot show.",
+        text: "The people closest to an incident often understand dimensions of it that aggregate numbers alone cannot show.",
       },
       {
         type: "paragraph",
@@ -270,7 +270,7 @@ export const PLACEHOLDER_CASE_STUDIES: CaseStudy[] = [
     slug: "documenting-rights-concerns",
     title: "Documenting rights concerns in the languages people speak",
     summary:
-      "Multilingual reporting surfaces issues that would otherwise go unrecorded.",
+      "Multilingual reporting surfaces incidents that would otherwise go unrecorded.",
     category: "rights-safety",
     location: "Pakistan",
     publishedAt: "2026-07-29",

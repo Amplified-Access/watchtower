@@ -35,7 +35,7 @@ export const PRIVACY_POLICY_SECTIONS: PolicySection[] = [
       },
       {
         type: "paragraph",
-        text: "The platform enables people to report local issues and rights violations in the languages they speak and helps organise, map, and analyse reports so that patterns can be better understood.",
+        text: "The platform enables people to report civic incidents and rights violations in the languages they speak and helps organise, map, and analyse reports so that patterns can be better understood.",
       },
       {
         type: "paragraph",
@@ -100,7 +100,7 @@ export const PRIVACY_POLICY_SECTIONS: PolicySection[] = [
     blocks: [
       {
         type: "paragraph",
-        text: "Some reports may include location information to help users understand where an issue occurred.",
+        text: "Some reports may include location information to help users understand where an incident occurred.",
       },
       {
         type: "paragraph",
