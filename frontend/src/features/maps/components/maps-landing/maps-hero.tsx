@@ -73,12 +73,8 @@ const MapsHero = () => {
         <div className="relative">
 
           <div className="px-6 pt-32 pb-12 text-center md:pb-16">
-            <p className="mb-4 font-title text-xs font-semibold uppercase tracking-widest text-white/80">
-              {t("eyebrow")}
-            </p>
             <h1 className="mx-auto max-w-2xl font-title text-4xl font-semibold leading-tight text-white md:text-[2.5rem]">
-              <span className="block">{t("heroTitleLine1")}</span>
-              <span className="block">{t("heroTitleLine2")}</span>
+              {t("eyebrow")}
             </h1>
             <p className="mx-auto mt-4 max-w-md text-white/90 leading-snug">
               {t("heroDescription")}
