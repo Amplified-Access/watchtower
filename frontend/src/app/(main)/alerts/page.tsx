@@ -21,7 +21,7 @@ const AlertsPage = () => {
             <h1 className="font-title text-4xl font-semibold leading-tight text-dark">
               {t("heading")}
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-dark/60 leading-snug">
+            <p className="mx-auto mt-4 max-w-md text-dark/60 leading-snug">
               {t("subheading")}
             </p>
           </div>
