@@ -80,7 +80,9 @@ const MapsHero = () => {
             <p className="mx-auto mt-4 max-w-md text-white/90 leading-snug">
               {t("heroDescription")}
             </p>
-            <Link
+            {/* commented out while trying the hero without it: the live map
+                preview below already links there on hover */}
+            {/* <Link
               href={LIVE_MAP_HREF}
               className={cn(
                 buttonVariants({ variant: "secondary", size: "lg" }),
@@ -89,7 +91,7 @@ const MapsHero = () => {
             >
               {t("exploreLiveMap")}
               <ChevronRight />
-            </Link>
+            </Link> */}
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 md:px-10">
