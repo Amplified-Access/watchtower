@@ -42,7 +42,7 @@ const ChatGreeting = () => {
           textClassName="font-title"
         />
       </div>
-      <h1 className="mt-1 text-dark/60 md:text-lg">{t("subtitle")}</h1>
+      <h1 className="mt-1 text-base text-dark/60">{t("subtitle")}</h1>
     </div>
   );
 };

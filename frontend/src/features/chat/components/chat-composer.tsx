@@ -95,7 +95,7 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
               send(question);
             }
           }}
-          className="min-h-12 resize-none border-none bg-transparent px-1 font-title text-base text-dark shadow-none placeholder:text-dark/70 focus-visible:ring-0 md:text-lg"
+          className="min-h-12 resize-none border-none bg-transparent px-1 font-title text-base text-dark shadow-none placeholder:text-dark/70 focus-visible:ring-0 md:text-base"
         />
         <div className="mt-2 flex items-center justify-between">
           <div className="flex items-center gap-1">
