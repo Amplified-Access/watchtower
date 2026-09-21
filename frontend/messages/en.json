@@ -585,7 +585,7 @@
   "Home": {
     "heroTitleLine1": "Report in your language.",
     "heroTitleLine2": "Be heard!",
-    "heroDescription": "When communities can speak up, things change. Watchtower enables people to report local issues and rights violations in the languages they speak so that everyone can participate in civic life and public accountability.",
+    "heroDescription": "Watchtower enables people to report local issues and rights violations in the languages they speak so that everyone can participate in civic life and public accountability.",
     "startReporting": "Submit a report",
     "viewMaps": "Create a deployment",
     "howItWorks": "How WatchTower works",
@@ -634,7 +634,7 @@
     "ctaButton2": "Create a deployment",
     "missionStatement": "WatchTower helps communities report what is happening, understand patterns across reports and turn information from the ground into intelligence that can support action.",
     "exploreLabel": "Explore WatchTower",
-    "exploreDescription": "Explore reports across places, issues, languages and time to understand what's happening on the ground.",
+    "exploreDescription": "The reports across places, incidents, languages and time to understand what's happening on the ground.",
     "exploreHeading": "See what communities are reporting."
   },
   "HomeLivePreview": {
