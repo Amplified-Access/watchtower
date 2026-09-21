@@ -280,7 +280,7 @@ const Page = () => {
               alt=""
               width={552}
               height={594}
-              className="pointer-events-none absolute inset-y-0 right-0 -top-10 -z-10 scale-125 h-full object-cover object-left md:w-48"
+              className="pointer-events-none absolute inset-y-0 right-0 -top-10 -z-10 hidden scale-125 h-full object-cover object-left md:block md:w-48"
             />
             <div className="relative z-10 flex flex-col gap-10 md:flex-row md:items-center md:gap-40">
               <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
