@@ -342,7 +342,9 @@ const Page = () => {
               {insights.map((insight) => (
                 <Link
                   key={insight.id}
-                  href={insight.slug ? `/insights/${insight.slug}` : "/insights"}
+                  href={
+                    insight.slug ? `/insights/${insight.slug}` : "/insights"
+                  }
                   className="group flex h-full flex-col"
                 >
                   <div className="aspect-video bg-dark/5">
@@ -382,7 +384,18 @@ const Page = () => {
         </section>
       )}
       <LogoCloud />
-      <section className="relative bg-white pb-16 [zoom:var(--viewport-scale)]">
+      <section className="relative isolate bg-white pb-16 [zoom:var(--viewport-scale)]">
+        {/* Pattern spans the full width and stops at the bottom rule; the
+            container is marked only by the guide lines drawn over it. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 bottom-16 -z-10 overflow-hidden">
+          <Image
+            src="/brand/Pattern.svg"
+            alt=""
+            width={1378}
+            height={617}
+            className="absolute inset-x-0 bottom-0 h-auto w-full opacity-40 invert"
+          />
+        </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-border" />
         <div className="pointer-events-none absolute inset-x-0 bottom-16 h-px bg-border" />
         <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
@@ -390,23 +403,16 @@ const Page = () => {
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
         <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
-          <div className="relative isolate overflow-hidden bg-dark px-6 py-16 md:px-16 md:py-20">
-            <Image
-              src="/brand/Pattern.svg"
-              alt=""
-              width={1378}
-              height={617}
-              className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full opacity-40"
-            />
+          <div className="relative px-6 py-16 md:px-16 md:py-20">
             <div className="grid gap-12 md:grid-cols-2 md:gap-16">
               <div>
                 <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
                   {t("faqsLabel")}
                 </p>
-                <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
+                <h2 className="font-title text-3xl font-semibold leading-tight text-dark md:text-4xl">
                   {t("faqsHeading")}
                 </h2>
-                <p className="mt-4 max-w-xs text-white/60 leading-relaxed">
+                <p className="mt-4 max-w-xs text-dark/60 leading-relaxed">
                   {t("faqsDescription")}
                 </p>
               </div>
@@ -447,16 +453,16 @@ const Page = () => {
                   <AccordionItem
                     key={value}
                     value={value}
-                    className="border-white/15"
+                    className="border-dark/10"
                   >
-                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-white hover:no-underline [&>svg]:hidden">
+                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-dark hover:no-underline [&>svg]:hidden">
                       <span className="flex-1">{question}</span>
                       <span className="relative flex size-6 shrink-0 items-center justify-center rounded bg-primary">
                         <Plus className="size-3.5 text-white group-data-[state=open]:hidden" />
                         <Minus className="absolute size-3.5 text-white opacity-0 group-data-[state=open]:opacity-100" />
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-white/60">
+                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-dark/60">
                       {answer}
                     </AccordionContent>
                   </AccordionItem>
