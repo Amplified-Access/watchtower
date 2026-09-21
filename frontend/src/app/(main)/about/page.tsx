@@ -8,6 +8,7 @@ import HeadingTwo from "@/components/common/heading-two";
 import TextComponent from "@/components/common/text-component";
 import Footer from "@/components/layout/footer/page";
 import LanguageMarquee from "@/components/common/language-marquee";
+import StepConnector from "@/components/common/step-connector";
 import { buttonVariants } from "@/components/ui/button";
 import { ChevronRight, Minus, Plus } from "lucide-react";
 import {
@@ -131,7 +132,8 @@ const Page = () => {
             </TextComponent>
           </div>
 
-          <div className="flex flex-col gap-16 md:gap-24">
+          {/* Row gap matches the StepConnector height so the line spans it exactly */}
+          <div className="flex flex-col gap-16 md:gap-24 lg:gap-40">
             {[
               {
                 number: 1,
@@ -151,8 +153,14 @@ const Page = () => {
             ].map((step, index) => (
               <div
                 key={step.number}
-                className="grid items-center gap-10 md:grid-cols-2 md:gap-16"
+                className="relative grid items-center gap-10 md:grid-cols-2 md:gap-16"
               >
+                {index < 2 && (
+                  <StepConnector
+                    from={index % 2 === 0 ? "left" : "right"}
+                    className="top-full hidden h-40 lg:block"
+                  />
+                )}
                 <div className={cn(index % 2 === 1 && "md:order-2")}>
                   <Image
                     src="/placeholder.png"
