@@ -155,9 +155,9 @@ src/
 - All mutations go through a tRPC procedure. Never call the Go backend directly from a component.
 - `lib/api/` functions are called from tRPC routers, not from components.
 - **The Go backend is the source of truth.** tRPC routers are pass-throughs: they validate input and forward it; they don't filter, group, geocode or reshape backend data. If a page needs a new shape, add it to the Go response. Components don't aggregate lists either — the maps get GeoJSON, counts and country lists ready-made from `/map/*` (`lib/api/map.ts`, the `map` tRPC router) and hand the GeoJSON to Mapbox as-is.
-- ESLint (`no-restricted-imports`) blocks `@/db`, `drizzle-orm`, `@neondatabase/*`, `@aws-sdk/*` and `@/lib/aws/*` in `src/`. The files that still bypass Go (Better Auth, chat embeddings, R2 upload/download, SNS) are listed in `eslint.config.mjs`; that list should only shrink.
-- **No work at import time in anything tRPC reaches.** All routers share one route handler, so a module that throws when imported (Better Auth opening Neon without `DATABASE_URL`, an SDK client validating credentials in its constructor) takes down *every* procedure, public ones included, and `next build` with it. Create clients lazily on first use, as `lib/aws/sns.ts` does. Admin user invites go through Go's `POST /admin/watchers` for this reason.
-- Next route handlers (`app/api/*`) sit outside tRPC's auth middleware; use `getRouteUser()` from `lib/api/route-auth.ts` to check the session against Go's `/me`.
+- ESLint (`no-restricted-imports`) blocks `@/db`, `drizzle-orm`, `@neondatabase/*`, `@aws-sdk/*` and `@/lib/aws/*` in `src/`. The files that still bypass Go (Better Auth, chat embeddings, R2 upload/download) are listed in `eslint.config.mjs`; that list should only shrink.
+- **No work at import time in anything tRPC reaches.** All routers share one route handler, so a module that throws when imported (Better Auth opening Neon without `DATABASE_URL`, an SDK client validating credentials in its constructor) takes down *every* procedure, public ones included, and `next build` with it. Create clients lazily on first use. Admin user invites go through Go's `POST /admin/watchers` for this reason.
+- The frontend has no AWS/SNS code and needs no AWS credentials. The unused SNS publishing (tRPC `notifications` router, `/api/sns/publish`, `lib/aws/sns.ts`) was removed; if alert notifications are built, publish from the Go backend.
 - The Epilogue font is declared in `src/app/globals.css`, not imported from `@fontsource-variable/epilogue`, so its vertical metrics can be overridden (`ascent-override`/`descent-override`) to centre capitals in every line box. Without that, text sits ~0.1em high in small pills and buttons. The woff2 files are copied into `public/fonts/epilogue/` because the bundler drops `@font-face` rules whose `url()` points into `node_modules`. Re-copy them when upgrading the package.
 - Server-only code (API keys, DB access) must import `server-only`.
 - State: Zustand for client state, React Query (via tRPC) for server state.
@@ -175,7 +175,7 @@ src/
 | Neon (Postgres) | Primary database |
 | Railway (Redis) | Caching + rate limiting |
 | Cloudflare R2 | Evidence file storage (S3-compatible) |
-| AWS SNS + Mailjet | Notifications |
+| Mailjet (from the Go backend) | Email notifications |
 | Google Generative AI | Chat assistant + embeddings (Gemini 2.5 Flash) |
 | Sentry | Error monitoring |
 | Mapbox | Geospatial visualization |
