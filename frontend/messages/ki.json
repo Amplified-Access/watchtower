@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower nĩteithagia mĩcemanio kũheana rũpoti rwa maũndũ marĩa marĩkĩte, kũmenya mĩthiĩre ĩrĩ thĩinĩ wa marũpoti, na kũgarũra ũhoro kuuma thĩ ũtuĩke ũmenyo ũrĩa ũngĩteithia wĩra.",
     "exploreLabel": "Menya Watchtower",
     "exploreDescription": "Cũthĩrĩria marũpoti kũringana na kũndũ, mathĩna, thiomi, na mahinda nĩguo ũmenye ũrĩa gũtũmagĩrĩka thĩ.",
-    "exploreHeading": "Ona ũrĩa mĩcemanio ĩrahe rũpoti."
+    "exploreHeading": "Ona ũrĩa mĩcemanio ĩrahe rũpoti.",
+    "reportIncident": "Tũma Rũpoti"
   },
   "HomeLivePreview": {
     "exploreLabel": "MENYA",

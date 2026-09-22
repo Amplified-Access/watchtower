@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower konyo oganda ripodho gik matimore, ngʼeyo kit weche e ripodho, kendo loko fweny koa e piny obed ngʼeyo makonyo tich.",
     "exploreLabel": "Nonro Watchtower",
     "exploreDescription": "Nonuru ripodho kuom kuonde, weche, dhok, kod sa mondo ungʼe gik matimore e piny.",
-    "exploreHeading": "Ne gik ma oganda ripodho."
+    "exploreHeading": "Ne gik ma oganda ripodho.",
+    "reportIncident": "Or Ripodho"
   },
   "HomeLivePreview": {
     "exploreLabel": "NON",

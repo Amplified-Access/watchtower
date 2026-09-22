@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower ikuganja makundi kupa ilipoti ga shindu shikwitendeka, kumenya mienendo mu malipoti na kugalusha habali kuhuma pa nsi kuba bumanyi bukwiganja shikomo.",
     "exploreLabel": "Lola Watchtower",
     "exploreDescription": "Shindeka malipoti kwa mahali, mahoja, ndimi na mwaawino koro umenye shikwitendeka pa nsi.",
-    "exploreHeading": "Lola shaga makundi gakupa malipoti."
+    "exploreHeading": "Lola shaga makundi gakupa malipoti.",
+    "reportIncident": "Tuma Ilipoti"
   },
   "HomeLivePreview": {
     "exploreLabel": "LOLA",

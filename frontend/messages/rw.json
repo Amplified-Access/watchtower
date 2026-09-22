@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower ifasha abaturage gutanga raporo ku bibera, gusobanukirwa imigendekere mu maraporo no guhindura amakuru avuye ku isi kuba ubumenyi bushobora gufasha ibikorwa.",
     "exploreLabel": "Menya Watchtower",
     "exploreDescription": "Reba amaraporo ukurikije ahantu, ibibazo, indimi n'igihe kugira ngo usobanukirwe ibibera ku isi.",
-    "exploreHeading": "Reba ibyo abaturage batanga raporo."
+    "exploreHeading": "Reba ibyo abaturage batanga raporo.",
+    "reportIncident": "Ohereza raporo"
   },
   "HomeLivePreview": {
     "exploreLabel": "REBA",

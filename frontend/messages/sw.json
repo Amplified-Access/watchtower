@@ -639,7 +639,8 @@
     "missionStatement": "WatchTower inasaidia jamii kuripoti yanayotokea, kuelewa mifumo katika ripoti na kugeuza taarifa kutoka uwanjani kuwa maarifa yanayoweza kusaidia hatua.",
     "exploreLabel": "Gundua WatchTower",
     "exploreDescription": "Chunguza ripoti kwa maeneo, masuala, lugha na wakati ili kuelewa yanayotokea uwanjani.",
-    "exploreHeading": "Ona yale jamii zinayoripoti."
+    "exploreHeading": "Ona yale jamii zinayoripoti.",
+    "reportIncident": "Wasilisha ripoti"
   },
   "HomeLivePreview": {
     "exploreLabel": "GUNDUA",

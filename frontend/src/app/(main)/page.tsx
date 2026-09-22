@@ -105,7 +105,7 @@ const Page = () => {
                   "font-title font-medium bg-dark text-white hover:bg-dark/90",
                 )}
               >
-                {t("startReporting")}
+                {t("reportIncident")}
                 <ChevronRight />
               </Link>
               <Link

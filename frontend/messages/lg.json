@@ -639,7 +639,8 @@
     "missionStatement": "WatchTower eyamba ebibiina okuwaayo alipooti ku ebibaawo, okutegeera enkola mu alipooti, n'okufuula amawulire okuva ku ttaka okuba amagezi agayamba okukola ekikolwa.",
     "exploreLabel": "Zuula WatchTower",
     "exploreDescription": "Nnyonnyola alipooti mu bifo, ebizibu, ennimi n'ebiseera okutegeera ebibaawo ku ttaka.",
-    "exploreHeading": "Laba by'ebibiina bye biwaayo mu alipooti."
+    "exploreHeading": "Laba by'ebibiina bye biwaayo mu alipooti.",
+    "reportIncident": "Waayo alipooti"
   },
   "HomeLivePreview": {
     "exploreLabel": "NOONYEREZA",

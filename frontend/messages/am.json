@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower ማህበረሰቦች እየተፈጠረ ያለውን ነገር ሪፖርት እንዲያደርጉ፣ በሪፖርቶች ውስጥ ያሉ አዝማሚያዎችን እንዲረዱ እና ከመሬት ላይ ያለውን መረጃ ወደ ተግባር የሚያግዝ ግንዛቤ እንዲቀይሩ ያግዛል።",
     "exploreLabel": "Watchtower ያስሱ",
     "exploreDescription": "በቦታ፣ በጉዳይ፣ በቋንቋ እና በጊዜ ሪፖርቶችን በማሰስ ከመሬት ላይ የሚከሰተውን ይረዱ።",
-    "exploreHeading": "ማህበረሰቦች ምን እያሳወቁ እንዳሉ ይመልከቱ።"
+    "exploreHeading": "ማህበረሰቦች ምን እያሳወቁ እንዳሉ ይመልከቱ።",
+    "reportIncident": "ሪፖርት ያስገቡ"
   },
   "HomeLivePreview": {
     "exploreLabel": "ያስሱ",
