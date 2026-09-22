@@ -52,10 +52,7 @@
     "readCaseStudy": "Soma ekyokulabirako",
     "empty": "Tewali kyokulabirako kikwatagana n'ebisengejja bino.",
     "clearFilters": "Jjawo ebisengejja",
-    "pagination": "Empapula z'ebyokulabirako",
-    "previousPage": "Olupapula oluvudde",
-    "nextPage": "Olupapula oluddako",
-    "pageLabel": "Olupapula {number}",
+    "loadMore": "Laga ebirala",
     "relatedCaseStudies": "Ebyokulabirako ebikwatagana",
     "exploreOnMap": "Noonyereza ku maapu"
   },

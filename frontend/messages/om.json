@@ -52,10 +52,7 @@
     "readCaseStudy": "Xinxala Dubbisi",
     "empty": "Xinxalotni kana wajjin walqabatan hin jiraatan.",
     "clearFilters": "Filtiree Haqi",
-    "pagination": "Fuulawwan Xinxalaa",
-    "previousPage": "Fuula Duraa",
-    "nextPage": "Fuula Itti Aanu",
-    "pageLabel": "Fuula {number}",
+    "loadMore": "Dabalata Ilaali",
     "relatedCaseStudies": "Xinxalota Walqabatan",
     "exploreOnMap": "Kaartaa Ilaali"
   },

@@ -52,10 +52,7 @@
     "readCaseStudy": "کیس اسٹڈی پڑھیں",
     "empty": "ان فلٹرز سے کوئی کیس اسٹڈی میل نہیں کھاتی۔",
     "clearFilters": "فلٹرز صاف کریں",
-    "pagination": "کیس اسٹڈیز کے صفحات",
-    "previousPage": "پچھلا صفحہ",
-    "nextPage": "اگلا صفحہ",
-    "pageLabel": "صفحہ {number}",
+    "loadMore": "مزید لوڈ کریں",
     "relatedCaseStudies": "متعلقہ کیس اسٹڈیز",
     "exploreOnMap": "نقشے پر دیکھیں"
   },

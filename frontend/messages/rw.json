@@ -52,10 +52,7 @@
     "readCaseStudy": "Soma urugero",
     "empty": "Nta rugero ruhuye n'aya mayunguruzo.",
     "clearFilters": "Siba amayunguruzo",
-    "pagination": "Amapaji y'ingero",
-    "previousPage": "Ipaji ibanza",
-    "nextPage": "Ipaji ikurikira",
-    "pageLabel": "Ipaji {number}",
+    "loadMore": "Reba ibindi",
     "relatedCaseStudies": "Ingero zifitanye isano",
     "exploreOnMap": "Reba ku ikarita"
   },

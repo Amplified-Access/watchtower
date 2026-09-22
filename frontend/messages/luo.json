@@ -52,10 +52,7 @@
     "readCaseStudy": "Wanjo Ngerana",
     "empty": "Onge ngerana moro moyiedho filtregi.",
     "clearFilters": "Gonyo Filtregi",
-    "pagination": "Pej Mar Ngerana",
-    "previousPage": "Pej Ma Notelo",
-    "nextPage": "Pej Ma Lusu",
-    "pageLabel": "Pej {number}",
+    "loadMore": "Medo Mamoko",
     "relatedCaseStudies": "Ngerana Mag Romore",
     "exploreOnMap": "Ne e Ramaki"
   },

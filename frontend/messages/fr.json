@@ -52,10 +52,7 @@
     "readCaseStudy": "Lire l'étude de cas",
     "empty": "Aucune étude de cas ne correspond à ces filtres.",
     "clearFilters": "Effacer les filtres",
-    "pagination": "Pages des études de cas",
-    "previousPage": "Page précédente",
-    "nextPage": "Page suivante",
-    "pageLabel": "Page {number}",
+    "loadMore": "Charger plus",
     "relatedCaseStudies": "Études de cas associées",
     "exploreOnMap": "Explorer sur la carte"
   },

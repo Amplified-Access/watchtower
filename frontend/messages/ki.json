@@ -52,10 +52,7 @@
     "readCaseStudy": "Thoma",
     "empty": "Gũtirĩ ngeretha ĩngĩhũthia cia cĩra ici.",
     "clearFilters": "Ringa Cĩra",
-    "pagination": "Mathamaki ma Ngeretha",
-    "previousPage": "Gathuka ga Mbere",
-    "nextPage": "Gathuka ga Keri",
-    "pageLabel": "Gathuka {number}",
+    "loadMore": "Onanio Nyingĩ",
     "relatedCaseStudies": "Ngeretha Iria Ikwatanĩte",
     "exploreOnMap": "Rora Mepe"
   },

@@ -11,40 +11,20 @@ import BrowserFrame from "./browser-frame";
 
 const LIVE_MAP_HREF = "/maps/live-incident-map";
 
-// Upright "homepage" windows peeking out behind the main frame. Kept unrotated
-// for a more professional feel. Decorative only.
-const SidePageCard = ({ className }: { className?: string }) => {
-  const tHome = useTranslations("Home");
-
-  return (
-    <div
-      aria-hidden
-      className={cn(
-        "pointer-events-none absolute hidden w-80 lg:block",
-        className,
-      )}
-    >
-      <BrowserFrame
-        className="rounded-xl pb-3"
-        contentClassName="rounded-sm"
-        urlClassName="w-3/5 text-[11px] md:text-[11px]"
-      >
-        <div className="flex h-72 flex-col items-center justify-center gap-4 px-8 text-center">
-          <p className="font-title text-2xl font-semibold leading-tight text-dark">
-            <span className="block">{tHome("heroTitleLine1")}</span>
-            <span className="block">{tHome("heroTitleLine2")}</span>
-          </p>
-          <p className="line-clamp-3 text-xs text-dark/60">
-            {tHome("heroDescription")}
-          </p>
-          <span className="bg-dark px-4 py-2 font-title text-xs text-white">
-            {tHome("startReporting")}
-          </span>
-        </div>
-      </BrowserFrame>
-    </div>
-  );
-};
+// Empty windows peeking out from behind the main frame, one each side. They
+// run nearly its full height and show only a narrow strip, so they read as
+// depth rather than content. Kept unrotated for a more professional feel.
+// Decorative only.
+const SidePageCard = ({ className }: { className?: string }) => (
+  <div
+    aria-hidden
+    className={cn("pointer-events-none absolute hidden w-80 lg:block", className)}
+  >
+    <BrowserFrame bare className="flex h-full flex-col" contentClassName="flex-1">
+      {null}
+    </BrowserFrame>
+  </div>
+);
 
 const MapsHero = () => {
   const t = useTranslations("MapsPage");
@@ -52,8 +32,8 @@ const MapsHero = () => {
   return (
     // The gradient and pattern sit inside the page container, so the hero's
     // edges line up with the header and the guide lines of the sections below.
-    // The frame is narrower than that box so the side cards, which hang off
-    // it, land inside the box instead of being sliced by its overflow-hidden.
+    // The side windows sit inside that box, so its overflow-hidden never
+    // slices them.
     <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
       <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
         <div className="relative isolate overflow-hidden">
@@ -94,12 +74,16 @@ const MapsHero = () => {
             </Link> */}
           </div>
 
-          <div className="relative mx-auto max-w-4xl px-4 md:px-10">
-            {/* Offsets stay inside the gap between the frame and the box edge
-                (32px at lg, 128px from xl, where the zoom keeps it fixed) so
-                the windows' outer edges are never clipped. */}
-            <SidePageCard className="-left-6 top-28 xl:-left-24" />
-            <SidePageCard className="-right-6 top-28 xl:-right-24" />
+          {/* The side windows sit where they always have, near the box edges
+              (8px in at lg, 32px from xl, where the zoom keeps it fixed). The
+              main frame is padded just past them (40px, then 72px), so it
+              spans nearly the whole box and covers all but a 32-40px strip of
+              each. top-10 drops them just below the main frame's top edge and
+              bottom-0 runs them to the hero's bottom, where the section clips
+              them along with it. */}
+          <div className="relative px-4 md:px-10 xl:px-18">
+            <SidePageCard className="top-10 bottom-0 left-2 xl:left-8" />
+            <SidePageCard className="top-10 bottom-0 right-2 xl:right-8" />
 
             <BrowserFrame className="relative">
               <div className="px-6 py-10 text-center md:py-12">

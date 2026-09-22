@@ -52,10 +52,7 @@
     "readCaseStudy": "Soma mfano huu",
     "empty": "Hakuna mifano inayolingana na vichujio hivi.",
     "clearFilters": "Futa vichujio",
-    "pagination": "Kurasa za mifano halisi",
-    "previousPage": "Ukurasa uliopita",
-    "nextPage": "Ukurasa unaofuata",
-    "pageLabel": "Ukurasa {number}",
+    "loadMore": "Pakia zaidi",
     "relatedCaseStudies": "Mifano inayohusiana",
     "exploreOnMap": "Chunguza kwenye ramani"
   },

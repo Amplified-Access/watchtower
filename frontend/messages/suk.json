@@ -52,10 +52,7 @@
     "readCaseStudy": "Soma Masomo",
     "empty": "Gabi masomo ga kukolwa na fila jino.",
     "clearFilters": "Geya Fila Jino",
-    "pagination": "Peeji ja Masomo",
-    "previousPage": "Peeji ja Kuma Numa",
-    "nextPage": "Peeji ja Kumbele",
-    "pageLabel": "Peeji {number}",
+    "loadMore": "Bona Mabaho",
     "relatedCaseStudies": "Masomo Gasaganagwa",
     "exploreOnMap": "Bona Malambo"
   },

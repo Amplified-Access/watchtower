@@ -8,6 +8,9 @@ interface BrowserFrameProps {
   // frames need a wider one to fit the same text legibly.
   urlClassName?: string;
   url?: string;
+  // Keeps the title bar's height but leaves out the dots and url, for frames
+  // that only peek out from behind another one.
+  bare?: boolean;
 }
 
 // Translucent "browser window" chrome used by the maps landing page mockups.
@@ -18,6 +21,7 @@ const BrowserFrame = ({
   contentClassName,
   urlClassName,
   url = "www.thewatchtower.tech",
+  bare = false,
 }: BrowserFrameProps) => {
   return (
     <div
@@ -27,19 +31,23 @@ const BrowserFrame = ({
       )}
     >
       <div aria-hidden className="relative flex h-7 items-center md:h-8">
-        <div className="flex gap-1.5">
-          <span className="size-2.5 rounded-full bg-white md:size-3" />
-          <span className="size-2.5 rounded-full bg-white md:size-3" />
-          <span className="size-2.5 rounded-full bg-white md:size-3" />
-        </div>
-        <div
-          className={cn(
-            "absolute left-1/2 hidden h-full w-2/5 -translate-x-1/2 items-center justify-center rounded-full bg-white/60 text-[10px] text-dark/60 sm:flex md:text-xs",
-            urlClassName,
-          )}
-        >
-          {url}
-        </div>
+        {!bare && (
+          <>
+            <div className="flex gap-1.5">
+              <span className="size-2.5 rounded-full bg-white md:size-3" />
+              <span className="size-2.5 rounded-full bg-white md:size-3" />
+              <span className="size-2.5 rounded-full bg-white md:size-3" />
+            </div>
+            <div
+              className={cn(
+                "absolute left-1/2 hidden h-full w-2/5 -translate-x-1/2 items-center justify-center rounded-full bg-white/60 text-[10px] text-dark/60 sm:flex md:text-xs",
+                urlClassName,
+              )}
+            >
+              {url}
+            </div>
+          </>
+        )}
       </div>
       <div className={cn("mt-2.5 overflow-hidden bg-white md:mt-4", contentClassName)}>
         {children}
