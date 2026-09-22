@@ -1,6 +1,6 @@
 # tRPC Setup
 
-tRPC provides end-to-end type-safe RPC between the frontend and the database layer (via Drizzle). All tRPC code lives in `src/_trpc/`.
+tRPC provides end-to-end type-safe RPC between the frontend's components and its server, whose routers call the Go backend through `src/lib/api/`. All tRPC code lives in `src/_trpc/`.
 
 ## Directory Structure
 
@@ -34,10 +34,9 @@ Requests go through `httpBatchLink` to `/api/trpc`. [SuperJSON](https://github.c
 
 Each tRPC request passes raw `Headers` as context (`trpc.ts`). The `authMiddleware` in `middleware.ts`:
 
-1. Reads the `better-auth.session_token` cookie.
-2. Validates the session via Better Auth.
-3. Fetches the current user from the Go backend (`GET /api/v1/me` via `NEXT_PUBLIC_API_URL`).
-4. Returns `{ session, user }` on success, or throws `UNAUTHORIZED` if the token is missing or invalid.
+1. Reads the `better-auth.session_token` cookie (the name is historical; the Go backend issues it).
+2. Fetches the current user from the Go backend (`GET /api/v1/me` via `NEXT_PUBLIC_API_URL`), which validates the session.
+3. Returns `{ session, user }` on success, or throws `UNAUTHORIZED` if the token is missing or invalid.
 
 ## Procedure Types
 

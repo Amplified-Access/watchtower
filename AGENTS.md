@@ -104,7 +104,7 @@ pnpm test:watch   # Jest watch mode
 pnpm i18n:check   # fail if any marketing string is still English (see frontend/docs/SCRIPTS.md)
 ```
 
-**Local env:** tRPC auth goes through the Go backend's `/me` (see `_trpc/middleware.ts`), so tRPC calls need `NEXT_PUBLIC_API_URL`, not `DATABASE_URL`. `DATABASE_URL` is still needed by the Better Auth routes (`/api/auth/*`, sign-up) and the chat assistant's embeddings until those move behind Go. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
+**Local env:** the frontend needs `NEXT_PUBLIC_API_URL` (the Go API, e.g. `http://localhost:8080/api/v1` — plain `http` for a local Go server) and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`. It has no database connection, so no `DATABASE_URL`. The chat assistant's model still runs in Next and needs `GOOGLE_GENERATIVE_AI_API_KEY` there; its knowledge-base search runs in Go and needs the same key on the backend. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
 
 ## Backend architecture — Clean Architecture (strict)
 
@@ -133,15 +133,13 @@ server/          Gin router setup
 ```
 src/
 ├── app/                  Next.js App Router — pages and API routes
-│   ├── api/              Server-only API routes (AI chat, auth, S3)
+│   ├── api/              Server-only API routes (AI chat, R2 upload/download)
 │   └── (main)/           Authenticated app shell
 ├── _trpc/
 │   └── routers/          tRPC routers — one file per domain
 ├── features/             Feature modules (incidents, maps, alerts, etc.)
 ├── lib/
-│   ├── api/              HTTP client wrappers for the Go backend
-│   └── ai/               Embeddings and knowledge base helpers
-└── db/                   Drizzle ORM schemas and migrations
+│   └── api/              HTTP client wrappers for the Go backend
 ```
 
 **tRPC procedure types** (use the correct one — they enforce auth):
@@ -155,7 +153,7 @@ src/
 - All mutations go through a tRPC procedure. Never call the Go backend directly from a component.
 - `lib/api/` functions are called from tRPC routers, not from components.
 - **The Go backend is the source of truth.** tRPC routers are pass-throughs: they validate input and forward it; they don't filter, group, geocode or reshape backend data. If a page needs a new shape, add it to the Go response. Components don't aggregate lists either — the maps get GeoJSON, counts and country lists ready-made from `/map/*` (`lib/api/map.ts`, the `map` tRPC router) and hand the GeoJSON to Mapbox as-is.
-- ESLint (`no-restricted-imports`) blocks `@/db`, `drizzle-orm`, `@neondatabase/*`, `@aws-sdk/*` and `@/lib/aws/*` in `src/`. The files that still bypass Go (Better Auth, chat embeddings, R2 upload/download) are listed in `eslint.config.mjs`; that list should only shrink.
+- ESLint (`no-restricted-imports`) blocks `@/db`, `drizzle-orm`, `@neondatabase/*`, `@aws-sdk/*` and `@/lib/aws/*` in `src/`. `@/lib/auth` and `better-auth` are blocked too. The only files still bypassing Go are the R2 upload/download routes, listed in `eslint.config.mjs`; that list should only shrink.
 - **No work at import time in anything tRPC reaches.** All routers share one route handler, so a module that throws when imported (Better Auth opening Neon without `DATABASE_URL`, an SDK client validating credentials in its constructor) takes down *every* procedure, public ones included, and `next build` with it. Create clients lazily on first use. Admin user invites go through Go's `POST /admin/watchers` for this reason.
 - The frontend has no AWS/SNS code and needs no AWS credentials. The unused SNS publishing (tRPC `notifications` router, `/api/sns/publish`, `lib/aws/sns.ts`) was removed; if alert notifications are built, publish from the Go backend.
 - The Epilogue font is declared in `src/app/globals.css`, not imported from `@fontsource-variable/epilogue`, so its vertical metrics can be overridden (`ascent-override`/`descent-override`) to centre capitals in every line box. Without that, text sits ~0.1em high in small pills and buttons. The woff2 files are copied into `public/fonts/epilogue/` because the bundler drops `@font-face` rules whose `url()` points into `node_modules`. Re-copy them when upgrading the package.
@@ -164,19 +162,20 @@ src/
 
 ## Authentication
 
-- Better Auth manages sessions in Postgres via Drizzle ORM.
-- The Go backend accepts auth via `Authorization: Bearer <token>` or `better-auth.session_token` cookie.
+- The Go backend owns accounts and sessions: login, logout, `/me`, forgot/reset password and admin invites (`POST /admin/watchers`). The frontend has no auth library; tRPC's `authMiddleware` forwards the session cookie to Go's `/me`.
+- The session cookie is still named `better-auth.session_token` (Go sets and reads it). Go accepts `Authorization: Bearer <token>` or the cookie, and strips the `.<signature>` suffix Better Auth used to append, so sessions it issued keep working.
+- **Password hashes:** Go writes argon2id. Accounts created under Better Auth have scrypt hashes (`<saltHex>:<keyHex>`, N=16384, r=16, p=1, 64-byte key, NFKC-normalised password, the hex salt string used as the salt bytes — `usecase/auth/legacy_password.go`). Go verifies both and re-hashes a Better Auth hash as argon2id on the next successful login. Keep the scrypt path until no `account.password` rows lack the `$argon2id$` prefix.
 - Roles: `super-admin`, `admin`, `watcher`, `independent-reporter`.
 
 ## External services
 
 | Service | Purpose |
 |---------|---------|
-| Neon (Postgres) | Primary database |
+| Neon (Postgres + pgvector) | Primary database, accessed only by the Go backend |
 | Railway (Redis) | Caching + rate limiting |
 | Cloudflare R2 | Evidence file storage (S3-compatible) |
 | Mailjet (from the Go backend) | Email notifications |
-| Google Generative AI | Chat assistant + embeddings (Gemini 2.5 Flash) |
+| Google Generative AI | Chat model (Gemini 2.5 Flash, in Next) and knowledge-base embeddings (`text-embedding-004`, in Go: `pkg/gemini`, `POST /assistant/knowledge/search`) |
 | Sentry | Error monitoring |
 | Mapbox | Geospatial visualization |
 

@@ -27,6 +27,23 @@ type mockAuthRepo struct {
 	credential  string
 	tokenEmail  string
 	tokenExpiry time.Time
+	// Login
+	storedHash   string
+	updatedEmail string
+	updatedHash  string
+	sessions     int
+}
+
+func (m *mockAuthRepo) GetPasswordHash(_ context.Context, _ string) (string, error) {
+	return m.storedHash, nil
+}
+func (m *mockAuthRepo) UpdatePasswordHash(_ context.Context, email, hash string) error {
+	m.updatedEmail, m.updatedHash = email, hash
+	return nil
+}
+func (m *mockAuthRepo) CreateSession(_ context.Context, _ *entity.Session) error {
+	m.sessions++
+	return nil
 }
 
 func (m *mockAuthRepo) CreateUser(_ context.Context, u *entity.User) error {

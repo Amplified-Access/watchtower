@@ -10,8 +10,8 @@ Next.js 15 application for the Watchtower incident monitoring platform. Uses the
 | Language      | TypeScript (strict)                             |
 | Styling       | Tailwind CSS, shadcn/ui, Radix UI               |
 | API layer     | tRPC + REST (Go backend)                        |
-| Database      | Drizzle ORM → PostgreSQL (Neon)                 |
-| Auth          | Better Auth                                     |
+| Data          | Go backend API (`src/lib/api/`, via tRPC)       |
+| Auth          | Go backend sessions                             |
 | State         | Zustand (client), React Query (server cache)    |
 | Forms         | React Hook Form + Zod                           |
 | Maps          | Mapbox GL                                       |
@@ -39,7 +39,7 @@ frontend/
 │   │   └── <feature>/
 │   │       ├── domain/             # Types, repository interfaces, domain errors
 │   │       ├── application/        # Use cases
-│   │       ├── infrastructure/     # Drizzle repositories, external adapters
+│   │       ├── infrastructure/     # Adapters (Go backend clients, external APIs)
 │   │       └── index.ts            # Composition root (public API)
 │   ├── components/                 # Shared UI components
 │   │   ├── ui/                     # shadcn base components
@@ -48,8 +48,7 @@ frontend/
 │   │   ├── ai/                     # AI-powered UI components
 │   │   └── common/                 # Generic reusable components
 │   ├── _trpc/                      # tRPC instance, procedures, and routers
-│   ├── db/                         # Drizzle schema definitions
-│   ├── lib/                        # Utilities (auth, AI, AWS, geocoding, etc.)
+│   ├── lib/                        # Utilities and Go backend clients (lib/api)
 │   ├── hooks/                      # Shared React hooks
 │   ├── i18n/                       # next-intl config and routing
 │   ├── types/                      # Shared TypeScript types
@@ -77,8 +76,8 @@ See [`docs/SCRIPTS.md`](./docs/SCRIPTS.md) for all available scripts.
 Each feature under `src/features/` is a self-contained vertical slice with four layers:
 
 - **Domain** — plain TypeScript types, repository port interfaces, domain errors. No framework imports.
-- **Application** — use-case classes that call domain ports. No Drizzle, no HTTP.
-- **Infrastructure** — Drizzle repository implementations and external service adapters.
+- **Application** — use-case classes that call domain ports. No HTTP.
+- **Infrastructure** — repository implementations (calling the Go backend) and external service adapters.
 - **Composition root** (`<feature>.container.ts`) — wires concrete implementations to use cases and exports use-case factories.
 
 tRPC routers call use cases only — no SQL or business logic lives in routers. `src/_trpc/routers/_app.ts` is the only file that imports and merges feature routers.

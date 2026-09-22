@@ -39,4 +39,4 @@ Every session starts cold — there is no memory of previous sessions. Follow th
 - Do not call `lib/api/` from React components — always go through tRPC.
 - Do not use `any` in TypeScript without a comment explaining why.
 - Do not skip `make swagger` after adding or changing API routes.
-- Do not add new Zod schemas without checking `drizzle-zod` can generate them from the DB schema first.
+- Do not query the database, Better Auth or AWS from the frontend: data comes from the Go backend (see AGENTS.md). Zod schemas are hand-written for tRPC inputs; the Go entities are the source of truth for data shapes.

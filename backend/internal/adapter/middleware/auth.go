@@ -78,11 +78,20 @@ func CurrentUser(c *gin.Context) *entity.User {
 func extractToken(c *gin.Context) string {
 	header := c.GetHeader("Authorization")
 	if strings.HasPrefix(header, "Bearer ") {
-		return strings.TrimPrefix(header, "Bearer ")
+		return SessionToken(strings.TrimPrefix(header, "Bearer "))
 	}
 	// Better Auth cookie fallback
 	if cookie, err := c.Cookie("better-auth.session_token"); err == nil {
-		return cookie
+		return SessionToken(cookie)
 	}
 	return ""
+}
+
+// SessionToken strips the signature Better Auth appended to its session
+// cookies ("<token>.<signature>"), so sessions it created keep working. The
+// token alone is what the session table stores. Tokens this backend issues
+// are base64url, which never contains a ".", so they pass through untouched.
+func SessionToken(raw string) string {
+	token, _, _ := strings.Cut(raw, ".")
+	return token
 }
