@@ -44,14 +44,4 @@ export default [
       ],
     },
   },
-  {
-    // Still bypassing the backend: R2 uploads and downloads. These entries
-    // should disappear when that moves behind Go. Don't add to it.
-    files: [
-      "src/app/api/file-upload/route.ts",
-      "src/app/api/file-download/route.ts",
-      "src/features/super-admin/server/index.ts",
-    ],
-    rules: { "no-restricted-imports": "off" },
-  },
 ];

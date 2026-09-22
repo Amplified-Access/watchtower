@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { downloadReport } from "@/utils/file-download";
+import { uploadFile } from "@/utils/file-upload";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -179,25 +180,12 @@ const ReportsContent = () => {
     setIsUploading(true);
 
     try {
-      // Upload file to Cloudflare
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-
-      const uploadResponse = await fetch("/api/file-upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const uploadResult = await uploadResponse.json();
-
-      if (!uploadResult.success) {
-        throw new Error("File upload failed");
-      }
+      const fileKey = await uploadFile(selectedFile);
 
       // Create report record
       await createReportMutation.mutateAsync({
         title: uploadTitle.trim(),
-        fileKey: uploadResult.fileKey,
+        fileKey,
         status: uploadStatus,
       });
     } catch (error) {

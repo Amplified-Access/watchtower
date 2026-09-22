@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getR2PublicUrl } from "@/utils/r2";
+import { fileDownloadUrl } from "@/utils/file-download";
 
 import Link from "next/link";
 import ActionsMenu from "./actions-menu";
@@ -74,7 +74,7 @@ export function DataTable<
                   const rowData = row.original as any;
 
                   if (columnId === "certificateOfIncorporation") {
-                    const url = getR2PublicUrl(cellValue);
+                    const url = fileDownloadUrl(cellValue);
                     return (
                       <TableCell key={cell.id}>
                         <Link

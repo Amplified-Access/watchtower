@@ -25,7 +25,7 @@ import {
   Trash,
   X,
 } from "lucide-react";
-import { getR2PublicUrl } from "@/utils/r2";
+import { fileDownloadUrl } from "@/utils/file-download";
 
 import {
   DropdownMenu,
@@ -149,7 +149,7 @@ export function DataTable<
                   const rowData = row.original as any;
 
                   if (columnId === "certificateOfIncorporation") {
-                    const url = getR2PublicUrl(cellValue);
+                    const url = fileDownloadUrl(cellValue);
                     return (
                       <TableCell key={cell.id}>
                         <Link
