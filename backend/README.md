@@ -88,10 +88,11 @@ See [`docs/SCRIPTS.md`](./docs/SCRIPTS.md) for all available Make commands.
 | `APP_ENV`             | Environment name (`production`, `development`)|
 | `LOG_LEVEL`           | Log verbosity (`debug`, `info`, `warn`, `error`) |
 | `PORT`                | Server port (default: `8080`)                |
-| `AWS_ACCESS_KEY_ID`   | S3-compatible storage key (Cloudflare R2)    |
-| `AWS_SECRET_KEY`      | S3-compatible storage secret                 |
-| `AWS_BUCKET_NAME`     | Storage bucket name                          |
-| `AWS_ENDPOINT_URL`    | R2 endpoint URL                              |
+| `CLOUDFLARE_S3_ENDPOINT` | R2 S3 endpoint (`https://<account-id>.r2.cloudflarestorage.com`) |
+| `CLOUDFLARE_ACCESS_KEY_ID` | R2 access key                              |
+| `CLOUDFLARE_SECRET_KEY` | R2 secret key                               |
+| `CLOUDFLARE_R2_BUCKET` | R2 bucket (default: `amplified-access-bucket`) |
+| `ALLOWED_EXTERNAL_DOMAINS` | Comma-separated hosts `/files/download` may redirect to when a file key is a full URL (`*` for any) |
 | `SNS_TOPIC_ARN`       | AWS SNS topic for push notifications         |
 | `SMTP_HOST`           | SMTP server hostname                         |
 | `SMTP_PORT`           | SMTP server port                             |

@@ -53,6 +53,7 @@ Limits are enforced per IP using a Redis-backed sliding window. Responses includ
 | Alert Subscriptions | Email/SMS alerts with frequency and location filters   |
 | Organizations     | Organization registry and membership                     |
 | Datasets          | Dataset listing and download tracking                    |
+| Files             | Public upload (`POST /files`, strict limit, 50 MB max) and download (`GET /files/download`) of files in Cloudflare R2 |
 | Insights          | AI-assisted insights with tags and slug-based access     |
 | Users             | Profile and role management                              |
 | Admin             | Organization-scoped admin operations                     |
