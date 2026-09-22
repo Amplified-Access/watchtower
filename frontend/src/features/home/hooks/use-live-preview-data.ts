@@ -184,6 +184,14 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
     return Array.from(ids);
   }, [incidentTypes, allReports]);
 
+  // Every country with reports, for the filters panel. Built from all reports
+  // rather than the filtered set so picking one doesn't shrink the list.
+  const countries = useMemo(() => {
+    const names = new Set<string>();
+    for (const r of allReports) if (r.country) names.add(r.country);
+    return Array.from(names).sort((a, b) => a.localeCompare(b));
+  }, [allReports]);
+
   const topChips = useMemo<TopChip[]>(() => {
     const byCountry = new Map<string, number>();
     for (const r of allReports) {
@@ -225,6 +233,7 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
     isLoading: reportsQuery.isLoading || typesQuery.isLoading || orgsQuery.isLoading,
     incidentTypes,
     categoryIds,
+    countries,
     filteredReports,
     bubbles,
     stats,

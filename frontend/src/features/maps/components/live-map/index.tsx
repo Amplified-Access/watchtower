@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -53,7 +53,7 @@ const LiveMap = () => {
   // The map-layer toggles are gone from the panel, so these are fixed for now.
   const layers = DEFAULT_LAYERS;
 
-  const { incidentTypes, categoryIds, filteredReports, bubbles, stats, topChips } =
+  const { incidentTypes, categoryIds, countries, filteredReports, bubbles, stats, topChips } =
     useLivePreviewData({
       timePeriod,
       customRange,
@@ -74,6 +74,19 @@ const LiveMap = () => {
       createdAt: r.createdAt ?? undefined,
     }))
     .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
+
+  // Choosing a country, from the filters panel or a top chip, flies the camera
+  // to its reports; clearing it flies back out to all of them. recenter() reads
+  // the points from the render that set the country, so it frames the new set.
+  // Skipped on mount, where GlobeMap already fits to the data once it loads.
+  const isFirstCountryRef = useRef(true);
+  useEffect(() => {
+    if (isFirstCountryRef.current) {
+      isFirstCountryRef.current = false;
+      return;
+    }
+    mapHandleRef.current?.recenter();
+  }, [country]);
 
   const toggleChip = (chip: TopChip) => {
     if (chip.kind === "country") {
@@ -304,6 +317,9 @@ const LiveMap = () => {
                 setHiddenCategoryIds((current) => toggleCategoryVisibility(current, id))
               }
               incidentTypes={incidentTypes}
+              countries={countries}
+              country={country}
+              onCountryChange={setCountry}
               totalReports={visibleReports.length}
               onReset={resetFilters}
               onViewReports={() => setIsFiltersOpen(false)}

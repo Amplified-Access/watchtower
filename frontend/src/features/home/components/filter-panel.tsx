@@ -39,6 +39,10 @@ interface FilterPanelProps {
   headerAction?: React.ReactNode;
   /** When set, the footer CTA runs this instead of linking to /maps. */
   onViewReports?: () => void;
+  /** Countries to filter by. The section only renders when this is passed. */
+  countries?: string[];
+  country?: string | null;
+  onCountryChange?: (country: string | null) => void;
 }
 
 const STYLES = {
@@ -95,6 +99,9 @@ const FilterPanel = ({
   variant = "dark",
   headerAction,
   onViewReports,
+  countries,
+  country = null,
+  onCountryChange,
 }: FilterPanelProps) => {
   const t = useTranslations("HomeLivePreview");
   const s = STYLES[variant];
@@ -175,6 +182,33 @@ const FilterPanel = ({
           </Popover>
         </div>
       </div>
+
+      {countries && countries.length > 0 && onCountryChange && (
+        <div className="flex flex-col gap-2">
+          <span className={s.label}>{t("country")}</span>
+          <div className="flex flex-wrap gap-2">
+            {countries.map((name) => {
+              const active = country === name;
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  aria-pressed={active}
+                  // Clicking the active country again clears the filter.
+                  onClick={() => onCountryChange(active ? null : name)}
+                  className={cn(
+                    "transition-colors",
+                    s.chip,
+                    active ? "bg-primary text-white" : s.chipIdle,
+                  )}
+                >
+                  {name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         <span className={s.label}>
