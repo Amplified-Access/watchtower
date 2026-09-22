@@ -165,8 +165,20 @@ class SNSService {
   }
 }
 
-// Export singleton instance
-export const snsService = new SNSService();
+// Created on first use rather than at import. Constructing it throws when
+// AWS credentials aren't set, and doing that at import took down every tRPC
+// route (the notifications router imports this) and `next build` with it.
+let instance: SNSService | null = null;
+const getSNSService = () => (instance ??= new SNSService());
+
+export const snsService = {
+  publishMessage: (...args: Parameters<SNSService["publishMessage"]>) =>
+    getSNSService().publishMessage(...args),
+  publishIncidentAlert: (...args: Parameters<SNSService["publishIncidentAlert"]>) =>
+    getSNSService().publishIncidentAlert(...args),
+  publishSystemAlert: (...args: Parameters<SNSService["publishSystemAlert"]>) =>
+    getSNSService().publishSystemAlert(...args),
+};
 
 // Export types and class for testing
 export { SNSService };

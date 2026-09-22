@@ -47,6 +47,10 @@ export const adminApi = {
   getOrganizationWatchers: (orgId: string) =>
     api.get<WatcherUser[]>(`/admin/watchers?organizationId=${orgId}`),
 
+  // Creates the account in the admin's organization and emails a set-password link.
+  inviteUser: (data: { name: string; email: string; role?: string }) =>
+    api.post<WatcherUser>("/admin/watchers", data),
+
   // Forms
   getOrganizationForms: (orgId: string) =>
     api.get<Form[]>(`/admin/forms?organizationId=${orgId}`),

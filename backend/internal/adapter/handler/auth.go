@@ -7,7 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"backend/internal/adapter/middleware"
 	"backend/internal/adapter/presenter"
+	"backend/internal/domain/entity"
 	authusecase "backend/internal/usecase/auth"
 )
 
@@ -138,3 +140,42 @@ func clearSessionCookie(c *gin.Context) {
 	c.SetCookie(sessionCookieName, "", -1, "/", cookieDomain, os.Getenv("ENV") == "production", true)
 }
 
+
+// InviteUser godoc
+//
+//	@Summary		Invite a user to the organization
+//	@Description	Creates an account in the admin's organization and emails a link to set its password (valid 3 days). Role defaults to watcher; admin roles need a super-admin.
+//	@Tags			Admin
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			body	body		object{name=string,email=string,role=string}	true	"Invitee"
+//	@Success		201		{object}	presenter.Response{data=entity.User}
+//	@Failure		400		{object}	presenter.Response
+//	@Failure		403		{object}	presenter.Response
+//	@Failure		409		{object}	presenter.Response
+//	@Failure		500		{object}	presenter.Response
+//	@Router			/admin/watchers [post]
+func (h *AuthHandler) InviteUser(c *gin.Context) {
+	var req struct {
+		Name  string `json:"name" binding:"required"`
+		Email string `json:"email" binding:"required,email"`
+		Role  string `json:"role"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		presenter.BadRequest(c, err.Error())
+		return
+	}
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:3000"
+	}
+
+	user, err := h.uc.InviteUser(c.Request.Context(), middleware.CurrentUser(c), req.Name, req.Email, entity.UserRole(req.Role), frontendURL)
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.Created(c, user)
+}
