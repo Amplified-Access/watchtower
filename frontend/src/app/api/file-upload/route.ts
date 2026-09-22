@@ -11,6 +11,14 @@ const r2 = new S3Client({
   },
 });
 
+// Anonymous reporters upload evidence here, so this route stays public. Until
+// uploads move behind the Go backend's rate limiter, cap the size and refuse
+// types a browser would execute if the file were ever served inline.
+const MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
+const BLOCKED_EXTENSIONS = new Set([
+  "html", "htm", "xhtml", "svg", "js", "mjs", "cjs", "exe", "bat", "cmd", "sh", "msi", "php",
+]);
+
 export const POST = async (req: NextRequest) => {
   const formdata = await req.formData();
   const file = formdata.get("file");
@@ -24,11 +32,24 @@ export const POST = async (req: NextRequest) => {
 
   const uploadedFile = file as File;
 
+  if (uploadedFile.size > MAX_UPLOAD_BYTES) {
+    return NextResponse.json(
+      { success: false, error: "File is too large (50 MB max)." },
+      { status: 413 }
+    );
+  }
+  const extension = uploadedFile.name.split(".").pop()?.toLowerCase() ?? "";
+  if (!extension || BLOCKED_EXTENSIONS.has(extension)) {
+    return NextResponse.json(
+      { success: false, error: "This file type isn't allowed." },
+      { status: 415 }
+    );
+  }
+
   const bytes = await uploadedFile.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const fileExtension = uploadedFile.name.split(".").pop();
-  const uniqueFileName = `${uuidv4()}.${fileExtension}`;
+  const uniqueFileName = `${uuidv4()}.${extension}`;
 
   const putObjectCommand = new PutObjectCommand({
     Bucket: "amplified-access-bucket",

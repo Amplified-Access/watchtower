@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { snsService } from "@/lib/aws/sns";
 import { z } from "zod";
+import { getRouteUser } from "@/lib/api/route-auth";
 
 // Request validation schema
 const publishMessageSchema = z.object({
@@ -31,6 +32,15 @@ const publishMessageSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Publishing reaches every subscriber on the topic, so it's super-admin only.
+  const user = await getRouteUser();
+  if (!user) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+  if (user.role !== "super-admin") {
+    return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const body = await request.json();
 

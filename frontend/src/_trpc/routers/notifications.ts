@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc";
+import { router } from "../trpc";
+import { superAdminProcedure } from "../middleware";
 import { createNotificationUseCases } from "@/features/notifications";
 
 const notifications = createNotificationUseCases();
@@ -36,7 +37,7 @@ const publishSystemAlertSchema = z.object({
 
 export const notificationRouter = router({
   // Publish a custom message to SNS
-  publishMessage: publicProcedure
+  publishMessage: superAdminProcedure
     .input(publishMessageSchema)
     .mutation(async ({ input }) => {
       try {
@@ -49,7 +50,7 @@ export const notificationRouter = router({
     }),
 
   // Publish an incident alert
-  publishIncidentAlert: publicProcedure
+  publishIncidentAlert: superAdminProcedure
     .input(publishIncidentAlertSchema)
     .mutation(async ({ input }) => {
       try {
@@ -64,7 +65,7 @@ export const notificationRouter = router({
     }),
 
   // Publish a system alert
-  publishSystemAlert: publicProcedure
+  publishSystemAlert: superAdminProcedure
     .input(publishSystemAlertSchema)
     .mutation(async ({ input }) => {
       try {
@@ -79,7 +80,7 @@ export const notificationRouter = router({
     }),
 
   // Test SNS connection
-  testConnection: publicProcedure.mutation(async () => {
+  testConnection: superAdminProcedure.mutation(async () => {
     try {
       return await notifications.testConnection.execute();
     } catch (error) {
