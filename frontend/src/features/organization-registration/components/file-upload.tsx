@@ -24,7 +24,7 @@ const initialFiles: {
 }[] = [];
 
 export default function Component({ file, setFile }: any) {
-  const maxSize = 2 * 1024 * 1024; // 10MB default
+  const maxSize = 10 * 1024 * 1024; // 10MB
 
   const [
     { files, isDragging, errors },
