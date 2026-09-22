@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower akony panyda bï baŋ kaam kɔc lueel, bï nyic kuɔɔth alɔŋ baŋ, ku bï puk athör bei piny ta bï nyic yenë kony luɔɔi.",
     "exploreLabel": "Nyin Watchtower",
     "exploreDescription": "Nyin baŋ alɔŋ bay, jɔl, thok, ku kaam bï nyic kaam bei piny.",
-    "exploreHeading": "Nyin kaam panyda baŋ."
+    "exploreHeading": "Nyin kaam panyda baŋ.",
+    "reportIncident": "Tɔ̈ɔ̈ŋ Baŋ"
   },
   "HomeLivePreview": {
     "exploreLabel": "NYIN",
@@ -672,9 +673,11 @@
     "filterReports": "Guiir Baŋ",
     "resetAll": "Bɛ̈i Kedhiɛ Cïën",
     "timePeriod": "Kaam",
+    "country": "Paan",
     "period24h": "Awer 24",
     "period7d": "Akool 7",
     "period30d": "Akool 30",
+    "period1y": "Ruɔ̈n 1",
     "periodCustom": "Guiir Ë Rot",
     "issuesCategory": "Jɔl",
     "allIssues": "Jɔl Kedhiɛ",

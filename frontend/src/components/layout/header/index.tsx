@@ -77,6 +77,7 @@ const Header = () => {
   // The conversation view is a full-height thread with its own back button, so
   // it reclaims the header's vertical space too.
   const isConversation = pathname.startsWith("/chat/conversation");
+  const isHome = pathname === "/";
   if (isFullScreenMap || isConversation) {
     return null;
   }
@@ -84,7 +85,7 @@ const Header = () => {
   return (
     <>
       <div className="fixed top-0 inset-x-0 z-30">
-        {showBanner && (
+        {showBanner && !isHome && (
           <div ref={setBannerEl}>
             <AnnouncementBanner onDismiss={dismissBanner} />
           </div>
@@ -113,22 +114,16 @@ const Header = () => {
               />
               <Link
                 href={getDashboardUrl()}
-                className="font-title text-sm font-medium"
+                className={cn(
+                  buttonVariants({ variant: "default" }),
+                  "font-title text-sm font-medium",
+                )}
               >
                 {isLoading
                   ? tCommon("loading")
                   : user && user.name
                     ? tCommon("dashboard")
                     : tCommon("signIn")}
-              </Link>
-              <Link
-                href={"/anonymous-reports"}
-                className={cn(
-                  buttonVariants({ variant: "default" }),
-                  "font-title text-sm font-medium",
-                )}
-              >
-                {t("reportIssue")}
               </Link>
             </div>
           </div>
@@ -137,7 +132,7 @@ const Header = () => {
           </div>
         </header>
       </div>
-      {showBanner && <div className="h-(--banner-height)" />}
+      {showBanner && !isHome && <div className="h-(--banner-height)" />}
     </>
   );
 };

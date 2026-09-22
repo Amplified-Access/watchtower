@@ -33,7 +33,7 @@
   },
   "AnnouncementBanner": {
     "message": "What's happening in your community?",
-    "cta": "Make a Report"
+    "cta": "Report an incident"
   },
   "CaseStudiesPage": {
     "eyebrow": "Case Studies",
@@ -639,7 +639,8 @@
     "missionStatement": "WatchTower helps communities report what is happening, understand patterns across reports and turn information from the ground into intelligence that can support action.",
     "exploreLabel": "Explore WatchTower",
     "exploreDescription": "The reports across places, incidents, languages and time to understand what's happening on the ground.",
-    "exploreHeading": "See what communities are reporting."
+    "exploreHeading": "See what communities are reporting.",
+    "reportIncident": "Report an incident"
   },
   "HomeLivePreview": {
     "exploreLabel": "EXPLORE",
@@ -672,9 +673,11 @@
     "filterReports": "Filter Reports",
     "resetAll": "Reset all",
     "timePeriod": "Time Period",
+    "country": "Country",
     "period24h": "24H",
     "period7d": "7D",
     "period30d": "30D",
+    "period1y": "1Y",
     "periodCustom": "Custom",
     "issuesCategory": "Incidents Category",
     "allIssues": "All Incidents",

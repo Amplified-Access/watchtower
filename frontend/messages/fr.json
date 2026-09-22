@@ -639,7 +639,8 @@
     "missionStatement": "WatchTower aide les communautés à signaler ce qui se passe, à comprendre les tendances des signalements et à transformer les informations du terrain en renseignements capables de soutenir l'action.",
     "exploreLabel": "Découvrir WatchTower",
     "exploreDescription": "Explorez les signalements par lieu, par thème, par langue et dans le temps pour comprendre ce qui se passe sur le terrain.",
-    "exploreHeading": "Découvrez ce que les communautés signalent."
+    "exploreHeading": "Découvrez ce que les communautés signalent.",
+    "reportIncident": "Soumettre un signalement"
   },
   "HomeLivePreview": {
     "exploreLabel": "EXPLORER",
@@ -672,9 +673,11 @@
     "filterReports": "Filtrer les signalements",
     "resetAll": "Tout réinitialiser",
     "timePeriod": "Période",
+    "country": "Pays",
     "period24h": "24 h",
     "period7d": "7 j",
     "period30d": "30 j",
+    "period1y": "1 an",
     "periodCustom": "Personnalisé",
     "issuesCategory": "Catégorie de problème",
     "allIssues": "Tous les problèmes",

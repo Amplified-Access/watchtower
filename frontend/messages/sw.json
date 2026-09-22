@@ -639,7 +639,8 @@
     "missionStatement": "WatchTower inasaidia jamii kuripoti yanayotokea, kuelewa mifumo katika ripoti na kugeuza taarifa kutoka uwanjani kuwa maarifa yanayoweza kusaidia hatua.",
     "exploreLabel": "Gundua WatchTower",
     "exploreDescription": "Chunguza ripoti kwa maeneo, masuala, lugha na wakati ili kuelewa yanayotokea uwanjani.",
-    "exploreHeading": "Ona yale jamii zinayoripoti."
+    "exploreHeading": "Ona yale jamii zinayoripoti.",
+    "reportIncident": "Wasilisha ripoti"
   },
   "HomeLivePreview": {
     "exploreLabel": "GUNDUA",
@@ -672,9 +673,11 @@
     "filterReports": "Chuja Ripoti",
     "resetAll": "Weka upya vyote",
     "timePeriod": "Kipindi cha Muda",
+    "country": "Nchi",
     "period24h": "Saa 24",
     "period7d": "Siku 7",
     "period30d": "Siku 30",
+    "period1y": "Mwaka 1",
     "periodCustom": "Maalum",
     "issuesCategory": "Jamii ya Suala",
     "allIssues": "Masuala Yote",

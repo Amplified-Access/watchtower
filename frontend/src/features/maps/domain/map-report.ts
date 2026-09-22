@@ -7,6 +7,7 @@ export interface CombinedIncidentReport {
   displayName?: string | null;
   incidentTypeDescriptions?: string | null;
   incidentTypeColor?: string | null;
+  country?: string | null;
 }
 
 export interface AfricawideIncidentReport {

@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower hawaasonni waan ta'aa jiru akka gabaasan, gosa gabaasaa keessatti adeemsa akka hubatan, fi odeeffannoo lafa irraa gara hubannoo tarkaanfii deeggaruu danda'uutti akka jijjiiran gargaara.",
     "exploreLabel": "Watchtower Sakatta'i",
     "exploreDescription": "Gabaasa bakkaan, dhimmaan, afaaniin, fi yeroon sakatta'ii waan lafa irratti ta'aa jiru hubadhu.",
-    "exploreHeading": "Waan hawaasonni gabaasaa jiran ilaali."
+    "exploreHeading": "Waan hawaasonni gabaasaa jiran ilaali.",
+    "reportIncident": "Gabaasa Ergi"
   },
   "HomeLivePreview": {
     "exploreLabel": "SAKATTA'I",
@@ -672,9 +673,11 @@
     "filterReports": "Gabaasota Calalii",
     "resetAll": "Hunda Deebisi",
     "timePeriod": "Yeroo",
+    "country": "Biyya",
     "period24h": "Sa'aa 24",
     "period7d": "Guyyaa 7",
     "period30d": "Guyyaa 30",
+    "period1y": "Waggaa 1",
     "periodCustom": "Filannoo Addaa",
     "issuesCategory": "Gosa Dhimmaa",
     "allIssues": "Dhimmoota Hunda",

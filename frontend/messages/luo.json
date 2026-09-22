@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower konyo oganda ripodho gik matimore, ngʼeyo kit weche e ripodho, kendo loko fweny koa e piny obed ngʼeyo makonyo tich.",
     "exploreLabel": "Nonro Watchtower",
     "exploreDescription": "Nonuru ripodho kuom kuonde, weche, dhok, kod sa mondo ungʼe gik matimore e piny.",
-    "exploreHeading": "Ne gik ma oganda ripodho."
+    "exploreHeading": "Ne gik ma oganda ripodho.",
+    "reportIncident": "Or Ripodho"
   },
   "HomeLivePreview": {
     "exploreLabel": "NON",
@@ -672,9 +673,11 @@
     "filterReports": "Yier Ripodho",
     "resetAll": "Chak Duto Chien",
     "timePeriod": "Sa",
+    "country": "Piny",
     "period24h": "Saa 24",
     "period7d": "Ndalo 7",
     "period30d": "Ndalo 30",
+    "period1y": "Higa 1",
     "periodCustom": "Mar Ayieya",
     "issuesCategory": "Kit Weche",
     "allIssues": "Weche Duto",

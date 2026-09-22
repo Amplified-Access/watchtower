@@ -639,7 +639,8 @@
     "missionStatement": "Watchtower ifasha abaturage gutanga raporo ku bibera, gusobanukirwa imigendekere mu maraporo no guhindura amakuru avuye ku isi kuba ubumenyi bushobora gufasha ibikorwa.",
     "exploreLabel": "Menya Watchtower",
     "exploreDescription": "Reba amaraporo ukurikije ahantu, ibibazo, indimi n'igihe kugira ngo usobanukirwe ibibera ku isi.",
-    "exploreHeading": "Reba ibyo abaturage batanga raporo."
+    "exploreHeading": "Reba ibyo abaturage batanga raporo.",
+    "reportIncident": "Ohereza raporo"
   },
   "HomeLivePreview": {
     "exploreLabel": "REBA",
@@ -672,9 +673,11 @@
     "filterReports": "Shungura Amaraporo",
     "resetAll": "Subiza Byose",
     "timePeriod": "Igihe",
+    "country": "Igihugu",
     "period24h": "Amasaha 24",
     "period7d": "Iminsi 7",
     "period30d": "Iminsi 30",
+    "period1y": "Umwaka 1",
     "periodCustom": "Bwite",
     "issuesCategory": "Ubwoko bw'Ikibazo",
     "allIssues": "Ibibazo Byose",
