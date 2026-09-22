@@ -1,24 +1,10 @@
-import * as React from "react";
-import { X } from "lucide-react";
+"use client";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarRail,
-} from "@/components/ui/sidebar";
+import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { useQueryState } from "nuqs";
-import { Button } from "@/components/ui/button";
+export type ThematicTimeframe = "week" | "month" | "year";
 
 const THEME_DESCRIPTIONS: Record<string, string> = {
   Battles:
@@ -35,108 +21,123 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
     "Intentional attacks on non-combatants including killings, kidnappings, and other targeted violence.",
 };
 
-interface ThematicMapSidebarProps extends React.ComponentProps<typeof Sidebar> {
+const TIMEFRAMES: { value: ThematicTimeframe; labelKey: string }[] = [
+  { value: "week", labelKey: "period7d" },
+  { value: "month", labelKey: "period30d" },
+  { value: "year", labelKey: "period1y" },
+];
+
+// Same classes as the live map's light FilterPanel, so the two docked panels
+// read as one design. Keep them in step with STYLES.light there.
+const labelClassName = "font-title text-xs font-medium uppercase tracking-wide text-dark";
+const chipClassName = "h-9 rounded-sm px-3 font-title text-sm uppercase transition-colors";
+const chipIdleClassName = "bg-dark/5 text-dark hover:bg-dark/10";
+
+interface ThematicMapFilterPanelProps {
   theme: string;
+  timeframe: ThematicTimeframe | null;
+  onTimeframeChange: (timeframe: ThematicTimeframe | null) => void;
+  /** Countries that have reports for this theme, so the list covers every region reported from. */
+  countries: string[];
+  country: string | null;
+  onCountryChange: (country: string | null) => void;
+  totalReports: number;
+  onReset: () => void;
+  onViewReports: () => void;
+  /** Rendered after "Reset all": the collapse button. */
+  headerAction?: ReactNode;
 }
 
-export function ThematicMapSidebar({
+export function ThematicMapFilterPanel({
   theme,
-  ...props
-}: ThematicMapSidebarProps) {
-  const [name, setName] = useQueryState("country");
-  const [timeframe, setTimeframe] = useQueryState("timeframe");
-
-  const clearAllFilters = () => {
-    setName(null);
-    setTimeframe(null);
-  };
-
-  const activeFilterCount = [name, timeframe].filter(Boolean).length;
-  const hasFilters = activeFilterCount > 0;
+  timeframe,
+  onTimeframeChange,
+  countries,
+  country,
+  onCountryChange,
+  totalReports,
+  onReset,
+  onViewReports,
+  headerAction,
+}: ThematicMapFilterPanelProps) {
+  const t = useTranslations("HomeLivePreview");
 
   return (
-    <Sidebar
-      {...props}
-      className="border-l border-border [&_[data-sidebar=sidebar]]:bg-white"
-    >
-      <SidebarContent>
-        <SidebarGroup className="gap-6 p-6 md:pt-24">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <h4 className="font-title text-xs font-semibold uppercase tracking-wide text-dark/60">
-                Filters
-              </h4>
-              {hasFilters && (
-                <span className="rounded-full bg-primary/10 px-2 py-0.5 font-title text-xs font-medium text-primary">
-                  {activeFilterCount} active
-                </span>
-              )}
-            </div>
-            {hasFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearAllFilters}
-                className="h-8 cursor-pointer px-2 font-title text-xs text-primary hover:bg-primary/10 hover:text-primary"
+    <div className="flex min-h-full w-full flex-col gap-7 px-6 py-6">
+      <div className="flex items-center justify-between gap-3">
+        <span className={labelClassName}>{t("filterReports")}</span>
+        <span className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={onReset}
+            className="font-title text-sm text-primary hover:text-primary/80"
+          >
+            {t("resetAll")}
+          </button>
+          {headerAction}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className={labelClassName}>{t("timePeriod")}</span>
+        <div className="flex flex-wrap gap-2">
+          {TIMEFRAMES.map((option) => {
+            const active = timeframe === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                aria-pressed={active}
+                // Clicking the active period again clears it back to all time.
+                onClick={() => onTimeframeChange(active ? null : option.value)}
+                className={cn(chipClassName, active ? "bg-primary text-white" : chipIdleClassName)}
               >
-                <X className="mr-1 h-3 w-3" />
-                Clear
-              </Button>
-            )}
-          </div>
+                {t(option.labelKey)}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="font-title text-xs font-semibold uppercase tracking-wide text-dark/60">
-              Country
-            </span>
-              <Select value={name ?? undefined} onValueChange={setName}>
-                <SelectTrigger className="w-full cursor-pointer border-border bg-white font-title text-dark shadow-none outline-none ring-0">
-                  <SelectValue placeholder="Select a Country" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Kenya">Kenya</SelectItem>
-                    <SelectItem value="Uganda">Uganda</SelectItem>
-                    <SelectItem value="Tanzania">Tanzania</SelectItem>
-                    <SelectItem value="Ethiopia">Ethiopia</SelectItem>
-                    <SelectItem value="Rwanda">Rwanda</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+      {countries.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <span className={labelClassName}>{t("country")}</span>
+          <div className="flex flex-wrap gap-2">
+            {countries.map((name) => {
+              const active = country === name;
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => onCountryChange(active ? null : name)}
+                  className={cn(chipClassName, active ? "bg-primary text-white" : chipIdleClassName)}
+                >
+                  {name}
+                </button>
+              );
+            })}
           </div>
+        </div>
+      )}
 
-          <div className="flex flex-col gap-2">
-            <span className="font-title text-xs font-semibold uppercase tracking-wide text-dark/60">
-              Time period
-            </span>
-            <Select value={timeframe ?? undefined} onValueChange={setTimeframe}>
-              <SelectTrigger className="w-full cursor-pointer border-border bg-white font-title text-dark shadow-none outline-none ring-0">
-                  <SelectValue placeholder="Select timeframe" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="week">Last 7 days</SelectItem>
-                    <SelectItem value="month">Last 30 days</SelectItem>
-                    <SelectItem value="year">Last year</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-            </Select>
-          </div>
+      {/* These descriptions only cover the original ACLED-style themes; the
+          incident types this app ships with have no copy yet, so the panel
+          is skipped rather than rendered as an empty box. */}
+      {THEME_DESCRIPTIONS[theme] && (
+        <div className="rounded-sm bg-dark/5 p-3">
+          <h4 className="mb-2 font-title text-sm font-medium text-dark">About {theme}</h4>
+          <p className="text-xs text-dark/60">{THEME_DESCRIPTIONS[theme]}</p>
+        </div>
+      )}
 
-          {/* These descriptions only cover the original ACLED-style themes; the
-              incident types this app ships with have no copy yet, so the panel
-              is skipped rather than rendered as an empty box. */}
-          {THEME_DESCRIPTIONS[theme] && (
-            <div className="rounded-lg bg-dark/5 p-3">
-              <h4 className="mb-2 font-title text-sm font-medium text-dark">
-                About {theme}
-              </h4>
-              <p className="text-xs text-dark/60">{THEME_DESCRIPTIONS[theme]}</p>
-            </div>
-          )}
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarRail />
-    </Sidebar>
+      <button
+        type="button"
+        onClick={onViewReports}
+        className="mt-auto flex h-14 items-center justify-center rounded-sm bg-primary px-4 font-title text-sm text-white transition-colors hover:bg-primary/90"
+      >
+        {t("viewReportsCta", { count: totalReports })}
+      </button>
+    </div>
   );
 }
