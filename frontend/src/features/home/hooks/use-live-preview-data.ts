@@ -1,22 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { keepPreviousData } from "@tanstack/react-query";
 import { trpc } from "@/_trpc/client";
 import { languages as supportedLanguages } from "@/components/common/language-selector";
+import type { MapFeatureCollection, MapFilter } from "@/lib/api/map";
 
 export type TimePeriod = "24h" | "7d" | "30d" | "custom";
 
 export interface DateRange {
   from?: string;
   to?: string;
-}
-
-export interface ReportBubble {
-  key: string;
-  country: string | null;
-  count: number;
-  lat: number;
-  lon: number;
 }
 
 export interface TopChip {
@@ -36,6 +30,7 @@ export interface LivePreviewFilters {
    */
   hiddenCategoryIds: string[];
   search: string;
+  country: string | null;
 }
 
 /** Flip one category's toggle. */
@@ -68,174 +63,95 @@ export const soloCategory = (
     ? []
     : categoryIds.filter((categoryId) => categoryId !== id);
 
-const PERIOD_MS: Record<Exclude<TimePeriod, "custom">, number> = {
-  "24h": 24 * 60 * 60 * 1000,
-  "7d": 7 * 24 * 60 * 60 * 1000,
-  "30d": 30 * 24 * 60 * 60 * 1000,
+// Search waits until typing pauses, so the backend isn't queried per keystroke.
+const SEARCH_DEBOUNCE_MS = 300;
+
+const EMPTY_POINTS: MapFeatureCollection = { type: "FeatureCollection", features: [] };
+
+const useDebouncedValue = <T,>(value: T, delay: number) => {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timeout);
+  }, [value, delay]);
+  return debounced;
 };
 
+// The map's data comes from the Go backend's /map endpoints, already filtered,
+// counted and shaped as GeoJSON; this hook only turns the panel's state into
+// query parameters. Two requests: the unfiltered summary, for the headline
+// stats, country list and top chips (so they don't shift as filters change),
+// and the filtered points the map draws.
 export function useLivePreviewData(filters: LivePreviewFilters) {
-  const reportsQuery = trpc.anonymousReports.getCombinedIncidentReports.useQuery({});
   const typesQuery = trpc.anonymousReports.getActiveIncidentTypesForMaps.useQuery();
   const orgsQuery = trpc.getPublicOrganizations.useQuery({ limit: 1 });
+  const summaryQuery = trpc.map.summary.useQuery({});
 
-  // Captured once per mount rather than read live inside useMemo, so the
-  // memoized filters stay pure (a "live" widget only needs this accurate to
-  // within the page's lifetime, not to the millisecond).
-  const now = useMemo(() => Date.now(), []);
-
-  const allReports = useMemo(
-    () => (reportsQuery.data?.success ? reportsQuery.data.data : []),
-    [reportsQuery.data],
-  );
+  const search = useDebouncedValue(filters.search.trim(), SEARCH_DEBOUNCE_MS);
+  const pointsFilter: MapFilter = {
+    excludeTypes: filters.hiddenCategoryIds.length ? [...filters.hiddenCategoryIds].sort() : undefined,
+    country: filters.country ?? undefined,
+    q: search || undefined,
+    ...(filters.timePeriod === "custom"
+      ? { from: filters.customRange.from || undefined, to: filters.customRange.to || undefined }
+      : { period: filters.timePeriod }),
+  };
+  // Previous points stay on the map while a new filter loads, rather than
+  // the markers blinking out.
+  const pointsQuery = trpc.map.points.useQuery(pointsFilter, { placeholderData: keepPreviousData });
 
   const incidentTypes = useMemo(
     () => (typesQuery.data?.success ? (typesQuery.data.data ?? []) : []),
     [typesQuery.data],
   );
+  const summary = summaryQuery.data;
 
-  const filteredReports = useMemo(() => {
-    const fromMs = filters.customRange.from
-      ? new Date(filters.customRange.from).getTime()
-      : undefined;
-    const toMs = filters.customRange.to
-      ? new Date(filters.customRange.to).getTime() + 24 * 60 * 60 * 1000
-      : undefined;
-    const search = filters.search.trim().toLowerCase();
-
-    return allReports.filter((r) => {
-      if (r.createdAt) {
-        const t = new Date(r.createdAt).getTime();
-        if (filters.timePeriod === "custom") {
-          if (fromMs != null && t < fromMs) return false;
-          if (toMs != null && t > toMs) return false;
-        } else if (now - t > PERIOD_MS[filters.timePeriod]) {
-          return false;
-        }
-      }
-
-      if (r.incidentTypeId && filters.hiddenCategoryIds.includes(r.incidentTypeId)) {
-        return false;
-      }
-
-      if (search) {
-        const haystack = `${r.displayName ?? ""} ${r.incidentTypeDescriptions ?? ""} ${r.country ?? ""}`.toLowerCase();
-        if (!haystack.includes(search)) return false;
-      }
-
-      return true;
-    });
-  }, [allReports, filters, now]);
-
-  const bubbles = useMemo<ReportBubble[]>(() => {
-    const groups = new Map<
-      string,
-      { country: string | null; lats: number[]; lons: number[]; count: number }
-    >();
-
-    for (const r of filteredReports) {
-      const lat = Number(r.lat);
-      const lon = Number(r.lon);
-      if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-      const key = r.country ? `country:${r.country}` : `grid:${lat.toFixed(1)},${lon.toFixed(1)}`;
-      const group = groups.get(key) ?? {
-        country: r.country ?? null,
-        lats: [],
-        lons: [],
-        count: 0,
-      };
-      group.lats.push(lat);
-      group.lons.push(lon);
-      group.count += 1;
-      groups.set(key, group);
-    }
-
-    return Array.from(groups.entries()).map(([key, group]) => ({
-      key,
-      country: group.country,
-      count: group.count,
-      lat: group.lats.reduce((a, b) => a + b, 0) / group.lats.length,
-      lon: group.lons.reduce((a, b) => a + b, 0) / group.lons.length,
-    }));
-  }, [filteredReports]);
-
-  const stats = useMemo(() => {
-    const countries = new Set(allReports.map((r) => r.country).filter(Boolean));
-    const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
-    const recentReports = allReports.filter(
-      (r) => r.createdAt && new Date(r.createdAt).getTime() >= oneWeekAgo,
-    ).length;
-
-    return {
-      totalReports: allReports.length,
-      recentReports,
-      totalCountries: countries.size,
-      totalDeployments: orgsQuery.data?.total ?? 0,
-      totalLanguages: supportedLanguages.length,
-    };
-  }, [allReports, orgsQuery.data, now]);
+  const stats = {
+    totalReports: summary?.totalReports ?? 0,
+    recentReports: summary?.recentReports ?? 0,
+    totalCountries: summary?.countries.length ?? 0,
+    totalDeployments: orgsQuery.data?.total ?? 0,
+    totalLanguages: supportedLanguages.length,
+  };
 
   const categoryIds = useMemo(() => {
     const ids = new Set(incidentTypes.map((type) => type.id));
-    for (const report of allReports) {
-      if (report.incidentTypeId) ids.add(report.incidentTypeId);
-    }
+    for (const type of summary?.types ?? []) ids.add(type.id);
     return Array.from(ids);
-  }, [incidentTypes, allReports]);
+  }, [incidentTypes, summary]);
 
-  // Every country with reports, for the filters panel. Built from all reports
-  // rather than the filtered set so picking one doesn't shrink the list.
-  const countries = useMemo(() => {
-    const names = new Set<string>();
-    for (const r of allReports) if (r.country) names.add(r.country);
-    return Array.from(names).sort((a, b) => a.localeCompare(b));
-  }, [allReports]);
+  // Every country with reports, for the filters panel.
+  const countries = useMemo(
+    () => (summary?.countries ?? []).map((c) => c.name).sort((a, b) => a.localeCompare(b)),
+    [summary],
+  );
 
+  // The backend sorts countries and types by count, so the chips are the top two of each.
   const topChips = useMemo<TopChip[]>(() => {
-    const byCountry = new Map<string, number>();
-    for (const r of allReports) {
-      if (!r.country) continue;
-      byCountry.set(r.country, (byCountry.get(r.country) ?? 0) + 1);
-    }
-    const topCountries: TopChip[] = Array.from(byCountry.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 2)
-      .map(([country, count]) => ({
-        kind: "country",
-        label: country,
-        value: country,
-        count,
-      }));
-
-    const byType = new Map<string, number>();
-    for (const r of allReports) {
-      if (!r.incidentTypeId) continue;
-      byType.set(r.incidentTypeId, (byType.get(r.incidentTypeId) ?? 0) + 1);
-    }
-    const topCategories: TopChip[] = Array.from(byType.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 2)
-      .map(([id, count]) => {
-        const type = incidentTypes.find((it) => it.id === id);
-        return {
-          kind: "category",
-          label: type?.name ?? "Incident",
-          value: id,
-          count,
-        };
-      });
-
+    if (!summary) return [];
+    const topCountries: TopChip[] = summary.countries.slice(0, 2).map((c) => ({
+      kind: "country",
+      label: c.name,
+      value: c.name,
+      count: c.count,
+    }));
+    const topCategories: TopChip[] = summary.types.slice(0, 2).map((type) => ({
+      kind: "category",
+      label: incidentTypes.find((it) => it.id === type.id)?.name ?? type.name,
+      value: type.id,
+      count: type.count,
+    }));
     return [...topCountries, ...topCategories];
-  }, [allReports, incidentTypes]);
+  }, [summary, incidentTypes]);
 
   return {
-    isLoading: reportsQuery.isLoading || typesQuery.isLoading || orgsQuery.isLoading,
+    isLoading: pointsQuery.isLoading || typesQuery.isLoading || summaryQuery.isLoading,
     incidentTypes,
     categoryIds,
     countries,
-    filteredReports,
-    bubbles,
+    points: pointsQuery.data ?? EMPTY_POINTS,
+    /** False while the map still shows the previous filter's points. */
+    pointsAreCurrent: pointsQuery.isSuccess && !pointsQuery.isPlaceholderData,
     stats,
     topChips,
   };

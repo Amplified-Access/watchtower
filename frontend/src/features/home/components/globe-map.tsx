@@ -5,7 +5,8 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Locate } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import type { ReportBubble } from "../hooks/use-live-preview-data";
+import { trpc } from "@/_trpc/client";
+import type { MapFeatureCollection } from "@/lib/api/map";
 
 const DEFAULT_CENTER: [number, number] = [25, 8];
 const DEFAULT_ZOOM = 1.4;
@@ -36,33 +37,16 @@ const MOBILE_PADDING = { top: 16, bottom: 16, left: 16, right: 16 };
 const getMapPadding = (docked: boolean) =>
   !docked && window.matchMedia("(min-width: 1024px)").matches ? DESKTOP_PADDING : MOBILE_PADDING;
 
-// Bounds covering every marker the map can draw, so the opening view frames the
-// data rather than the whole globe. Returns null when there is nothing to frame.
-const getDataBounds = (bubbles: ReportBubble[], points: MapReportPoint[]) => {
-  const coords = [
-    ...bubbles.map((b) => [b.lon, b.lat] as [number, number]),
-    ...points.map((p) => [p.lon, p.lat] as [number, number]),
-  ].filter(([lon, lat]) => Number.isFinite(lon) && Number.isFinite(lat));
-
-  if (coords.length === 0) return null;
-
-  return coords.reduce(
-    (bounds, coord) => bounds.extend(coord),
-    new mapboxgl.LngLatBounds(coords[0], coords[0]),
-  );
+// The backend sends a bbox with the points, so the opening view frames the
+// data without walking the features. Returns null when there is nothing to frame.
+const getDataBounds = (points: MapFeatureCollection) => {
+  if (!points.bbox) return null;
+  const [minLon, minLat, maxLon, maxLat] = points.bbox;
+  return new mapboxgl.LngLatBounds([minLon, minLat], [maxLon, maxLat]);
 };
 
-export interface MapReportPoint {
-  lat: number;
-  lon: number;
-  /** Shown in a popup when the report pin is clicked. */
-  title?: string;
-  description?: string;
-  createdAt?: string;
-}
-
 // Built with textContent (never innerHTML) because report text is user-submitted.
-const buildReportPopup = (point: MapReportPoint, dateLine?: string) => {
+const buildReportPopup = (lines: { title?: string; description?: string; dateLine?: string }) => {
   const root = document.createElement("div");
   root.style.fontFamily = "var(--font-title)";
   const addLine = (text: string, style: Partial<CSSStyleDeclaration>) => {
@@ -71,11 +55,13 @@ const buildReportPopup = (point: MapReportPoint, dateLine?: string) => {
     Object.assign(line.style, style);
     root.appendChild(line);
   };
-  if (point.title) addLine(point.title, { fontWeight: "600", color: "#000" });
-  if (point.description) {
-    addLine(point.description, { marginTop: "4px", color: "rgba(0,0,0,0.65)" });
+  if (lines.title) addLine(lines.title, { fontWeight: "600", color: "#000" });
+  if (lines.description) {
+    addLine(lines.description, { marginTop: "4px", color: "rgba(0,0,0,0.65)" });
   }
-  if (dateLine) addLine(dateLine, { marginTop: "6px", fontSize: "11px", color: "rgba(0,0,0,0.45)" });
+  if (lines.dateLine) {
+    addLine(lines.dateLine, { marginTop: "6px", fontSize: "11px", color: "rgba(0,0,0,0.45)" });
+  }
   return root;
 };
 
@@ -84,8 +70,8 @@ export interface GlobeMapHandle {
 }
 
 interface GlobeMapProps {
-  bubbles: ReportBubble[];
-  points: MapReportPoint[];
+  /** GeoJSON from the backend's /map/points, passed to the source as-is. */
+  points: MapFeatureCollection;
   layers: {
     reports: boolean;
     clusters: boolean;
@@ -116,7 +102,6 @@ interface GlobeMapProps {
 const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
   (
     {
-      bubbles,
       points,
       layers,
       viewMode,
@@ -130,6 +115,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
   ) => {
   const t = useTranslations("HomeLivePreview");
   const locale = useLocale();
+  const trpcUtils = trpc.useUtils();
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -295,27 +281,14 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [container]);
 
-  // Feed the clustered source and toggle what it draws. The country-grouped
-  // `bubbles` are no longer rendered: they were a fixed grouping that never
-  // responded to zoom, which is what Supercluster is for. Clustering the raw
-  // reports means the counts are real and break apart as you zoom in.
+  // Feed the clustered source and toggle what it draws. The points arrive as
+  // GeoJSON from the backend, so they go to the source untouched.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !isLoaded) return;
 
     const source = map.getSource(CLUSTER_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
-    source?.setData({
-      type: "FeatureCollection",
-      features: points.map((point) => ({
-        type: "Feature",
-        geometry: { type: "Point", coordinates: [point.lon, point.lat] },
-        properties: {
-          title: point.title ?? "",
-          description: point.description ?? "",
-          createdAt: point.createdAt ?? "",
-        },
-      })),
-    });
+    source?.setData(points);
 
     const visibility = (on: boolean) => (on ? "visible" : "none");
     for (const id of [CLUSTER_GLOW_LAYER_ID, CLUSTER_LAYER_ID, CLUSTER_COUNT_LAYER_ID]) {
@@ -335,14 +308,14 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     const map = mapRef.current;
     if (!map || !isLoaded) return;
 
+    // The points only carry a place name and date; the description is fetched
+    // for the one report that was clicked (and cached by React Query).
     const handleClick = (event: mapboxgl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
       const feature = event.features?.[0];
       if (!feature) return;
       const props = feature.properties ?? {};
-      const title = String(props.title ?? "");
-      const description = String(props.description ?? "");
-      if (!title && !description) return;
-
+      const id = String(props.id ?? "");
+      const title = String(props.name ?? "");
       const createdAt = String(props.createdAt ?? "");
       const dateLine = createdAt
         ? t("reportDate", {
@@ -354,17 +327,30 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
           })
         : undefined;
 
-      new mapboxgl.Popup({ offset: 10, maxWidth: "260px" })
+      const popup = new mapboxgl.Popup({ offset: 10, maxWidth: "260px" })
         .setLngLat((feature.geometry as GeoJSON.Point).coordinates as [number, number])
-        .setDOMContent(buildReportPopup({ lat: 0, lon: 0, title, description }, dateLine))
+        .setDOMContent(buildReportPopup({ title, dateLine }))
         .addTo(map);
+
+      if (!id) return;
+      trpcUtils.map.report
+        .fetch({ id })
+        .then((report) => {
+          if (!popup.isOpen()) return;
+          popup.setDOMContent(
+            buildReportPopup({ title: report.name || title, description: report.description, dateLine }),
+          );
+        })
+        .catch(() => {
+          // The name and date are already showing; a failed detail fetch leaves them be.
+        });
     };
 
     map.on("click", POINT_LAYER_ID, handleClick);
     return () => {
       map.off("click", POINT_LAYER_ID, handleClick);
     };
-  }, [isLoaded, locale, t]);
+  }, [isLoaded, locale, t, trpcUtils]);
 
   // Heatmap data + visibility
   useEffect(() => {
@@ -372,16 +358,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     if (!map || !isLoaded) return;
 
     const source = map.getSource(HEATMAP_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
-    if (source) {
-      source.setData({
-        type: "FeatureCollection",
-        features: points.map((p) => ({
-          type: "Feature",
-          geometry: { type: "Point", coordinates: [p.lon, p.lat] },
-          properties: {},
-        })),
-      });
-    }
+    source?.setData(points);
 
     if (map.getLayer(HEATMAP_LAYER_ID)) {
       map.setPaintProperty(HEATMAP_LAYER_ID, "heatmap-opacity", layers.heatmap ? 0.75 : 0);
@@ -414,7 +391,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
   const fitToData = (duration: number) => {
     const map = mapRef.current;
     if (!map) return false;
-    const bounds = getDataBounds(bubbles, points);
+    const bounds = getDataBounds(points);
     if (!bounds) return false;
 
     const padding = getMapPadding(docked);
@@ -443,7 +420,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     if (!isLoaded || hasFitToDataRef.current) return;
     if (fitToData(INITIAL_FIT_DURATION)) hasFitToDataRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, bubbles, points]);
+  }, [isLoaded, points]);
 
   const recenter = () => {
     // Falls back to the whole-globe view only when there is no data to frame.

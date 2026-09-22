@@ -53,40 +53,26 @@ const LiveMap = () => {
   // The map-layer toggles are gone from the panel, so these are fixed for now.
   const layers = DEFAULT_LAYERS;
 
-  const { incidentTypes, categoryIds, countries, filteredReports, bubbles, stats, topChips } =
+  const { incidentTypes, categoryIds, countries, points, pointsAreCurrent, stats, topChips } =
     useLivePreviewData({
       timePeriod,
       customRange,
       hiddenCategoryIds,
       search,
+      country,
     });
 
-  const visibleReports = country
-    ? filteredReports.filter((r) => r.country === country)
-    : filteredReports;
-  const visibleBubbles = country ? bubbles.filter((b) => b.country === country) : bubbles;
-  const points = visibleReports
-    .map((r) => ({
-      lat: Number(r.lat),
-      lon: Number(r.lon),
-      title: r.displayName ?? undefined,
-      description: r.incidentTypeDescriptions ?? undefined,
-      createdAt: r.createdAt ?? undefined,
-    }))
-    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
-
   // Choosing a country, from the filters panel or a top chip, flies the camera
-  // to its reports; clearing it flies back out to all of them. recenter() reads
-  // the points from the render that set the country, so it frames the new set.
-  // Skipped on mount, where GlobeMap already fits to the data once it loads.
-  const isFirstCountryRef = useRef(true);
+  // to its reports; clearing it flies back out to all of them. The new points
+  // come from the backend, so this waits until they've replaced the previous
+  // filter's before recentering. Skipped on mount, where GlobeMap already fits
+  // to the data once it loads.
+  const fittedCountryRef = useRef<string | null>(country);
   useEffect(() => {
-    if (isFirstCountryRef.current) {
-      isFirstCountryRef.current = false;
-      return;
-    }
+    if (fittedCountryRef.current === country || !pointsAreCurrent) return;
+    fittedCountryRef.current = country;
     mapHandleRef.current?.recenter();
-  }, [country]);
+  }, [country, pointsAreCurrent]);
 
   const toggleChip = (chip: TopChip) => {
     if (chip.kind === "country") {
@@ -188,7 +174,6 @@ const LiveMap = () => {
         <div className="relative min-w-0 flex-1">
           <GlobeMap
             ref={mapHandleRef}
-            bubbles={visibleBubbles}
             points={points}
             layers={layers}
             viewMode={viewMode}
@@ -320,7 +305,7 @@ const LiveMap = () => {
               countries={countries}
               country={country}
               onCountryChange={setCountry}
-              totalReports={visibleReports.length}
+              totalReports={points.features.length}
               onReset={resetFilters}
               onViewReports={() => setIsFiltersOpen(false)}
               headerAction={
