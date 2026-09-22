@@ -106,6 +106,45 @@ definitions:
       name:
         type: string
     type: object
+  backend_internal_domain_entity.User:
+    properties:
+      banExpires:
+        type: string
+      banReason:
+        type: string
+      banned:
+        type: boolean
+      createdAt:
+        type: string
+      email:
+        type: string
+      emailVerified:
+        type: boolean
+      id:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      organizationId:
+        type: string
+      role:
+        $ref: '#/definitions/backend_internal_domain_entity.UserRole'
+      updatedAt:
+        type: string
+    type: object
+  backend_internal_domain_entity.UserRole:
+    enum:
+    - super-admin
+    - admin
+    - watcher
+    - independent-reporter
+    type: string
+    x-enum-varnames:
+    - RoleSuperAdmin
+    - RoleAdmin
+    - RoleWatcher
+    - RoleIndependentReporter
 host: localhost:8080
 info:
   contact:
@@ -1053,6 +1092,59 @@ paths:
       summary: List watchers
       tags:
       - Users
+    post:
+      consumes:
+      - application/json
+      description: Creates an account in the admin's organization and emails a link
+        to set its password (valid 3 days). Role defaults to watcher; admin roles
+        need a super-admin.
+      parameters:
+      - description: Invitee
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            email:
+              type: string
+            name:
+              type: string
+            role:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain_entity.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Invite a user to the organization
+      tags:
+      - Admin
   /alerts:
     get:
       description: Returns all alert subscriptions for the given email address

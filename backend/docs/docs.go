@@ -1474,6 +1474,90 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates an account in the admin's organization and emails a link to set its password (valid 3 days). Role defaults to watcher; admin roles need a super-admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Invite a user to the organization",
+                "parameters": [
+                    {
+                        "description": "Invitee",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "role": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_domain_entity.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
             }
         },
         "/alerts": {
@@ -4313,6 +4397,62 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "backend_internal_domain_entity.User": {
+            "type": "object",
+            "properties": {
+                "banExpires": {
+                    "type": "string"
+                },
+                "banReason": {
+                    "type": "string"
+                },
+                "banned": {
+                    "type": "boolean"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "emailVerified": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organizationId": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/backend_internal_domain_entity.UserRole"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_internal_domain_entity.UserRole": {
+            "type": "string",
+            "enum": [
+                "super-admin",
+                "admin",
+                "watcher",
+                "independent-reporter"
+            ],
+            "x-enum-varnames": [
+                "RoleSuperAdmin",
+                "RoleAdmin",
+                "RoleWatcher",
+                "RoleIndependentReporter"
+            ]
         }
     },
     "securityDefinitions": {
