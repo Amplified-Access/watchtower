@@ -113,6 +113,11 @@ definitions:
       name:
         type: string
     type: object
+  backend_internal_domain_entity.UploadedFile:
+    properties:
+      fileKey:
+        type: string
+    type: object
   backend_internal_domain_entity.User:
     properties:
       banExpires:
@@ -1558,6 +1563,87 @@ paths:
       summary: Send an email
       tags:
       - Email
+  /files:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Stores a file (50 MB max; no HTML, SVG, script or executable types)
+        and returns the key to save on the record that uses it.
+      parameters:
+      - description: File to store
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain_entity.UploadedFile'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "413":
+          description: Request Entity Too Large
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "415":
+          description: Unsupported Media Type
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Upload a file
+      tags:
+      - Files
+  /files/download:
+    get:
+      description: Streams a stored file as an attachment. Keys that are full URLs
+        redirect, if the host is in ALLOWED_EXTERNAL_DOMAINS.
+      parameters:
+      - description: Stored file key
+        in: query
+        name: fileKey
+        required: true
+        type: string
+      - description: Name to save the file as (defaults to the key)
+        in: query
+        name: filename
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "302":
+          description: Found
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Download a file
+      tags:
+      - Files
   /incident-types:
     get:
       description: Returns all incident types; pass activeOnly=false to include inactive
