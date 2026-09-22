@@ -19,9 +19,9 @@ The frontend uses a feature-first Clean Architecture. Each feature under `src/fe
 src/features/<feature>/
 ├── domain/                      # Types, repository port interfaces, domain errors
 ├── application/
-│   └── use-cases/               # Business logic — no Drizzle, no HTTP, no framework
+│   └── use-cases/               # Business logic — no HTTP, no framework
 ├── infrastructure/
-│   ├── repositories/            # Drizzle implementations of repository ports
+│   ├── repositories/            # Implementations of repository ports (Go backend via lib/api)
 │   └── <feature>.container.ts   # Composition root: wires adapters to use cases
 └── index.ts                     # Public API — exports only use-case factories
 ```
@@ -34,8 +34,8 @@ tRPC routers (`src/_trpc/routers/`) stay thin: auth, input validation, and use-c
 
 1. `domain/` — define entity types, repository interface, and domain errors.
 2. `application/use-cases/` — implement use-case classes that accept repository ports as constructor arguments.
-3. `infrastructure/repositories/` — implement the repository port using Drizzle.
-4. `infrastructure/<feature>.container.ts` — wire the Drizzle repository into the use cases.
+3. `infrastructure/repositories/` — implement the repository port by calling the Go backend through `src/lib/api/`.
+4. `infrastructure/<feature>.container.ts` — wire the repository into the use cases.
 5. `index.ts` — export use-case factories; nothing else.
 6. `src/_trpc/routers/<feature>.ts` — create a thin tRPC router that calls use cases.
 7. `src/_trpc/routers/_app.ts` — register the new router.
