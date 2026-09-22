@@ -29,71 +29,95 @@ import Image from "next/image";
 import Loader from "@/components/common/loader";
 import { useQueryState } from "nuqs";
 import Logo from "@/components/logo";
-import { generateIncidentTypeAssets } from "@/utils/generate-incident-type-assets";
 import { buildLiveIncidentGeoJson } from "@/features/maps/application/use-cases/build-live-incident-geojson";
 import type { CombinedIncidentReport } from "@/features/maps/domain/map-report";
 
 const BRAND_BLUE = "#0042e7";
+const DARK_TEXT = "#0a0a0a";
 const RING = "rgba(255,255,255,0.85)";
 
-// Step boundaries shared by the cluster circle and its glow, so the halo always
-// tracks the bubble it sits behind.
-const CLUSTER_RADIUS: CircleLayerSpecification["paint"] = {
-  "circle-color": BRAND_BLUE,
-  "circle-radius": ["step", ["get", "point_count"], 16, 10, 20, 30, 25, 50, 30],
-  "circle-stroke-width": 2,
-  "circle-stroke-color": RING,
+// Incident type colors come from the API, sometimes with stray whitespace/CRLF
+// (e.g. "#00FFFF\r\n"). Mapbox rejects a malformed color outright, so anything
+// that isn't a clean hex falls back to the brand blue.
+const toMarkerColor = (color?: string) => {
+  const trimmed = color?.trim() ?? "";
+  return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(trimmed) ? trimmed : BRAND_BLUE;
 };
 
-const clusterGlowLayer: Omit<CircleLayerSpecification, "source"> = {
-  id: "cluster-glow",
-  type: "circle",
-  filter: ["has", "point_count"],
-  paint: {
-    "circle-color": BRAND_BLUE,
-    "circle-opacity": 0.25,
-    "circle-radius": ["step", ["get", "point_count"], 21, 10, 25, 30, 30, 50, 35],
-  },
+// White counts disappear on light type colors such as cyan or orange, so pick
+// the label color from the marker's relative luminance.
+const countTextColor = (hex: string) => {
+  const full =
+    hex.length === 4 ? hex.replace(/[0-9a-f]/gi, (c) => c + c) : hex;
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const c = parseInt(full.slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance > 0.4 ? DARK_TEXT : "#ffffff";
 };
 
-const clusterLayer: Omit<CircleLayerSpecification, "source"> = {
-  id: "clusters",
-  type: "circle",
-  filter: ["has", "point_count"],
-  paint: CLUSTER_RADIUS,
-};
+// Markers take the incident type's color, the same one its thumbnail on the
+// maps page uses. Step boundaries are shared by the cluster circle and its
+// glow, so the halo always tracks the bubble it sits behind.
+const buildMarkerLayers = (color: string) => {
+  const clusterGlowLayer: Omit<CircleLayerSpecification, "source"> = {
+    id: "cluster-glow",
+    type: "circle",
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-color": color,
+      "circle-opacity": 0.25,
+      "circle-radius": ["step", ["get", "point_count"], 21, 10, 25, 30, 30, 50, 35],
+    },
+  };
 
-const clusterCountLayer: Omit<SymbolLayerSpecification, "source"> = {
-  id: "cluster-count",
-  type: "symbol",
-  filter: ["has", "point_count"],
-  layout: {
-    "text-field": ["get", "point_count_abbreviated"],
-    "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-    "text-size": ["step", ["get", "point_count"], 11, 30, 14],
-  },
-  paint: { "text-color": "#ffffff" },
-};
+  const clusterLayer: Omit<CircleLayerSpecification, "source"> = {
+    id: "clusters",
+    type: "circle",
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-color": color,
+      "circle-radius": ["step", ["get", "point_count"], 16, 10, 20, 30, 25, 50, 30],
+      "circle-stroke-width": 2,
+      "circle-stroke-color": RING,
+    },
+  };
 
-// Single reports: same treatment, smaller, and deliberately unlabelled — a
-// count of 1 is noise.
-const pointGlowLayer: Omit<CircleLayerSpecification, "source"> = {
-  id: "unclustered-glow",
-  type: "circle",
-  filter: ["!", ["has", "point_count"]],
-  paint: { "circle-color": BRAND_BLUE, "circle-opacity": 0.25, "circle-radius": 11 },
-};
+  const clusterCountLayer: Omit<SymbolLayerSpecification, "source"> = {
+    id: "cluster-count",
+    type: "symbol",
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": ["get", "point_count_abbreviated"],
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": ["step", ["get", "point_count"], 11, 30, 14],
+    },
+    paint: { "text-color": countTextColor(color) },
+  };
 
-const pointLayer: Omit<CircleLayerSpecification, "source"> = {
-  id: "unclustered-point",
-  type: "circle",
-  filter: ["!", ["has", "point_count"]],
-  paint: {
-    "circle-color": BRAND_BLUE,
-    "circle-radius": 7,
-    "circle-stroke-width": 2,
-    "circle-stroke-color": RING,
-  },
+  // Single reports: same treatment, smaller, and deliberately unlabelled — a
+  // count of 1 is noise.
+  const pointGlowLayer: Omit<CircleLayerSpecification, "source"> = {
+    id: "unclustered-glow",
+    type: "circle",
+    filter: ["!", ["has", "point_count"]],
+    paint: { "circle-color": color, "circle-opacity": 0.25, "circle-radius": 11 },
+  };
+
+  const pointLayer: Omit<CircleLayerSpecification, "source"> = {
+    id: "unclustered-point",
+    type: "circle",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": color,
+      "circle-radius": 7,
+      "circle-stroke-width": 2,
+      "circle-stroke-color": RING,
+    },
+  };
+
+  return [clusterGlowLayer, clusterLayer, clusterCountLayer, pointGlowLayer, pointLayer];
 };
 
 interface PopupInfo {
@@ -110,9 +134,12 @@ interface ThematicMapProps {
   theme: string;
   title: string;
   description: string;
+  color?: string;
 }
 
-const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
+const ThematicMap = ({ theme, title, description, color }: ThematicMapProps) => {
+  const markerColor = toMarkerColor(color);
+  const markerLayers = useMemo(() => buildMarkerLayers(markerColor), [markerColor]);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [name] = useQueryState("country");
   const [searchTerm, setSearchTerm] = useQueryState("search", {
@@ -253,10 +280,6 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
     );
   };
 
-  // Generate dynamic theme assets
-  const themeAssets = generateIncidentTypeAssets(theme);
-  const themeColor: string = themeAssets.colors.primary;
-
   return (
     <>
       {/* Pin to the viewport like the live map, so the map fills the screen
@@ -370,7 +393,7 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
               </div>
               {/* Real clustering: Mapbox groups the points with Supercluster,
                   so they merge as you zoom out and split as you zoom in. The
-                  glow + ring + count styling matches the brand marker; it is
+                  glow + ring + count styling matches the brand marker, in the type's color; it is
                   drawn with paint properties rather than DOM nodes because only
                   a GL source can cluster. */}
               <Source
@@ -381,11 +404,9 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
                 clusterMaxZoom={14}
                 clusterRadius={50}
               >
-                <Layer {...clusterGlowLayer} />
-                <Layer {...clusterLayer} />
-                <Layer {...clusterCountLayer} />
-                <Layer {...pointGlowLayer} />
-                <Layer {...pointLayer} />
+                {markerLayers.map((layer) => (
+                  <Layer key={layer.id} {...layer} />
+                ))}
               </Source>
 
               {popupInfo && (
@@ -440,7 +461,10 @@ const ThematicMap = ({ theme, title, description }: ThematicMapProps) => {
 
                     <div className="mt-3 border-t border-border pt-2">
                       <div className="flex items-center gap-2">
-                        <div className="size-3 rounded-full bg-primary" />
+                        <div
+                          className="size-3 rounded-full"
+                          style={{ backgroundColor: markerColor }}
+                        />
                         <span className="font-title text-xs font-medium text-dark/70">
                           {theme}
                         </span>

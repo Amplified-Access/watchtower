@@ -44,6 +44,7 @@ const DynamicMapPage = async ({ params }: DynamicMapPageProps) => {
       >
         <ThematicMap
           theme={incidentType.name}
+          color={incidentType.color}
           title={`${label} map`}
           description={
             incidentType.description ||
