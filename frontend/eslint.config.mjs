@@ -45,23 +45,12 @@ export default [
     },
   },
   {
-    // Still bypassing the backend. Each entry should disappear as its path
-    // moves behind Go (auth, chat retrieval, uploads/downloads, SNS). Don't add to it.
+    // Still bypassing the backend: R2 uploads and downloads. These entries
+    // should disappear when that moves behind Go. Don't add to it.
     files: [
-      "src/db/**",
-      "src/lib/auth.ts",
-      "src/lib/actions/resources.ts",
-      "src/lib/ai/embeddings.ts",
       "src/app/api/file-upload/route.ts",
       "src/app/api/file-download/route.ts",
       "src/features/super-admin/server/index.ts",
-      "src/app/api/auth/**",
-      "src/lib/auth-client.ts",
-      "src/features/organization-registration/infrastructure/services/better-auth-identity-provisioner.ts",
-      "src/features/super-admin/components/auth/temp-sign-up.tsx",
-      "src/features/watcher/components/auth/watcher-sign-up-form.tsx",
-      "src/components/debug/session-debug.tsx",
-      "src/lib/permissions.ts",
     ],
     rules: { "no-restricted-imports": "off" },
   },

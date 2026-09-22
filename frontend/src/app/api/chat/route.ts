@@ -1,4 +1,3 @@
-import { createResource } from "@/lib/actions/resources";
 import { google } from "@ai-sdk/google";
 import {
   convertToModelMessages,
@@ -8,7 +7,7 @@ import {
   stepCountIs,
 } from "ai";
 import { z } from "zod";
-import { findRelevantContent } from "@/lib/ai/embeddings";
+import { assistantApi } from "@/lib/api/assistant";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -71,22 +70,17 @@ If pressed for technical details: You may reveal that you are a chatbot created 
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(5),
     tools: {
-      // addResource: tool({
-      //   description: `add a resource to your knowledge base.
-      //     If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
-      //   inputSchema: z.object({
-      //     content: z
-      //       .string()
-      //       .describe("the content or resource to add to the knowledge base"),
-      //   }),
-      //   execute: async ({ content }) => createResource({ content }),
-      // }),
       getInformation: tool({
         description: `get information from your knowledge base to answer questions.`,
         inputSchema: z.object({
           question: z.string().describe("the users question"),
         }),
-        execute: async ({ question }) => findRelevantContent(question),
+        // The Go backend owns the knowledge base. If the search fails the
+        // assistant still answers, just without citing it.
+        execute: async ({ question }) => {
+          const res = await assistantApi.searchKnowledge(question);
+          return res.success ? (res.data ?? []) : [];
+        },
       }),
     },
   });
