@@ -14,6 +14,7 @@ import (
 	pgRepo "backend/internal/adapter/repository/postgres"
 	adminuc "backend/internal/usecase/admin"
 	alertuc "backend/internal/usecase/alert"
+	assistantuc "backend/internal/usecase/assistant"
 	authuc "backend/internal/usecase/auth"
 	datasetuuc "backend/internal/usecase/dataset"
 	incidentuc "backend/internal/usecase/incident"
@@ -22,6 +23,7 @@ import (
 	reportuc "backend/internal/usecase/report"
 	useruc "backend/internal/usecase/user"
 	emailSvc "backend/pkg/email"
+	"backend/pkg/gemini"
 	pgClient "backend/pkg/postgres"
 	redisClient "backend/pkg/redis"
 )
@@ -31,17 +33,18 @@ type Server struct {
 	db    pgClient.Service
 	redis redisClient.Service
 
-	orgHandler      *handler.OrganizationHandler
-	userHandler     *handler.UserHandler
-	incidentHandler *handler.IncidentHandler
-	reportHandler   *handler.ReportHandler
-	insightHandler  *handler.InsightHandler
-	datasetHandler  *handler.DatasetHandler
-	alertHandler    *handler.AlertHandler
-	adminHandler    *handler.AdminHandler
-	emailHandler    *handler.EmailHandler
-	authHandler     *handler.AuthHandler
-	userUseCase     *useruc.UseCase
+	orgHandler       *handler.OrganizationHandler
+	userHandler      *handler.UserHandler
+	incidentHandler  *handler.IncidentHandler
+	reportHandler    *handler.ReportHandler
+	insightHandler   *handler.InsightHandler
+	datasetHandler   *handler.DatasetHandler
+	alertHandler     *handler.AlertHandler
+	adminHandler     *handler.AdminHandler
+	emailHandler     *handler.EmailHandler
+	authHandler      *handler.AuthHandler
+	assistantHandler *handler.AssistantHandler
+	userUseCase      *useruc.UseCase
 }
 
 func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Server {
@@ -60,6 +63,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	orgReportRepo := pgRepo.NewOrganizationIncidentReportRepository(sqlDB)
 	reportRepo := pgRepo.NewReportRepository(sqlDB)
 	alertRepo := pgRepo.NewAlertSubscriptionRepository(sqlDB)
+	knowledgeRepo := pgRepo.NewKnowledgeRepository(sqlDB)
 
 	// Repositories (cache-wrapped)
 	sessionRepo := cacheRepo.NewCachedSessionRepository(rdb, pgRepo.NewSessionRepository(sqlDB))
@@ -83,24 +87,26 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	insightUC := insightuc.New(insightRepo)
 	datasetUC := datasetuuc.New(datasetRepo)
 	alertUC := alertuc.New(alertRepo)
+	assistantUC := assistantuc.New(gemini.New(), knowledgeRepo)
 	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo, orgReportRepo, anonReportRepo)
 
 	// Handlers
 	newServer := &Server{
-		port:            port,
-		db:              dbSvc,
-		redis:           redisSvc,
-		userHandler:     handler.NewUserHandler(userUC),
-		orgHandler:      handler.NewOrganizationHandler(orgUC),
-		incidentHandler: handler.NewIncidentHandler(incidentUC),
-		reportHandler:   handler.NewReportHandler(reportUC),
-		insightHandler:  handler.NewInsightHandler(insightUC),
-		datasetHandler:  handler.NewDatasetHandler(datasetUC),
-		alertHandler:    handler.NewAlertHandler(alertUC),
-		adminHandler:    handler.NewAdminHandler(adminUC),
-		emailHandler:    handler.NewEmailHandler(mailSvc),
-		authHandler:     handler.NewAuthHandler(authUC),
-		userUseCase:     userUC,
+		port:             port,
+		db:               dbSvc,
+		redis:            redisSvc,
+		userHandler:      handler.NewUserHandler(userUC),
+		orgHandler:       handler.NewOrganizationHandler(orgUC),
+		incidentHandler:  handler.NewIncidentHandler(incidentUC),
+		reportHandler:    handler.NewReportHandler(reportUC),
+		insightHandler:   handler.NewInsightHandler(insightUC),
+		datasetHandler:   handler.NewDatasetHandler(datasetUC),
+		alertHandler:     handler.NewAlertHandler(alertUC),
+		adminHandler:     handler.NewAdminHandler(adminUC),
+		emailHandler:     handler.NewEmailHandler(mailSvc),
+		authHandler:      handler.NewAuthHandler(authUC),
+		assistantHandler: handler.NewAssistantHandler(assistantUC),
+		userUseCase:      userUC,
 	}
 
 	srv := &http.Server{
