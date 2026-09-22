@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, ChevronDown, Check } from "lucide-react";
-import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import { ChevronDown, Check } from "lucide-react";
+import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,19 +21,10 @@ import {
   LISTED_CASE_STUDIES,
 } from "../data/placeholder-case-studies";
 
-const PAGE_SIZE = 6;
+// Four to start and four more per "Load more", like the thematic maps list.
+const PAGE_SIZE = 4;
 
 const LOCATIONS = [...new Set(LISTED_CASE_STUDIES.map((c) => c.location))].sort();
-
-// 1 2 3 4 5 … 21 near the start, 1 … 9 10 11 … 21 in the middle, etc.
-const getPageItems = (current: number, total: number): (number | "ellipsis")[] => {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  if (current <= 4) return [1, 2, 3, 4, 5, "ellipsis", total];
-  if (current >= total - 3) {
-    return [1, "ellipsis", total - 4, total - 3, total - 2, total - 1, total];
-  }
-  return [1, "ellipsis", current - 1, current, current + 1, "ellipsis", total];
-};
 
 const chipClassName = (active: boolean) =>
   cn(
@@ -45,38 +37,32 @@ const chipClassName = (active: boolean) =>
 const CaseStudiesList = () => {
   const t = useTranslations("CaseStudiesPage");
   const categoryLabel = useCategoryLabel();
-  const listRef = useRef<HTMLDivElement>(null);
 
   const [category, setCategory] = useQueryState(
     "category",
     parseAsStringLiteral(CASE_STUDY_CATEGORIES),
   );
   const [location, setLocation] = useQueryState("location", parseAsString);
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const filtered = LISTED_CASE_STUDIES.filter(
     (c) => (!category || c.category === category) && (!location || c.location === location),
   );
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const currentPage = Math.min(Math.max(page, 1), totalPages);
-  const visible = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
-  // Filter changes go back to page 1 (null drops the param from the URL).
+  // A filter change starts the list over at the first four.
   const selectCategory = (value: typeof category) => {
     setCategory(value);
-    setPage(null);
+    setVisibleCount(PAGE_SIZE);
   };
   const selectLocation = (value: string | null) => {
     setLocation(value);
-    setPage(null);
-  };
-  const goToPage = (value: number) => {
-    setPage(value === 1 ? null : value);
-    listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setVisibleCount(PAGE_SIZE);
   };
 
   return (
-    <div ref={listRef} className="scroll-mt-40">
+    <div>
       <div className="flex flex-wrap gap-2 md:gap-2.5">
         <button
           type="button"
@@ -141,53 +127,20 @@ const CaseStudiesList = () => {
         </div>
       )}
 
-      {totalPages > 1 && (
-        <nav
-          aria-label={t("pagination")}
-          className="mt-16 flex items-center justify-center gap-1 md:mt-24"
-        >
+      {hasMore && (
+        <div className="mt-16 flex justify-center md:mt-24">
           <button
             type="button"
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            aria-label={t("previousPage")}
-            className="flex size-9 items-center justify-center rounded-full border border-dark/10 text-dark transition-colors hover:bg-dark/5 disabled:border-transparent disabled:bg-dark/5 disabled:text-dark/30"
+            onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+            className={cn(
+              buttonVariants({ variant: "secondary", size: "lg" }),
+              "font-title font-medium",
+            )}
           >
-            <ChevronLeft className="size-4" />
+            {t("loadMore")}
+            <ChevronDown />
           </button>
-          {getPageItems(currentPage, totalPages).map((item, index) =>
-            item === "ellipsis" ? (
-              <span key={`ellipsis-${index}`} aria-hidden className="w-8 text-center text-sm text-dark/60">
-                …
-              </span>
-            ) : (
-              <button
-                key={item}
-                type="button"
-                onClick={() => goToPage(item)}
-                aria-label={t("pageLabel", { number: item })}
-                aria-current={item === currentPage ? "page" : undefined}
-                className={cn(
-                  "flex size-9 items-center justify-center rounded-full text-sm transition-colors",
-                  item === currentPage
-                    ? "bg-primary text-white"
-                    : "text-dark hover:bg-dark/5",
-                )}
-              >
-                {item}
-              </button>
-            ),
-          )}
-          <button
-            type="button"
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            aria-label={t("nextPage")}
-            className="flex size-9 items-center justify-center rounded-full border border-dark/10 text-dark transition-colors hover:bg-dark/5 disabled:border-transparent disabled:bg-dark/5 disabled:text-dark/30"
-          >
-            <ChevronRight className="size-4" />
-          </button>
-        </nav>
+        </div>
       )}
     </div>
   );

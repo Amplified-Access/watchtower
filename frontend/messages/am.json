@@ -52,10 +52,7 @@
     "readCaseStudy": "የጉዳይ ጥናቱን ያንብቡ",
     "empty": "ከእነዚህ ማጣሪያዎች ጋር የሚዛመድ የጉዳይ ጥናት የለም።",
     "clearFilters": "ማጣሪያዎችን ያጽዱ",
-    "pagination": "የጉዳይ ጥናቶች ገጾች",
-    "previousPage": "ቀዳሚ ገጽ",
-    "nextPage": "ቀጣይ ገጽ",
-    "pageLabel": "ገጽ {number}",
+    "loadMore": "ተጨማሪ ጫን",
     "relatedCaseStudies": "ተዛማጅ የጉዳይ ጥናቶች",
     "exploreOnMap": "በካርታ ላይ ያስሱ"
   },

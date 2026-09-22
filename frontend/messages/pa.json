@@ -52,10 +52,7 @@
     "readCaseStudy": "ਕੇਸ ਸਟੱਡੀ ਪੜ੍ਹੋ",
     "empty": "ਇਹਨਾਂ ਫਿਲਟਰਾਂ ਨਾਲ ਕੋਈ ਕੇਸ ਸਟੱਡੀ ਮੇਲ ਨਹੀਂ ਖਾਂਦੀ।",
     "clearFilters": "ਫਿਲਟਰ ਸਾਫ਼ ਕਰੋ",
-    "pagination": "ਕੇਸ ਸਟੱਡੀਜ਼ ਦੇ ਪੰਨੇ",
-    "previousPage": "ਪਿਛਲਾ ਪੰਨਾ",
-    "nextPage": "ਅਗਲਾ ਪੰਨਾ",
-    "pageLabel": "ਪੰਨਾ {number}",
+    "loadMore": "ਹੋਰ ਲੋਡ ਕਰੋ",
     "relatedCaseStudies": "ਸੰਬੰਧਿਤ ਕੇਸ ਸਟੱਡੀਜ਼",
     "exploreOnMap": "ਨਕਸ਼ੇ 'ਤੇ ਵੇਖੋ"
   },

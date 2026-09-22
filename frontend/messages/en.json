@@ -52,10 +52,7 @@
     "readCaseStudy": "Read case study",
     "empty": "No case studies match these filters.",
     "clearFilters": "Clear filters",
-    "pagination": "Case studies pages",
-    "previousPage": "Previous page",
-    "nextPage": "Next page",
-    "pageLabel": "Page {number}",
+    "loadMore": "Load more",
     "relatedCaseStudies": "Related case studies",
     "exploreOnMap": "Explore on map"
   },

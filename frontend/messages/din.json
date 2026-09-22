@@ -52,10 +52,7 @@
     "readCaseStudy": "Kuɔn Tuɔ̈ɔ̈c",
     "empty": "Ajin tuɔ̈ɔ̈c ɣe cɔ̈k tëek tënë.",
     "clearFilters": "Dït Thöŋ",
-    "pagination": "Aguooc ë Tuɔ̈ɔ̈c",
-    "previousPage": "Agouc Tuɔŋ",
-    "nextPage": "Agouc Yecï Rӧӧr",
-    "pageLabel": "Agouc {number}",
+    "loadMore": "Rieei Alït",
     "relatedCaseStudies": "Tuɔ̈ɔ̈c Yecï Angueth",
     "exploreOnMap": "Tïŋ Mapthiin Yic"
   },
