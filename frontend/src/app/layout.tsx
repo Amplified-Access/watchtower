@@ -9,12 +9,6 @@ import { getLocale, getMessages } from "next-intl/server";
 export const metadata: Metadata = {
   title: "WatchTower",
   description: "Localizing Tech to build resilient communities",
-  icons: {
-    icon: [
-      { url: "/favicon-light.png", media: "(prefers-color-scheme: light)" },
-      { url: "/favicon-dark.png", media: "(prefers-color-scheme: dark)" },
-    ],
-  },
 };
 
 export default async function RootLayout({
