@@ -104,7 +104,7 @@ pnpm test:watch   # Jest watch mode
 pnpm i18n:check   # fail if any marketing string is still English (see frontend/docs/SCRIPTS.md)
 ```
 
-**Local env:** every tRPC request builds its context through Better Auth, which imports the Neon DB client — so without `DATABASE_URL` *all* tRPC calls (even `publicProcedure` ones) return 500, and pages silently render empty/error states. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
+**Local env:** tRPC auth goes through the Go backend's `/me` (see `_trpc/middleware.ts`), so tRPC calls need `NEXT_PUBLIC_API_URL`, not `DATABASE_URL`. `DATABASE_URL` is still needed by the Better Auth routes (`/api/auth/*`, sign-up) and the chat assistant's embeddings until those move behind Go. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
 
 ## Backend architecture — Clean Architecture (strict)
 
@@ -122,8 +122,10 @@ server/          Gin router setup
 - Business logic lives in `usecase/` only. Handlers orchestrate, never decide.
 - Handlers call usecase methods and use `presenter.Error()` / `presenter.Success()` for responses.
 - Every new domain entity needs: `domain/entity/`, `domain/repository/` interface, `adapter/repository/postgres/` impl, optionally `adapter/repository/cache/` decorator.
-- Repository interfaces are defined in `domain/repository/` and injected via `bootstrap/bootstrap.go`.
+- Repository interfaces are defined in `domain/repository/` and injected in `server/server.go` (`NewServer` builds the repositories, cache decorators, usecases and handlers). `bootstrap/bootstrap.go` only starts the infrastructure services (Postgres, Redis) — despite CLAUDE.md's checklist, new wiring goes in `server.go`.
 - Cache repositories wrap postgres repositories — they never own business logic.
+- **Map data** (`/api/v1/map/points`, `/map/summary`, `/map/reports/:id`, in `handler/map.go` + `usecase/incident/map.go`) is the only source for the public maps. Points are GeoJSON with a `bbox`, deliberately slim (id, place name, country, date); descriptions and casualty figures come from `/map/reports/:id` when a marker is clicked. The summary is computed from the same rows as the points so counts always match the markers. Reports stored at 0,0 are placed at their country's centre (`entity/geo.go`).
+- **Map cache invalidation:** `FindForMap` results are cached per filter under `anon:map:v{N}:{hash}`. Creating an anonymous report `INCR`s `anon:map:version`, which strands every old entry at once instead of deleting keys by pattern. Relative periods ("24h") are passed down as tokens, not timestamps, so the cache key stays stable; the TTL (5 min) bounds how far they drift.
 - Rate limiting middleware is applied per-route group in `server/routes.go` (public: 60/min, strict: 10/min, authed: 200/min).
 
 ## Frontend architecture
@@ -152,6 +154,9 @@ src/
 **Rules:**
 - All mutations go through a tRPC procedure. Never call the Go backend directly from a component.
 - `lib/api/` functions are called from tRPC routers, not from components.
+- **The Go backend is the source of truth.** tRPC routers are pass-throughs: they validate input and forward it; they don't filter, group, geocode or reshape backend data. If a page needs a new shape, add it to the Go response. Components don't aggregate lists either — the maps get GeoJSON, counts and country lists ready-made from `/map/*` (`lib/api/map.ts`, the `map` tRPC router) and hand the GeoJSON to Mapbox as-is.
+- ESLint (`no-restricted-imports`) blocks `@/db`, `drizzle-orm`, `@neondatabase/*`, `@aws-sdk/*` and `@/lib/aws/*` in `src/`. The files that still bypass Go (Better Auth, chat embeddings, R2 upload/download, SNS) are listed in `eslint.config.mjs`; that list should only shrink.
+- Next route handlers (`app/api/*`) sit outside tRPC's auth middleware; use `getRouteUser()` from `lib/api/route-auth.ts` to check the session against Go's `/me`.
 - The Epilogue font is declared in `src/app/globals.css`, not imported from `@fontsource-variable/epilogue`, so its vertical metrics can be overridden (`ascent-override`/`descent-override`) to centre capitals in every line box. Without that, text sits ~0.1em high in small pills and buttons. The woff2 files are copied into `public/fonts/epilogue/` because the bundler drops `@font-face` rules whose `url()` points into `node_modules`. Re-copy them when upgrading the package.
 - Server-only code (API keys, DB access) must import `server-only`.
 - State: Zustand for client state, React Query (via tRPC) for server state.
