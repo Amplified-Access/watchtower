@@ -25,7 +25,6 @@ import {
   Trash,
   X,
 } from "lucide-react";
-import { getR2PublicUrl } from "@/utils/r2";
 
 import {
   DropdownMenu,

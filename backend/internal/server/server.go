@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -17,6 +18,7 @@ import (
 	assistantuc "backend/internal/usecase/assistant"
 	authuc "backend/internal/usecase/auth"
 	datasetuuc "backend/internal/usecase/dataset"
+	fileuc "backend/internal/usecase/file"
 	incidentuc "backend/internal/usecase/incident"
 	insightuc "backend/internal/usecase/insight"
 	orguc "backend/internal/usecase/organization"
@@ -25,6 +27,7 @@ import (
 	emailSvc "backend/pkg/email"
 	"backend/pkg/gemini"
 	pgClient "backend/pkg/postgres"
+	"backend/pkg/r2"
 	redisClient "backend/pkg/redis"
 )
 
@@ -44,6 +47,7 @@ type Server struct {
 	emailHandler     *handler.EmailHandler
 	authHandler      *handler.AuthHandler
 	assistantHandler *handler.AssistantHandler
+	fileHandler      *handler.FileHandler
 	userUseCase      *useruc.UseCase
 }
 
@@ -88,6 +92,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	datasetUC := datasetuuc.New(datasetRepo)
 	alertUC := alertuc.New(alertRepo)
 	assistantUC := assistantuc.New(gemini.New(), knowledgeRepo)
+	fileUC := fileuc.New(r2.New(), allowedExternalDomains())
 	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo, orgReportRepo, anonReportRepo)
 
 	// Handlers
@@ -106,6 +111,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 		emailHandler:     handler.NewEmailHandler(mailSvc),
 		authHandler:      handler.NewAuthHandler(authUC),
 		assistantHandler: handler.NewAssistantHandler(assistantUC),
+		fileHandler:      handler.NewFileHandler(fileUC),
 		userUseCase:      userUC,
 	}
 
@@ -118,4 +124,16 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	}
 
 	return srv
+}
+
+// allowedExternalDomains reads ALLOWED_EXTERNAL_DOMAINS, the comma-separated
+// hosts a file key may point at when it's a full URL ("*" allows any).
+func allowedExternalDomains() []string {
+	var domains []string
+	for _, d := range strings.Split(os.Getenv("ALLOWED_EXTERNAL_DOMAINS"), ",") {
+		if d = strings.TrimSpace(d); d != "" {
+			domains = append(domains, d)
+		}
+	}
+	return domains
 }

@@ -54,6 +54,7 @@ import {
   type DatasetUpdate,
 } from "@/features/datasets/schemas/dataset-schema";
 import Container from "@/components/common/container";
+import { uploadFile as uploadFileToStorage } from "@/utils/file-upload";
 
 const SuperAdminDatasetsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -149,20 +150,7 @@ const SuperAdminDatasetsPage = () => {
 
     setIsUploading(true);
     try {
-      // Upload file to CloudFlare R2
-      const formData = new FormData();
-      formData.append("file", uploadFile);
-
-      const response = await fetch("/api/file-upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("File upload failed");
-      }
-
-      const { fileKey } = await response.json();
+      const fileKey = await uploadFileToStorage(uploadFile);
 
       // Create dataset record
       await uploadDatasetMutation.mutateAsync({

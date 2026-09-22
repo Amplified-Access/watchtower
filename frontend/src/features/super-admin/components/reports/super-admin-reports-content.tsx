@@ -59,6 +59,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "@/components/common/container";
+import { downloadReport } from "@/utils/file-download";
 
 interface Report {
   id: string;
@@ -156,12 +157,7 @@ const SuperAdminReportsContent = () => {
   };
 
   const handleDownload = (fileKey: string, title: string) => {
-    // Generate download URL for Cloudflare R2
-    const downloadUrl = `${process.env.NEXT_PUBLIC_CLOUDFLARE_PUBLIC_URL}/${fileKey}`;
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.download = `${title}.pdf`;
-    link.click();
+    downloadReport(fileKey, title);
   };
 
   if (userLoading || reportsLoading || organizationsLoading) {

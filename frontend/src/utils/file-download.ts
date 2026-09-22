@@ -1,35 +1,27 @@
+import { API_BASE } from "@/lib/api/base";
+
 /**
- * Utility function to handle file downloads from Cloudflare R2
+ * URL that downloads a stored file from the Go backend, saved as filename
+ * when given.
+ */
+export function fileDownloadUrl(fileKey: string, filename?: string): string {
+  const params = new URLSearchParams({ fileKey });
+  if (filename) params.set("filename", filename);
+  return `${API_BASE}/files/download?${params}`;
+}
+
+/**
+ * Downloads a report PDF, named after its title.
  */
 export function downloadReport(fileKey: string, title: string) {
-  // Create download URL with proper filename
-  const downloadUrl = `/api/file-download?fileKey=${encodeURIComponent(
-    fileKey
-  )}&filename=${encodeURIComponent(title)}.pdf`;
-
-  // Open in new tab to trigger download
-  window.open(downloadUrl, "_blank");
+  window.open(fileDownloadUrl(fileKey, `${title}.pdf`), "_blank");
 }
 
 /**
- * Generic utility function to download any file from Cloudflare R2
+ * Downloads any stored file.
  */
 export function downloadFileFromR2(fileKey: string, filename: string) {
-  // Create download URL with proper filename
-  const downloadUrl = `/api/file-download?fileKey=${encodeURIComponent(
-    fileKey
-  )}&filename=${encodeURIComponent(filename)}`;
-
-  // Open in new tab to trigger download
-  window.open(downloadUrl, "_blank");
-}
-
-/**
- * Utility function to get a direct public URL for a file in Cloudflare R2
- * This can be used for preview purposes if the bucket is configured for public access
- */
-export function getFilePreviewUrl(fileKey: string): string {
-  return `/api/file-download?fileKey=${encodeURIComponent(fileKey)}`;
+  window.open(fileDownloadUrl(fileKey, filename), "_blank");
 }
 
 /**

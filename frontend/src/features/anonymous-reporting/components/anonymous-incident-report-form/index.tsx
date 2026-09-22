@@ -34,6 +34,7 @@ import EvidenceUpload, { type EvidenceFile } from "./evidence-upload";
 import VoiceReportRecorder from "./voice-report-recorder";
 import ReportReviewDialog from "./report-review-dialog";
 import { reportFieldClassName, reportLabelClassName } from "./field-styles";
+import { uploadFile as uploadFileToStorage } from "@/utils/file-upload";
 
 const AnonymousIncidentReportForm = () => {
   const t = useTranslations("IncidentReporting");
@@ -85,18 +86,10 @@ const AnonymousIncidentReportForm = () => {
   const submitMutation = trpc.anonymousReports.submitAmonymousIncidentReport.useMutation();
 
   const uploadFile = async (file: File, failedMessage: string, errorMessage: string) => {
-    const formData = new FormData();
-    formData.append("file", file);
     try {
-      const response = await fetch("/api/file-upload", { method: "POST", body: formData });
-      if (!response.ok) {
-        toast.error(failedMessage);
-        return undefined;
-      }
-      const body: { fileKey?: string } = await response.json();
-      return body.fileKey ?? undefined;
-    } catch {
-      toast.error(errorMessage);
+      return await uploadFileToStorage(file);
+    } catch (error) {
+      toast.error(error instanceof TypeError ? errorMessage : failedMessage);
       return undefined;
     }
   };

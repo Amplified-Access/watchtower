@@ -58,6 +58,22 @@ Mailjet SMTP email sender.
 
 ---
 
+## `pkg/r2`
+
+Cloudflare R2 file storage through its S3-compatible API (`aws-sdk-go-v2/service/s3`). Used by `usecase/file`, which serves `POST /files` and `GET /files/download`.
+
+**Methods**:
+- `Put(ctx, key, contentType, body, size)` — stores a file; `body` must be seekable (a multipart file is) so it's signed without buffering
+- `Get(ctx, key)` — opens a stored file; a missing key returns an error wrapping `fs.ErrNotExist`
+
+**Configuration**:
+- `CLOUDFLARE_S3_ENDPOINT`, `CLOUDFLARE_ACCESS_KEY_ID`, `CLOUDFLARE_SECRET_KEY`
+- `CLOUDFLARE_R2_BUCKET` (default `amplified-access-bucket`)
+
+Missing settings don't stop the server; uploads and downloads return 503 until they're set. Checksums are only sent when required, because R2 doesn't accept every checksum the SDK sends by default.
+
+---
+
 ## `pkg/logger`
 
 Structured `slog.Logger` with environment-aware output.

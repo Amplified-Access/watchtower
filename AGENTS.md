@@ -104,7 +104,7 @@ pnpm test:watch   # Jest watch mode
 pnpm i18n:check   # fail if any marketing string is still English (see frontend/docs/SCRIPTS.md)
 ```
 
-**Local env:** the frontend needs `NEXT_PUBLIC_API_URL` (the Go API, e.g. `http://localhost:8080/api/v1` — plain `http` for a local Go server) and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`. It has no database connection, so no `DATABASE_URL`. The chat assistant's model still runs in Next and needs `GOOGLE_GENERATIVE_AI_API_KEY` there; its knowledge-base search runs in Go and needs the same key on the backend. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
+**Local env:** the frontend needs `NEXT_PUBLIC_API_URL` (the Go API, e.g. `http://localhost:8080/api/v1` — plain `http` for a local Go server) and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`. It has no database connection, so no `DATABASE_URL`, and no storage credentials: the R2 settings (`CLOUDFLARE_*`) go in `backend/.env`. The chat assistant's model still runs in Next and needs `GOOGLE_GENERATIVE_AI_API_KEY` there; its knowledge-base search runs in Go and needs the same key on the backend. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
 
 ## Backend architecture — Clean Architecture (strict)
 
@@ -126,6 +126,7 @@ server/          Gin router setup
 - Cache repositories wrap postgres repositories — they never own business logic.
 - **Map data** (`/api/v1/map/points`, `/map/summary`, `/map/reports/:id`, in `handler/map.go` + `usecase/incident/map.go`) is the only source for the public maps. Points are GeoJSON with a `bbox`, deliberately slim (id, place name, country, date); descriptions and casualty figures come from `/map/reports/:id` when a marker is clicked. The summary is computed from the same rows as the points so counts always match the markers. Reports stored at 0,0 are placed at their country's centre (`entity/geo.go`).
 - **Map cache invalidation:** `FindForMap` results are cached per filter under `anon:map:v{N}:{hash}`. Creating an anonymous report `INCR`s `anon:map:version`, which strands every old entry at once instead of deleting keys by pattern. Relative periods ("24h") are passed down as tokens, not timestamps, so the cache key stays stable; the TTL (5 min) bounds how far they drift.
+- **Files** (`POST /api/v1/files`, `GET /api/v1/files/download`; `handler/file.go`, `usecase/file`, `pkg/r2`) are the only access to Cloudflare R2. Uploads are public (anonymous reporters and organization applicants attach files) under the strict limit, capped at 50 MB, with HTML/SVG/script/executable types refused; each file gets a random `<uuid>.<ext>` key that the record using it stores. These handlers extend their own read/write deadlines past the server's 10s/30s timeouts, which a slow connection can't upload 10 MB inside. Keys that are full URLs (older dataset records) redirect if the host is in `ALLOWED_EXTERNAL_DOMAINS`.
 - Rate limiting middleware is applied per-route group in `server/routes.go` (public: 60/min, strict: 10/min, authed: 200/min).
 
 ## Frontend architecture
@@ -133,7 +134,7 @@ server/          Gin router setup
 ```
 src/
 ├── app/                  Next.js App Router — pages and API routes
-│   ├── api/              Server-only API routes (AI chat, R2 upload/download)
+│   ├── api/              Server-only API routes (AI chat)
 │   └── (main)/           Authenticated app shell
 ├── _trpc/
 │   └── routers/          tRPC routers — one file per domain
@@ -153,10 +154,11 @@ src/
 - All mutations go through a tRPC procedure. Never call the Go backend directly from a component.
 - `lib/api/` functions are called from tRPC routers, not from components.
 - **The Go backend is the source of truth.** tRPC routers are pass-throughs: they validate input and forward it; they don't filter, group, geocode or reshape backend data. If a page needs a new shape, add it to the Go response. Components don't aggregate lists either — the maps get GeoJSON, counts and country lists ready-made from `/map/*` (`lib/api/map.ts`, the `map` tRPC router) and hand the GeoJSON to Mapbox as-is.
-- ESLint (`no-restricted-imports`) blocks `@/db`, `drizzle-orm`, `@neondatabase/*`, `@aws-sdk/*` and `@/lib/aws/*` in `src/`. `@/lib/auth` and `better-auth` are blocked too. The only files still bypassing Go are the R2 upload/download routes, listed in `eslint.config.mjs`; that list should only shrink.
+- ESLint (`no-restricted-imports`) blocks `@/db`, `drizzle-orm`, `@neondatabase/*`, `@aws-sdk/*` and `@/lib/aws/*` in `src/`. `@/lib/auth` and `better-auth` are blocked too. Nothing in `src/` is exempt.
 - **No work at import time in anything tRPC reaches.** All routers share one route handler, so a module that throws when imported (Better Auth opening Neon without `DATABASE_URL`, an SDK client validating credentials in its constructor) takes down *every* procedure, public ones included, and `next build` with it. Create clients lazily on first use. Admin user invites go through Go's `POST /admin/watchers` for this reason.
 - The frontend has no AWS/SNS code and needs no AWS credentials. The unused SNS publishing (tRPC `notifications` router, `/api/sns/publish`, `lib/aws/sns.ts`) was removed; if alert notifications are built, publish from the Go backend.
 - The Epilogue font is declared in `src/app/globals.css`, not imported from `@fontsource-variable/epilogue`, so its vertical metrics can be overridden (`ascent-override`/`descent-override`) to centre capitals in every line box. Without that, text sits ~0.1em high in small pills and buttons. The woff2 files are copied into `public/fonts/epilogue/` because the bundler drops `@font-face` rules whose `url()` points into `node_modules`. Re-copy them when upgrading the package.
+- **File bytes are the one exception to "never call Go from a component".** `utils/file-upload.ts` posts the file straight from the browser to Go's `/files`, and `utils/file-download.ts` links to `/files/download`, both using `API_BASE` from `lib/api/base.ts`. tRPC only carries JSON, and a Next route in between would hit Vercel's 4.5 MB function body limit. Only the returned key goes through tRPC, on the mutation that saves the record. The frontend holds no R2 credentials.
 - Server-only code (API keys, DB access) must import `server-only`.
 - State: Zustand for client state, React Query (via tRPC) for server state.
 

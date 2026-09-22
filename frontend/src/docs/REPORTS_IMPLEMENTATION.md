@@ -13,7 +13,7 @@ Successfully implemented public-facing reports functionality with download capab
 
 ### 2. File Download API Route
 
-- **`/api/file-download`**: GET endpoint to download files from Cloudflare R2
+- **`GET /api/v1/files/download`** (Go backend): downloads files from Cloudflare R2
 - Supports proper filename handling and content disposition headers
 - Uses existing Cloudflare R2 configuration
 
@@ -75,8 +75,6 @@ apps/watchtower/src/
 │   ├── (main)/reports/
 │   │   ├── page.tsx                 # Reports listing page
 │   │   └── [id]/page.tsx           # Report detail page
-│   └── api/file-download/
-│       └── route.ts                # File download endpoint
 ├── _trpc/routers/
 │   └── _app.ts                     # Added public report procedures
 ├── utils/
@@ -87,10 +85,7 @@ apps/watchtower/src/
 
 ## Environment Variables Required
 
-- `CLOUDFLARE_S3_ENDPOINT`
-- `CLOUDFLARE_ACCESS_KEY_ID`
-- `CLOUDFLARE_SECRET_KEY`
-- `NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_URL` (optional, for direct links)
+None in the frontend. The R2 settings (`CLOUDFLARE_S3_ENDPOINT`, `CLOUDFLARE_ACCESS_KEY_ID`, `CLOUDFLARE_SECRET_KEY`) are read by the Go backend.
 
 ## Usage Examples
 
@@ -108,9 +103,9 @@ apps/watchtower/src/
 import { downloadReport } from "@/utils/file-download";
 downloadReport(fileKey, reportTitle);
 
-// Get a preview URL
-import { getFilePreviewUrl } from "@/utils/file-download";
-const previewUrl = getFilePreviewUrl(fileKey);
+// Get a download URL
+import { fileDownloadUrl } from "@/utils/file-download";
+const url = fileDownloadUrl(fileKey, "report.pdf");
 ```
 
 ## Testing

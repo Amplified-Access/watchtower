@@ -22,6 +22,7 @@ import { trpc } from "@/_trpc/client";
 import Loader from "@/components/common/loader";
 import { toast } from "sonner";
 import FileUpload from "./file-upload";
+import { uploadFile } from "@/utils/file-upload";
 import Link from "next/link";
 
 const OrganizationRegistrationForm = ({
@@ -54,32 +55,12 @@ const OrganizationRegistrationForm = ({
       return;
     }
 
-    // Reverting to the FormData approach, which is the most reliable way
-    // to send file data with associated metadata like the file name.
-    const formData = new FormData();
-
-    // Correctly append the nested file object to the form data
-    // The 'file' variable is an object, and the actual File is inside file.file
-    formData.append("file", file);
-
     try {
-      const response = await fetch("/api/file-upload", {
-        method: "POST",
-        body: formData,
-        // No need to set Content-Type header manually with FormData
-      });
-
-      if (response.ok) {
-        console.log("File uploaded successfully!");
-        return response.json();
-      } else {
-        toast.error("Server error during file upload");
-        console.error("File upload failed.");
-        return null;
-        // Handle server-side errors, e.g., show a user-friendly message
-      }
+      return { fileKey: await uploadFile(file) };
     } catch (error) {
-      toast.error("Error during file upload: " + error);
+      toast.error(
+        error instanceof Error ? error.message : "Server error during file upload",
+      );
       return null;
     }
   };

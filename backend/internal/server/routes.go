@@ -77,6 +77,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 		// so the strict per-IP limit would be shared by every chat user.
 		pub.POST("/assistant/knowledge/search", s.assistantHandler.SearchKnowledge)
 
+		// Files (stored in Cloudflare R2). Uploads are public because
+		// anonymous reporters and organization applicants attach files.
+		pub.POST("/files", strictLimiter, s.fileHandler.Upload)
+		pub.GET("/files/download", s.fileHandler.Download)
+
 		// Public insights
 		pub.GET("/insights", s.insightHandler.GetPublicInsights)
 		pub.GET("/insights/tags", s.insightHandler.GetTags)
