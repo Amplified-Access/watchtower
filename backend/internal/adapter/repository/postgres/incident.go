@@ -493,6 +493,70 @@ func (r *AnonymousIncidentReportRepository) GetHeatmapData(ctx context.Context) 
 	return points, rows.Err()
 }
 
+// FindForMap selects only the columns the maps draw; descriptions, entities
+// and file keys stay in the table until a single report is opened.
+func (r *AnonymousIncidentReportRepository) FindForMap(ctx context.Context, f entity.MapFilter) ([]*entity.MapReportRow, error) {
+	q := `SELECT id, incident_type_id, location, created_at FROM anonymous_incident_reports WHERE 1=1`
+	args := []interface{}{}
+	arg := func(v interface{}) string {
+		args = append(args, v)
+		return fmt.Sprintf("$%d", len(args))
+	}
+
+	if f.Category != "" {
+		q += " AND incident_type_id = (SELECT id FROM incident_types WHERE name = " + arg(f.Category) + " LIMIT 1)"
+	}
+	if len(f.ExcludeTypeIDs) > 0 {
+		// Passed as one comma-joined string so the query doesn't depend on
+		// the driver's array encoding. IDs are UUIDs, so they hold no commas.
+		q += " AND NOT (incident_type_id::text = ANY(string_to_array(" + arg(strings.Join(f.ExcludeTypeIDs, ",")) + ", ',')))"
+	}
+	if f.Country != "" {
+		q += " AND location->>'country' = " + arg(f.Country)
+	}
+	if interval := f.Period.Interval(); interval != "" {
+		q += " AND created_at >= now() - " + arg(interval) + "::interval"
+	}
+	if f.From != nil {
+		q += " AND created_at >= " + arg(*f.From)
+	}
+	if f.To != nil {
+		q += " AND created_at < " + arg(*f.To)
+	}
+	if f.Query != "" {
+		pattern := "%" + likeEscaper.Replace(f.Query) + "%"
+		p := arg(pattern)
+		q += " AND (description ILIKE " + p +
+			" OR location->>'name' ILIKE " + p +
+			" OR location->>'address' ILIKE " + p +
+			" OR location->>'country' ILIKE " + p + ")"
+	}
+	q += " ORDER BY created_at DESC"
+
+	rows, err := r.db.QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var out []*entity.MapReportRow
+	for rows.Next() {
+		row := &entity.MapReportRow{}
+		var locJSON []byte
+		if err := rows.Scan(&row.ID, &row.IncidentTypeID, &locJSON, &row.CreatedAt); err != nil {
+			return nil, err
+		}
+		if err := json.Unmarshal(locJSON, &row.Location); err != nil {
+			return nil, err
+		}
+		out = append(out, row)
+	}
+	return out, rows.Err()
+}
+
+// likeEscaper keeps a search term's % and _ literal inside ILIKE.
+var likeEscaper = strings.NewReplacer(`\`, `\\`, "%", `\%`, "_", `\_`)
+
 func scanAnonReports(rows *sql.Rows) ([]*entity.AnonymousIncidentReport, error) {
 	var reports []*entity.AnonymousIncidentReport
 	for rows.Next() {

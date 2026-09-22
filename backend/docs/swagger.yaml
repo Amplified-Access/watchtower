@@ -12,6 +12,100 @@ definitions:
       total:
         type: integer
     type: object
+  backend_internal_domain_entity.MapCountryCount:
+    properties:
+      count:
+        type: integer
+      name:
+        type: string
+    type: object
+  backend_internal_domain_entity.MapFeature:
+    properties:
+      geometry:
+        $ref: '#/definitions/backend_internal_domain_entity.MapPointGeometry'
+      properties:
+        $ref: '#/definitions/backend_internal_domain_entity.MapFeatureProperties'
+      type:
+        type: string
+    type: object
+  backend_internal_domain_entity.MapFeatureCollection:
+    properties:
+      bbox:
+        items:
+          type: number
+        type: array
+      features:
+        items:
+          $ref: '#/definitions/backend_internal_domain_entity.MapFeature'
+        type: array
+      type:
+        type: string
+    type: object
+  backend_internal_domain_entity.MapFeatureProperties:
+    properties:
+      country:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  backend_internal_domain_entity.MapPointGeometry:
+    properties:
+      coordinates:
+        items:
+          type: number
+        type: array
+      type:
+        type: string
+    type: object
+  backend_internal_domain_entity.MapReportDetail:
+    properties:
+      country:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      fatalities:
+        type: integer
+      id:
+        type: string
+      incidentTypeId:
+        type: string
+      injuries:
+        type: integer
+      name:
+        type: string
+    type: object
+  backend_internal_domain_entity.MapSummary:
+    properties:
+      countries:
+        items:
+          $ref: '#/definitions/backend_internal_domain_entity.MapCountryCount'
+        type: array
+      recentReports:
+        type: integer
+      totalReports:
+        type: integer
+      types:
+        items:
+          $ref: '#/definitions/backend_internal_domain_entity.MapTypeCount'
+        type: array
+    type: object
+  backend_internal_domain_entity.MapTypeCount:
+    properties:
+      color:
+        type: string
+      count:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -1275,6 +1369,55 @@ paths:
       summary: List dataset categories
       tags:
       - Datasets
+  /email/send:
+    post:
+      consumes:
+      - application/json
+      description: Sends an email via the configured SMTP provider. Requires a valid
+        X-Internal-Token header.
+      parameters:
+      - description: Internal service secret
+        in: header
+        name: X-Internal-Token
+        required: true
+        type: string
+      - description: Email payload
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            body:
+              type: string
+            html:
+              type: string
+            subject:
+              type: string
+            to:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Send an email
+      tags:
+      - Email
   /incident-types:
     get:
       description: Returns all incident types; pass activeOnly=false to include inactive
@@ -1346,16 +1489,20 @@ paths:
       - Watcher – Incidents
   /incidents/anonymous:
     get:
-      description: Returns anonymous incident reports, optionally filtered by country
-        and category
+      description: Returns anonymous incident reports, optionally filtered by country,
+        category, and timeframe
       parameters:
-      - description: Filter by country code
+      - description: Filter by country name
         in: query
         name: country
         type: string
-      - description: Filter by incident category
+      - description: Filter by incident type name
         in: query
         name: category
+        type: string
+      - description: 'Time window: week, month, or year'
+        in: query
+        name: timeframe
         type: string
       produces:
       - application/json
@@ -1523,6 +1670,152 @@ paths:
       summary: List insight tags
       tags:
       - Insights
+  /map/points:
+    get:
+      description: Public anonymous reports as a GeoJSON FeatureCollection for the
+        maps, with a bbox. Features carry only an id, place name, country and date;
+        fetch /map/reports/{id} for the rest.
+      parameters:
+      - description: Incident type name
+        in: query
+        name: category
+        type: string
+      - description: Comma-separated incident type IDs to leave out
+        in: query
+        name: excludeTypes
+        type: string
+      - description: Country name
+        in: query
+        name: country
+        type: string
+      - description: 'Relative window: 24h, 7d, 30d, week, month or year'
+        in: query
+        name: period
+        type: string
+      - description: Start date (YYYY-MM-DD), instead of period
+        in: query
+        name: from
+        type: string
+      - description: End date, inclusive (YYYY-MM-DD), instead of period
+        in: query
+        name: to
+        type: string
+      - description: Search place names and descriptions
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain_entity.MapFeatureCollection'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Map points (GeoJSON)
+      tags:
+      - Maps
+  /map/reports/{id}:
+    get:
+      description: One report's public details (place, description, injuries, fatalities)
+        for a marker popup. Evidence and audio keys are not included.
+      parameters:
+      - description: Report ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain_entity.MapReportDetail'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Map report details
+      tags:
+      - Maps
+  /map/summary:
+    get:
+      description: Totals, countries and incident types for the reports a map would
+        show, with the same filters as /map/points.
+      parameters:
+      - description: Incident type name
+        in: query
+        name: category
+        type: string
+      - description: Comma-separated incident type IDs to leave out
+        in: query
+        name: excludeTypes
+        type: string
+      - description: Country name
+        in: query
+        name: country
+        type: string
+      - description: 'Relative window: 24h, 7d, 30d, week, month or year'
+        in: query
+        name: period
+        type: string
+      - description: Start date (YYYY-MM-DD), instead of period
+        in: query
+        name: from
+        type: string
+      - description: End date, inclusive (YYYY-MM-DD), instead of period
+        in: query
+        name: to
+        type: string
+      - description: Search place names and descriptions
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain_entity.MapSummary'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Map summary
+      tags:
+      - Maps
   /me:
     get:
       description: Returns the authenticated user's profile
@@ -2079,6 +2372,34 @@ paths:
       security:
       - BearerAuth: []
       summary: Get platform statistics
+      tags:
+      - Super Admin – Dashboard
+  /superadmin/dashboard/trend:
+    get:
+      description: Returns weekly incident counts over the past 7 weeks (super admin
+        only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Get platform activity trend
       tags:
       - Super Admin – Dashboard
   /superadmin/datasets:
