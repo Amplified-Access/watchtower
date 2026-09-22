@@ -22,11 +22,8 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import Loader from "@/components/common/loader";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { buildLiveIncidentGeoJson } from "@/features/maps/application/use-cases/build-live-incident-geojson";
-import type {
-  CombinedIncidentReport,
-  GeoIncidentFeatureCollection,
-} from "@/features/maps/domain/map-report";
+import { keepPreviousData } from "@tanstack/react-query";
+import type { MapFeatureCollection } from "@/lib/api/map";
 
 const BRAND_BLUE = "#0042e7";
 const DARK_TEXT = "#0a0a0a";
@@ -116,15 +113,15 @@ const buildMarkerLayers = (color: string) => {
   return [clusterGlowLayer, clusterLayer, clusterCountLayer, pointGlowLayer, pointLayer];
 };
 
+// What the clicked marker already carries; the rest of the report is fetched.
 interface PopupInfo {
+  id: string;
   longitude: number;
   latitude: number;
-  displayName: string;
-  totalReports: number;
-  totalInjuries: number;
-  totalFatalities: number;
-  incidentTypeDescriptions: string;
+  name: string;
 }
+
+const EMPTY_POINTS: MapFeatureCollection = { type: "FeatureCollection", features: [] };
 
 interface ThematicMapProps {
   theme: string;
@@ -151,13 +148,11 @@ const panelToggleClassName =
 const floatingButtonClassName =
   "flex cursor-pointer items-center justify-center rounded-full bg-white text-dark shadow-[0_4px_16px_rgba(0,0,0,0.15)]";
 
-const getDataBounds = (data: GeoIncidentFeatureCollection) => {
-  const coords = data.features.map((f) => f.geometry.coordinates);
-  if (coords.length === 0) return null;
-  return coords.reduce(
-    (bounds, coord) => bounds.extend(coord),
-    new mapboxgl.LngLatBounds(coords[0], coords[0]),
-  );
+// The backend sends a bbox with the points, so there's no need to walk them.
+const getDataBounds = (data: MapFeatureCollection) => {
+  if (!data.bbox) return null;
+  const [minLon, minLat, maxLon, maxLat] = data.bbox;
+  return new mapboxgl.LngLatBounds([minLon, minLat], [maxLon, maxLat]);
 };
 
 // Full-screen map for one incident type. Its chrome copies the live incident
@@ -195,41 +190,40 @@ const ThematicMap = ({ theme, color }: ThematicMapProps) => {
     };
   }, []);
 
-  const anonymousIncidentReports =
-    trpc.anonymousReports.getCombinedIncidentReports.useQuery({
+  // Points, counts and the country list all come from the Go backend's /map
+  // endpoints, already filtered and shaped as GeoJSON. Previous points stay
+  // on the map while a new filter loads, rather than blinking out.
+  const pointsQuery = trpc.map.points.useQuery(
+    {
+      category: theme,
       country: country || undefined,
-      category: theme, // Filter by the specific theme
-      search: searchTerm || undefined,
-      timeframe: timeframe || undefined,
-    });
+      period: timeframe || undefined,
+      q: searchTerm || undefined,
+    },
+    { placeholderData: keepPreviousData },
+  );
+  const geojsonData = pointsQuery.data ?? EMPTY_POINTS;
+  const pointsAreCurrent = pointsQuery.isSuccess && !pointsQuery.isPlaceholderData;
+  const totalReports = geojsonData.features.length;
 
   // Country chips come from every country this theme has reports in, not the
   // country-filtered result, so picking one doesn't empty the list.
-  const countryOptionsQuery =
-    trpc.anonymousReports.getCombinedIncidentReports.useQuery({
-      category: theme,
-      timeframe: timeframe || undefined,
-    });
+  const summaryQuery = trpc.map.summary.useQuery({
+    category: theme,
+    period: timeframe || undefined,
+  });
   const countries = useMemo(() => {
-    const names = new Set<string>();
-    for (const report of countryOptionsQuery.data?.data ?? []) {
-      if (report.country) names.add(report.country);
-    }
+    const names = new Set((summaryQuery.data?.countries ?? []).map((c) => c.name));
     if (country) names.add(country);
     return [...names].sort((a, b) => a.localeCompare(b));
-  }, [countryOptionsQuery.data, country]);
+  }, [summaryQuery.data, country]);
 
-  const geojsonData = useMemo(
-    () =>
-      buildLiveIncidentGeoJson(
-        anonymousIncidentReports.data?.data as CombinedIncidentReport[] | undefined,
-      ),
-    [anonymousIncidentReports.data],
+  // A report's description and casualty figures load when its marker is opened.
+  const reportQuery = trpc.map.report.useQuery(
+    { id: popupInfo?.id ?? "" },
+    { enabled: Boolean(popupInfo?.id) },
   );
-  const totalReports = geojsonData.features.reduce(
-    (sum, feature) => sum + feature.properties.totalReports,
-    0,
-  );
+  const popupReport = reportQuery.data?.id === popupInfo?.id ? reportQuery.data : undefined;
 
   // Clicking a cluster zooms to the level where Supercluster splits it, which
   // is how the group breaks apart into its members. Clicking a single report
@@ -260,13 +254,10 @@ const ThematicMap = ({ theme, color }: ThematicMapProps) => {
 
     const props = feature.properties ?? {};
     setPopupInfo({
+      id: String(props.id ?? ""),
       longitude,
       latitude,
-      displayName: String(props.displayName ?? "Unknown Location"),
-      totalReports: Number(props.totalReports) || 0,
-      totalInjuries: Number(props.totalInjuries) || 0,
-      totalFatalities: Number(props.totalFatalities) || 0,
-      incidentTypeDescriptions: String(props.incidentTypeDescriptions ?? ""),
+      name: String(props.name ?? "Unknown Location"),
     });
   }, []);
 
@@ -317,9 +308,9 @@ const ThematicMap = ({ theme, color }: ThematicMapProps) => {
   const fittedCountryRef = useRef<string | null | undefined>(undefined);
   useEffect(() => {
     if (!isMapLoaded || fittedCountryRef.current === country) return;
-    if (anonymousIncidentReports.isFetching) return;
+    if (!pointsAreCurrent) return;
     if (fitToData(INITIAL_FIT_DURATION)) fittedCountryRef.current = country;
-  }, [isMapLoaded, country, fitToData, anonymousIncidentReports.isFetching]);
+  }, [isMapLoaded, country, fitToData, pointsAreCurrent]);
 
   const recenter = () => {
     if (fitToData(RECENTER_DURATION)) return;
@@ -436,37 +427,45 @@ const ThematicMap = ({ theme, color }: ThematicMapProps) => {
                   <h3 className="mb-2 font-title text-sm font-semibold text-dark">
                     {theme} in{" "}
                     {searchTerm
-                      ? highlightSearchTerm(popupInfo.displayName, searchTerm)
-                      : popupInfo.displayName}
+                      ? highlightSearchTerm(popupInfo.name, searchTerm)
+                      : popupInfo.name}
                   </h3>
 
-                  <div className="mb-3 flex flex-wrap gap-2 text-xs text-dark/60">
-                    <span className="rounded-full bg-primary/10 px-2 py-1 font-title font-medium text-primary">
-                      {popupInfo.totalReports} reports
-                    </span>
-                    {popupInfo.totalInjuries > 0 ? (
-                      <span className="rounded-full bg-orange-100 px-2 py-1 text-orange-800">
-                        {popupInfo.totalInjuries} injuries
-                      </span>
-                    ) : null}
-                    {popupInfo.totalFatalities > 0 ? (
-                      <span className="rounded-full bg-red-100 px-2 py-1 text-red-800">
-                        {popupInfo.totalFatalities} fatalities
-                      </span>
-                    ) : null}
-                  </div>
-
-                  {popupInfo.incidentTypeDescriptions && (
-                    <div className="space-y-1">
-                      <h4 className="mb-1 font-title text-xs font-medium text-dark/70">
-                        Details:
-                      </h4>
-                      <div className="rounded bg-dark/5 p-2 text-xs text-dark/70">
-                        {searchTerm
-                          ? highlightSearchTerm(popupInfo.incidentTypeDescriptions, searchTerm)
-                          : popupInfo.incidentTypeDescriptions}
-                      </div>
+                  {!popupReport ? (
+                    <div className="space-y-2" aria-busy={reportQuery.isFetching}>
+                      <div className="h-3 w-3/4 animate-pulse rounded bg-dark/10" />
+                      <div className="h-3 w-1/2 animate-pulse rounded bg-dark/10" />
                     </div>
+                  ) : (
+                    <>
+                      {(popupReport.injuries > 0 || popupReport.fatalities > 0) && (
+                        <div className="mb-3 flex flex-wrap gap-2 text-xs">
+                          {popupReport.injuries > 0 ? (
+                            <span className="rounded-full bg-orange-100 px-2 py-1 text-orange-800">
+                              {popupReport.injuries} injuries
+                            </span>
+                          ) : null}
+                          {popupReport.fatalities > 0 ? (
+                            <span className="rounded-full bg-red-100 px-2 py-1 text-red-800">
+                              {popupReport.fatalities} fatalities
+                            </span>
+                          ) : null}
+                        </div>
+                      )}
+
+                      {popupReport.description && (
+                        <div className="space-y-1">
+                          <h4 className="mb-1 font-title text-xs font-medium text-dark/70">
+                            Details:
+                          </h4>
+                          <div className="rounded bg-dark/5 p-2 text-xs text-dark/70">
+                            {searchTerm
+                              ? highlightSearchTerm(popupReport.description, searchTerm)
+                              : popupReport.description}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
 
                   <div className="mt-3 border-t border-border pt-2">
@@ -485,7 +484,7 @@ const ThematicMap = ({ theme, color }: ThematicMapProps) => {
             )}
           </Map>
 
-          {anonymousIncidentReports.isPending && (
+          {pointsQuery.isPending && (
             <div className="absolute inset-0 z-10 grid place-items-center backdrop-blur-sm">
               <Loader className="text-dark" size="24" />
             </div>

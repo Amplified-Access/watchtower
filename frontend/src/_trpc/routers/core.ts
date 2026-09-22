@@ -7,7 +7,6 @@ import { incidentsApi } from "@/lib/api/incidents";
 import { adminApi } from "@/lib/api/admin";
 import { anonymousReportingRouter } from "./anonymous-reporting";
 import { alertSubscriptionsRouter } from "./alert-subscriptions";
-import { notificationRouter } from "./notifications";
 import { organizationReportingRouter } from "./organization-reporting";
 
 export const coreRouter = router({
@@ -83,6 +82,5 @@ export const coreRouter = router({
 
   anonymousReports: anonymousReportingRouter,
   organizationReports: organizationReportingRouter,
-  notifications: notificationRouter,
   alertSubscriptions: alertSubscriptionsRouter,
 });

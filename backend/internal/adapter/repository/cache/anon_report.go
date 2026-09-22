@@ -2,6 +2,11 @@ package cache
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/hex"
+	"fmt"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,6 +18,13 @@ import (
 const (
 	heatmapTTL        = 30 * time.Minute
 	keyAnonHeatmap    = "anon:heatmap"
+
+	// Map rows are cached per filter. Rather than hunting down every filter
+	// combination when a report comes in, the keys carry a version number
+	// that Create bumps, which strands the old entries until their TTL. The
+	// TTL is short because relative periods ("24h") drift as time passes.
+	mapRowsTTL    = 5 * time.Minute
+	keyMapVersion = "anon:map:version"
 )
 
 // CachedAnonymousReportRepository caches the heatmap aggregation query, which is an
@@ -39,7 +51,42 @@ func (r *CachedAnonymousReportRepository) Create(ctx context.Context, report *en
 		return err
 	}
 	cacheDel(context.Background(), r.rdb, keyAnonHeatmap)
+	_ = r.rdb.Incr(context.Background(), keyMapVersion).Err()
 	return nil
+}
+
+func (r *CachedAnonymousReportRepository) FindForMap(ctx context.Context, filter entity.MapFilter) ([]*entity.MapReportRow, error) {
+	key := mapRowsKey(r.rdb.Get(ctx, keyMapVersion).Val(), filter)
+	if cached, ok := cacheGet[[]*entity.MapReportRow](ctx, r.rdb, key); ok {
+		return cached, nil
+	}
+	result, err := r.repo.FindForMap(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	cacheSet(ctx, r.rdb, key, result, mapRowsTTL)
+	return result, nil
+}
+
+// mapRowsKey hashes a canonical form of the filter, so the same filter always
+// lands on the same key whatever order the excluded types arrived in.
+func mapRowsKey(version string, f entity.MapFilter) string {
+	excluded := append([]string(nil), f.ExcludeTypeIDs...)
+	sort.Strings(excluded)
+	day := func(t *time.Time) string {
+		if t == nil {
+			return ""
+		}
+		return t.UTC().Format(time.DateOnly)
+	}
+	canonical := fmt.Sprintf("c=%s|x=%s|n=%s|p=%s|f=%s|t=%s|q=%s",
+		f.Category, strings.Join(excluded, ","), f.Country, f.Period,
+		day(f.From), day(f.To), strings.ToLower(f.Query))
+	sum := sha1.Sum([]byte(canonical))
+	if version == "" {
+		version = "0"
+	}
+	return "anon:map:v" + version + ":" + hex.EncodeToString(sum[:])
 }
 
 func (r *CachedAnonymousReportRepository) GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error) {

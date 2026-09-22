@@ -38,6 +38,8 @@ type AnonymousIncidentReportRepository interface {
 	Create(ctx context.Context, report *entity.AnonymousIncidentReport) error
 	GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error)
 	GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error)
+	// FindForMap returns the rows behind the public maps, newest first.
+	FindForMap(ctx context.Context, filter entity.MapFilter) ([]*entity.MapReportRow, error)
 }
 
 type OrganizationIncidentReportRepository interface {

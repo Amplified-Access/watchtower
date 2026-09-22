@@ -68,6 +68,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 		pub.GET("/incidents/anonymous", s.incidentHandler.GetAnonymousReports)
 		pub.GET("/incidents/heatmap", s.incidentHandler.GetHeatmapData)
 
+		// Maps: GeoJSON points, summaries and per-report popup details
+		pub.GET("/map/points", s.incidentHandler.GetMapPoints)
+		pub.GET("/map/summary", s.incidentHandler.GetMapSummary)
+		pub.GET("/map/reports/:id", s.incidentHandler.GetMapReport)
+
 		// Public insights
 		pub.GET("/insights", s.insightHandler.GetPublicInsights)
 		pub.GET("/insights/tags", s.insightHandler.GetTags)
@@ -128,6 +133,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			admin.DELETE("/forms/:id", s.adminHandler.DeleteForm)
 
 			admin.GET("/watchers", s.userHandler.GetAllWatchers)
+			admin.POST("/watchers", strictLimiter, s.authHandler.InviteUser)
 
 			admin.GET("/incident-types", s.incidentHandler.GetTypesByOrganization)
 			admin.GET("/incident-types/available", s.incidentHandler.GetAvailableTypes)

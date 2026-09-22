@@ -13,8 +13,28 @@ import { findRelevantContent } from "@/lib/ai/embeddings";
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+// The route is public and every call spends model quota, so bound what one
+// request can send until chat moves behind the Go backend's rate limiter.
+const MAX_MESSAGES = 30;
+const MAX_TOTAL_CHARS = 20_000;
+
+const messageChars = (message: UIMessage) =>
+  message.parts.reduce(
+    (total, part) => total + ("text" in part && typeof part.text === "string" ? part.text.length : 0),
+    0,
+  );
+
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  const body = (await req.json().catch(() => null)) as { messages?: UIMessage[] } | null;
+  if (!Array.isArray(body?.messages) || body.messages.length === 0) {
+    return Response.json({ error: "messages are required" }, { status: 400 });
+  }
+  // Older turns beyond the cap are dropped rather than rejected, so long
+  // conversations keep working.
+  const messages = body.messages.slice(-MAX_MESSAGES);
+  if (messages.reduce((total, m) => total + messageChars(m), 0) > MAX_TOTAL_CHARS) {
+    return Response.json({ error: "conversation is too long" }, { status: 413 });
+  }
 
   const result = streamText({
     model: google("gemini-2.5-flash"),

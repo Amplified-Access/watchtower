@@ -18,7 +18,6 @@ Next.js 15 application for the Watchtower incident monitoring platform. Uses the
 | i18n          | next-intl (10 languages)                        |
 | AI            | Google Generative AI, AI SDK                    |
 | Storage       | Cloudflare R2 (S3-compatible)                   |
-| Notifications | AWS SNS                                         |
 | Monitoring    | Sentry                                          |
 | Testing       | Jest + Testing Library                          |
 

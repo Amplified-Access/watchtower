@@ -17,7 +17,6 @@
     "@ai-sdk/openai": "^2.0.24",
     "@ai-sdk/react": "^2.0.34",
     "@aws-sdk/client-s3": "^3.862.0",
-    "@aws-sdk/client-sns": "^3.888.0",
     "@elevenlabs/elevenlabs-js": "^2.12.2",
     "@elevenlabs/react": "^0.5.1",
     "@emotion/react": "^11.14.0",

@@ -22,9 +22,9 @@ func NewAuthRepository(db *sql.DB) *AuthRepository {
 
 func (r *AuthRepository) CreateUser(ctx context.Context, user *entity.User) error {
 	const q = `
-		INSERT INTO "user" (id, name, email, email_verified, created_at, updated_at, role)
-		VALUES ($1, $2, $3, false, NOW(), NOW(), '')`
-	_, err := r.db.ExecContext(ctx, q, user.ID, user.Name, user.Email)
+		INSERT INTO "user" (id, name, email, email_verified, created_at, updated_at, role, organization_id)
+		VALUES ($1, $2, $3, false, NOW(), NOW(), $4, $5)`
+	_, err := r.db.ExecContext(ctx, q, user.ID, user.Name, user.Email, string(user.Role), user.OrganizationID)
 	return err
 }
 

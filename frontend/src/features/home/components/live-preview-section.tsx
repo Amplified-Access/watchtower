@@ -32,24 +32,18 @@ const LivePreviewSection = () => {
   // The map-layer toggles are gone from the panel, so these are fixed for now.
   const layers = { reports: false, clusters: true, heatmap: false, boundaries: true };
 
-  const { incidentTypes, categoryIds, filteredReports, bubbles, stats, topChips } =
-    useLivePreviewData({ timePeriod, customRange, hiddenCategoryIds, search });
+  const { incidentTypes, categoryIds, points, stats, topChips } = useLivePreviewData({
+    timePeriod,
+    customRange,
+    hiddenCategoryIds,
+    search,
+    country,
+  });
 
   const soloedCategoryId =
     incidentTypes.find((type) => isCategorySoloed(hiddenCategoryIds, categoryIds, type.id))?.id ??
     null;
 
-  const visibleReports = country
-    ? filteredReports.filter((r) => r.country === country)
-    : filteredReports;
-
-  const visibleBubbles = country
-    ? bubbles.filter((b) => b.country === country)
-    : bubbles;
-
-  const points = visibleReports
-    .map((r) => ({ lat: Number(r.lat), lon: Number(r.lon) }))
-    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
 
   const handleToggleChip = (chip: TopChip) => {
     if (chip.kind === "country") {
@@ -76,7 +70,6 @@ const LivePreviewSection = () => {
           <div className="relative h-105 w-full overflow-hidden lg:absolute lg:inset-0 lg:z-0 lg:h-full">
             <GlobeMap
               ref={mapHandleRef}
-              bubbles={visibleBubbles}
               points={points}
               layers={layers}
               viewMode={viewMode}

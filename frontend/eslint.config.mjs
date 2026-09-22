@@ -17,4 +17,52 @@ export default [
       "react-hooks/static-components": "warn",
     },
   },
+  {
+    // The Go backend is the source of truth for data: new code reaches the
+    // database, R2 and SNS through it (lib/api/ + tRPC), never directly.
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/db", "@/db/*", "**/db", "**/db/*", "drizzle-orm", "drizzle-orm/*", "@neondatabase/*"],
+              message: "Read and write data through the Go backend (lib/api/ via tRPC), not the database.",
+            },
+            {
+              group: ["@aws-sdk/*", "@/lib/aws/*"],
+              message: "Storage and notifications belong in the Go backend.",
+            },
+            {
+              group: ["@/lib/auth", "better-auth", "better-auth/*"],
+              message:
+                "Accounts and sessions go through the Go backend. Importing Better Auth also opens its database connection at import, which crashes the importing route when DATABASE_URL isn't set.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Still bypassing the backend. Each entry should disappear as its path
+    // moves behind Go (auth, chat retrieval, uploads/downloads, SNS). Don't add to it.
+    files: [
+      "src/db/**",
+      "src/lib/auth.ts",
+      "src/lib/actions/resources.ts",
+      "src/lib/ai/embeddings.ts",
+      "src/app/api/file-upload/route.ts",
+      "src/app/api/file-download/route.ts",
+      "src/features/super-admin/server/index.ts",
+      "src/app/api/auth/**",
+      "src/lib/auth-client.ts",
+      "src/features/organization-registration/infrastructure/services/better-auth-identity-provisioner.ts",
+      "src/features/super-admin/components/auth/temp-sign-up.tsx",
+      "src/features/watcher/components/auth/watcher-sign-up-form.tsx",
+      "src/components/debug/session-debug.tsx",
+      "src/lib/permissions.ts",
+    ],
+    rules: { "no-restricted-imports": "off" },
+  },
 ];
