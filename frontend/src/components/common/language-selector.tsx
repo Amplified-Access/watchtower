@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Globe, Check, ChevronDown } from "lucide-react";
+import { Languages, Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface LanguageSelectorProps {
@@ -81,7 +81,7 @@ export default function LanguageSelector({
             disabled={isPending}
             className={cn(className)}
           >
-            <Globe className="h-3.5 w-3.5" />
+            <Languages className="h-3.5 w-3.5" />
             <span className="text-xs font-medium">
               {currentLanguage?.short}
             </span>
@@ -129,7 +129,7 @@ export default function LanguageSelector({
           disabled={isPending}
           className={cn("h-9 w-9", className)}
         >
-          <Globe className="h-4 w-4" />
+          <Languages className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-50 p-2">
