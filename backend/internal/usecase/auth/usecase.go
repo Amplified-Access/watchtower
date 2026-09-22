@@ -65,6 +65,17 @@ func (uc *UseCase) Login(ctx context.Context, email, password, ipAddr, userAgent
 		return nil, nil, domainerrors.NewUnauthorized("invalid credentials")
 	}
 
+	// Accounts created under Better Auth still carry its scrypt hashes. Now
+	// that the password is known to be right, store it as argon2id so the old
+	// format phases out as people sign in. A failure here doesn't block login.
+	if isBetterAuthHash(hash) {
+		if upgraded, err := hashPassword(password); err == nil {
+			if err := uc.authRepo.UpdatePasswordHash(ctx, user.Email, upgraded); err != nil {
+				slog.Warn("login: password rehash failed", slog.String("user_id", user.ID), slog.String("error", err.Error()))
+			}
+		}
+	}
+
 	session, err := pgRepo.NewSession(user.ID, ipAddr, userAgent)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create session: %w", err)
@@ -192,11 +203,14 @@ func hashPassword(password string) (string, error) {
 	), nil
 }
 
-// verifyPassword supports Argon2id (new) hashes only.
-// All pre-migration passwords must be reset via forgot-password.
+// verifyPassword accepts the argon2id hashes this backend writes and the
+// scrypt hashes Better Auth wrote before it (see legacy_password.go).
 func verifyPassword(hash, password string) error {
+	if isBetterAuthHash(hash) {
+		return verifyBetterAuthPassword(hash, password)
+	}
 	if !strings.HasPrefix(hash, "$argon2id$") {
-		return fmt.Errorf("unsupported hash format — password reset required")
+		return fmt.Errorf("unsupported hash format")
 	}
 
 	// Parse PHC string: $argon2id$v=<v>$m=<m>,t=<t>,p=<p>$<salt>$<key>

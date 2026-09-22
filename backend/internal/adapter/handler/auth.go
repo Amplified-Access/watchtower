@@ -76,7 +76,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 func (h *AuthHandler) Logout(c *gin.Context) {
 	token, err := c.Cookie(sessionCookieName)
 	if err == nil && token != "" {
-		_ = h.uc.Logout(c.Request.Context(), token)
+		_ = h.uc.Logout(c.Request.Context(), middleware.SessionToken(token))
 	}
 	clearSessionCookie(c)
 	presenter.OK(c, nil)

@@ -21,14 +21,16 @@ func init() {
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
 type mockSessionRepo struct {
-	user *entity.User
-	err  error
+	user      *entity.User
+	err       error
+	lastToken string
 }
 
 func (m *mockSessionRepo) FindByToken(_ context.Context, _ string) (*entity.Session, error) {
 	return nil, nil
 }
-func (m *mockSessionRepo) FindUserByToken(_ context.Context, _ string) (*entity.User, error) {
+func (m *mockSessionRepo) FindUserByToken(_ context.Context, token string) (*entity.User, error) {
+	m.lastToken = token
 	return m.user, m.err
 }
 
@@ -292,5 +294,37 @@ func TestExtractToken_BearerTakesPrecedenceOverCookie(t *testing.T) {
 
 	if got := extractToken(c); got != "header-token" {
 		t.Errorf("extractToken() = %q, want %q", got, "header-token")
+	}
+}
+
+func TestAuth_BetterAuthSignedCookie_LooksUpTheBareToken(t *testing.T) {
+	sessions := &mockSessionRepo{user: &entity.User{ID: "u3", Role: entity.RoleWatcher}}
+	uc := userusecase.New(&mockUserRepo{}, sessions)
+
+	// Better Auth stored "<token>.<signature>", URL-encoded, in its cookie.
+	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	req.Header.Set("Cookie", "better-auth.session_token=abc123XYZ.c2lnbmF0dXJl%2Bpart%3D")
+	w := httptest.NewRecorder()
+
+	newRouter(Auth(uc)).ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200", w.Code)
+	}
+	if sessions.lastToken != "abc123XYZ" {
+		t.Errorf("session lookup got %q, want the token without its signature", sessions.lastToken)
+	}
+}
+
+func TestSessionToken(t *testing.T) {
+	cases := map[string]string{
+		"abc.def":               "abc",
+		"plain_base64url-Token": "plain_base64url-Token",
+		"":                      "",
+	}
+	for in, want := range cases {
+		if got := SessionToken(in); got != want {
+			t.Errorf("SessionToken(%q) = %q, want %q", in, got, want)
+		}
 	}
 }
