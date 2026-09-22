@@ -1865,6 +1865,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/assistant/knowledge/search": {
+            "post": {
+                "description": "Returns up to 4 knowledge-base passages similar to the question (cosine similarity above 0.5), for the chat assistant.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assistant"
+                ],
+                "summary": "Search the assistant's knowledge base",
+                "parameters": [
+                    {
+                        "description": "Question",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "question": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_domain_entity.KnowledgeMatch"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/datasets": {
             "get": {
                 "description": "Returns a paginated list of publicly available datasets, optionally filtered by category",
@@ -4250,6 +4316,17 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "backend_internal_domain_entity.KnowledgeMatch": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "similarity": {
+                    "type": "number"
                 }
             }
         },

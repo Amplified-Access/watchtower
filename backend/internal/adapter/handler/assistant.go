@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"backend/internal/adapter/presenter"
+	"backend/internal/domain/entity"
 	assistantusecase "backend/internal/usecase/assistant"
 )
 
@@ -40,6 +41,7 @@ func (h *AssistantHandler) SearchKnowledge(c *gin.Context) {
 		return
 	}
 
+	var matches []*entity.KnowledgeMatch
 	matches, err := h.uc.SearchKnowledge(c.Request.Context(), req.Question)
 	if errors.Is(err, assistantusecase.ErrUnavailable) {
 		slog.Error("knowledge search unavailable", slog.String("error", err.Error()))
