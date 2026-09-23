@@ -66,6 +66,18 @@ make itest
 
 Runs database integration tests only (`go test ./internal/database -v`). Requires the database container to be running.
 
+## Re-embedding the knowledge base
+
+```
+go run ./cmd/reembed              # dry run: embeds everything, writes nothing
+go run ./cmd/reembed -apply       # rewrites every vector, after a backup
+go run ./cmd/reembed -limit 2     # dry run over the first 2 rows
+```
+
+Rewrites every vector in `embeddings` with the current `pkg/gemini.EmbeddingModel`. Vectors made by different models aren't comparable, so **changing the embedding model means running this** — until it's done, the chat assistant's knowledge search matches nothing. It only rewrites the `embedding` column; the chunk text in `content` and the rows in `resources` are untouched. `-apply` writes the old vectors and their text to `reembed-backup-<timestamp>.json` first, and updates every row in one transaction.
+
+Run in September 2026 when Google retired `text-embedding-004`.
+
 ## Database seeding
 
 ```bash

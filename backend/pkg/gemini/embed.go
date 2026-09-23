@@ -13,8 +13,17 @@ import (
 )
 
 // EmbeddingModel must stay the model the stored knowledge-base vectors were
-// made with (768 dimensions), or query vectors won't be comparable with them.
-const EmbeddingModel = "text-embedding-004"
+// made with, or query vectors won't be comparable with them. Changing it
+// means re-embedding every row (`go run ./cmd/reembed`).
+//
+// text-embedding-004 was retired by Google (404 from embedContent) and
+// replaced here in September 2026.
+const EmbeddingModel = "gemini-embedding-2"
+
+// EmbeddingDimensions keeps vectors at the width of the `embeddings.embedding`
+// column. gemini-embedding-2 returns normalised vectors at this size, so
+// cosine similarity needs no rescaling.
+const EmbeddingDimensions = 768
 
 const embedURL = "https://generativelanguage.googleapis.com/v1beta/models/" + EmbeddingModel + ":embedContent"
 
@@ -44,6 +53,7 @@ type embedRequest struct {
 			Text string `json:"text"`
 		} `json:"parts"`
 	} `json:"content"`
+	OutputDimensionality int `json:"outputDimensionality"`
 }
 
 type embedResponse struct {
@@ -66,6 +76,7 @@ func (c *Client) Embed(ctx context.Context, text string) ([]float32, error) {
 	reqBody.Content.Parts = []struct {
 		Text string `json:"text"`
 	}{{Text: text}}
+	reqBody.OutputDimensionality = EmbeddingDimensions
 	payload, err := json.Marshal(reqBody)
 	if err != nil {
 		return nil, err
@@ -96,8 +107,8 @@ func (c *Client) Embed(ctx context.Context, text string) ([]float32, error) {
 		}
 		return nil, fmt.Errorf("gemini: embed failed: %s", msg)
 	}
-	if len(body.Embedding.Values) == 0 {
-		return nil, errors.New("gemini: empty embedding")
+	if len(body.Embedding.Values) != EmbeddingDimensions {
+		return nil, fmt.Errorf("gemini: want %d dimensions, got %d", EmbeddingDimensions, len(body.Embedding.Values))
 	}
 	return body.Embedding.Values, nil
 }
