@@ -32,10 +32,12 @@ export const languages = [
   { code: "din", name: "Thuɔŋjäŋ", short: "Din", flag: "🇸🇸" },
 ];
 
+const defaultLocale = "en";
+
 function getCurrentLocale() {
-  if (typeof document === "undefined") return "en";
+  if (typeof document === "undefined") return defaultLocale;
   const match = document.cookie.match(/locale=([^;]+)/);
-  return match ? match[1] : "en";
+  return match ? match[1] : defaultLocale;
 }
 
 export default function LanguageSelector({
@@ -43,10 +45,15 @@ export default function LanguageSelector({
   className = "",
 }: LanguageSelectorProps) {
   const [isPending, startTransition] = useTransition();
-  const [currentLocale, setCurrentLocale] = useState("en");
+  // Starts at the default rather than reading the cookie during render: the
+  // server has no cookie access here, so an initialiser would render "Eng"
+  // into the HTML and something else on the client for every non-English
+  // visitor - a hydration mismatch.
+  const [currentLocale, setCurrentLocale] = useState(defaultLocale);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentLocale(getCurrentLocale());
   }, []);
 

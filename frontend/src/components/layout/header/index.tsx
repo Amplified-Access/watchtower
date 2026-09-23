@@ -23,6 +23,8 @@ const Header = () => {
 
   useEffect(() => {
     if (localStorage.getItem(BANNER_DISMISSED_KEY) === "1") {
+      // This value must be read after hydration to avoid a server/client mismatch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowBanner(false);
     }
   }, []);
