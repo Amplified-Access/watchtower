@@ -12,6 +12,84 @@ definitions:
       total:
         type: integer
     type: object
+  backend_internal_domain_entity.AnalyticsBucket:
+    properties:
+      fatalities:
+        type: integer
+      injuries:
+        type: integer
+      key:
+        description: |-
+          Key is the country, incident type, or the bucket's start date
+          (YYYY-MM-DD) for a time grouping.
+        type: string
+      reports:
+        type: integer
+    type: object
+  backend_internal_domain_entity.AnalyticsGroupBy:
+    enum:
+    - ""
+    - country
+    - type
+    - day
+    - week
+    - month
+    type: string
+    x-enum-varnames:
+    - GroupByNone
+    - GroupByCountry
+    - GroupByType
+    - GroupByDay
+    - GroupByWeek
+    - GroupByMonth
+  backend_internal_domain_entity.AnalyticsResult:
+    properties:
+      applied:
+        $ref: '#/definitions/backend_internal_domain_entity.AppliedFilter'
+      buckets:
+        items:
+          $ref: '#/definitions/backend_internal_domain_entity.AnalyticsBucket'
+        type: array
+      groupBy:
+        $ref: '#/definitions/backend_internal_domain_entity.AnalyticsGroupBy'
+      totals:
+        $ref: '#/definitions/backend_internal_domain_entity.AnalyticsBucket'
+      truncated:
+        description: Truncated says whether Limit cut buckets off the end.
+        type: boolean
+    type: object
+  backend_internal_domain_entity.AppliedFilter:
+    properties:
+      country:
+        type: string
+      from:
+        type: string
+      period:
+        type: string
+      query:
+        type: string
+      to:
+        type: string
+      type:
+        type: string
+    type: object
+  backend_internal_domain_entity.DataOverview:
+    properties:
+      countries:
+        items:
+          $ref: '#/definitions/backend_internal_domain_entity.AnalyticsBucket'
+        type: array
+      firstReportAt:
+        type: string
+      lastReportAt:
+        type: string
+      totalReports:
+        type: integer
+      types:
+        items:
+          $ref: '#/definitions/backend_internal_domain_entity.AnalyticsBucket'
+        type: array
+    type: object
   backend_internal_domain_entity.KnowledgeMatch:
     properties:
       content:
@@ -1359,6 +1437,92 @@ paths:
       summary: Deactivate alert subscription
       tags:
       - Alerts
+  /analytics/incidents:
+    get:
+      description: Counts reports, injuries and fatalities for a filter, optionally
+        split by country, incident type, day, week or month. Covers the same anonymous
+        reports as the public maps. Built for the chat assistant's data questions.
+      parameters:
+      - description: 'Split by: country, type, day, week or month. Omit for totals
+          only'
+        in: query
+        name: groupBy
+        type: string
+      - description: Incident type name
+        in: query
+        name: category
+        type: string
+      - description: Country name
+        in: query
+        name: country
+        type: string
+      - description: 'Relative window: 24h, 7d, 30d, week, month or year'
+        in: query
+        name: period
+        type: string
+      - description: Start date (YYYY-MM-DD), instead of period
+        in: query
+        name: from
+        type: string
+      - description: End date, inclusive (YYYY-MM-DD), instead of period
+        in: query
+        name: to
+        type: string
+      - description: Search place names and descriptions
+        in: query
+        name: q
+        type: string
+      - description: Maximum buckets (default 20, max 200)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain_entity.AnalyticsResult'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Aggregate public incident reports
+      tags:
+      - Analytics
+  /analytics/overview:
+    get:
+      description: Total public reports, the window they cover, and the country and
+        incident type names available to filter by. Meant to be read before querying,
+        so a question is asked with names that exist.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain_entity.DataOverview'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: What report data exists
+      tags:
+      - Analytics
   /assistant/knowledge/search:
     post:
       consumes:
@@ -2299,6 +2463,10 @@ paths:
             $ref: '#/definitions/backend_internal_adapter_presenter.Response'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "409":
+          description: An application already uses this email
           schema:
             $ref: '#/definitions/backend_internal_adapter_presenter.Response'
         "500":

@@ -1865,6 +1865,138 @@ const docTemplate = `{
                 }
             }
         },
+        "/analytics/incidents": {
+            "get": {
+                "description": "Counts reports, injuries and fatalities for a filter, optionally split by country, incident type, day, week or month. Covers the same anonymous reports as the public maps. Built for the chat assistant's data questions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Aggregate public incident reports",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Split by: country, type, day, week or month. Omit for totals only",
+                        "name": "groupBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Incident type name",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Country name",
+                        "name": "country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Relative window: 24h, 7d, 30d, week, month or year",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start date (YYYY-MM-DD), instead of period",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date, inclusive (YYYY-MM-DD), instead of period",
+                        "name": "to",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search place names and descriptions",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum buckets (default 20, max 200)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_domain_entity.AnalyticsResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/overview": {
+            "get": {
+                "description": "Total public reports, the window they cover, and the country and incident type names available to filter by. Meant to be read before querying, so a question is asked with names that exist.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "What report data exists",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_domain_entity.DataOverview"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/assistant/knowledge/search": {
             "post": {
                 "description": "Returns up to 4 knowledge-base passages similar to the question (cosine similarity above 0.5), for the chat assistant.",
@@ -3270,6 +3402,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
                         }
                     },
+                    "409": {
+                        "description": "An application already uses this email",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -4440,6 +4578,116 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "backend_internal_domain_entity.AnalyticsBucket": {
+            "type": "object",
+            "properties": {
+                "fatalities": {
+                    "type": "integer"
+                },
+                "injuries": {
+                    "type": "integer"
+                },
+                "key": {
+                    "description": "Key is the country, incident type, or the bucket's start date\n(YYYY-MM-DD) for a time grouping.",
+                    "type": "string"
+                },
+                "reports": {
+                    "type": "integer"
+                }
+            }
+        },
+        "backend_internal_domain_entity.AnalyticsGroupBy": {
+            "type": "string",
+            "enum": [
+                "",
+                "country",
+                "type",
+                "day",
+                "week",
+                "month"
+            ],
+            "x-enum-varnames": [
+                "GroupByNone",
+                "GroupByCountry",
+                "GroupByType",
+                "GroupByDay",
+                "GroupByWeek",
+                "GroupByMonth"
+            ]
+        },
+        "backend_internal_domain_entity.AnalyticsResult": {
+            "type": "object",
+            "properties": {
+                "applied": {
+                    "$ref": "#/definitions/backend_internal_domain_entity.AppliedFilter"
+                },
+                "buckets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_internal_domain_entity.AnalyticsBucket"
+                    }
+                },
+                "groupBy": {
+                    "$ref": "#/definitions/backend_internal_domain_entity.AnalyticsGroupBy"
+                },
+                "totals": {
+                    "$ref": "#/definitions/backend_internal_domain_entity.AnalyticsBucket"
+                },
+                "truncated": {
+                    "description": "Truncated says whether Limit cut buckets off the end.",
+                    "type": "boolean"
+                }
+            }
+        },
+        "backend_internal_domain_entity.AppliedFilter": {
+            "type": "object",
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "from": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "query": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_internal_domain_entity.DataOverview": {
+            "type": "object",
+            "properties": {
+                "countries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_internal_domain_entity.AnalyticsBucket"
+                    }
+                },
+                "firstReportAt": {
+                    "type": "string"
+                },
+                "lastReportAt": {
+                    "type": "string"
+                },
+                "totalReports": {
+                    "type": "integer"
+                },
+                "types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_internal_domain_entity.AnalyticsBucket"
+                    }
                 }
             }
         },
