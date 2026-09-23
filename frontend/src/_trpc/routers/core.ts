@@ -39,7 +39,10 @@ export const coreRouter = router({
     .mutation(async ({ input }) => {
       const res = await organizationsApi.submitApplication(input);
       if (!res.success) {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.error ?? "Failed" });
+        throw new TRPCError({
+          code: res.status === 409 ? "CONFLICT" : "INTERNAL_SERVER_ERROR",
+          message: res.error ?? "Failed",
+        });
       }
       return res.data;
     }),

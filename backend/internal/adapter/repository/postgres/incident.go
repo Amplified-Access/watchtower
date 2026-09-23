@@ -496,42 +496,9 @@ func (r *AnonymousIncidentReportRepository) GetHeatmapData(ctx context.Context) 
 // FindForMap selects only the columns the maps draw; descriptions, entities
 // and file keys stay in the table until a single report is opened.
 func (r *AnonymousIncidentReportRepository) FindForMap(ctx context.Context, f entity.MapFilter) ([]*entity.MapReportRow, error) {
-	q := `SELECT id, incident_type_id, location, created_at FROM anonymous_incident_reports WHERE 1=1`
 	args := []interface{}{}
-	arg := func(v interface{}) string {
-		args = append(args, v)
-		return fmt.Sprintf("$%d", len(args))
-	}
-
-	if f.Category != "" {
-		q += " AND incident_type_id = (SELECT id FROM incident_types WHERE name = " + arg(f.Category) + " LIMIT 1)"
-	}
-	if len(f.ExcludeTypeIDs) > 0 {
-		// Passed as one comma-joined string so the query doesn't depend on
-		// the driver's array encoding. IDs are UUIDs, so they hold no commas.
-		q += " AND NOT (incident_type_id::text = ANY(string_to_array(" + arg(strings.Join(f.ExcludeTypeIDs, ",")) + ", ',')))"
-	}
-	if f.Country != "" {
-		q += " AND location->>'country' = " + arg(f.Country)
-	}
-	if interval := f.Period.Interval(); interval != "" {
-		q += " AND created_at >= now() - " + arg(interval) + "::interval"
-	}
-	if f.From != nil {
-		q += " AND created_at >= " + arg(*f.From)
-	}
-	if f.To != nil {
-		q += " AND created_at < " + arg(*f.To)
-	}
-	if f.Query != "" {
-		pattern := "%" + likeEscaper.Replace(f.Query) + "%"
-		p := arg(pattern)
-		q += " AND (description ILIKE " + p +
-			" OR location->>'name' ILIKE " + p +
-			" OR location->>'address' ILIKE " + p +
-			" OR location->>'country' ILIKE " + p + ")"
-	}
-	q += " ORDER BY created_at DESC"
+	q := `SELECT r.id, r.incident_type_id, r.location, r.created_at FROM anonymous_incident_reports r WHERE 1=1` +
+		mapFilterSQL(f, &args) + " ORDER BY r.created_at DESC"
 
 	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
@@ -552,6 +519,149 @@ func (r *AnonymousIncidentReportRepository) FindForMap(ctx context.Context, f en
 		out = append(out, row)
 	}
 	return out, rows.Err()
+}
+
+// mapFilterSQL appends the shared WHERE clauses for a map filter and returns
+// them, growing args as it goes. The maps and the analytics aggregates run
+// through it so they always count the same rows.
+//
+// Columns are qualified with "r.": the aggregates join incident_types, which
+// has created_at and description columns of its own, so unqualified names
+// there are ambiguous.
+func mapFilterSQL(f entity.MapFilter, args *[]interface{}) string {
+	arg := func(v interface{}) string {
+		*args = append(*args, v)
+		return fmt.Sprintf("$%d", len(*args))
+	}
+
+	var q string
+	if f.Category != "" {
+		q += " AND r.incident_type_id = (SELECT id FROM incident_types WHERE name = " + arg(f.Category) + " LIMIT 1)"
+	}
+	if len(f.ExcludeTypeIDs) > 0 {
+		// Passed as one comma-joined string so the query doesn't depend on
+		// the driver's array encoding. IDs are UUIDs, so they hold no commas.
+		q += " AND NOT (r.incident_type_id::text = ANY(string_to_array(" + arg(strings.Join(f.ExcludeTypeIDs, ",")) + ", ',')))"
+	}
+	if f.Country != "" {
+		q += " AND r.location->>'country' = " + arg(f.Country)
+	}
+	if interval := f.Period.Interval(); interval != "" {
+		q += " AND r.created_at >= now() - " + arg(interval) + "::interval"
+	}
+	if f.From != nil {
+		q += " AND r.created_at >= " + arg(*f.From)
+	}
+	if f.To != nil {
+		q += " AND r.created_at < " + arg(*f.To)
+	}
+	if f.Query != "" {
+		pattern := "%" + likeEscaper.Replace(f.Query) + "%"
+		p := arg(pattern)
+		q += " AND (r.description ILIKE " + p +
+			" OR r.location->>'name' ILIKE " + p +
+			" OR r.location->>'address' ILIKE " + p +
+			" OR r.location->>'country' ILIKE " + p + ")"
+	}
+	return q
+}
+
+// groupExpressions map a grouping dimension to its SQL. The keys are the
+// only values a caller can pick from, so no caller-supplied text ever
+// reaches the query.
+var groupExpressions = map[entity.AnalyticsGroupBy]string{
+	entity.GroupByCountry: "COALESCE(NULLIF(r.location->>'country', ''), 'Unknown')",
+	entity.GroupByType:    "COALESCE(t.name, 'Unknown')",
+	entity.GroupByDay:     "to_char(date_trunc('day', r.created_at), 'YYYY-MM-DD')",
+	entity.GroupByWeek:    "to_char(date_trunc('week', r.created_at), 'YYYY-MM-DD')",
+	entity.GroupByMonth:   "to_char(date_trunc('month', r.created_at), 'YYYY-MM-DD')",
+}
+
+// Aggregate counts reports and casualties for a filter, optionally split by
+// one dimension.
+func (r *AnonymousIncidentReportRepository) Aggregate(ctx context.Context, query entity.AnalyticsQuery) (*entity.AnalyticsResult, error) {
+	result := &entity.AnalyticsResult{GroupBy: query.GroupBy, Buckets: []entity.AnalyticsBucket{}}
+
+	totalArgs := []interface{}{}
+	totalQ := `SELECT count(*), COALESCE(sum(injuries), 0), COALESCE(sum(fatalities), 0)
+		FROM anonymous_incident_reports r WHERE 1=1` + mapFilterSQL(query.Filter, &totalArgs)
+	if err := r.db.QueryRowContext(ctx, totalQ, totalArgs...).Scan(
+		&result.Totals.Reports, &result.Totals.Injuries, &result.Totals.Fatalities); err != nil {
+		return nil, err
+	}
+
+	expr, grouped := groupExpressions[query.GroupBy]
+	if !grouped {
+		return result, nil
+	}
+
+	order := "reports DESC, key ASC"
+	if query.GroupBy.OverTime() {
+		order = "key ASC"
+	}
+	args := []interface{}{}
+	q := `SELECT ` + expr + ` AS key, count(*) AS reports,
+			COALESCE(sum(r.injuries), 0), COALESCE(sum(r.fatalities), 0)
+		FROM anonymous_incident_reports r
+		LEFT JOIN incident_types t ON t.id = r.incident_type_id
+		WHERE 1=1` + mapFilterSQL(query.Filter, &args) +
+		` GROUP BY key ORDER BY ` + order
+
+	// One extra row tells us whether the limit cut anything off.
+	args = append(args, query.Limit+1)
+	q += fmt.Sprintf(" LIMIT $%d", len(args))
+
+	rows, err := r.db.QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var b entity.AnalyticsBucket
+		if err := rows.Scan(&b.Key, &b.Reports, &b.Injuries, &b.Fatalities); err != nil {
+			return nil, err
+		}
+		if len(result.Buckets) == query.Limit {
+			result.Truncated = true
+			break
+		}
+		result.Buckets = append(result.Buckets, b)
+	}
+	return result, rows.Err()
+}
+
+// Overview describes the reports available to analyse.
+func (r *AnonymousIncidentReportRepository) Overview(ctx context.Context, limit int) (*entity.DataOverview, error) {
+	o := &entity.DataOverview{Countries: []entity.AnalyticsBucket{}, Types: []entity.AnalyticsBucket{}}
+
+	var first, last sql.NullTime
+	if err := r.db.QueryRowContext(ctx,
+		`SELECT count(*), min(created_at), max(created_at) FROM anonymous_incident_reports`).
+		Scan(&o.TotalReports, &first, &last); err != nil {
+		return nil, err
+	}
+	if first.Valid {
+		o.FirstReportAt = &first.Time
+	}
+	if last.Valid {
+		o.LastReportAt = &last.Time
+	}
+
+	for _, dim := range []struct {
+		group entity.AnalyticsGroupBy
+		into  *[]entity.AnalyticsBucket
+	}{
+		{entity.GroupByCountry, &o.Countries},
+		{entity.GroupByType, &o.Types},
+	} {
+		res, err := r.Aggregate(ctx, entity.AnalyticsQuery{GroupBy: dim.group, Limit: limit})
+		if err != nil {
+			return nil, err
+		}
+		*dim.into = res.Buckets
+	}
+	return o, nil
 }
 
 // likeEscaper keeps a search term's % and _ literal inside ILIKE.

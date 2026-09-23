@@ -73,6 +73,7 @@ func (h *OrganizationHandler) GetBySlug(c *gin.Context) {
 //	@Param			body	body		object{organizationName=string,applicantName=string,applicantEmail=string,website=string,certificateOfIncorporation=string}	true	"Application payload"
 //	@Success		201		{object}	presenter.Response
 //	@Failure		400		{object}	presenter.Response
+//	@Failure		409		{object}	presenter.Response	"An application already uses this email"
 //	@Failure		500		{object}	presenter.Response
 //	@Router			/organizations/apply [post]
 func (h *OrganizationHandler) SubmitApplication(c *gin.Context) {

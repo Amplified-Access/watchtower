@@ -14,6 +14,7 @@ import (
 	cacheRepo "backend/internal/adapter/repository/cache"
 	pgRepo "backend/internal/adapter/repository/postgres"
 	adminuc "backend/internal/usecase/admin"
+	analyticsuc "backend/internal/usecase/analytics"
 	alertuc "backend/internal/usecase/alert"
 	assistantuc "backend/internal/usecase/assistant"
 	authuc "backend/internal/usecase/auth"
@@ -47,6 +48,7 @@ type Server struct {
 	emailHandler     *handler.EmailHandler
 	authHandler      *handler.AuthHandler
 	assistantHandler *handler.AssistantHandler
+	analyticsHandler *handler.AnalyticsHandler
 	fileHandler      *handler.FileHandler
 	userUseCase      *useruc.UseCase
 }
@@ -92,6 +94,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	datasetUC := datasetuuc.New(datasetRepo)
 	alertUC := alertuc.New(alertRepo)
 	assistantUC := assistantuc.New(gemini.New(), knowledgeRepo)
+	analyticsUC := analyticsuc.New(anonReportRepo)
 	fileUC := fileuc.New(r2.New(), allowedExternalDomains())
 	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo, orgReportRepo, anonReportRepo)
 
@@ -111,6 +114,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 		emailHandler:     handler.NewEmailHandler(mailSvc),
 		authHandler:      handler.NewAuthHandler(authUC),
 		assistantHandler: handler.NewAssistantHandler(assistantUC),
+		analyticsHandler: handler.NewAnalyticsHandler(analyticsUC),
 		fileHandler:      handler.NewFileHandler(fileUC),
 		userUseCase:      userUC,
 	}

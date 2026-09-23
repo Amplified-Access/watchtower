@@ -80,6 +80,7 @@ describe("ApiResponse.fromFetch", () => {
     const result = await ApiResponse.fromFetch(res);
     expect(result.success).toBe(false);
     expect(result.error).toBe("Token expired");
+    expect(result.status).toBe(401);
   });
 });
 

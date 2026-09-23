@@ -3,11 +3,18 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
+
 	"backend/internal/domain/entity"
+	domainerrors "backend/internal/domain/errors"
 )
+
+// pgUniqueViolation is Postgres's error code for a unique constraint failure.
+const pgUniqueViolation = "23505"
 
 type OrganizationRepository struct {
 	db *sql.DB
@@ -207,6 +214,12 @@ func (r *OrganizationApplicationRepository) Create(ctx context.Context, app *ent
 	now := time.Now()
 	_, err := r.db.ExecContext(ctx, q, app.OrganizationName, app.ApplicantName, app.ApplicantEmail,
 		app.Website, app.CertificateOfIncorporation, string(app.Status), now, now)
+	// applicant_email is unique. Checking the constraint here, rather than
+	// looking the email up first, also covers two submissions racing.
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == pgUniqueViolation {
+		return domainerrors.NewConflict("an application has already been submitted with this email")
+	}
 	return err
 }
 

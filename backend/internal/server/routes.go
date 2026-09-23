@@ -73,6 +73,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 		pub.GET("/map/summary", s.incidentHandler.GetMapSummary)
 		pub.GET("/map/reports/:id", s.incidentHandler.GetMapReport)
 
+		// Analytics over the public reports: the assistant's data tools,
+		// and anything else that needs counts rather than points.
+		pub.GET("/analytics/incidents", s.analyticsHandler.QueryIncidents)
+		pub.GET("/analytics/overview", s.analyticsHandler.GetOverview)
+
 		// Chat assistant: knowledge-base search. Called from the Next server,
 		// so the strict per-IP limit would be shared by every chat user.
 		pub.POST("/assistant/knowledge/search", s.assistantHandler.SearchKnowledge)

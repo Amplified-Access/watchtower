@@ -22,7 +22,7 @@ func NewKnowledgeRepository(db *sql.DB) *KnowledgeRepository {
 func (r *KnowledgeRepository) Search(ctx context.Context, embedding []float32, minSimilarity float64, limit int) ([]*entity.KnowledgeMatch, error) {
 	const q = `
 		SELECT content, 1 - (embedding <=> $1::vector) AS similarity
-		FROM embedding
+		FROM embeddings
 		WHERE 1 - (embedding <=> $1::vector) > $2
 		ORDER BY similarity DESC
 		LIMIT $3`
