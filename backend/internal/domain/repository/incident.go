@@ -40,6 +40,12 @@ type AnonymousIncidentReportRepository interface {
 	GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error)
 	// FindForMap returns the rows behind the public maps, newest first.
 	FindForMap(ctx context.Context, filter entity.MapFilter) ([]*entity.MapReportRow, error)
+	// Aggregate counts reports and casualties for a filter, optionally
+	// split by one dimension. It counts the same rows FindForMap returns.
+	Aggregate(ctx context.Context, query entity.AnalyticsQuery) (*entity.AnalyticsResult, error)
+	// Overview describes the reports available to analyse, with at most
+	// limit countries and types.
+	Overview(ctx context.Context, limit int) (*entity.DataOverview, error)
 }
 
 type OrganizationIncidentReportRepository interface {

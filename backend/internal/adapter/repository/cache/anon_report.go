@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	heatmapTTL        = 30 * time.Minute
-	keyAnonHeatmap    = "anon:heatmap"
+	heatmapTTL     = 30 * time.Minute
+	keyAnonHeatmap = "anon:heatmap"
 
 	// Map rows are cached per filter. Rather than hunting down every filter
 	// combination when a report comes in, the keys carry a version number
@@ -87,6 +87,40 @@ func mapRowsKey(version string, f entity.MapFilter) string {
 		version = "0"
 	}
 	return "anon:map:v" + version + ":" + hex.EncodeToString(sum[:])
+}
+
+// Aggregate and Overview are cached under the same version as the map rows,
+// so a new report strands every stale aggregate at once.
+func (r *CachedAnonymousReportRepository) Aggregate(ctx context.Context, query entity.AnalyticsQuery) (*entity.AnalyticsResult, error) {
+	key := analyticsKey(r.rdb.Get(ctx, keyMapVersion).Val(), query)
+	if cached, ok := cacheGet[*entity.AnalyticsResult](ctx, r.rdb, key); ok {
+		return cached, nil
+	}
+	result, err := r.repo.Aggregate(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	cacheSet(ctx, r.rdb, key, result, mapRowsTTL)
+	return result, nil
+}
+
+func (r *CachedAnonymousReportRepository) Overview(ctx context.Context, limit int) (*entity.DataOverview, error) {
+	key := fmt.Sprintf("anon:overview:v%s:%d", r.rdb.Get(ctx, keyMapVersion).Val(), limit)
+	if cached, ok := cacheGet[*entity.DataOverview](ctx, r.rdb, key); ok {
+		return cached, nil
+	}
+	result, err := r.repo.Overview(ctx, limit)
+	if err != nil {
+		return nil, err
+	}
+	cacheSet(ctx, r.rdb, key, result, mapRowsTTL)
+	return result, nil
+}
+
+// analyticsKey reuses the map filter's canonical form, plus the grouping and
+// limit that shape the buckets.
+func analyticsKey(version string, q entity.AnalyticsQuery) string {
+	return fmt.Sprintf("%s:g=%s:l=%d", mapRowsKey(version, q.Filter), q.GroupBy, q.Limit)
 }
 
 func (r *CachedAnonymousReportRepository) GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error) {
