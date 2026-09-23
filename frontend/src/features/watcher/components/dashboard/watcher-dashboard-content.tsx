@@ -72,12 +72,16 @@ export default function WatcherDashboardContent() {
   const totalForms = Array.isArray(activeForms) ? activeForms.length : 0;
 
   // Transform incident reports for display
-  const myIncidents = (myIncidentReports?.reports || []).map((report: any) => ({
+  const myIncidents = (myIncidentReports?.reports ?? []).map((report) => ({
     id: report.id,
-    title: `${report.incidentTypeName} Incident`,
+    // The list endpoint does not join the incident type, so the name is
+    // usually absent; it used to render as "undefined Incident".
+    title: report.incidentType?.name
+      ? `${report.incidentType.name} Incident`
+      : "Incident report",
     status: report.verified ? "resolved" : "reported",
     date: new Date(report.createdAt).toLocaleDateString(),
-    type: report.incidentTypeName || "General Incident",
+    type: report.incidentType?.name || "General Incident",
     href: `/watcher/incidents/${report.id}`,
   }));
 
@@ -142,7 +146,7 @@ export default function WatcherDashboardContent() {
           <StatsCard
             title="Pending Actions"
             value={
-              myIncidents.filter((i: any) => i.status === "reported").length
+              myIncidents.filter((i) => i.status === "reported").length
             }
             icon={Clock}
             change={{
@@ -154,7 +158,7 @@ export default function WatcherDashboardContent() {
           <StatsCard
             title="Completion Rate"
             value={`${
-              myIncidents.filter((i: any) => i.status === "resolved").length
+              myIncidents.filter((i) => i.status === "resolved").length
             }/${myIncidents.length || 1}`}
             icon={CheckCircle}
             change={{

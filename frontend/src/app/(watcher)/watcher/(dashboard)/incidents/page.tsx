@@ -100,9 +100,13 @@ const Page = () => {
   const myOrgIncidentReports = orgIncidentReports?.reports || [];
 
   // Transform organization incident reports to match the old incident format for display
-  const transformedOrgReports = myOrgIncidentReports.map((report: any) => ({
+  const transformedOrgReports = myOrgIncidentReports.map((report) => ({
     id: report.id,
-    formName: `${report.incidentTypeName} Incident Report`,
+    // The list endpoint does not join the incident type, so the name is
+    // usually absent; it used to render as "undefined Incident Report".
+    formName: report.incidentType?.name
+      ? `${report.incidentType.name} Incident Report`
+      : "Incident report",
     status: report.verified ? "resolved" : "reported", // Simple status mapping
     data: {
       location: report.location,

@@ -33,6 +33,7 @@ import {
   casualtyOptions,
   severityOptions,
 } from "../schemas/organization-incident-form-schema";
+import type { LocationSuggestion } from "../domain/organization-incident-report";
 import { trpc } from "@/_trpc/client";
 
 interface StandaloneOrganizationIncidentFormProps {
@@ -43,9 +44,10 @@ const StandaloneOrganizationIncidentForm: React.FC<
   StandaloneOrganizationIncidentFormProps
 > = ({ onSuccess }) => {
   const [locationSearch, setLocationSearch] = useState("");
-  const [locations, setLocations] = useState<any[]>([]);
+  const [locations, setLocations] = useState<LocationSuggestion[]>([]);
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  const [selectedLocation, setSelectedLocation] =
+    useState<LocationSuggestion | null>(null);
 
   // Get organization's incident types
   const { data: incidentTypesData, isLoading: isLoadingTypes } =
@@ -91,7 +93,7 @@ const StandaloneOrganizationIncidentForm: React.FC<
   }, [searchLocation.data, searchLocation.error]);
 
   const form = useForm<OrganizationIncidentFormData>({
-    resolver: zodResolver(organizationIncidentFormSchema as any),
+    resolver: zodResolver(organizationIncidentFormSchema),
     defaultValues: {
       entities: [],
       severity: "medium",
@@ -115,18 +117,12 @@ const StandaloneOrganizationIncidentForm: React.FC<
   }, []);
 
   // Handle location selection
-  const handleLocationSelect = (location: any) => {
+  const handleLocationSelect = (location: LocationSuggestion) => {
     setSelectedLocation(location);
     // Map the selected location to the expected schema
     setValue("location", {
-      lat:
-        typeof location.lat === "string"
-          ? parseFloat(location.lat)
-          : location.lat,
-      lon:
-        typeof location.lon === "string"
-          ? parseFloat(location.lon)
-          : location.lon,
+      lat: parseFloat(location.lat ?? "") || 0,
+      lon: parseFloat(location.lon ?? "") || 0,
       admin1: location.admin1 || location.state || location.region || "",
       region: location.region || location.state || location.admin1 || "",
       country:
@@ -134,7 +130,7 @@ const StandaloneOrganizationIncidentForm: React.FC<
         location.display_name?.split(",").pop()?.trim() ||
         "",
     });
-    setLocationSearch(location.display_name);
+    setLocationSearch(location.display_name ?? "");
     setLocations([]);
     trigger("location");
   };
@@ -160,8 +156,13 @@ const StandaloneOrganizationIncidentForm: React.FC<
   // Submit handler
   const onSubmit = (data: OrganizationIncidentFormData) => {
     // console.log("Executing......");
+    // Counts come from the selects as "0".."5" and "6+"; the mutation takes
+    // numbers.
+    const toCount = (value: string) => (value === "6+" ? 6 : Number(value));
     const submissionData = {
       ...data,
+      injuries: toCount(data.injuries),
+      fatalities: toCount(data.fatalities),
       location: {
         latitude: data.location.lat,
         longitude: data.location.lon,
@@ -169,7 +170,7 @@ const StandaloneOrganizationIncidentForm: React.FC<
         country: data.location.country,
       },
     };
-    submitReport.mutate(submissionData as any);
+    submitReport.mutate(submissionData);
   };
 
   const incidentTypes = incidentTypesData || [];

@@ -40,6 +40,7 @@ import {
   casualtyOptions,
   severityOptions,
 } from "../schemas/organization-incident-form-schema";
+import type { LocationSuggestion } from "../domain/organization-incident-report";
 import { trpc } from "@/_trpc/client";
 
 interface OrganizationIncidentReportFormProps {
@@ -52,13 +53,14 @@ const OrganizationIncidentReportForm: React.FC<
   OrganizationIncidentReportFormProps
 > = ({ isOpen, onClose, onSuccess }) => {
   const [locationSearch, setLocationSearch] = useState("");
-  const [locations, setLocations] = useState<any[]>([]);
+  const [locations, setLocations] = useState<LocationSuggestion[]>([]);
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  const [selectedLocation, setSelectedLocation] =
+    useState<LocationSuggestion | null>(null);
 
   // Transform LocationIQ API response to our simplified format
   const transformLocationData = (
-    locationIQResponse: any,
+    locationIQResponse: LocationSuggestion,
   ): OrganizationLocationData => {
     // Parse the display_name to extract region and admin1
     const displayName = locationIQResponse.display_name || "";
@@ -85,8 +87,8 @@ const OrganizationIncidentReportForm: React.FC<
     };
 
     return {
-      lat: parseFloat(locationIQResponse.lat) || 0,
-      lon: parseFloat(locationIQResponse.lon) || 0,
+      lat: parseFloat(locationIQResponse.lat ?? "") || 0,
+      lon: parseFloat(locationIQResponse.lon ?? "") || 0,
       admin1: admin1 || "Unknown",
       region: getRegionForCountry(country),
       country: country || "Unknown",
@@ -105,7 +107,7 @@ const OrganizationIncidentReportForm: React.FC<
 
   // Initialize form using shadcn Form pattern
   const form = useForm<OrganizationIncidentFormData>({
-    resolver: zodResolver(organizationIncidentFormSchema as any),
+    resolver: zodResolver(organizationIncidentFormSchema),
     mode: "onChange", // Enable real-time validation
     defaultValues: {
       entities: [],
@@ -171,12 +173,12 @@ const OrganizationIncidentReportForm: React.FC<
   }, []);
 
   // Handle location selection
-  const handleLocationSelect = (location: any) => {
+  const handleLocationSelect = (location: LocationSuggestion) => {
     setSelectedLocation(location);
     // Transform the LocationIQ response to our simplified format
     const transformedLocation = transformLocationData(location);
     form.setValue("location", transformedLocation);
-    setLocationSearch(location.display_name);
+    setLocationSearch(location.display_name ?? "");
     setLocations([]);
   };
 
@@ -201,8 +203,14 @@ const OrganizationIncidentReportForm: React.FC<
   const onSubmit = (data: OrganizationIncidentFormData) => {
     console.log("🚀 Form submission data:", data);
     console.log("📍 Location data:", data.location);
+    // The selects store counts as "0".."5" and "6+"; the mutation takes
+    // numbers. Removing an `as any` here surfaced that the strings were being
+    // sent through unconverted.
+    const toCount = (value: string) => (value === "6+" ? 6 : Number(value));
     const submissionData = {
       ...data,
+      injuries: toCount(data.injuries),
+      fatalities: toCount(data.fatalities),
       location: {
         latitude: data.location.lat,
         longitude: data.location.lon,
@@ -210,7 +218,7 @@ const OrganizationIncidentReportForm: React.FC<
         country: data.location.country,
       },
     };
-    submitReport.mutate(submissionData as any);
+    submitReport.mutate(submissionData);
   };
 
   // Reset form when dialog closes
@@ -321,7 +329,7 @@ const OrganizationIncidentReportForm: React.FC<
                     onClick={() => {
                       setSelectedLocation(null);
                       setLocationSearch("");
-                      form.setValue("location", undefined as any);
+                      form.resetField("location");
                     }}
                   >
                     <X className="h-4 w-4" />

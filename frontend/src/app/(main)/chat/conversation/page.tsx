@@ -1,6 +1,13 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import type { UIMessage } from "ai";
+import {
+  getSpeechRecognition,
+  type SpeechRecognition,
+  type SpeechRecognitionErrorEvent,
+  type SpeechRecognitionEvent,
+} from "@/types/speech-recognition";
 import { useState, useEffect, Suspense, useRef, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -30,7 +37,7 @@ import Loader from "@/components/ai/chat/loader";
 import { toast } from "sonner";
 
 // Custom hook for smooth auto-scrolling chat to bottom
-function useChatScroll(messages: any[]) {
+function useChatScroll(messages: UIMessage[]) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -59,7 +66,7 @@ function ChatContent() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const shouldListenRef = useRef(false);
   const processedStarterRef = useRef<string | null>(null);
   const { messages, sendMessage } = useChat({
@@ -114,9 +121,7 @@ function ChatContent() {
   // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition;
+      const SpeechRecognition = getSpeechRecognition();
 
       if (SpeechRecognition) {
         const initRecognition = () => {
@@ -126,14 +131,14 @@ function ChatContent() {
           recognitionRef.current.lang = "en-US";
           recognitionRef.current.maxAlternatives = 1;
 
-          recognitionRef.current.onresult = (event: any) => {
+          recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
             const results = event.results;
             const transcript = results[results.length - 1][0].transcript;
 
             setInput((prev) => prev + transcript + " ");
           };
 
-          recognitionRef.current.onerror = (event: any) => {
+          recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
             console.log("Speech recognition error:", event.error);
 
             if (event.error === "not-allowed") {
@@ -209,7 +214,7 @@ function ChatContent() {
         recognitionRef.current.start();
         setIsListening(true);
         toast.success("Listening... Speak now");
-      } catch (error: any) {
+      } catch (error) {
         console.log("Error starting recognition:", error);
         shouldListenRef.current = false;
         setIsListening(false);

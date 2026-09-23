@@ -2,6 +2,10 @@
 
 import { trpc } from "@/_trpc/client";
 import { useExtendedSession } from "@/hooks/use-extended-session";
+import {
+  formFieldEntries,
+  type FormFieldDefinition,
+} from "@/types/form-definition";
 import Loader from "@/components/common/loader";
 import { toast } from "sonner";
 import { useState, useRef } from "react";
@@ -43,7 +47,8 @@ interface FormSubmissionContentProps {
 const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const router = useRouter();
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  // Every input on these generated forms yields a string.
+  const [formData, setFormData] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("FormSubmission");
   const tCommon = useTranslations("Common");
@@ -65,7 +70,7 @@ const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
     },
   });
 
-  const handleInputChange = (fieldKey: string, value: any) => {
+  const handleInputChange = (fieldKey: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [fieldKey]: value,
@@ -81,18 +86,12 @@ const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
     }
 
     // Validate required fields
-    const definition = form.definition || {};
-    const requiredFields = Object.entries(definition).filter(
-      ([_, field]: [string, any]) =>
-        field?.required === true || field?.required === "on",
+    const requiredFields = formFieldEntries(form.definition).filter(
+      ([, field]) => field.required === true || field.required === "on",
     );
 
-    for (const [fieldKey, field] of requiredFields as [string, any][]) {
-      if (
-        !formData[fieldKey] ||
-        (typeof formData[fieldKey] === "string" &&
-          formData[fieldKey].trim() === "")
-      ) {
+    for (const [fieldKey, field] of requiredFields) {
+      if (!formData[fieldKey] || formData[fieldKey].trim() === "") {
         toast.error(`${t("requiredFieldError")} ${field.title || fieldKey}`);
         return;
       }
@@ -110,7 +109,7 @@ const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
     }
   };
 
-  const renderFormField = (fieldKey: string, field: any) => {
+  const renderFormField = (fieldKey: string, field: FormFieldDefinition) => {
     const fieldValue = formData[fieldKey] || "";
     const isRequired = field.required === true || field.required === "on";
     const description = field.description || "";
@@ -299,7 +298,7 @@ const FormSubmissionContent = ({ formId }: FormSubmissionContentProps) => {
   }
 
   const definition = form.definition || {};
-  const fieldEntries = Object.entries(definition);
+  const fieldEntries = formFieldEntries(form.definition);
 
   return (
     <Container className="max-w-2xl space-y-6">

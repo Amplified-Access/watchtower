@@ -53,8 +53,12 @@ import {
   type DatasetUpload,
   type DatasetUpdate,
 } from "@/features/datasets/schemas/dataset-schema";
+import type { RouterOutputs } from "@/_trpc/client";
 import Container from "@/components/common/container";
 import { uploadFile as uploadFileToStorage } from "@/utils/file-upload";
+
+/** One row as the admin datasets query returns it. */
+type AdminDataset = RouterOutputs["getAllDatasets"]["data"][number];
 
 const SuperAdminDatasetsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,7 +66,9 @@ const SuperAdminDatasetsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingDataset, setEditingDataset] = useState<any>(null);
+  const [editingDataset, setEditingDataset] = useState<AdminDataset | null>(
+    null,
+  );
   const [isUploading, setIsUploading] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
@@ -118,7 +124,7 @@ const SuperAdminDatasetsPage = () => {
 
   // Form setup for upload
   const form = useForm<DatasetUpload>({
-    resolver: zodResolver(datasetUploadSchema as any),
+    resolver: zodResolver(datasetUploadSchema),
     defaultValues: {
       license: "CC BY 4.0",
       version: "1.0",
@@ -130,7 +136,7 @@ const SuperAdminDatasetsPage = () => {
 
   // Form setup for edit
   const editForm = useForm<DatasetUpdate>({
-    resolver: zodResolver(datasetUpdateSchema as any),
+    resolver: zodResolver(datasetUpdateSchema),
   });
 
   // useWatch rather than editForm.watch(): watch() returns a value the React
@@ -182,7 +188,7 @@ const SuperAdminDatasetsPage = () => {
     }
   };
 
-  const handleEdit = (dataset: any) => {
+  const handleEdit = (dataset: AdminDataset) => {
     setEditingDataset(dataset);
     // Populate the edit form with current dataset data
     editForm.reset({
