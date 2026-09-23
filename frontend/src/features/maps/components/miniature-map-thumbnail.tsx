@@ -61,6 +61,8 @@ const MiniatureMapThumbnail = ({
       setIsMapLoaded(true);
     });
 
+    // The map instance is created by Mapbox and stored for later marker updates.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMap(mapInstance);
 
     return () => {

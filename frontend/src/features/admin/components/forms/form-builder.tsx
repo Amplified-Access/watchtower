@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trpc } from "@/_trpc/client";
 import { useExtendedSession } from "@/hooks/use-extended-session";
@@ -16,32 +16,46 @@ interface FormBuilderProps {
   formId?: string;
 }
 
+type Questions = Record<string, unknown>;
+
 const FormBuilder = ({ formId }: FormBuilderProps) => {
   const router = useRouter();
   const { user, isLoading: userLoading } = useExtendedSession();
-  const [questions, setQuestions] = useState({});
-  const [formTitle, setFormTitle] = useState("Untitled Form");
-  const [isActive, setIsActive] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Edits are kept apart from the fetched form: null means "not edited yet",
+  // so the loaded values show without being copied into state. Copying them
+  // in an effect caused the cascading render this file was changed to avoid,
+  // and React Query v5 has no onSuccess on queries to copy them in instead.
+  const [draftTitle, setDraftTitle] = useState<string | null>(null);
+  const [draftQuestions, setDraftQuestions] = useState<Questions | null>(null);
+  const [draftIsActive, setDraftIsActive] = useState<boolean | null>(null);
 
   // Fetch existing form if editing
   const {
     data: existingForm,
     isLoading: formLoading,
     error: formError,
-  } = trpc.getFormById.useQuery(
-    { formId: formId || "" },
-    { enabled: !!formId },
-  );
+  } = trpc.getFormById.useQuery({ formId: formId || "" }, { enabled: !!formId });
 
-  // Load existing form data
-  useEffect(() => {
-    if (existingForm) {
-      setFormTitle(existingForm.name);
-      setQuestions(existingForm.definition || {});
-      setIsActive(existingForm.isActive ?? true);
-    }
-  }, [existingForm]);
+  const loadedQuestions = (existingForm?.definition as Questions | undefined) ?? {};
+  const formTitle = draftTitle ?? existingForm?.name ?? "Untitled Form";
+  const questions = draftQuestions ?? loadedQuestions;
+  const isActive = draftIsActive ?? existingForm?.isActive ?? true;
+
+  // The panels below expect ordinary state setters, functional updates
+  // included, so each edit resolves against the draft or the loaded value.
+  const setFormTitle: Dispatch<SetStateAction<string>> = (value) =>
+    setDraftTitle((previous) =>
+      typeof value === "function"
+        ? value(previous ?? existingForm?.name ?? "Untitled Form")
+        : value,
+    );
+  const setQuestions: Dispatch<SetStateAction<Questions>> = (value) =>
+    setDraftQuestions((previous) =>
+      typeof value === "function" ? value(previous ?? loadedQuestions) : value,
+    );
+  const setIsActive = (value: boolean) => setDraftIsActive(value);
 
   const saveFormMutation = trpc.saveFormDefinition.useMutation();
   const updateFormMutation = trpc.updateForm.useMutation();

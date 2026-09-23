@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense, useRef, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,13 +57,11 @@ function useChatScroll(messages: any[]) {
 
 function ChatContent() {
   const [input, setInput] = useState("");
-  const [processedStarter, setProcessedStarter] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSearchingKnowledge, setIsSearchingKnowledge] =
-    useState<boolean>(false);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const shouldListenRef = useRef(false);
+  const processedStarterRef = useRef<string | null>(null);
   const { messages, sendMessage } = useChat({
     onError: (error) => {
       console.error("Chat error:", error);
@@ -73,8 +71,45 @@ function ChatContent() {
     },
   });
   const searchParams = useSearchParams();
-  const formRef = useRef<HTMLFormElement>(null);
   const { ref: chatRef, bottomRef, scrollToBottom } = useChatScroll(messages);
+
+  const stopListening = useCallback(() => {
+    shouldListenRef.current = false;
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        // Ignore
+      }
+    }
+    setIsListening(false);
+  }, []);
+
+  const submitMessage = useCallback(
+    async (messageText: string) => {
+      const nextInput = messageText.trim();
+      if (!nextInput || isLoading) {
+        return;
+      }
+
+      stopListening();
+      setInput("");
+      setIsLoading(true);
+
+      try {
+        await sendMessage({
+          role: "user",
+          parts: [{ type: "text", text: nextInput }],
+        });
+        requestAnimationFrame(() => scrollToBottom(true));
+      } catch (error) {
+        console.error("Error sending message:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading, scrollToBottom, sendMessage, stopListening],
+  );
 
   // Initialize speech recognition
   useEffect(() => {
@@ -187,28 +222,18 @@ function ChatContent() {
   const starter = searchParams.get("starter");
   const topic = searchParams.get("topic");
 
-  // Auto-send the conversation starter when component mounts (form-based approach)
+  // Auto-send the conversation starter when the conversation is still empty.
   useEffect(() => {
-    console.log("Conversation starter effect:", {
-      starter,
-      processedStarter,
-      messagesLength: messages.length,
-    });
-
-    if (starter && starter !== processedStarter && messages.length === 0) {
-      console.log("Starting conversation with:", starter);
-      setProcessedStarter(starter);
-      setInput(starter);
-      setTimeout(() => {
-        console.log("Attempting to submit form...", formRef.current);
-        if (formRef.current) {
-          formRef.current.requestSubmit();
-        } else {
-          console.error("Form ref is null");
-        }
-      }, 100); // Increased timeout to ensure form is rendered
+    if (!starter || messages.length !== 0 || isLoading) {
+      return;
     }
-  }, [starter, processedStarter, messages.length]);
+    if (processedStarterRef.current === starter) {
+      return;
+    }
+
+    processedStarterRef.current = starter;
+    void submitMessage(starter);
+  }, [isLoading, messages.length, starter, submitMessage]);
 
   // Scroll to bottom when loading state changes (response received)
   useEffect(() => {
@@ -217,24 +242,22 @@ function ChatContent() {
     }
   }, [isLoading, scrollToBottom, messages.length]);
 
-  // Check if AI is currently using knowledge base tools
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage.role === "assistant") {
-        const hasKnowledgeTools = lastMessage.parts.some(
-          (part) =>
-            part.type === "tool-addResource" ||
-            part.type === "tool-getInformation",
-        );
-        setIsSearchingKnowledge(hasKnowledgeTools && isLoading);
-      } else {
-        setIsSearchingKnowledge(false);
-      }
-    } else {
-      setIsSearchingKnowledge(false);
+  // Check if AI is currently using knowledge base tools.
+  const isSearchingKnowledge = useMemo(() => {
+    if (!isLoading || messages.length === 0) {
+      return false;
     }
-  }, [messages, isLoading]);
+
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.role !== "assistant") {
+      return false;
+    }
+
+    return lastMessage.parts.some(
+      (part) =>
+        part.type === "tool-addResource" || part.type === "tool-getInformation",
+    );
+  }, [isLoading, messages]);
 
   return (
     <>
@@ -455,44 +478,9 @@ function ChatContent() {
 
           <div className="mx-auto w-full max-w-3xl shrink-0 px-6 pt-3 pb-6">
           <form
-            ref={formRef}
-            onSubmit={async (e) => {
+            onSubmit={(e) => {
               e.preventDefault();
-              console.log("Form submitted with input:", input);
-
-              if (!input.trim()) {
-                console.log("Empty input, not submitting");
-                return;
-              }
-
-              // Stop listening when submitting
-              shouldListenRef.current = false;
-              if (recognitionRef.current) {
-                try {
-                  recognitionRef.current.stop();
-                } catch (e) {
-                  // Ignore
-                }
-              }
-              setIsListening(false);
-
-              const currentInput = input;
-              setInput("");
-              setIsLoading(true);
-
-              try {
-                console.log("Sending message:", currentInput);
-                await sendMessage({
-                  role: "user",
-                  parts: [{ type: "text", text: currentInput }],
-                });
-                // Scroll to bottom after message is sent
-                setTimeout(() => scrollToBottom(true), 150);
-              } catch (error) {
-                console.error("Error sending message:", error);
-              } finally {
-                setIsLoading(false);
-              }
+              void submitMessage(input);
             }}
             className="w-full"
           >
@@ -504,36 +492,16 @@ function ChatContent() {
                   setInput(e.currentTarget.value);
                   // Stop listening if user starts typing
                   if (isListening) {
-                    shouldListenRef.current = false;
-                    if (recognitionRef.current) {
-                      try {
-                        recognitionRef.current.stop();
-                      } catch (e) {
-                        // Ignore
-                      }
-                    }
-                    setIsListening(false);
+                    stopListening();
                   }
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    // Stop listening before sending
-                    if (isListening) {
-                      shouldListenRef.current = false;
-                      if (recognitionRef.current) {
-                        try {
-                          recognitionRef.current.stop();
-                        } catch (e) {
-                          // Ignore
-                        }
-                      }
-                      setIsListening(false);
-                    }
-                    if (input.trim() && !isLoading) {
-                      formRef.current?.requestSubmit();
-                    }
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (input.trim() && !isLoading) {
+                    void submitMessage(input);
                   }
+                }
                 }}
                 disabled={isLoading}
                 className="min-h-12 resize-none border-none bg-transparent px-1 font-title text-base text-dark shadow-none placeholder:text-dark/70 focus-visible:ring-0 md:text-lg"
