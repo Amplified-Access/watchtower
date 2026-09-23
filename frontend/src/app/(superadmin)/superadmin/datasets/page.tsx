@@ -45,7 +45,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import Loader from "@/components/common/loader";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   datasetUploadSchema,
@@ -133,12 +133,17 @@ const SuperAdminDatasetsPage = () => {
     resolver: zodResolver(datasetUpdateSchema as any),
   });
 
+  // useWatch rather than editForm.watch(): watch() returns a value the React
+  // Compiler cannot memoize, so it skips optimising this whole page.
+  const editCategory = useWatch({ control: editForm.control, name: "category" });
+  const editLicense = useWatch({ control: editForm.control, name: "license" });
+  const editIsPublic = useWatch({ control: editForm.control, name: "isPublic" });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
     setValue,
   } = form;
 
@@ -477,7 +482,7 @@ const SuperAdminDatasetsPage = () => {
                 <div>
                   <Label htmlFor="edit-category">Category *</Label>
                   <Select
-                    value={editForm.watch("category") || ""}
+                    value={editCategory || ""}
                     onValueChange={(value) =>
                       editForm.setValue("category", value)
                     }
@@ -551,7 +556,7 @@ const SuperAdminDatasetsPage = () => {
                 <div>
                   <Label htmlFor="edit-license">License *</Label>
                   <Select
-                    value={editForm.watch("license") || ""}
+                    value={editLicense || ""}
                     onValueChange={(value) =>
                       editForm.setValue("license", value)
                     }
@@ -606,7 +611,7 @@ const SuperAdminDatasetsPage = () => {
               <div className="flex items-center space-x-2">
                 <Switch
                   id="edit-public"
-                  checked={editForm.watch("isPublic") || false}
+                  checked={editIsPublic || false}
                   onCheckedChange={(checked) =>
                     editForm.setValue("isPublic", checked)
                   }

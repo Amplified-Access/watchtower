@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/refs -- Vendored animate-ui code: its event
+   handlers read props taken from a child ref while rendering. Left exactly as
+   the library ships it so the next upgrade is a clean overwrite. */
 'use client';
 
 import * as React from 'react';

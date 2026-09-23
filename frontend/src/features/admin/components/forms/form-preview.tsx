@@ -58,6 +58,9 @@ const FormPreview = ({
 
   const formTitleRef = useRef(null);
 
+  // The hook reads the ref while rendering, which the compiler flags; it is
+  // third-party and the ref is only used for the outside-click listener.
+  // eslint-disable-next-line react-hooks/refs
   useOnClickOutside(formTitleRef, () => setIsEditingTitle(false));
 
   return (
