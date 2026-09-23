@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { setLocaleCookie } from "@/lib/actions/set-locale";
 import {
   Popover,
@@ -43,12 +43,8 @@ export default function LanguageSelector({
   className = "",
 }: LanguageSelectorProps) {
   const [isPending, startTransition] = useTransition();
-  const [currentLocale, setCurrentLocale] = useState("en");
+  const [currentLocale, setCurrentLocale] = useState(getCurrentLocale);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setCurrentLocale(getCurrentLocale());
-  }, []);
 
   const handleLanguageChange = async (newLocale: string) => {
     if (newLocale === currentLocale) {

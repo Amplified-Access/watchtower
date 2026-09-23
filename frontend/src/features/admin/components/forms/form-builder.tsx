@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trpc } from "@/_trpc/client";
 import { useExtendedSession } from "@/hooks/use-extended-session";
@@ -31,17 +31,15 @@ const FormBuilder = ({ formId }: FormBuilderProps) => {
     error: formError,
   } = trpc.getFormById.useQuery(
     { formId: formId || "" },
-    { enabled: !!formId },
+    {
+      enabled: !!formId,
+      onSuccess: (form) => {
+        setFormTitle(form.name);
+        setQuestions(form.definition || {});
+        setIsActive(form.isActive ?? true);
+      },
+    },
   );
-
-  // Load existing form data
-  useEffect(() => {
-    if (existingForm) {
-      setFormTitle(existingForm.name);
-      setQuestions(existingForm.definition || {});
-      setIsActive(existingForm.isActive ?? true);
-    }
-  }, [existingForm]);
 
   const saveFormMutation = trpc.saveFormDefinition.useMutation();
   const updateFormMutation = trpc.updateForm.useMutation();

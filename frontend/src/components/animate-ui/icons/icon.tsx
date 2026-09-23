@@ -206,6 +206,8 @@ function AnimateIcon({
 
   React.useEffect(() => {
     if (animate === undefined) return;
+    // Vendored animation state machine syncs imperative animation triggers here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentAnimation(typeof animate === 'string' ? animate : animation);
     if (animate) startAnimation(animate as TriggerProp);
     else stopAnimation();
@@ -240,6 +242,8 @@ function AnimateIcon({
 
   React.useEffect(() => {
     if (!animateOnView) return;
+    // IntersectionObserver updates from `useIsInView` must drive this animation trigger.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isInView) startAnimation(animateOnView);
     else stopAnimation();
   }, [isInView, animateOnView, startAnimation, stopAnimation]);
