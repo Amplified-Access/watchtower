@@ -8,14 +8,27 @@ import {
 } from "ai";
 import { z } from "zod";
 import { assistantApi } from "@/lib/api/assistant";
+import { analyticsApi } from "@/lib/api/analytics";
+import { mapApi, type MapPeriod } from "@/lib/api/map";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
-// The route is public and every call spends model quota, so bound what one
-// request can send until chat moves behind the Go backend's rate limiter.
 const MAX_MESSAGES = 30;
 const MAX_TOTAL_CHARS = 20_000;
+// Individual reports are heavier than counts, so the model gets few of them.
+const MAX_INCIDENTS = 10;
+
+// Mirrors the Go handler's accepted values, so the model can't invent a
+// grouping or window the backend would reject.
+const groupBySchema = z.enum(["country", "type", "day", "week", "month"]);
+// Periods are windows counted back from now: "month" is the last 30 days and
+// "year" the last 365, never a calendar month or year. For "in 2026" or "in
+// March", the model should use from/to instead.
+const periodSchema = z
+  .enum(["24h", "7d", "30d", "week", "month", "year"])
+  .describe("window counted back from now; 'year' means the last 365 days, not the calendar year");
+const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "use YYYY-MM-DD");
 
 const messageChars = (message: UIMessage) =>
   message.parts.reduce(
@@ -36,7 +49,7 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    model: google("gemini-2.5-flash"),
+    model: google("gemini-3.8-flash"),
     system: `You are Esi, a helpful multilingual AI assistant for the WatchTower platform.
 Your Purpose
 Answer user questions about the platform and provide navigational guidance in the user's preferred language. You are specifically designed to excel in these languages:
@@ -59,6 +72,23 @@ One language per response: Avoid mixing languages or providing translations unle
 
 Core Functionality
 When to use the knowledge base: Use the getInformation tool only when a user's question specifically requires details about the WatchTower platform, its features, or how to navigate it.
+
+Answering questions about incident data
+WatchTower's reports change daily, so never answer a question about what has been reported from memory - always use the data tools, even if a similar question was answered earlier in the conversation.
+
+getDataOverview: how many reports exist, the dates they span, and the exact country and incident type names available. Call it first when you do not already know the right names to filter by, or when asked what data exists.
+queryIncidentStats: the main tool. Counts reports, injuries and fatalities, optionally split by country, type, day, week or month. Use groupBy to rank ("which country reports most" - groupBy country) or to show change over time ("is it rising" - groupBy month).
+findIncidents: a few individual reports, for "what happened recently in X".
+getIncidentDetail: the full public detail of one report, when the user asks about a specific one.
+
+Rules for data answers
+Relative windows versus calendar dates: period counts backwards from now, so "year" is the last 365 days. For a named month or calendar year ("in March", "in 2026"), pass from and to instead, and say which you used.
+Use exact names: country and type filters match names exactly. Take them from getDataOverview; do not guess or translate them.
+State what you counted: every figure must say the period and any country or type filter behind it, in the user's language.
+Never estimate or extrapolate: report only the numbers the tools return. If a count is zero, say plainly that no reports match - do not fall back on general knowledge about the country or the topic.
+Mind the source: these are reports submitted to WatchTower, not a complete record of everything that happened. Say "reports submitted" rather than implying full coverage.
+Chain tools when needed: a comparison may need two queries. Make them, then answer once.
+Be careful with sensitive detail: individual reports can describe violence. Summarise plainly and without dramatisation, and do not repeat identifying details of individuals.
 Provide clear and simple answers: Base your responses on the information you find, or on your general knowledge for simple queries. Use straightforward, user-friendly language appropriate to the language being used. Never use technical jargon, file paths, or private information.
 Provide navigational guidance: For questions about "getting started," "how to," or where to find something, provide clear, actionable instructions that direct the user to the correct page or feature on the platform.
 Handle irrelevant questions: If a user asks a question that is outside of your purpose, humbly and politely explain in their language that you can only provide information about the WatchTower platform.
@@ -68,7 +98,8 @@ Stay in character: You are Esi, a helpful AI assistant for the WatchTower platfo
 If asked about your identity: Respond as Esi and explain your role as an assistant for the WatchTower platform.
 If pressed for technical details: You may reveal that you are a chatbot created by AmplifiedAccess to help people on the WatchTower platform, but do not provide information about other AI models or training processes.`,
     messages: convertToModelMessages(messages),
-    stopWhen: stepCountIs(5),
+    // Enough steps for an overview, two queries and an answer.
+    stopWhen: stepCountIs(8),
     tools: {
       getInformation: tool({
         description: `get information from your knowledge base to answer questions.`,
@@ -80,6 +111,80 @@ If pressed for technical details: You may reveal that you are a chatbot created 
         execute: async ({ question }) => {
           const res = await assistantApi.searchKnowledge(question);
           return res.success ? (res.data ?? []) : [];
+        },
+      }),
+
+      getDataOverview: tool({
+        description:
+          "What incident report data exists: total reports, the dates they span, and the exact country and incident type names that can be filtered on. Call before querying when unsure of a name.",
+        inputSchema: z.object({}),
+        execute: async () => {
+          const res = await analyticsApi.getOverview();
+          return res.success ? res.data : { error: res.error ?? "Data is unavailable right now." };
+        },
+      }),
+
+      queryIncidentStats: tool({
+        description:
+          "Count reported incidents, injuries and fatalities, with optional filters and one grouping. Use groupBy to rank countries or types, or to see change over day, week or month.",
+        inputSchema: z.object({
+          groupBy: groupBySchema
+            .optional()
+            .describe("split the counts by this dimension; omit for totals only"),
+          country: z.string().optional().describe("exact country name from getDataOverview"),
+          category: z.string().optional().describe("exact incident type name from getDataOverview"),
+          period: periodSchema
+            .optional()
+            .describe("relative window; omit for all time, or use from/to instead"),
+          from: dateSchema.optional().describe("start date YYYY-MM-DD, instead of period"),
+          to: dateSchema.optional().describe("end date YYYY-MM-DD inclusive, instead of period"),
+          q: z.string().optional().describe("free-text search of places and descriptions"),
+          limit: z.number().int().min(1).max(100).optional().describe("maximum buckets, default 20"),
+        }),
+        execute: async (query) => {
+          const res = await analyticsApi.queryIncidents(query);
+          return res.success ? res.data : { error: res.error ?? "That query could not be run." };
+        },
+      }),
+
+      findIncidents: tool({
+        description:
+          "List individual reported incidents matching a filter, newest first, for questions about what was reported recently or in a place.",
+        inputSchema: z.object({
+          country: z.string().optional().describe("exact country name from getDataOverview"),
+          category: z.string().optional().describe("exact incident type name from getDataOverview"),
+          period: periodSchema.optional(),
+          q: z.string().optional().describe("free-text search of places and descriptions"),
+          limit: z.number().int().min(1).max(MAX_INCIDENTS).optional(),
+        }),
+        execute: async ({ limit, ...filter }) => {
+          const res = await mapApi.getPoints({ ...filter, period: filter.period as MapPeriod });
+          if (!res.success || !res.data) {
+            return { error: res.error ?? "Reports could not be loaded." };
+          }
+          const features = res.data.features.slice(0, limit ?? 5);
+          return {
+            matching: res.data.features.length,
+            // Slim rows: enough to say what and where, not the whole report.
+            incidents: features.map((f) => ({
+              id: f.properties.id,
+              place: f.properties.name,
+              country: f.properties.country,
+              reportedAt: f.properties.createdAt,
+            })),
+          };
+        },
+      }),
+
+      getIncidentDetail: tool({
+        description:
+          "The public detail of one reported incident by id, including its description and casualty figures. Ids come from findIncidents.",
+        inputSchema: z.object({
+          id: z.string().describe("the incident id from findIncidents"),
+        }),
+        execute: async ({ id }) => {
+          const res = await mapApi.getReport(id);
+          return res.success ? res.data : { error: res.error ?? "That report could not be found." };
         },
       }),
     },
