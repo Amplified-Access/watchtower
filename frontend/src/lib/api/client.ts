@@ -26,18 +26,21 @@ export class ApiResponse<T> {
   data: T | null;
   error: string | null;
   total: number | undefined;
+  /** HTTP status from the Go backend, e.g. 409 for a conflict. */
+  status: number;
 
-  private constructor(res: { success: boolean; data?: T; error?: string; total?: number }) {
+  private constructor(res: { success: boolean; data?: T; error?: string; total?: number; status: number }) {
     this.success = res.success;
     this.data = res.data ?? null;
     this.error = res.error ?? null;
     this.total = res.total;
+    this.status = res.status;
   }
 
   static async fromFetch<T>(res: Response): Promise<ApiResponse<T>> {
     if (!res.ok) {
       const err = await ApiError.fromResponse(res);
-      return { success: false, error: err.message } as ApiResponse<T>;
+      return { success: false, error: err.message, status: res.status } as ApiResponse<T>;
     }
     const body = await res.json();
     return new ApiResponse<T>({
@@ -45,6 +48,7 @@ export class ApiResponse<T> {
       data: body.data,
       error: body.error ?? null,
       total: body.total,
+      status: res.status,
     });
   }
 }

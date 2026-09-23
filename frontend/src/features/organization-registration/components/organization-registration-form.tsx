@@ -19,6 +19,7 @@ import { organizationApplicationSchema } from "../schemas/organization-registrat
 import { useState } from "react";
 // import { FileUpload } from "./file-upload";
 import { trpc } from "@/_trpc/client";
+import { TRPCClientError } from "@trpc/client";
 import Loader from "@/components/common/loader";
 import { toast } from "sonner";
 import FileUpload from "./file-upload";
@@ -80,28 +81,29 @@ const OrganizationRegistrationForm = ({
     }
 
     try {
-      const result = (await submitApplicationMutation.mutateAsync({
+      await submitApplicationMutation.mutateAsync({
         ...values,
         certificateOfIncorporation: fileResponse.fileKey,
-      })) as { error?: string; message?: string } | null;
-      if (result?.error) {
-        toast.error(result.message, {
-          description: "Ensure the email hasnt been used before",
-        });
-        return;
-      }
+      });
       toast.success("Application submitted successfully");
       // Display success message (replace with a proper modal/toast in a real app)
       // alert(result.message); // Using alert for simplicity, consider a better UI
       // Reset the form after successful submission
       form.reset();
       setFile(null);
-    } catch (error: any) {
+    } catch (error) {
+      if (error instanceof TRPCClientError && error.data?.code === "CONFLICT") {
+        form.setError("applicantEmail", {
+          message: "An application has already been submitted with this email.",
+        });
+        toast.error("This email has already been used to apply.", {
+          description:
+            "We'll be in touch about your existing application. To apply again, use a different email.",
+        });
+        return;
+      }
       console.error("Error submitting application:", error);
-      // Display error message
-      toast.error(
-        `Submission failed: ${error.message || "An unknown error occurred."}`,
-      ); // Using alert for simplicity
+      toast.error("We couldn't submit your application. Please try again.");
     } finally {
       setIsLoading(false);
     }
