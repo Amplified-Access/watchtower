@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import type { ReactNode } from "react";
+import { portableTextBlocks } from "@/types/portable-text";
 import { trpc } from "@/_trpc/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,43 +34,42 @@ function formatRelativeTime(date: string | Date) {
   return `${Math.floor(diffDays / 365)} years ago`;
 }
 
-function formatReadingTime(content: any) {
+function formatReadingTime(content: unknown) {
   if (!content) return "1 min read";
 
   // Rough estimate: 200 words per minute reading speed
   const wordsPerMinute = 200;
   let wordCount = 0;
 
-  if (Array.isArray(content)) {
-    wordCount = content.reduce((count, block) => {
-      if (block.children) {
-        return (
-          count +
-          block.children.reduce((childCount: number, child: any) => {
-            return childCount + (child.text ? child.text.split(" ").length : 0);
-          }, 0)
-        );
-      }
-      return count;
-    }, 0);
-  }
+  wordCount = portableTextBlocks(content).reduce((count, block) => {
+    if (!block.children) return count;
+    return (
+      count +
+      block.children.reduce(
+        (childCount, child) =>
+          childCount + (child.text ? child.text.split(" ").length : 0),
+        0,
+      )
+    );
+  }, 0);
 
   const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
   return `${readingTime} min read`;
 }
 
-function renderContent(content: any) {
-  if (!content || !Array.isArray(content)) {
+function renderContent(content: unknown) {
+  const blocks = portableTextBlocks(content);
+  if (blocks.length === 0) {
     return <p className="text-muted-foreground">No content available.</p>;
   }
 
-  return content.map((block, index) => {
+  return blocks.map((block, index) => {
     if (block._type === "block") {
       const style = block.style || "normal";
 
       const text =
-        block.children?.map((child: any, childIndex: number) => {
-          let element = child.text || "";
+        block.children?.map((child, childIndex) => {
+          let element: ReactNode = child.text || "";
 
           if (child.marks?.includes("strong")) {
             element = <strong key={childIndex}>{element}</strong>;

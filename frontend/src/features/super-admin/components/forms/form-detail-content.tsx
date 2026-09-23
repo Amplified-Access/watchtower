@@ -1,6 +1,11 @@
 "use client";
 
 import { trpc } from "@/_trpc/client";
+import {
+  formFieldEntries,
+  type FormDefinition,
+  type FormFieldDefinition,
+} from "@/types/form-definition";
 import { useExtendedSession } from "@/hooks/use-extended-session";
 import Loader from "@/components/common/loader";
 import { toast } from "sonner";
@@ -105,7 +110,7 @@ const SuperAdminFormDetailContent = ({
     }
   };
 
-  const renderFormField = (field: any, index: number) => {
+  const renderFormField = (field: FormFieldDefinition, index: number) => {
     const fieldTypeLabels: Record<string, string> = {
       "short-answer": "Short Answer",
       paragraph: "Paragraph",
@@ -116,9 +121,11 @@ const SuperAdminFormDetailContent = ({
     return (
       <div key={index} className="border rounded-lg p-4 space-y-2">
         <div className="flex items-center justify-between">
-          <h4 className="font-medium">{field.label || `Field ${index + 1}`}</h4>
+          <h4 className="font-medium">
+            {field.label || field.title || `Field ${index + 1}`}
+          </h4>
           <Badge variant="outline">
-            {fieldTypeLabels[field.type] || field.type}
+            {fieldTypeLabels[field.type ?? ""] || field.type}
           </Badge>
         </div>
 
@@ -181,7 +188,11 @@ const SuperAdminFormDetailContent = ({
     );
   }
 
-  const formFields = (form.definition as any)?.fields || [];
+  // Older records keep an explicit `fields` array; newer ones are a map of
+  // field key to field, as the builder writes them.
+  const definition = form.definition as FormDefinition | undefined;
+  const formFields: FormFieldDefinition[] =
+    definition?.fields ?? formFieldEntries(definition).map(([, field]) => field);
 
   return (
     <Container className="space-y-6" size="lg">
@@ -339,14 +350,14 @@ const SuperAdminFormDetailContent = ({
             <div>
               <label className="text-sm font-medium">Form Title</label>
               <p className="text-sm text-muted-foreground mt-1">
-                {(form.definition as any)?.title || form.name || "No title"}
+                {definition?.title || form.name || "No title"}
               </p>
             </div>
-            {(form.definition as any)?.description && (
+            {definition?.description && (
               <div>
                 <label className="text-sm font-medium">Description</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {(form.definition as any).description}
+                  {definition.description}
                 </p>
               </div>
             )}
@@ -363,7 +374,7 @@ const SuperAdminFormDetailContent = ({
         <CardContent>
           {formFields.length > 0 ? (
             <div className="space-y-4">
-              {formFields.map((field: any, index: number) =>
+              {formFields.map((field, index) =>
                 renderFormField(field, index)
               )}
             </div>

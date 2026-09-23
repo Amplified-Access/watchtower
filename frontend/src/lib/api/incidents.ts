@@ -24,6 +24,34 @@ export interface Incident {
   updatedAt: string;
 }
 
+/**
+ * A report a watcher filed for their organization, as
+ * entity.OrganizationIncidentReport serialises it.
+ *
+ * `incidentType` is declared because the Go entity carries it, but the list
+ * queries do not join incident_types, so in practice it is absent — read it
+ * defensively.
+ */
+export interface OrganizationIncidentReport {
+  id: string;
+  organizationId: string;
+  reportedByUserId: string;
+  incidentTypeId: string;
+  incidentType?: { id: string; name: string };
+  location: Record<string, unknown>;
+  description: string;
+  entities?: string[];
+  injuries: number;
+  fatalities: number;
+  evidenceFileKey?: string;
+  audioFileKey?: string;
+  severity: "low" | "medium" | "high" | "critical";
+  verified: boolean;
+  verifiedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface IncidentStats {
   total: number;
   reported: number;
@@ -119,7 +147,9 @@ export const incidentsApi = {
     const query = new URLSearchParams();
     if (params?.limit) query.set("limit", String(params.limit));
     if (params?.offset) query.set("offset", String(params.offset));
-    return api.get<unknown[]>(`/org/incident-reports?${query}`);
+    return api.get<OrganizationIncidentReport[]>(
+      `/org/incident-reports?${query}`,
+    );
   },
 
   getOrgReportStats: (orgId: string) =>

@@ -23,11 +23,19 @@ import {
 } from "@/components/ui/select";
 import { Plus, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
+import type { FormFieldDefinition } from "@/types/form-definition";
 import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const AddField = ({ questions, setQuestions }: any) => {
+type Questions = Record<string, unknown>;
+
+interface AddFieldProps {
+  questions: Questions;
+  setQuestions: Dispatch<SetStateAction<Questions>>;
+}
+
+const AddField = ({ setQuestions }: AddFieldProps) => {
   const [fieldType, setFieldType] = useState("short-answer");
   const [options, setOptions] = useState([
     { name: "option1", placeholder: "Option 1" },
@@ -42,15 +50,17 @@ const AddField = ({ questions, setQuestions }: any) => {
     { value: "drop-down", label: "Drop down" },
   ];
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const newQuestion: Record<string, any> = {};
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+    // Built from the dialog's inputs, so every value arrives as a string.
+    const newQuestion: FormFieldDefinition & Record<string, unknown> = {};
 
     // Get form values
     for (const [key, value] of formData.entries()) {
-      if (value) {
-        // Only add non-empty values
+      // Only add non-empty values; file inputs are not used on this form.
+      if (value && typeof value === "string") {
         newQuestion[key] = value;
       }
     }
@@ -67,7 +77,9 @@ const AddField = ({ questions, setQuestions }: any) => {
     if (fieldType === "multiple-choice" || fieldType === "drop-down") {
       const formOptions = options
         .map((opt) => formData.get(opt.name))
-        .filter(Boolean);
+        .filter(
+          (value): value is string => typeof value === "string" && value !== "",
+        );
 
       if (formOptions.length === 0) {
         alert("Please provide at least one option");
@@ -79,14 +91,16 @@ const AddField = ({ questions, setQuestions }: any) => {
 
     // Add question with unique key
     const questionKey =
-      newQuestion.title.replace(/\s+/g, "_").toLowerCase() + "_" + Date.now();
-    setQuestions((prev: any) => ({
+      (newQuestion.title ?? "").replace(/\s+/g, "_").toLowerCase() +
+      "_" +
+      Date.now();
+    setQuestions((prev) => ({
       ...prev,
       [questionKey]: newQuestion,
     }));
 
     // Reset form and close dialog
-    e.target.reset();
+    formElement.reset();
     setFieldType("short-answer");
     setOptions([{ name: "option1", placeholder: "Option 1" }]);
     setIsRequired(false);

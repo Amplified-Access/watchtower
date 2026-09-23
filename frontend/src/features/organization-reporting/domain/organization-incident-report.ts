@@ -1,5 +1,25 @@
 export type IncidentSeverity = "low" | "medium" | "high" | "critical";
 
+/**
+ * One search result as LocationIQ returns it, before it is narrowed to an
+ * OrganizationLocation. Only the fields the forms read are declared.
+ */
+export interface LocationSuggestion {
+  display_name?: string;
+  /** LocationIQ sends coordinates as strings. */
+  lat?: string;
+  lon?: string;
+  /**
+   * Only present when the search is made with addressdetails=1, which ours
+   * is not; the forms fall back to parsing display_name. Declared so that
+   * fallback reads as the intentional thing it is.
+   */
+  admin1?: string;
+  state?: string;
+  region?: string;
+  country?: string;
+}
+
 export interface OrganizationLocation {
   lat: number;
   lon: number;
