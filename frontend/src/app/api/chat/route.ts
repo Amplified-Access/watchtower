@@ -10,10 +10,38 @@ import { z } from "zod";
 import { assistantApi } from "@/lib/api/assistant";
 import { analyticsApi } from "@/lib/api/analytics";
 import { mapApi, type MapPeriod } from "@/lib/api/map";
+import { createFallbackModel } from "@/lib/ai/model-fallback";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+// Gemini's free tier counts requests per day per model, and every tool call
+// is a request — so the chat runs through a chain rather than one model. A
+// model that answers "out of quota" is skipped until its cooldown expires,
+// and the next one takes over mid-conversation. Newest first; override with
+// GEMINI_MODEL_CHAIN (comma-separated) to change the order or add models.
+const MODEL_CHAIN = (
+  process.env.GEMINI_MODEL_CHAIN ??
+  "gemini-3.8-flash,gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash"
+)
+  .split(",")
+  .map((id) => id.trim())
+  .filter(Boolean);
+
+// Built once per server instance so the cooldowns it learns are remembered
+// between requests.
+const chatModel = createFallbackModel(
+  MODEL_CHAIN.map((id) => google(id)),
+  {
+    onExhausted: (modelId, cooldownMs) =>
+      console.warn(
+        `[chat] ${modelId} is out of quota; skipping it for ${Math.round(cooldownMs / 60000)} min`,
+      ),
+  },
+);
+
+// The route is public and every call spends model quota, so bound what one
+// request can send until chat moves behind the Go backend's rate limiter.
 const MAX_MESSAGES = 30;
 const MAX_TOTAL_CHARS = 20_000;
 // Individual reports are heavier than counts, so the model gets few of them.
@@ -49,7 +77,10 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    model: google("gemini-3.8-flash"),
+    model: chatModel,
+    // The chain already tries every model; the SDK's own retries would only
+    // repeat a chain that has just been exhausted.
+    maxRetries: 1,
     system: `You are Esi, a helpful multilingual AI assistant for the WatchTower platform.
 Your Purpose
 Answer user questions about the platform and provide navigational guidance in the user's preferred language. You are specifically designed to excel in these languages:
