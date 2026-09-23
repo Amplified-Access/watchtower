@@ -46,7 +46,7 @@ export default function Component({ file, setFile }: any) {
 
   useEffect(() => {
     setFile(files[0]);
-  }, [files]);
+  }, [files, setFile]);
 
   return (
     <div className="flex flex-col gap-2">

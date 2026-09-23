@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/refs -- Vendored animate-ui code: its event
+   handlers read props taken from a child ref while rendering. Left exactly as
+   the library ships it so the next upgrade is a clean overwrite. */
 'use client';
 
 import * as React from 'react';
@@ -206,6 +209,8 @@ function AnimateIcon({
 
   React.useEffect(() => {
     if (animate === undefined) return;
+    // Vendored animation state machine syncs imperative animation triggers here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentAnimation(typeof animate === 'string' ? animate : animation);
     if (animate) startAnimation(animate as TriggerProp);
     else stopAnimation();
@@ -240,6 +245,8 @@ function AnimateIcon({
 
   React.useEffect(() => {
     if (!animateOnView) return;
+    // IntersectionObserver updates from `useIsInView` must drive this animation trigger.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isInView) startAnimation(animateOnView);
     else stopAnimation();
   }, [isInView, animateOnView, startAnimation, stopAnimation]);

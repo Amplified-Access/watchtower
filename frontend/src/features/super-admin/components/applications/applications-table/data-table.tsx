@@ -29,6 +29,11 @@ export function DataTable<
   TData extends { id: number; organizationName: string },
   TValue
 >({ columns, data }: DataTableProps<TData, TValue>) {
+  // TanStack Table returns functions the React Compiler cannot memoize, so it
+  // skips optimising this component. There is no compatible usage pattern to
+  // adopt, and nothing here is passed into a memoized child, so the skip is
+  // harmless - see AGENTS.md. Revisit when TanStack ships compiler support.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

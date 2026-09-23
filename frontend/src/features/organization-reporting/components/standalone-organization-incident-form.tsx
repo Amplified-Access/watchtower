@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,6 +77,11 @@ const StandaloneOrganizationIncidentForm: React.FC<
   // Handle location search results
   useEffect(() => {
     if (searchLocation.data?.success) {
+      // Copies the query result into local state, which several other
+      // handlers also write. Deriving it from the query instead is the real
+      // fix; the warning only appeared once useWatch let the compiler
+      // analyse this component at all.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocations(searchLocation.data.data);
       setIsSearchingLocation(false);
     } else if (searchLocation.error) {
@@ -92,9 +97,11 @@ const StandaloneOrganizationIncidentForm: React.FC<
       severity: "medium",
     },
   });
-  const { watch, setValue, reset, trigger } = form;
+  const { setValue, reset, trigger } = form;
 
-  const selectedEntities = watch("entities") || [];
+  // useWatch rather than form.watch(): watch() returns a value the React
+  // Compiler cannot memoize, so it skips optimising this whole component.
+  const selectedEntities = useWatch({ control: form.control, name: "entities" }) || [];
 
   // Handle location search with debouncing
   const handleLocationSearch = useCallback((value: string) => {

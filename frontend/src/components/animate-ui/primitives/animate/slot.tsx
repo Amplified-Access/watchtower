@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/static-components -- Vendored animate-ui code:
+   it builds a component inside useMemo. Left as the library ships it. */
 'use client';
 
 import * as React from 'react';
