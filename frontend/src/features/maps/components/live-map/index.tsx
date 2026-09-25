@@ -203,7 +203,7 @@ const LiveMap = () => {
                     onClick={() => toggleChip(chip)}
                     aria-pressed={isChipActive(chip)}
                     className={cn(
-                      "cursor-pointer rounded-full border px-3 py-1 font-title text-sm shadow-sm transition-colors md:px-4 md:py-1.5 md:text-lg",
+                      "cursor-pointer rounded-full border px-3 py-1 font-title text-sm shadow-sm transition-colors md:px-4 md:py-1.5",
                       isChipActive(chip)
                         ? "border-primary bg-primary text-white"
                         : "border-dark/5 bg-white text-dark",
@@ -248,7 +248,7 @@ const LiveMap = () => {
                       aria-checked={viewMode === mode}
                       onClick={() => setViewMode(mode)}
                       className={cn(
-                        "rounded-full px-3 py-1 font-title text-sm transition-colors md:text-lg",
+                        "rounded-full px-3 py-1 font-title text-sm transition-colors",
                         viewMode === mode ? "bg-primary text-white" : "text-dark/40 hover:text-dark",
                       )}
                     >
