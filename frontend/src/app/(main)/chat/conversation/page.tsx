@@ -2,39 +2,14 @@
 
 import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
-import {
-  getSpeechRecognition,
-  type SpeechRecognition,
-  type SpeechRecognitionErrorEvent,
-  type SpeechRecognitionEvent,
-} from "@/types/speech-recognition";
 import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MutatingDots } from "react-loader-spinner";
-import {
-  MessageCircle,
-  Brain,
-  Database,
-  Plus,
-  ArrowLeft,
-  MoveUp,
-  ArrowDown,
-  Mic,
-  MicOff,
-  Paperclip,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import Container from "@/components/common/container";
-import TextComponent from "@/components/common/text-component";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
+import ChatComposer from "@/features/chat/components/chat-composer";
 import ChatStatus from "@/features/chat/components/chat-status";
-import { toast } from "sonner";
 
 // Custom hook for smooth auto-scrolling chat to bottom
 function useChatScroll(messages: UIMessage[]) {
@@ -63,11 +38,7 @@ function useChatScroll(messages: UIMessage[]) {
 }
 
 function ChatContent() {
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const shouldListenRef = useRef(false);
   const processedStarterRef = useRef<string | null>(null);
   const { messages, sendMessage } = useChat({
     onError: (error) => {
@@ -80,18 +51,6 @@ function ChatContent() {
   const searchParams = useSearchParams();
   const { ref: chatRef, bottomRef, scrollToBottom } = useChatScroll(messages);
 
-  const stopListening = useCallback(() => {
-    shouldListenRef.current = false;
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (e) {
-        // Ignore
-      }
-    }
-    setIsListening(false);
-  }, []);
-
   const submitMessage = useCallback(
     async (messageText: string) => {
       const nextInput = messageText.trim();
@@ -99,8 +58,6 @@ function ChatContent() {
         return;
       }
 
-      stopListening();
-      setInput("");
       setIsLoading(true);
 
       try {
@@ -115,113 +72,8 @@ function ChatContent() {
         setIsLoading(false);
       }
     },
-    [isLoading, scrollToBottom, sendMessage, stopListening],
+    [isLoading, scrollToBottom, sendMessage],
   );
-
-  // Initialize speech recognition
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const SpeechRecognition = getSpeechRecognition();
-
-      if (SpeechRecognition) {
-        const initRecognition = () => {
-          recognitionRef.current = new SpeechRecognition();
-          recognitionRef.current.continuous = false;
-          recognitionRef.current.interimResults = false;
-          recognitionRef.current.lang = "en-US";
-          recognitionRef.current.maxAlternatives = 1;
-
-          recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-            const results = event.results;
-            const transcript = results[results.length - 1][0].transcript;
-
-            setInput((prev) => prev + transcript + " ");
-          };
-
-          recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
-            console.log("Speech recognition error:", event.error);
-
-            if (event.error === "not-allowed") {
-              shouldListenRef.current = false;
-              setIsListening(false);
-              toast.error(
-                "Microphone access denied. Please allow microphone access.",
-              );
-            } else if (event.error === "aborted") {
-              shouldListenRef.current = false;
-              setIsListening(false);
-            } else {
-              console.log(
-                `Speech error (${event.error}), will auto-restart if still listening`,
-              );
-            }
-          };
-
-          recognitionRef.current.onend = () => {
-            if (shouldListenRef.current) {
-              try {
-                setTimeout(() => {
-                  if (shouldListenRef.current && recognitionRef.current) {
-                    recognitionRef.current.start();
-                  }
-                }, 100);
-              } catch (error) {
-                console.log("Could not restart recognition:", error);
-                setIsListening(false);
-                shouldListenRef.current = false;
-              }
-            } else {
-              setIsListening(false);
-            }
-          };
-        };
-
-        initRecognition();
-      }
-    }
-
-    return () => {
-      shouldListenRef.current = false;
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (e) {
-          // Ignore errors on cleanup
-        }
-      }
-    };
-  }, []);
-
-  const handleVoiceInput = () => {
-    if (!recognitionRef.current) {
-      toast.error("Speech recognition is not supported in your browser.");
-      return;
-    }
-
-    if (isListening) {
-      shouldListenRef.current = false;
-      try {
-        recognitionRef.current.stop();
-        setIsListening(false);
-        toast.success("Voice dictation stopped");
-      } catch (error) {
-        console.log("Error stopping recognition:", error);
-        setIsListening(false);
-      }
-    } else {
-      shouldListenRef.current = true;
-      try {
-        recognitionRef.current.start();
-        setIsListening(true);
-        toast.success("Listening... Speak now");
-      } catch (error) {
-        console.log("Error starting recognition:", error);
-        shouldListenRef.current = false;
-        setIsListening(false);
-        toast.error("Failed to start voice dictation. Please try again.");
-      }
-    }
-  };
 
   // Get the conversation starter from URL params
   const starter = searchParams.get("starter");
@@ -345,24 +197,26 @@ function ChatContent() {
                           switch (part.type) {
                             case "text":
                               return (
+                                // No typography plugin, so sizes are set per
+                                // element: text-sm body, like the composer.
                                 <div
                                   key={`${message.id}-${i}`}
-                                  className="prose prose-sm max-w-none"
+                                  className="text-sm"
                                 >
                                   <ReactMarkdown
                                     components={{
                                       h1: ({ children }) => (
-                                        <h1 className="text-2xl font-bold mt-4 mb-2">
+                                        <h1 className="text-lg font-semibold mt-4 mb-2">
                                           {children}
                                         </h1>
                                       ),
                                       h2: ({ children }) => (
-                                        <h2 className="text-xl font-semibold mt-4 mb-2">
+                                        <h2 className="text-base font-semibold mt-4 mb-2">
                                           {children}
                                         </h2>
                                       ),
                                       h3: ({ children }) => (
-                                        <h3 className="text-lg font-semibold mt-3 mb-2">
+                                        <h3 className="text-sm font-semibold mt-3 mb-2">
                                           {children}
                                         </h3>
                                       ),
@@ -372,12 +226,12 @@ function ChatContent() {
                                         </p>
                                       ),
                                       code: ({ children }) => (
-                                        <code className="bg-gray-100 px-1 py-0.5 rounded font-mono text-sm">
+                                        <code className="bg-gray-100 px-1 py-0.5 rounded font-mono text-xs">
                                           {children}
                                         </code>
                                       ),
                                       pre: ({ children }) => (
-                                        <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm my-4">
+                                        <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-xs my-4">
                                           {children}
                                         </pre>
                                       ),
@@ -459,82 +313,11 @@ function ChatContent() {
         )} */}
 
           <div className="mx-auto w-full max-w-3xl shrink-0 px-6 pt-3 pb-6">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void submitMessage(input);
-            }}
-            className="w-full"
-          >
-            <div className="w-full rounded-lg border border-dark/5 bg-[#fafafa] p-3 shadow-[0_6px_24px_-8px_rgba(0,153,153,0.25)] md:p-4">
-              <Textarea
-                value={input}
-                placeholder="Ask me about WatchTower"
-                onChange={(e) => {
-                  setInput(e.currentTarget.value);
-                  // Stop listening if user starts typing
-                  if (isListening) {
-                    stopListening();
-                  }
-                }}
-                onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  if (input.trim() && !isLoading) {
-                    void submitMessage(input);
-                  }
-                }
-                }}
-                disabled={isLoading}
-                className="min-h-12 resize-none border-none bg-transparent px-1 font-title text-base text-dark shadow-none placeholder:text-dark/70 focus-visible:ring-0 md:text-lg"
-              />
-              <div className="mt-2 flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                <Button
-                  type="button"
-                  variant={"ghost"}
-                  className="order-1 size-8 cursor-pointer text-dark hover:bg-dark/5"
-                  onClick={() => {
-                    // Media attachment functionality to be implemented later
-                    console.log("Media attachment clicked");
-                  }}
-                  disabled={isLoading}
-                >
-                  <Paperclip className="h-5 w-5" />
-                </Button>
-                </div>
-              {input.trim() ? (
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="size-10 cursor-pointer rounded-full bg-primary text-white hover:bg-primary/90"
-                  size={"icon"}
-                >
-                  <MoveUp />
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  variant={"ghost"}
-                  className={cn(
-                    "size-10 cursor-pointer rounded-full text-white hover:bg-primary/90",
-                    isListening ? "animate-pulse bg-red-500 hover:bg-red-600" : "bg-primary",
-                  )}
-                  size={"icon"}
-                  onClick={handleVoiceInput}
-                  disabled={isLoading}
-                  title={isListening ? "Stop dictation" : "Voice dictation"}
-                >
-                  {isListening ? (
-                    <MicOff className="h-5 w-5" />
-                  ) : (
-                    <Mic className="h-5 w-5" />
-                  )}
-                </Button>
-              )}
-              </div>
-            </div>
-          </form>
+          <ChatComposer
+            onSubmit={(question) => void submitMessage(question)}
+            disabled={isLoading}
+            showStarters={false}
+          />
           </div>
         </div>
       </section>
