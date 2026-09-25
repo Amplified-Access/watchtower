@@ -8,7 +8,7 @@ import {
   type SpeechRecognitionErrorEvent,
   type SpeechRecognitionEvent,
 } from "@/types/speech-recognition";
-import { useState, useEffect, Suspense, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ import TextComponent from "@/components/common/text-component";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
-import Loader from "@/components/ai/chat/loader";
+import ChatStatus from "@/features/chat/components/chat-status";
 import { toast } from "sonner";
 
 // Custom hook for smooth auto-scrolling chat to bottom
@@ -247,23 +247,6 @@ function ChatContent() {
     }
   }, [isLoading, scrollToBottom, messages.length]);
 
-  // Check if AI is currently using knowledge base tools.
-  const isSearchingKnowledge = useMemo(() => {
-    if (!isLoading || messages.length === 0) {
-      return false;
-    }
-
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role !== "assistant") {
-      return false;
-    }
-
-    return lastMessage.parts.some(
-      (part) =>
-        part.type === "tool-addResource" || part.type === "tool-getInformation",
-    );
-  }, [isLoading, messages]);
-
   return (
     <>
       {/* Header */}
@@ -454,13 +437,7 @@ function ChatContent() {
                 ))}
               </div>
 
-              {isLoading && (
-                <div className="flex items-center py-4">
-                  <div className="flex items-center space-x-2 text-gray-500">
-                    <Loader />
-                  </div>
-                </div>
-              )}
+              {isLoading && <ChatStatus messages={messages} />}
 
               {/* Invisible element to scroll to */}
               <div ref={bottomRef} className="h-1" />

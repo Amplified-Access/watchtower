@@ -581,7 +581,14 @@
     "listening": "Ndumva... vuga ubu",
     "micDenied": "Uburenganzira bwa mikoro bwanzwe. Emerera mikoro.",
     "dictationNotSupported": "Kwandika ukoresheje ijwi ntibishyigikiwe muri iyi mushakisha.",
-    "dictationFailed": "Ntibyashobotse gutangira kwandika ukoresheje ijwi. Ongera ugerageze."
+    "dictationFailed": "Ntibyashobotse gutangira kwandika ukoresheje ijwi. Ongera ugerageze.",
+    "statusThinking": "Ndatekereza",
+    "statusSearchingKnowledge": "Ndashakisha mu bubiko bw'ubumenyi",
+    "statusCheckingData": "Ndareba amakuru ahari",
+    "statusAnalysing": "Ndasesengura amakuru y'ibyabaye",
+    "statusFindingReports": "Ndashakisha raporo",
+    "statusReadingReport": "Ndasoma raporo",
+    "statusReviewing": "Ndasuzuma ibyo nabonye"
   },
   "Home": {
     "heroTitleLine1": "Tanga raporo mu rurimi rwawe.",

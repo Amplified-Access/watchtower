@@ -581,7 +581,14 @@
     "listening": "Gukilungila... Ubona sila.",
     "micDenied": "Mic yachigwe. Nyunga mic yidu.",
     "dictationNotSupported": "Nsasi jijandikwaga pagati ya browser yino.",
-    "dictationFailed": "Nahalile kujandika nsasi. Yeya nima yingi."
+    "dictationFailed": "Nahalile kujandika nsasi. Yeya nima yingi.",
+    "statusThinking": "Nalisamba",
+    "statusSearchingKnowledge": "Nalipandika mu bubiko bwa bumanyi",
+    "statusCheckingData": "Nalilola data jili",
+    "statusAnalysing": "Nalisamula data ja mahanga",
+    "statusFindingReports": "Nalipandika ripoti",
+    "statusReadingReport": "Nalisoma ripoti",
+    "statusReviewing": "Nalilola ayo naganile"
   },
   "Home": {
     "heroTitleLine1": "Panga ilipoti mululimi lwako.",

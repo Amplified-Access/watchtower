@@ -581,7 +581,14 @@
     "listening": "Ndĩragwatia... Aria hũ",
     "micDenied": "Mico kũregena? Nĩ wahĩtirio mĩgate ya mĩgambo. Rekia mĩgambo.",
     "dictationNotSupported": "Gũhũga mũgambo gũtiagamirirwo kĩrũkundo-inĩ gĩkĩ.",
-    "dictationFailed": "Ndingĩhota kũambĩrĩria mũgambo. Gerera rĩngĩ."
+    "dictationFailed": "Ndingĩhota kũambĩrĩria mũgambo. Gerera rĩngĩ.",
+    "statusThinking": "Ndĩreciria",
+    "statusSearchingKnowledge": "Ndĩracaria kũrĩ kĩgĩna gĩa ũmenyo",
+    "statusCheckingData": "Ndĩrarora ũhoro ũrĩa ũrĩ kuo",
+    "statusAnalysing": "Ndĩrathuthuria ũhoro wa maũndũ marĩa mekĩkĩte",
+    "statusFindingReports": "Ndĩracaria ripoti",
+    "statusReadingReport": "Ndĩrathoma ripoti",
+    "statusReviewing": "Ndĩrarora kĩrĩa ndona"
   },
   "Home": {
     "heroTitleLine1": "He rũpoti na rũthiomi rwaku.",

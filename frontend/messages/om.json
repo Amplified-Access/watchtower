@@ -581,7 +581,14 @@
     "listening": "Dhaggeeffachaa... Amma dubbadhu.",
     "micDenied": "Mikaafooni dhowweera. Mee seyyima.",
     "dictationNotSupported": "Barreeffamuun sagalee browser kana keessatti hin hojjatu.",
-    "dictationFailed": "Sagalee jalqabuun hin danda'ame. Yeroo biroo yaali."
+    "dictationFailed": "Sagalee jalqabuun hin danda'ame. Yeroo biroo yaali.",
+    "statusThinking": "Yaadaa jira",
+    "statusSearchingKnowledge": "Kuusaa beekumsaa keessa barbaadaa jira",
+    "statusCheckingData": "Daataa jiru mirkaneessaa jira",
+    "statusAnalysing": "Daataa taateewwanii xiinxalaa jira",
+    "statusFindingReports": "Gabaasota barbaadaa jira",
+    "statusReadingReport": "Gabaasa dubbisaa jira",
+    "statusReviewing": "Waan argadhe ilaalaa jira"
   },
   "Home": {
     "heroTitleLine1": "Afaan keessaniin gabaasaa.",

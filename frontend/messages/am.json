@@ -581,7 +581,14 @@
     "listening": "እያዳመጥኩ ነው... አሁን ይናገሩ",
     "micDenied": "የማይክሮፎን ፈቃድ ተከልክሏል። እባክዎ ማይክሮፎን ይፍቀዱ።",
     "dictationNotSupported": "በዚህ አሳሽ በድምጽ መጻፍ አይደገፍም።",
-    "dictationFailed": "በድምጽ መጻፍ መጀመር አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
+    "dictationFailed": "በድምጽ መጻፍ መጀመር አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+    "statusThinking": "እያሰብኩ ነው",
+    "statusSearchingKnowledge": "በእውቀት ቋቱ ውስጥ እየፈለግኩ ነው",
+    "statusCheckingData": "ያለውን መረጃ እያጣራሁ ነው",
+    "statusAnalysing": "የክስተት መረጃን እየተነተንኩ ነው",
+    "statusFindingReports": "ሪፖርቶችን እየፈለግኩ ነው",
+    "statusReadingReport": "ሪፖርቱን እያነበብኩ ነው",
+    "statusReviewing": "ያገኘሁትን እየገመገምኩ ነው"
   },
   "Home": {
     "heroTitleLine1": "በቋንቋዎ ሪፖርት ያድርጉ።",

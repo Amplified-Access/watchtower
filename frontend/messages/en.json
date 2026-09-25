@@ -581,7 +581,14 @@
     "listening": "Listening... speak now",
     "micDenied": "Microphone access denied. Please allow microphone access.",
     "dictationNotSupported": "Voice dictation isn't supported in this browser.",
-    "dictationFailed": "Couldn't start voice dictation. Please try again."
+    "dictationFailed": "Couldn't start voice dictation. Please try again.",
+    "statusThinking": "Thinking",
+    "statusSearchingKnowledge": "Searching the knowledge base",
+    "statusCheckingData": "Checking what data is available",
+    "statusAnalysing": "Analysing incident data",
+    "statusFindingReports": "Looking up reports",
+    "statusReadingReport": "Reading the report",
+    "statusReviewing": "Reviewing what I found"
   },
   "Home": {
     "heroTitleLine1": "Report in your language.",

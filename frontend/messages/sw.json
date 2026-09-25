@@ -581,7 +581,14 @@
     "listening": "Ninasikiliza... ongea sasa",
     "micDenied": "Ruhusa ya maikrofoni imekataliwa. Tafadhali ruhusu maikrofoni.",
     "dictationNotSupported": "Kuandika kwa sauti hakutumiki kwenye kivinjari hiki.",
-    "dictationFailed": "Imeshindwa kuanza kuandika kwa sauti. Tafadhali jaribu tena."
+    "dictationFailed": "Imeshindwa kuanza kuandika kwa sauti. Tafadhali jaribu tena.",
+    "statusThinking": "Inafikiria",
+    "statusSearchingKnowledge": "Inatafuta kwenye hifadhi ya maarifa",
+    "statusCheckingData": "Inaangalia data iliyopo",
+    "statusAnalysing": "Inachambua data ya matukio",
+    "statusFindingReports": "Inatafuta ripoti",
+    "statusReadingReport": "Inasoma ripoti",
+    "statusReviewing": "Inapitia nilichopata"
   },
   "Home": {
     "heroTitleLine1": "Ripoti kwa lugha yako.",
