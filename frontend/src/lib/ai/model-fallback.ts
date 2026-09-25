@@ -4,13 +4,16 @@ import type {
 } from "@ai-sdk/provider";
 
 /**
- * Routes a call across several models, falling back when one is out of quota.
+ * Routes a call across several models, falling back when one is out of quota
+ * or overloaded.
  *
  * Gemini's free tier allows a fixed number of requests per day *per model*,
  * and every tool call is a separate request — so one data question can cost
  * several. Chaining models multiplies the daily allowance, and a model that
  * answers a 429 is skipped until its cooldown expires rather than being
- * retried on every step of every conversation.
+ * retried on every step of every conversation. A 503 "high demand" answer is
+ * treated the same way with a short cooldown: those spikes are per model and
+ * usually pass in minutes, so the next model can take the request meanwhile.
  *
  * The cooldown lives in the process, so each server instance learns
  * separately and forgets on restart. That is deliberate: it is a way to stop
@@ -21,19 +24,25 @@ import type {
 export const DAILY_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 /** How long it is skipped after a per-minute quota error. */
 export const BURST_COOLDOWN_MS = 60 * 1000;
+/** How long it is skipped after answering that it is overloaded. */
+export const OVERLOAD_COOLDOWN_MS = 2 * 60 * 1000;
+
+export type FailoverReason = "quota" | "overloaded";
 
 export type FallbackOptions = {
   /** Called when a model is set aside, for logging. */
-  onExhausted?: (modelId: string, cooldownMs: number) => void;
+  onExhausted?: (modelId: string, cooldownMs: number, reason: FailoverReason) => void;
   /** Overridable for tests. */
   now?: () => number;
 };
 
+function statusOf(error: unknown): number | undefined {
+  return (error as { statusCode?: number })?.statusCode ?? (error as { status?: number })?.status;
+}
+
 /** True when an error means "this model has no quota right now". */
 export function isQuotaError(error: unknown): boolean {
-  const status = (error as { statusCode?: number; status?: number })?.statusCode ??
-    (error as { status?: number })?.status;
-  if (status === 429) return true;
+  if (statusOf(error) === 429) return true;
 
   const text = describe(error).toLowerCase();
   return (
@@ -43,11 +52,27 @@ export function isQuotaError(error: unknown): boolean {
   );
 }
 
+/** True when an error means "this model is too busy to answer right now". */
+export function isOverloadError(error: unknown): boolean {
+  if (statusOf(error) === 503) return true;
+
+  const text = describe(error).toLowerCase();
+  return text.includes("high demand") || text.includes("overloaded");
+}
+
+/** Why a model should be set aside for this error, or null to rethrow it. */
+export function failoverReason(error: unknown): FailoverReason | null {
+  if (isQuotaError(error)) return "quota";
+  if (isOverloadError(error)) return "overloaded";
+  return null;
+}
+
 /**
  * Per-day quotas reset overnight, so a model that hits one is worth skipping
  * for hours; a per-minute burst limit clears in seconds.
  */
 export function cooldownFor(error: unknown): number {
+  if (failoverReason(error) === "overloaded") return OVERLOAD_COOLDOWN_MS;
   const text = describe(error).toLowerCase();
   const perDay = text.includes("perday") || text.includes("per day") || text.includes("requestsperday");
   return perDay ? DAILY_COOLDOWN_MS : BURST_COOLDOWN_MS;
@@ -100,10 +125,11 @@ export function createFallbackModel(
       try {
         return await run(model);
       } catch (error) {
-        if (!isQuotaError(error)) throw error;
+        const reason = failoverReason(error);
+        if (!reason) throw error;
         const cooldownMs = cooldownFor(error);
         cooling.set(model.modelId, now() + cooldownMs);
-        onExhausted?.(model.modelId, cooldownMs);
+        onExhausted?.(model.modelId, cooldownMs, reason);
         lastError = error;
       }
     }

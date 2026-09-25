@@ -3,8 +3,10 @@ import type { LanguageModelV2 } from "@ai-sdk/provider";
 import {
   BURST_COOLDOWN_MS,
   DAILY_COOLDOWN_MS,
+  OVERLOAD_COOLDOWN_MS,
   createFallbackModel,
   cooldownFor,
+  failoverReason,
   isQuotaError,
 } from "./model-fallback";
 
@@ -29,6 +31,16 @@ function quotaError(perDay = true) {
         ],
       },
     }),
+  });
+}
+
+/** The 503 Gemini answers when a model is overloaded. */
+function overloadError() {
+  const message =
+    "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.";
+  return Object.assign(new Error(message), {
+    statusCode: 503,
+    responseBody: JSON.stringify({ error: { code: 503, message, status: "UNAVAILABLE" } }),
   });
 }
 
@@ -69,10 +81,27 @@ describe("isQuotaError", () => {
   });
 });
 
+describe("failoverReason", () => {
+  it("tells quota apart from overload", () => {
+    expect(failoverReason(quotaError())).toBe("quota");
+    expect(failoverReason(overloadError())).toBe("overloaded");
+    expect(failoverReason(new Error("The model is overloaded"))).toBe("overloaded");
+  });
+
+  it("returns null for errors another model would hit too", () => {
+    expect(failoverReason(new Error("network unreachable"))).toBeNull();
+    expect(failoverReason(Object.assign(new Error("bad request"), { statusCode: 400 }))).toBeNull();
+  });
+});
+
 describe("cooldownFor", () => {
   it("skips a model for hours on a per-day quota, seconds on a burst limit", () => {
     expect(cooldownFor(quotaError(true))).toBe(DAILY_COOLDOWN_MS);
     expect(cooldownFor(quotaError(false))).toBe(BURST_COOLDOWN_MS);
+  });
+
+  it("skips an overloaded model for minutes", () => {
+    expect(cooldownFor(overloadError())).toBe(OVERLOAD_COOLDOWN_MS);
   });
 });
 
@@ -99,6 +128,24 @@ describe("createFallbackModel", () => {
 
     await expect(model.doStream({} as never)).resolves.toBe("ok");
     expect(exhausted).toEqual(["a"]);
+  });
+
+  it("falls back to the next model when one is overloaded", async () => {
+    let clock = 0;
+    const first = fakeModel("a", () => overloadError());
+    const second = fakeModel("b");
+    const setAside: [string, string][] = [];
+    const model = createFallbackModel([first, second], {
+      now: () => clock,
+      onExhausted: (id, _cooldownMs, reason) => setAside.push([id, reason]),
+    });
+
+    await expect(model.doStream({} as never)).resolves.toBe("ok");
+    expect(setAside).toEqual([["a", "overloaded"]]);
+
+    clock += OVERLOAD_COOLDOWN_MS + 1;
+    await model.doStream({} as never);
+    expect(first.calls).toBe(2); // asked again once the spike should have passed
   });
 
   it("stops asking an exhausted model until its cooldown expires", async () => {

@@ -29,9 +29,13 @@ const DICTATION_LANGUAGES = [
 
 interface ChatComposerProps {
   onSubmit: (question: string) => void;
+  /** Blocks sending, e.g. while a reply streams; typing stays open. */
+  disabled?: boolean;
+  /** The starter chips suit an empty chat, not one already under way. */
+  showStarters?: boolean;
 }
 
-const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
+const ChatComposer = ({ onSubmit, disabled = false, showStarters = true }: ChatComposerProps) => {
   const t = useTranslations("ChatPage");
   const locale = useLocale();
   const [question, setQuestion] = useState("");
@@ -47,9 +51,10 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
   });
 
   const send = (text: string) => {
-    if (!text.trim()) return;
+    if (disabled || !text.trim()) return;
     dictation.stop();
     onSubmit(text.trim());
+    setQuestion("");
   };
 
   const toggleDictation = () => {
@@ -66,20 +71,22 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
 
   return (
     <div className="w-full">
-      <div className="flex flex-wrap gap-2">
-        {[t("starterWhatIs"), t("starterFindSomething")].map((starter) => (
-          <button
-            key={starter}
-            type="button"
-            onClick={() => send(starter)}
-            className="rounded-full border border-dark/10 bg-dark/2 px-3 py-1.5 font-title text-sm text-dark/80 transition-colors hover:border-dark/20 hover:text-dark"
-          >
-            {starter}
-          </button>
-        ))}
-      </div>
+      {showStarters && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          {[t("starterWhatIs"), t("starterFindSomething")].map((starter) => (
+            <button
+              key={starter}
+              type="button"
+              onClick={() => send(starter)}
+              className="rounded-full border border-dark/10 bg-dark/2 px-3 py-1.5 font-title text-sm text-dark/80 transition-colors hover:border-dark/20 hover:text-dark"
+            >
+              {starter}
+            </button>
+          ))}
+        </div>
+      )}
 
-      <div className="mt-3 rounded-lg border border-dark/5 bg-[#fafafa] px-3 py-2.5 shadow-[0_6px_24px_-8px_rgba(0,153,153,0.25)]">
+      <div className="rounded-lg border border-dark/5 bg-[#fafafa] px-3 py-2.5 shadow-[0_6px_24px_-8px_rgba(0,153,153,0.25)]">
         <Textarea
           value={question}
           aria-label={t("placeholder")}
@@ -139,8 +146,9 @@ const ChatComposer = ({ onSubmit }: ChatComposerProps) => {
             <button
               type="button"
               onClick={() => send(question)}
+              disabled={disabled}
               aria-label={t("send")}
-              className="flex size-8 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90"
+              className="flex size-8 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <ArrowUp className="size-4" />
             </button>

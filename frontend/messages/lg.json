@@ -581,7 +581,14 @@
     "listening": "Mpuliriza... yogera kati",
     "micDenied": "Olukusa lwa maikulofooni lugaanyiddwa. Kkiriza maikulofooni.",
     "dictationNotSupported": "Okuwandiika n'eddoboozi tekuwagirwa mu browser eno.",
-    "dictationFailed": "Tetusobodde kutandika kuwandiika n'eddoboozi. Gezaako nate."
+    "dictationFailed": "Tetusobodde kutandika kuwandiika n'eddoboozi. Gezaako nate.",
+    "statusThinking": "Kirowooza",
+    "statusSearchingKnowledge": "Kinoonya mu tterekero ly'amagezi",
+    "statusCheckingData": "Kikebera ebiwandiiko ebiriwo",
+    "statusAnalysing": "Kyekenneenya ebiwandiiko by'ebibaddewo",
+    "statusFindingReports": "Kinoonya lipoota",
+    "statusReadingReport": "Kisoma lipoota",
+    "statusReviewing": "Kyetegereza bye nzudde"
   },
   "Home": {
     "heroTitleLine1": "Waayo alipooti mu lulimi lwo.",

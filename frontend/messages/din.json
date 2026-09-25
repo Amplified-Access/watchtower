@@ -581,7 +581,14 @@
     "listening": "Riëëc... Bɛ̈n wör.",
     "micDenied": "Mic acïn thïn bï yök. Miɔɔc mic.",
     "dictationNotSupported": "Wör acïn kony browser yic.",
-    "dictationFailed": "Acïn cak bï wör. Tëm yen puɔu."
+    "dictationFailed": "Acïn cak bï wör. Tëm yen puɔu.",
+    "statusThinking": "Ya tak",
+    "statusSearchingKnowledge": "Ya kör në të ye ŋïny",
+    "statusCheckingData": "Ya tïŋ wël tɔ̈ thïn",
+    "statusAnalysing": "Ya wël ke käke cë rɔ̈ɔ̈t gɔ̈t",
+    "statusFindingReports": "Ya ripɔ̈t kör",
+    "statusReadingReport": "Ya ripɔ̈t kuen",
+    "statusReviewing": "Ya kë cë yök tïŋ"
   },
   "Home": {
     "heroTitleLine1": "Baŋ kek thok du.",

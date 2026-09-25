@@ -581,7 +581,14 @@
     "listening": "Awinjo... Wuogi koro.",
     "micDenied": "Mic otami. Yie miyo mich inyal tiyo.",
     "dictationNotSupported": "Wach mar dwol ok nyal e browser mani.",
-    "dictationFailed": "Ok neyalo chako wacho. Tem kendo."
+    "dictationFailed": "Ok neyalo chako wacho. Tem kendo.",
+    "statusThinking": "Aparo",
+    "statusSearchingKnowledge": "Amanyo e kar keno rieko",
+    "statusCheckingData": "Arango weche manitie",
+    "statusAnalysing": "Anono weche mag gik matimore",
+    "statusFindingReports": "Amanyo ripode",
+    "statusReadingReport": "Asomo ripot",
+    "statusReviewing": "Arango gima ayudo"
   },
   "Home": {
     "heroTitleLine1": "Ripodh e dhogi.",

@@ -17,8 +17,8 @@ export const maxDuration = 30;
 
 // Gemini's free tier counts requests per day per model, and every tool call
 // is a request — so the chat runs through a chain rather than one model. A
-// model that answers "out of quota" is skipped until its cooldown expires,
-// and the next one takes over mid-conversation. Newest first; override with
+// model that answers "out of quota" or "high demand" is skipped until its
+// cooldown expires, and the next one takes over mid-conversation. Newest first; override with
 // GEMINI_MODEL_CHAIN (comma-separated) to change the order or add models.
 const MODEL_CHAIN = (
   process.env.GEMINI_MODEL_CHAIN ??
@@ -33,9 +33,9 @@ const MODEL_CHAIN = (
 const chatModel = createFallbackModel(
   MODEL_CHAIN.map((id) => google(id)),
   {
-    onExhausted: (modelId, cooldownMs) =>
+    onExhausted: (modelId, cooldownMs, reason) =>
       console.warn(
-        `[chat] ${modelId} is out of quota; skipping it for ${Math.round(cooldownMs / 60000)} min`,
+        `[chat] ${modelId} is ${reason === "quota" ? "out of quota" : "overloaded"}; skipping it for ${Math.round(cooldownMs / 60000)} min`,
       ),
   },
 );
