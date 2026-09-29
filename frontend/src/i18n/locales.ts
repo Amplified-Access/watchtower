@@ -1,6 +1,7 @@
 // Every locale the site serves. Kept apart from request.ts (which reads the
-// request's cookies) so code outside a request, such as tests, can import
-// the list.
+// request's cookies) so code outside a request, such as tests and the Sanity
+// queries, can import the list. The Studio's content languages
+// (`sanity/languages.ts`) are built from it.
 export const locales = [
   "en",
   "fr",
