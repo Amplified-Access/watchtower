@@ -474,9 +474,6 @@
     "accessibility": "Akkesibiliitii"
   },
   "PrivacyPolicyPage": {
-    "eyebrow": "Imaammata Iccitii",
-    "heading": "Iccitiin kee gatii qaba.",
-    "intro": "WatchTower akka namoonni dhimmoota hawaasaa gabaasanii fi filannoo itti cuubfachuu itti himatanuuf kan baafameedha.",
     "lastUpdated": "Yeroo dhumaa: {date}",
     "inThisPolicy": "Imaammata kana keessatti"
   },

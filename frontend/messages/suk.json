@@ -474,9 +474,6 @@
     "accessibility": "Kwingila kwa bose"
   },
   "PrivacyPolicyPage": {
-    "eyebrow": "Masharti ga Ubwiswii",
-    "heading": "Ubwiswii bhoko ndege.",
-    "intro": "WatchTower yagendekigwa kukomeya abandu kubonga shi liliho mu makundi gabo nu ukujibhiija ubwiswii bwa jabo.",
     "lastUpdated": "Gayenjigwa Goya: {date}",
     "inThisPolicy": "Mu Masharti Gangana"
   },

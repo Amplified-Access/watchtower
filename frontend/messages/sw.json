@@ -474,9 +474,6 @@
     "accessibility": "Ufikivu"
   },
   "PrivacyPolicyPage": {
-    "eyebrow": "Sera ya Faragha",
-    "heading": "Faragha yako ni muhimu.",
-    "intro": "WatchTower imeundwa kusaidia watu kuripoti kinachotokea katika jamii zao huku ikiwapa chaguo wazi kuhusu taarifa wanazoshiriki.",
     "lastUpdated": "Ilisasishwa mwisho: {date}",
     "inThisPolicy": "Katika sera hii"
   },

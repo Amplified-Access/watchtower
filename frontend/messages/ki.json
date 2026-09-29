@@ -474,9 +474,6 @@
     "accessibility": "Kũgera"
   },
   "PrivacyPolicyPage": {
-    "eyebrow": "Watho wa Hitho",
-    "heading": "Kũhitho gwaku nĩ ũhoro.",
-    "intro": "WatchTower nĩ ũthiithe gũteithia andũ kũrũtũrania mahũtĩko ma gĩthaka na kũheana wega ũrĩa marũpoti ma makana.",
     "lastUpdated": "Ũtũma mũthia: {date}",
     "inThisPolicy": "Kũrĩ watho ũno"
   },

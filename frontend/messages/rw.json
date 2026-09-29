@@ -474,9 +474,6 @@
     "accessibility": "Kugera ku bose"
   },
   "PrivacyPolicyPage": {
-    "eyebrow": "Politiki y'Ibanga",
-    "heading": "Ibanga ryawe rifite agaciro.",
-    "intro": "WatchTower yakozwe kugira ngo ifashe abantu gutanga raporo ku bibera mu miryango yabo, ibaha uburenganzira busobanutse ku makuru basangiza.",
     "lastUpdated": "Byavuguruwe bwa nyuma: {date}",
     "inThisPolicy": "Muri iyi politiki"
   },
