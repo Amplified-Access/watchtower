@@ -8,7 +8,7 @@ const messagesDir = join(root, 'messages');
 const SECTIONS = [
   'Common', 'Navigation', 'Footer', 'LogoCloud', 'AnnouncementBanner',
   'Home', 'HomeLivePreview', 'About', 'Alerts', 'AnonymousReporting',
-  'CaseStudiesPage', 'CodeOfConduct', 'Security', 'PrivacyPolicyPage',
+  'CaseStudiesPage', 'PrivacyPolicyPage',
   'Datasets', 'Insights', 'MapsPage', 'Organizations', 'Reports', 'ChatPage'
 ];
 
@@ -26,8 +26,7 @@ const IGNORED_VALUES = {
   fr: new Set([
     'Navigation.chat', 'Footer.cookies', 'Footer.contact',
     'HomeLivePreview.viewAsGlobe', 'CaseStudiesPage.pageLabel',
-    'Insights.page', 'Reports.page', 'CodeOfConduct.correctionTitle',
-    'CodeOfConduct.attributionTitle'
+    'Insights.page', 'Reports.page'
   ])
 };
 
