@@ -8,4 +8,19 @@ const config = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 };
 
-module.exports = createJestConfig(config);
+// groq-js (which runs the Sanity queries against the seed data in tests) and
+// its `obug` dependency are published as ES modules only, so they have to go
+// through the transform that next/jest otherwise skips for node_modules.
+const ESM_PACKAGES = ["groq-js", "obug"];
+
+module.exports = async () => {
+  const jestConfig = await createJestConfig(config)();
+  const esm = ESM_PACKAGES.join("|");
+  return {
+    ...jestConfig,
+    transformIgnorePatterns: [
+      `/node_modules/(?!(\\.pnpm/)?(${esm})[@/])`,
+      ...jestConfig.transformIgnorePatterns.filter((pattern) => !pattern.includes("node_modules")),
+    ],
+  };
+};

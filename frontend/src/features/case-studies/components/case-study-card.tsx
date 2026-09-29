@@ -1,11 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
-import type { CaseStudy } from "../data/placeholder-case-studies";
-import { useCategoryLabel } from "../hooks/use-category-label";
+import SanityImage from "@/components/common/sanity-image";
+import type { CaseStudySummary } from "@/lib/sanity/types";
 import { cn } from "@/lib/utils";
 
 // "08 Sep, 2026". Formatted in UTC so server and client render the same string.
@@ -22,7 +21,7 @@ const formatDate = (iso: string, locale: string) => {
 };
 
 type CaseStudyCardProps = {
-  caseStudy: CaseStudy;
+  caseStudy: CaseStudySummary;
   className?: string;
   imageClassName?: string;
   sizes?: string;
@@ -38,7 +37,7 @@ const CaseStudyCard = ({
 }: CaseStudyCardProps) => {
   const t = useTranslations("CaseStudiesPage");
   const locale = useLocale();
-  const categoryLabel = useCategoryLabel();
+  const tag = [caseStudy.category?.title, caseStudy.location].filter(Boolean).join(" . ");
 
   return (
     <article className={cn("group flex flex-col", className)}>
@@ -48,19 +47,18 @@ const CaseStudyCard = ({
           imageClassName,
         )}
       >
-        <Image
-          src={caseStudy.imageUrl}
-          alt={caseStudy.imageAlt}
-          fill
-          sizes={sizes}
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        {caseStudy.image && (
+          <SanityImage
+            image={caseStudy.image}
+            fill
+            sizes={sizes}
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        )}
       </div>
       <div className="flex flex-col">
         <div className="mt-4 flex items-center justify-between gap-4">
-          <span className="truncate bg-dark/5 px-2 py-0.5 text-sm text-dark">
-            {categoryLabel(caseStudy.category)} . {caseStudy.location}
-          </span>
+          <span className="truncate bg-dark/5 px-2 py-0.5 text-sm text-dark">{tag}</span>
           <time
             dateTime={caseStudy.publishedAt}
             className="shrink-0 text-sm text-dark"

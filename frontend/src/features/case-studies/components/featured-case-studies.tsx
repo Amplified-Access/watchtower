@@ -2,21 +2,17 @@
 
 import { useTranslations } from "next-intl";
 import CaseStudyCard from "./case-study-card";
-import {
-  FEATURED_CASE_STUDIES,
-  type CaseStudy,
-} from "../data/placeholder-case-studies";
+import type { CaseStudySummary } from "@/lib/sanity/types";
 
-const FeaturedCaseStudies = () => {
+const FeaturedCaseStudies = ({ caseStudies }: { caseStudies: CaseStudySummary[] }) => {
   const t = useTranslations("CaseStudiesPage");
 
-  if (FEATURED_CASE_STUDIES.length === 0) return null;
+  if (caseStudies.length === 0) return null;
 
-  const pairs: [CaseStudy, CaseStudy | undefined][] = [];
-  for (let i = 0; i < FEATURED_CASE_STUDIES.length; i += 2) {
-    pairs.push([FEATURED_CASE_STUDIES[i], FEATURED_CASE_STUDIES[i + 1]]);
+  const pairs: [CaseStudySummary, CaseStudySummary | undefined][] = [];
+  for (let i = 0; i < caseStudies.length; i += 2) {
+    pairs.push([caseStudies[i], caseStudies[i + 1]]);
   }
-
   return (
     <div className="border-b border-border pb-16 md:pb-24">
       <h2 className="font-title text-3xl font-semibold text-dark md:text-4xl">

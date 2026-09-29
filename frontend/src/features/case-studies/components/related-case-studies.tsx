@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { CaseStudy } from "../data/placeholder-case-studies";
+import type { CaseStudySummary } from "@/lib/sanity/types";
 import CaseStudyCard from "./case-study-card";
 
-const RelatedCaseStudies = ({ caseStudies }: { caseStudies: CaseStudy[] }) => {
+const RelatedCaseStudies = ({ caseStudies }: { caseStudies: CaseStudySummary[] }) => {
   const t = useTranslations("CaseStudiesPage");
   if (caseStudies.length === 0) return null;
 

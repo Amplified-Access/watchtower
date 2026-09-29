@@ -1,15 +1,19 @@
-"use client";
-
 import { Suspense } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import Footer from "@/components/layout/footer/page";
 import CaseStudiesList from "@/features/case-studies/components/case-studies-list";
 import FeaturedCaseStudies from "@/features/case-studies/components/featured-case-studies";
+import { getCaseStudies, getCaseStudyCategories } from "@/lib/sanity/content";
 
-const Page = () => {
-  const t = useTranslations("CaseStudiesPage");
-  const tBanner = useTranslations("AnnouncementBanner");
+const Page = async () => {
+  const locale = await getLocale();
+  const [t, tBanner, caseStudies, categories] = await Promise.all([
+    getTranslations("CaseStudiesPage"),
+    getTranslations("AnnouncementBanner"),
+    getCaseStudies(locale),
+    getCaseStudyCategories(locale),
+  ]);
 
   return (
     <>
@@ -40,10 +44,14 @@ const Page = () => {
           <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
         </div>
         <div className="mx-auto max-w-360 px-8 py-12 md:px-16 md:py-16 xl:px-28">
-          <FeaturedCaseStudies />
+          {/* Featured studies appear in their own block, not the filtered list. */}
+          <FeaturedCaseStudies caseStudies={caseStudies.filter((c) => c.featured)} />
           <div className="pt-16 md:pt-24">
             <Suspense>
-              <CaseStudiesList />
+              <CaseStudiesList
+                caseStudies={caseStudies.filter((c) => !c.featured)}
+                categories={categories}
+              />
             </Suspense>
           </div>
         </div>

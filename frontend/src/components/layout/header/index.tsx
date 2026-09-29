@@ -17,7 +17,8 @@ const BANNER_DISMISSED_KEY = "wt-announcement-dismissed";
 const Header = () => {
   const t = useTranslations("Navigation");
   const tCommon = useTranslations("Common");
-  const pathname = usePathname();
+  // Null only under the Pages Router (pages/studio), which never renders this header.
+  const pathname = usePathname() ?? "";
   const { user, isLoading } = useExtendedSession();
   const [showBanner, setShowBanner] = useState(true);
 

@@ -29,7 +29,7 @@ const statusColors = {
 
 const Page = () => {
   const params = useParams();
-  const incidentId = params.id as string;
+  const incidentId = params?.id as string;
 
   const { user, isLoading: userLoading } = useExtendedSession();
 

@@ -1,4 +1,4 @@
-.PHONY: setup dev dev-backend dev-frontend \
+.PHONY: setup dev dev-backend dev-frontend sanity-setup \
         test test-backend test-frontend \
         build build-backend build-frontend \
         lint lint-backend lint-frontend \
@@ -19,6 +19,11 @@ dev-backend:
 
 dev-frontend:
 	cd frontend && pnpm dev
+
+# One-time: log in to Sanity, create/pick the project, import the seed content.
+# The Studio itself runs with the site, at /studio — see frontend/docs/CMS.md
+sanity-setup:
+	cd frontend && pnpm sanity:setup
 
 # ── Testing ──────────────────────────────────────────────────────────────────
 

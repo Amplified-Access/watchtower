@@ -1,14 +1,10 @@
-"use client";
-
-import Image from "next/image";
-import type { CaseStudy } from "../data/placeholder-case-studies";
-import { useCategoryLabel } from "../hooks/use-category-label";
+import SanityImage from "@/components/common/sanity-image";
+import type { CaseStudy } from "@/lib/sanity/types";
 
 // Grid hero with the title block beside the cover image, in a panel that stops
 // at the page gutters like the listing hero.
 const CaseStudyHero = ({ caseStudy }: { caseStudy: CaseStudy }) => {
-  const categoryLabel = useCategoryLabel();
-  const meta = [caseStudy.location, categoryLabel(caseStudy.category), caseStudy.deployment]
+  const meta = [caseStudy.location, caseStudy.category?.title, caseStudy.deployment]
     .filter(Boolean)
     .join(" · ");
 
@@ -35,14 +31,15 @@ const CaseStudyHero = ({ caseStudy }: { caseStudy: CaseStudy }) => {
               </p>
             </div>
             <div className="relative aspect-7/4 overflow-hidden bg-dark/5">
-              <Image
-                src={caseStudy.imageUrl}
-                alt={caseStudy.imageAlt}
-                fill
-                priority
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
-              />
+              {caseStudy.image && (
+                <SanityImage
+                  image={caseStudy.image}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover"
+                />
+              )}
             </div>
           </div>
         </div>

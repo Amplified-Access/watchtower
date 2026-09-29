@@ -37,8 +37,8 @@ const PasswordReset = ({
 
   const router = useRouter();
   const params = useSearchParams();
-  const token = params.get("token");
-  const error = params.get("error");
+  const token = params?.get("token") ?? null;
+  const error = params?.get("error") ?? null;
 
   async function onSubmit(values: z.infer<typeof passwordResetSchema>) {
     if (!token) {

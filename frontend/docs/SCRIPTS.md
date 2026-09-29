@@ -59,3 +59,14 @@ pnpm i18n:check
 ```
 
 Runs `scripts/i18n-check.mjs`, which fails if any string in the public marketing sections (`Common`, `Navigation`, `Footer`, `Home`, `About`, `Alerts`, `MapsPage`, `CaseStudiesPage`, `ChatPage`, `HomeLivePreview`, `PrivacyPolicyPage`, etc.) is still identical to its `en.json` value. Brand names (`appName`, `watchtower`), `About.lang*`/`About.region*` proper nouns, and a small explicit per-language allowlist (`scripts/i18n-check.mjs`) are exempt. Add new translations to all files in `messages/` rather than adding exceptions.
+
+## Sanity (content)
+
+```bash
+pnpm sanity:setup       # one-time: CLI login, create/pick the project, CORS, import the seed, add env vars
+pnpm sanity:validate    # validate the content schema (sanity schema validate)
+pnpm sanity:seed:build  # regenerate sanity/seed/seed.ndjson from sanity/seed/source.ts and translations/
+pnpm sanity:seed        # reset: re-import the seed, replacing seed documents and Studio edits to them
+```
+
+The Studio runs with the site at `/studio`. See [CMS.md](./CMS.md).

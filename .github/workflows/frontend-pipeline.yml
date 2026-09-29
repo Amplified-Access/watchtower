@@ -25,10 +25,11 @@ jobs:
         with:
           version: 10
 
+      # Sanity v6 (the Studio at /studio, and its CLI) requires Node 22.12+.
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
 
@@ -40,6 +41,17 @@ jobs:
 
       - name: Unit tests
         run: pnpm test
+
+      # Nothing here talks to Sanity, so any project ID satisfies the config.
+      - name: Validate the Sanity schema
+        run: pnpm sanity:validate
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ci00000
+          DO_NOT_TRACK: "1"
+
+      # seed.ndjson is generated; fail if it wasn't regenerated after its inputs changed.
+      - name: Sanity seed is up to date
+        run: pnpm sanity:seed:build && git diff --exit-code sanity/seed/seed.ndjson
 
       # A couple of modules build a client eagerly at import time and throw
       # if their env vars are unset, which Next hits while collecting page

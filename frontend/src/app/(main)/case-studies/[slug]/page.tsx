@@ -1,32 +1,42 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Footer from "@/components/layout/footer/page";
 import CaseStudyHero from "@/features/case-studies/components/case-study-hero";
 import CaseStudyArticle from "@/features/case-studies/components/case-study-article";
 import RelatedCaseStudies from "@/features/case-studies/components/related-case-studies";
-import {
-  PLACEHOLDER_CASE_STUDIES,
-  getCaseStudyBySlug,
-  getRelatedCaseStudies,
-} from "@/features/case-studies/data/placeholder-case-studies";
+import { getCaseStudy } from "@/lib/sanity/content";
 
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return PLACEHOLDER_CASE_STUDIES.map(({ slug }) => ({ slug }));
+export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const caseStudy = await getCaseStudy(slug, await getLocale());
+  return caseStudy ? { title: caseStudy.title, description: caseStudy.summary } : {};
 }
 
 const CaseStudyPage = async ({ params }: CaseStudyPageProps) => {
   const { slug } = await params;
-  const caseStudy = getCaseStudyBySlug(slug);
+  const locale = await getLocale();
+  const caseStudy = await getCaseStudy(slug, locale);
   if (!caseStudy) notFound();
 
   const tBanner = await getTranslations("AnnouncementBanner");
   // Studies without a full write-up yet show their summary as the introduction.
-  const blocks = caseStudy.body ?? [{ type: "paragraph" as const, text: caseStudy.summary }];
+  const body = caseStudy.body?.length
+    ? caseStudy.body
+    : [
+        {
+          _type: "block",
+          _key: "summary",
+          style: "normal",
+          children: [{ _type: "span", _key: "summary", text: caseStudy.summary, marks: [] }],
+          markDefs: [],
+        },
+      ];
 
   return (
     <>
@@ -39,10 +49,15 @@ const CaseStudyPage = async ({ params }: CaseStudyPageProps) => {
         </div>
         <div className="mx-auto max-w-360 px-8 md:px-16 xl:px-28">
           <article className="mx-auto max-w-3xl py-12 md:py-16">
-            <CaseStudyArticle blocks={blocks} />
+            {/* An untranslated body is shown in English: say so to screen
+                readers and in-browser translation. */}
+            <CaseStudyArticle
+              body={body}
+              lang={caseStudy.body?.length && caseStudy.bodyLanguage !== locale ? caseStudy.bodyLanguage : undefined}
+            />
           </article>
           <div className="pt-12 pb-20 md:pt-20 md:pb-28">
-            <RelatedCaseStudies caseStudies={getRelatedCaseStudies(caseStudy)} />
+            <RelatedCaseStudies caseStudies={caseStudy.related} />
           </div>
         </div>
       </section>

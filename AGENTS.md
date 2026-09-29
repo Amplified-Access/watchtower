@@ -7,7 +7,7 @@ Watchtower is an open-source incident monitoring platform for civil society orga
 ```
 watchtower/
 ├── backend/      Go 1.25 REST API (Clean Architecture)
-└── frontend/     Next.js 15 + TypeScript + tRPC
+└── frontend/     Next.js 15 + TypeScript + tRPC (also serves the Sanity Studio at /studio)
 ```
 
 ## Documentation map
@@ -33,7 +33,8 @@ watchtower/
         ├── CLEAN_ARCHITECTURE_MIGRATION.md  # Feature layer patterns and migration status
         ├── TRPC.md                  # tRPC setup, procedures, auth middleware
         ├── SCRIPTS.md               # All pnpm scripts
-        └── DYNAMIC_MAP.md           # Dynamic map component approaches and data shape
+        ├── DYNAMIC_MAP.md           # Dynamic map component approaches and data shape
+        └── CMS.md                   # Sanity: setup, embedded Studio, translation approach, seed
 ```
 
 **Where to put new documentation:**
@@ -83,6 +84,14 @@ make seed         # one-time DB seed (skips tables that already have rows)
 make refresh      # insert a fresh batch of weekly anonymous reports (safe to re-run)
 ```
 
+### Sanity (run from `frontend/`)
+```
+pnpm sanity:setup       # one-time: log in, create/pick the Sanity project, CORS, import the seed, add env vars
+pnpm sanity:validate    # validate the content schema
+pnpm sanity:seed:build  # regenerate sanity/seed/seed.ndjson from its sources
+```
+The Studio is part of the site: `pnpm dev`, then `/studio`. See `frontend/docs/CMS.md`. The root Makefile has `make sanity-setup`.
+
 ### Weekly data refresh (Railway cron)
 `cmd/refresh/main.go` inserts 5–10 anonymous incident reports dated within the last 7 days.
 It has no skip-if-exists guard — running it weekly keeps the "past week" map filter populated.
@@ -104,7 +113,7 @@ pnpm test:watch   # Jest watch mode
 pnpm i18n:check   # fail if any marketing string is still English (see frontend/docs/SCRIPTS.md)
 ```
 
-**Local env:** the frontend needs `NEXT_PUBLIC_API_URL` (the Go API, e.g. `http://localhost:8080/api/v1` — plain `http` for a local Go server) and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`. It has no database connection, so no `DATABASE_URL`, and no storage credentials: the R2 settings (`CLOUDFLARE_*`) go in `backend/.env`. The chat assistant's model still runs in Next and needs `GOOGLE_GENERATIVE_AI_API_KEY` there (optionally `GEMINI_MODEL_CHAIN` to change the fallback order); its knowledge-base search runs in Go and needs the same key on the backend. Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
+**Local env:** the frontend needs `NEXT_PUBLIC_API_URL` (the Go API, e.g. `http://localhost:8080/api/v1` — plain `http` for a local Go server) and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`. It has no database connection, so no `DATABASE_URL`, and no storage credentials: the R2 settings (`CLOUDFLARE_*`) go in `backend/.env`. The chat assistant's model still runs in Next and needs `GOOGLE_GENERATIVE_AI_API_KEY` there (optionally `GEMINI_MODEL_CHAIN` to change the fallback order); its knowledge-base search runs in Go and needs the same key on the backend. For the case study and privacy policy pages it also needs `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` (`pnpm sanity:setup` adds them). Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
 
 ## Backend architecture — Clean Architecture (strict)
 
@@ -163,6 +172,11 @@ src/
 - **The chat runs through a model chain, not one model** (`lib/ai/model-fallback.ts`). Because the free tier's daily allowance is per model, a 429 sets that model aside for a cooldown (6 hours for a per-day quota, a minute for a burst limit) and the next model in the chain answers — mid-conversation if need be. The order defaults to `gemini-3.8-flash,gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash` and is overridable with `GEMINI_MODEL_CHAIN`. Cooldowns live in the server process, so they are a way to stop wasting requests, not a record of quota; each instance learns on its own and forgets on restart. Non-quota errors are passed straight through rather than burning the chain.
 - **File bytes are the one exception to "never call Go from a component".** `utils/file-upload.ts` posts the file straight from the browser to Go's `/files`, and `utils/file-download.ts` links to `/files/download`, both using `API_BASE` from `lib/api/base.ts`. tRPC only carries JSON, and a Next route in between would hit Vercel's 4.5 MB function body limit. Only the returned key goes through tRPC, on the mutation that saves the record. The frontend holds no R2 credentials.
 - **React Compiler**: the lint run must stay free of `react-hooks/*` warnings. Read values from React Hook Form with `useWatch`, never `form.watch()` during render — `watch()` makes the compiler skip the whole component, which also hides every other compiler warning in it. TanStack Table's `useReactTable` has no compatible pattern, so the five data tables carry a line-level suppression explaining why; that is safe only while nothing passes a `table` or `row` into a memoized child, and there is no `React.memo` in `src/` today. Vendored `animate-ui` files carry file-level suppressions so a library upgrade stays a clean overwrite.
+- **Editorial content comes from Sanity, not Go**, the one deliberate exception to "the Go backend is the source of truth". Case studies, their categories and the privacy policy text are edited in the Studio embedded at `/studio` (schema in `src/sanity/`, config in `sanity.config.ts`) and read by **server components** through `lib/sanity/` (`content.ts` → `live.ts`), never through tRPC or the browser: it is public, read-only, published content with no per-user logic, and the Go backend would only proxy it. Incident data, accounts and anything organisation-internal stay in Go. UI copy stays in `messages/*.json`; Sanity holds content that editors write, not interface strings.
+- **Sanity content is translated field by field** (`sanity-plugin-internationalized-array`): the site has no locale in its URLs (the locale is a cookie), so one document holds every language and shares its slug, category, date and images. Queries take `$locale` and fall back to English per field through `localized()` in `lib/sanity/queries.ts`; always use it for translatable fields. When a body falls back, the page marks it `lang="en"`. The Studio's languages (`src/sanity/languages.ts`) are built from `src/i18n/locales.ts`, so adding a locale adds it to the Studio. Why field-level and not one document per language: `docs/CMS.md`.
+- **Sanity queries are tested against the seed** with groq-js (`lib/sanity/queries.test.ts`), Sanity's own query engine, so no project is needed in CI. groq-js is ESM-only, which is why `jest.config.js` transforms it.
+- **Sanity content updates live** (Sanity Live, `lib/sanity/live.ts`, `defineLive` from `next-sanity/live`): fetches are cached under Sanity's sync tags, and `<SanityLive />` in the browser revalidates exactly those tags and soft-refreshes the page when a document is published. **Every page showing Sanity content must render `<SanityLive />`** once (the case-studies layout and the privacy policy page do). Fallbacks for publishes no open page sees: every fetch also carries the `sanity` tag, which a Sanity webhook (`POST /api/revalidate`, signed with `SANITY_REVALIDATE_SECRET`) drops, and fetches expire after 60 s. `next-sanity` is pinned to 11.6.13, the last release supporting Next 15; its `sanity ^5` peer warning is expected (only `/live` is used). Without `NEXT_PUBLIC_SANITY_PROJECT_ID` nothing is defined and the pages render empty, so builds and tests don't need Sanity. Images go through `components/common/sanity-image.tsx` (Sanity's CDN resizes them; it's a client component because next/image's `loader` is a function).
+- **The Studio is embedded at `/studio` as the app's only Pages Router page** (`src/pages/studio/[[...tool]].tsx`, rendering Sanity's `<Studio>`, not next-sanity's `NextStudio`, which needs Next 16). Sanity v6 imports React 19.2's `Activity`; the React that Next 15 bundles for the App Router (a 19.2 canary) lacks it, so a Studio under `app/` passes `next dev` but fails `next build`. The Pages Router uses the installed `react` (19.2.8). Because `pages/` exists, Next types `useParams`/`useSearchParams`/`usePathname` as nullable app-wide: handle `null` in new App Router code (it never is null there). The Studio loads in the browser only (`next/dynamic`, `ssr: false`) and on that route only. Every origin serving the site must be a Sanity CORS origin with credentials, for the Studio and for Sanity Live. On Next 16, move the Studio to `app/studio/`, drop the null handling and upgrade `next-sanity`. Files the Sanity CLI also loads (`sanity.config.ts`, `src/sanity/`) import each other relatively: the CLI doesn't know the `@/` alias.
 - Server-only code (API keys, DB access) must import `server-only`.
 - State: Zustand for client state, React Query (via tRPC) for server state.
 
@@ -184,6 +198,7 @@ src/
 | Google Generative AI | Chat model (Gemini 3.8 Flash, in Next) and knowledge-base embeddings (`gemini-embedding-2` at 768 dimensions, in Go: `pkg/gemini`, `POST /assistant/knowledge/search`) |
 | Sentry | Error monitoring |
 | Mapbox | Geospatial visualization |
+| Sanity | Editorial content (case studies, legal pages), edited in the Studio at `/studio` and read by Next server components |
 
 ## CI
 
