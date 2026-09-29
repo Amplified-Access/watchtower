@@ -11,6 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "sanity:setup": "bash scripts/sanity-setup.sh",
     "sanity:seed:build": "tsx sanity/seed/build.ts",
     "sanity:seed": "set -a && for f in .env .env.development.local .env.local; do [ -f $f ] && . ./$f; done; set +a && sanity datasets import sanity/seed/seed.ndjson -p \"$NEXT_PUBLIC_SANITY_PROJECT_ID\" -d \"${NEXT_PUBLIC_SANITY_DATASET:-production}\" --replace",
     "sanity:validate": "sanity schema validate"
