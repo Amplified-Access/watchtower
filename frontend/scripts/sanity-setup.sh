@@ -5,12 +5,12 @@
 #   2. creates a "Watchtower" project, or uses the one in .env.local,
 #   3. creates the dataset (public: the site reads published content without a token),
 #   4. allows the local site (http://localhost:3000, where /studio runs) to call the API (CORS),
-#   5. imports the seed content (case studies, categories, privacy policy)
-#      into a dataset that has none yet,
+#   5. adds the seed content (pages, case studies, categories) the dataset
+#      doesn't have yet, and the fields existing documents lack,
 #   6. adds NEXT_PUBLIC_SANITY_PROJECT_ID / _DATASET to .env.local.
 # Safe to re-run: existing datasets and CORS origins are left alone, and the
-# seed is only imported into a dataset without content, so edits made in the
-# Studio are never overwritten. (`pnpm sanity:seed` is the explicit "reset the
+# seed never overwrites a document or field that exists, so edits made in the
+# Studio are kept. (`pnpm sanity:seed` is the explicit "reset the
 # seed documents" command.)
 set -euo pipefail
 
@@ -77,14 +77,18 @@ count_case_studies() {
     sed -n 's/.*"result":\([0-9]*\).*/\1/p' || true
 }
 
-# Only a dataset without content gets the seed. Even with --missing, an
-# import re-points image fields at the seed's images, which would undo an
-# image an editor replaced.
-if [ "$(count_case_studies)" -gt 0 ] 2>/dev/null; then
-  echo "→ The dataset already has content; skipping the seed (\`pnpm sanity:seed\` resets it)"
-else
-  echo "→ Importing the seed content"
-  sanity datasets import sanity/seed/seed.ndjson -p "$PROJECT_ID" -d "$DATASET" --missing
+# Seed documents the dataset lacks are imported, and existing ones only get
+# the fields they lack (sanity/seed/sync.ts), so edits made in the Studio are
+# never overwritten. Only the missing documents go to the import: even with
+# --missing, importing a document that exists re-points its image fields at
+# the seed's images, which would undo an image an editor replaced.
+echo "→ Adding the seed content the dataset doesn't have yet"
+export NEXT_PUBLIC_SANITY_PROJECT_ID="$PROJECT_ID" NEXT_PUBLIC_SANITY_DATASET="$DATASET"
+MISSING=sanity/seed/.missing.ndjson
+trap 'rm -f "$MISSING"' EXIT
+sanity exec sanity/seed/sync.ts --with-user-token
+if [ -s "$MISSING" ]; then
+  sanity datasets import "$MISSING" -p "$PROJECT_ID" -d "$DATASET" --missing
 fi
 
 # The site reads without a token, as anyone can: check that works.
