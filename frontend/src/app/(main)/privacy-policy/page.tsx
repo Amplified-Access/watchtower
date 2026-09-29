@@ -1,27 +1,35 @@
-"use client";
-
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import Footer from "@/components/layout/footer/page";
 import PolicySections from "@/features/legal/components/policy-sections";
 import PolicyToc from "@/features/legal/components/policy-toc";
-import {
-  PRIVACY_POLICY_LAST_UPDATED,
-  PRIVACY_POLICY_SECTIONS,
-} from "@/features/legal/content/privacy-policy";
+import { getLegalPage } from "@/lib/sanity/content";
+import { SanityLive } from "@/lib/sanity/live";
 
-const TOC_ITEMS = PRIVACY_POLICY_SECTIONS.map(({ id, title }) => ({ id, title }));
+// The page header is UI copy in messages/*.json; the policy text is edited in
+// Sanity (the `privacyPolicy` document). It is only translated once a reviewed
+// translation exists — until then each section falls back to English.
+const Page = async () => {
+  const locale = await getLocale();
+  const [t, tBanner, policy] = await Promise.all([
+    getTranslations("PrivacyPolicyPage"),
+    getTranslations("AnnouncementBanner"),
+    getLegalPage("privacyPolicy", locale),
+  ]);
+  const sections = policy?.sections ?? [];
+  const tocItems = sections.map(({ id, title, titleLanguage }) => ({
+    id,
+    title,
+    lang: titleLanguage !== locale ? titleLanguage : undefined,
+  }));
 
-const Page = () => {
-  const t = useTranslations("PrivacyPolicyPage");
-  const tBanner = useTranslations("AnnouncementBanner");
-  const locale = useLocale();
-
-  const lastUpdated = new Intl.DateTimeFormat(locale, {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(PRIVACY_POLICY_LAST_UPDATED));
+  const lastUpdated =
+    policy &&
+    new Intl.DateTimeFormat(locale, {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(policy.lastUpdated));
 
   return (
     <>
@@ -40,21 +48,23 @@ const Page = () => {
               {t("heading")}
             </h1>
             <p className="mx-auto mt-6 max-w-lg text-dark leading-snug md:text-lg">{t("intro")}</p>
-            <p className="mt-10 font-title font-semibold text-dark md:text-lg">
-              {t("lastUpdated", { date: lastUpdated })}
-            </p>
+            {lastUpdated && (
+              <p className="mt-10 font-title font-semibold text-dark md:text-lg">
+                {t("lastUpdated", { date: lastUpdated })}
+              </p>
+            )}
           </div>
         </div>
 
         <div className="mx-auto grid max-w-360 px-4 md:px-8 lg:grid-cols-[18rem_1fr] xl:grid-cols-[20rem_1fr] xl:px-16">
           <aside className="border-b border-border lg:border-r lg:border-b-0">
             <div className="lg:sticky lg:top-32">
-              <PolicyToc label={t("inThisPolicy")} items={TOC_ITEMS} />
+              <PolicyToc label={t("inThisPolicy")} items={tocItems} />
             </div>
           </aside>
           <div className="px-6 py-12 md:px-12 md:py-16 xl:px-24">
             <div className="max-w-3xl">
-              <PolicySections sections={PRIVACY_POLICY_SECTIONS} />
+              <PolicySections sections={sections} locale={locale} />
             </div>
           </div>
         </div>
@@ -73,6 +83,8 @@ const Page = () => {
       </section>
 
       <Footer />
+      {/* Refreshes the policy for open readers when it is published. */}
+      <SanityLive />
     </>
   );
 };

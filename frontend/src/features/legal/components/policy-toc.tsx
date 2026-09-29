@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 
 interface PolicyTocProps {
   label: string;
-  items: { id: string; title: string }[];
+  /** `lang` marks a title shown in another language than the page (an English fallback). */
+  items: { id: string; title: string; lang?: string }[];
 }
 
 // Numbered table of contents that highlights the section currently in view.
@@ -57,7 +58,9 @@ const PolicyToc = ({ label, items }: PolicyTocProps) => {
               )}
             >
               <span className="text-right text-dark">{index + 1}.</span>
-              <span className="ps-1.5">{item.title}</span>
+              <span lang={item.lang} className="ps-1.5">
+                {item.title}
+              </span>
             </a>
           </li>
         ))}
