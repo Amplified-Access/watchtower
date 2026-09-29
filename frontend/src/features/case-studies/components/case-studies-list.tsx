@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Check } from "lucide-react";
-import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -14,17 +14,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { CaseStudyCategory, CaseStudySummary } from "@/lib/sanity/types";
 import CaseStudyCard from "./case-study-card";
-import { useCategoryLabel } from "../hooks/use-category-label";
-import {
-  CASE_STUDY_CATEGORIES,
-  LISTED_CASE_STUDIES,
-} from "../data/placeholder-case-studies";
 
 // Four to start and four more per "Load more", like the thematic maps list.
 const PAGE_SIZE = 4;
-
-const LOCATIONS = [...new Set(LISTED_CASE_STUDIES.map((c) => c.location))].sort();
 
 const chipClassName = (active: boolean) =>
   cn(
@@ -34,19 +28,28 @@ const chipClassName = (active: boolean) =>
       : "border-dark/10 bg-dark/[0.03] text-dark hover:bg-dark/[0.07]",
   );
 
-const CaseStudiesList = () => {
-  const t = useTranslations("CaseStudiesPage");
-  const categoryLabel = useCategoryLabel();
+type CaseStudiesListProps = {
+  /** The studies below the featured block, newest first. */
+  caseStudies: CaseStudySummary[];
+  categories: CaseStudyCategory[];
+};
 
-  const [category, setCategory] = useQueryState(
-    "category",
-    parseAsStringLiteral(CASE_STUDY_CATEGORIES),
-  );
-  const [location, setLocation] = useQueryState("location", parseAsString);
+const CaseStudiesList = ({ caseStudies, categories }: CaseStudiesListProps) => {
+  const t = useTranslations("CaseStudiesPage");
+
+  // The filters are the category slug and the location as shown, both in the
+  // URL so a filtered list can be shared. A value the list doesn't have is
+  // ignored: a category renamed in the Studio, or a place name shared from
+  // another language (locations are translated, category slugs are not).
+  const [categoryParam, setCategory] = useQueryState("category", parseAsString);
+  const [locationParam, setLocation] = useQueryState("location", parseAsString);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const filtered = LISTED_CASE_STUDIES.filter(
-    (c) => (!category || c.category === category) && (!location || c.location === location),
+  const locations = [...new Set(caseStudies.map((c) => c.location))].sort();
+  const category = categories.some((c) => c.slug === categoryParam) ? categoryParam : null;
+  const location = locationParam && locations.includes(locationParam) ? locationParam : null;
+  const filtered = caseStudies.filter(
+    (c) => (!category || c.category?.slug === category) && (!location || c.location === location),
   );
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
@@ -72,15 +75,15 @@ const CaseStudiesList = () => {
         >
           {t("filterAll")}
         </button>
-        {CASE_STUDY_CATEGORIES.map((value) => (
+        {categories.map(({ slug, title }) => (
           <button
-            key={value}
+            key={slug}
             type="button"
-            onClick={() => selectCategory(category === value ? null : value)}
-            aria-pressed={category === value}
-            className={chipClassName(category === value)}
+            onClick={() => selectCategory(category === slug ? null : slug)}
+            aria-pressed={category === slug}
+            className={chipClassName(category === slug)}
           >
-            {categoryLabel(value)}
+            {title}
           </button>
         ))}
         <DropdownMenu>
@@ -95,7 +98,7 @@ const CaseStudiesList = () => {
               <Check className={cn("size-4", location && "invisible")} />
               {t("allLocations")}
             </DropdownMenuItem>
-            {LOCATIONS.map((value) => (
+            {locations.map((value) => (
               <DropdownMenuItem key={value} onSelect={() => selectLocation(value)}>
                 <Check className={cn("size-4", location !== value && "invisible")} />
                 {value}
