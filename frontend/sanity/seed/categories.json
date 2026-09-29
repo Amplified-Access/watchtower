@@ -1,0 +1,80 @@
+{
+  "am": {
+    "climate": "የአየር ንብረት",
+    "water-sanitation": "ውሃና ንጽህና",
+    "rights-safety": "መብቶችና ደህንነት",
+    "public-services": "የሕዝብ አገልግሎቶች"
+  },
+  "din": {
+    "climate": "Pëër ë Piny",
+    "water-sanitation": "Piu ku Thöny",
+    "rights-safety": "Yoga ku Mëtliëc",
+    "public-services": "Luui ë Päth"
+  },
+  "en": {
+    "climate": "Climate",
+    "water-sanitation": "Water & Sanitation",
+    "rights-safety": "Rights & Safety",
+    "public-services": "Public Services"
+  },
+  "fr": {
+    "climate": "Climat",
+    "water-sanitation": "Eau et assainissement",
+    "rights-safety": "Droits et sécurité",
+    "public-services": "Services publics"
+  },
+  "ki": {
+    "climate": "Klimati",
+    "water-sanitation": "Maĩ na Ũtheregithia",
+    "rights-safety": "Hĩti na Ũgitĩri",
+    "public-services": "Mihũnga ya Gũa"
+  },
+  "lg": {
+    "climate": "Embeera y'Obudde",
+    "water-sanitation": "Amazzi n'Obuyonjo",
+    "rights-safety": "Eddembe n'Obukuumi",
+    "public-services": "Empeereza za Gavumenti"
+  },
+  "luo": {
+    "climate": "Weche Mar Piny",
+    "water-sanitation": "Pi kod Ler",
+    "rights-safety": "Gidhgi kod Rit",
+    "public-services": "Tich mag Oganda"
+  },
+  "om": {
+    "climate": "Haalota Qilleensaa",
+    "water-sanitation": "Bishaanii fi Qulqullinaa",
+    "rights-safety": "Mirgootaa fi Nagaa",
+    "public-services": "Tajaajila Uummataa"
+  },
+  "pa": {
+    "climate": "ਜਲਵਾਯੂ",
+    "water-sanitation": "ਪਾਣੀ ਅਤੇ ਸਫ਼ਾਈ",
+    "rights-safety": "ਅਧਿਕਾਰ ਅਤੇ ਸੁਰੱਖਿਆ",
+    "public-services": "ਜਨਤਕ ਸੇਵਾਵਾਂ"
+  },
+  "rw": {
+    "climate": "Ikirere",
+    "water-sanitation": "Amazi n'Isuku",
+    "rights-safety": "Uburenganzira n'Umutekano",
+    "public-services": "Serivisi za Leta"
+  },
+  "suk": {
+    "climate": "Klimati",
+    "water-sanitation": "Maji na Usafi",
+    "rights-safety": "Haki na Lindo",
+    "public-services": "Milimo ja Bukuma"
+  },
+  "sw": {
+    "climate": "Hali ya Hewa",
+    "water-sanitation": "Maji na Usafi",
+    "rights-safety": "Haki na Usalama",
+    "public-services": "Huduma za Umma"
+  },
+  "ur": {
+    "climate": "موسمیات",
+    "water-sanitation": "پانی اور صفائی",
+    "rights-safety": "حقوق اور تحفظ",
+    "public-services": "عوامی خدمات"
+  }
+}
