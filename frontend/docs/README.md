@@ -10,6 +10,7 @@ Architecture guides and reference docs for the Watchtower frontend.
 | [TRPC.md](./TRPC.md) | tRPC setup: transport, context, auth middleware, procedure types, error handling, composition root |
 | [SCRIPTS.md](./SCRIPTS.md) | All pnpm scripts explained (dev, build, test, coverage, lint) |
 | [DYNAMIC_MAP.md](./DYNAMIC_MAP.md) | Dynamic map component: implementation approaches, data shape, customisation |
+| [CMS.md](./CMS.md) | Sanity content: setup, the Studio at /studio, how translation and English fallback work, seed content |
 
 ## Architecture Overview
 
