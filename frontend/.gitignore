@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# sanity/seed/sync.ts output, imported and deleted by scripts/sanity-setup.sh
+sanity/seed/.missing.ndjson

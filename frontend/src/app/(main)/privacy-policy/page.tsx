@@ -6,9 +6,10 @@ import PolicyToc from "@/features/legal/components/policy-toc";
 import { getLegalPage } from "@/lib/sanity/content";
 import { SanityLive } from "@/lib/sanity/live";
 
-// The page header is UI copy in messages/*.json; the policy text is edited in
-// Sanity (the `privacyPolicy` document). It is only translated once a reviewed
-// translation exists — until then each section falls back to English.
+// The header and the policy text are the `privacyPolicy` document in Sanity;
+// the "Last updated" and contents labels are UI copy in messages/*.json. The
+// text is only translated once a reviewed translation exists — until then
+// each section falls back to English.
 const Page = async () => {
   const locale = await getLocale();
   const [t, tBanner, policy] = await Promise.all([
@@ -17,14 +18,13 @@ const Page = async () => {
     getLegalPage("privacyPolicy", locale),
   ]);
   const sections = policy?.sections ?? [];
-  const tocItems = sections.map(({ id, title, titleLanguage }) => ({
-    id,
-    title,
-    lang: titleLanguage !== locale ? titleLanguage : undefined,
-  }));
+  // Untitled (introductory) sections aren't listed in the contents.
+  const tocItems = sections.flatMap(({ id, title, titleLanguage }) =>
+    title ? [{ id, title, lang: titleLanguage !== locale ? titleLanguage : undefined }] : [],
+  );
 
   const lastUpdated =
-    policy &&
+    policy?.lastUpdated &&
     new Intl.DateTimeFormat(locale, {
       month: "long",
       year: "numeric",
@@ -42,12 +42,12 @@ const Page = async () => {
         <div className="border-b border-border">
           <div className="mx-auto max-w-3xl px-8 pt-40 pb-16 text-center md:pt-44 md:pb-20">
             <p className="mb-4 font-title text-sm font-medium uppercase tracking-wide text-primary">
-              {t("eyebrow")}
+              {policy?.hero.eyebrow}
             </p>
             <h1 className="font-title text-4xl font-medium leading-tight text-dark md:text-6xl">
-              {t("heading")}
+              {policy?.hero.title}
             </h1>
-            <p className="mx-auto mt-6 max-w-lg text-dark leading-snug md:text-lg">{t("intro")}</p>
+            <p className="mx-auto mt-6 max-w-lg text-dark leading-snug md:text-lg">{policy?.hero.description}</p>
             {lastUpdated && (
               <p className="mt-10 font-title font-semibold text-dark md:text-lg">
                 {t("lastUpdated", { date: lastUpdated })}

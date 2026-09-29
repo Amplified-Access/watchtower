@@ -70,8 +70,80 @@ export const CASE_STUDY_QUERY = `*[_type == "caseStudy" && slug.current == $slug
     | order(sameCategory desc, publishedAt desc) [0...2] {${caseStudyCard}}
 }`;
 
-// A legal page (e.g. `privacyPolicy`), sectioned for the table of contents.
+// ── Pages ────────────────────────────────────────────────────────────────────
+// Page text is always a string, empty when a field has no value in any
+// language, so the page components need no null checks.
+const text = (field: string) => `coalesce(${localized(field)}, "")`;
+const texts = (fields: Record<string, string>) =>
+  Object.entries(fields)
+    .map(([name, field]) => `"${name}": ${text(field)}`)
+    .join(", ");
+
+const pageHero = `"hero": { ${texts({ eyebrow: "hero.eyebrow", title: "hero.title", description: "hero.description" })} }`;
+const faqItems = (field: string) =>
+  `coalesce(${field}[]{ _key, ${texts({ question: "question", answer: "answer" })} }, [])`;
+
+// The parts of the home page the about page shows too: edited once, on Home.
+const sharedHomeSections = `
+  "stats": coalesce(stats[]{ _key, "value": coalesce(value, ""), "label": ${text("label")} }, []),
+  "howItWorks": {
+    ${texts({ heading: "howItWorks.heading", description: "howItWorks.description" })},
+    "steps": coalesce(howItWorks.steps[]{ _key, ${texts({ title: "title", description: "description" })} }, [])
+  },
+  "faqsLabel": ${text("faqs.label")},
+  "impact": { ${texts({ title: "impact.title", description: "impact.description" })} },
+  "banner": { ${texts({ text: "banner.text", cta: "banner.cta" })} }`;
+
+export const HOME_PAGE_QUERY = `*[_id == "homePage"][0] {
+  "hero": { ${texts({
+    titleLine1: "hero.titleLine1",
+    titleLine2: "hero.titleLine2",
+    description: "hero.description",
+    primaryCta: "hero.primaryCta",
+    secondaryCta: "hero.secondaryCta",
+  })} },
+  "explore": { ${texts({ heading: "explore.heading", description: "explore.description" })} },
+  "speakNaturally": { ${texts({ title: "speakNaturally.title", description: "speakNaturally.description", cta: "speakNaturally.cta" })} },
+  "insights": {
+    ${texts({
+      label: "insights.label",
+      heading: "insights.heading",
+      description: "insights.description",
+      cta: "insights.cta",
+      readStory: "insights.readStory",
+    })},
+    "sampleTitles": coalesce(insights.sampleTitles[]{ _key, "title": ${text("title")} }, [])
+  },
+  "faqs": {
+    ${texts({ label: "faqs.label", heading: "faqs.heading", description: "faqs.description" })},
+    "items": ${faqItems("faqs.items")}
+  },
+  ${sharedHomeSections}
+}`;
+
+export const ABOUT_PAGE_QUERY = `{
+  "about": *[_id == "aboutPage"][0] {
+    "hero": { ${texts({ title: "hero.title", description: "hero.description", objective: "hero.objective" })} },
+    "languages": { ${texts({ heading: "languages.heading", description: "languages.description" })} },
+    "safety": {
+      ${texts({ title: "safety.title", description: "safety.description" })},
+      "items": ${faqItems("safety.items")}
+    },
+    "cta": { ${texts({
+      title: "cta.title",
+      description: "cta.description",
+      primaryCta: "cta.primaryCta",
+      secondaryCta: "cta.secondaryCta",
+    })} }
+  },
+  "home": *[_id == "homePage"][0] { ${sharedHomeSections} }
+}`;
+
+// A legal page (`privacyPolicy`, `security`, `codeOfConduct`): its header,
+// search title and sections.
 export const LEGAL_PAGE_QUERY = `*[_type == "legalPage" && _id == $id][0] {
+  ${pageHero},
+  "seo": { ${texts({ title: "seo.title", description: "seo.description" })} },
   lastUpdated,
   "sections": sections[defined(anchor.current)] {
     "id": anchor.current,

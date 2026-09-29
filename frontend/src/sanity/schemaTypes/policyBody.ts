@@ -2,7 +2,8 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 import { ArrowRight, BookA, Mail } from "lucide-react";
 
 // One section of a legal page in one language. Bold text stands out as the
-// policy's emphasised statements and list titles.
+// policy's emphasised statements and list titles; subheadings divide a long
+// section (the code of conduct's enforcement guidelines).
 export const policyBody = defineType({
   name: "policyBody",
   title: "Body",
@@ -10,7 +11,10 @@ export const policyBody = defineType({
   of: [
     defineArrayMember({
       type: "block",
-      styles: [{ title: "Paragraph", value: "normal" }],
+      styles: [
+        { title: "Paragraph", value: "normal" },
+        { title: "Subheading", value: "h3" },
+      ],
       lists: [{ title: "Bullets", value: "bullet" }],
       marks: {
         decorators: [

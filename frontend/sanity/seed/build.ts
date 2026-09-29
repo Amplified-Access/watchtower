@@ -10,10 +10,15 @@
 // Category names are in seed/categories.json: they were the listing page's
 // filter chips in the frontend's messages/*.json, translated into every
 // language, before Sanity existed.
+//
+// The pages (Home, About, and the Security, Code of Conduct and Privacy
+// Policy headers and text) are built by seed/pages.ts from seed/pages/<lang>.json:
+// their text in every language, as it was in messages/*.json.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { BASE_LANGUAGE, LANGUAGES } from "../../src/sanity/languages";
+import { buildPageDocs, loadPageStrings } from "./pages";
 import {
   PLACEHOLDER_CASE_STUDIES,
   PRIVACY_POLICY_LAST_UPDATED,
@@ -256,10 +261,15 @@ const policyBody = (prefix: string, blocks: PolicyBlock[]) => {
   });
 };
 
+// ── Pages ───────────────────────────────────────────────────────────────────
+
+const pages = buildPageDocs(loadPageStrings(join(here, "pages")));
+
 const privacyPolicyDoc = {
   _id: "privacyPolicy",
   _type: "legalPage",
   name: "Privacy policy",
+  hero: pages.privacyHero,
   lastUpdated: PRIVACY_POLICY_LAST_UPDATED,
   sections: PRIVACY_POLICY_SECTIONS.map((section) => ({
     _key: section.id,
@@ -280,7 +290,15 @@ if (process.argv.includes("--strings")) {
   writeFileSync(join(translationsDir, "en.json"), `${JSON.stringify(translatable, null, 2)}\n`);
   console.log(`Wrote ${Object.keys(translatable).length} strings to seed/translations/en.json`);
 } else {
-  const docs = [...categoryDocs, ...caseStudyDocs, privacyPolicyDoc];
+  const docs = [
+    pages.home,
+    pages.about,
+    ...categoryDocs,
+    ...caseStudyDocs,
+    privacyPolicyDoc,
+    pages.security,
+    pages.codeOfConduct,
+  ];
   const lines = docs.map((doc) => JSON.stringify(doc));
 
   // `sanity datasets import` refuses U+FFFD (the "�" left where a character

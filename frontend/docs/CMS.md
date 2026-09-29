@@ -1,6 +1,8 @@
 # Content management (Sanity)
 
-Editorial content for the Watchtower site: **case studies** (and their categories) and **legal pages** (the privacy policy). Editors change it in the Sanity Studio at **`/studio`** on the site itself, and published changes appear on the site within seconds, on pages readers already have open too (Sanity Live, below). Everything else stays where it was: incident data comes from the Go backend, and UI copy (buttons, headings, page chrome) stays in `messages/*.json`.
+Editorial content for the Watchtower site: the **Home** and **About** pages, **case studies** (and their categories) and the **policy pages** (privacy policy, security policy, code of conduct). Editors change it in the Sanity Studio at **`/studio`** on the site itself, and published changes appear on the site within seconds, on pages readers already have open too (Sanity Live, below). Everything else stays where it was: incident data comes from the Go backend, and UI copy stays in `messages/*.json`.
+
+**What is in Sanity, and what is UI copy.** The words on a page that an editor would rewrite (headings, paragraphs, questions and answers, figures, button labels on those pages) are in Sanity. Text that belongs to the interface stays in `messages/*.json`: navigation, footer, the announcement banner, forms, the live map widget, labels built around a value ("Step {number}", "Last updated: {date}"), and the names of the site's languages and their regions on the About page, which go with the locale list. Page layout (images, links, the order of sections) is code.
 
 ```
 frontend/
@@ -9,7 +11,7 @@ frontend/
 ├── src/pages/studio/[[...tool]].tsx  The /studio route (the app's only Pages Router page)
 ├── src/sanity/                 Content model (schemaTypes/), languages, env, the Studio component
 ├── src/lib/sanity/             What the site reads: Sanity Live (live.ts), queries, fetchers, types
-├── sanity/seed/                The initial import (see "Seed content")
+├── sanity/seed/                The seed content, and sync.ts, which adds what a dataset lacks (see "Seed content")
 └── scripts/sanity-setup.sh     One-time project setup
 ```
 
@@ -21,9 +23,9 @@ pnpm sanity:setup   # log in to the Sanity CLI, create/pick the project, import 
 pnpm dev            # the Studio is at http://localhost:3000/studio
 ```
 
-`pnpm sanity:setup` uses the project in `.env.local` if there is one, and otherwise asks: pick an existing project or leave it empty to create a "Watchtower" project. It creates a **public** dataset (the site reads published documents without a token; drafts are never public), allows `http://localhost:3000` to call the Sanity API (CORS, which the Studio and Sanity Live need), imports the seed content if the dataset has none yet (so re-running it never overwrites Studio edits), checks the site can read it, and adds `NEXT_PUBLIC_SANITY_PROJECT_ID` / `NEXT_PUBLIC_SANITY_DATASET` to `.env.local`.
+`pnpm sanity:setup` uses the project in `.env.local` if there is one, and otherwise asks: pick an existing project or leave it empty to create a "Watchtower" project. It creates a **public** dataset (the site reads published documents without a token; drafts are never public), allows `http://localhost:3000` to call the Sanity API (CORS, which the Studio and Sanity Live need), adds the seed content the dataset doesn't have yet (whole documents it lacks, and fields existing documents lack; it never changes anything that exists, so re-running it keeps Studio edits), checks the site can read it, and adds `NEXT_PUBLIC_SANITY_PROJECT_ID` / `NEXT_PUBLIC_SANITY_DATASET` to `.env.local`.
 
-Without those two variables the site still builds and runs: the case study and privacy policy pages render empty, the server logs a warning, and `/studio` says it isn't set up.
+Without those two variables the site still builds and runs: the pages keep their layout without their Sanity text, the server logs a warning, and `/studio` says it isn't set up.
 
 ## The embedded Studio
 
@@ -43,7 +45,7 @@ The Studio is a React app rendered by `src/pages/studio/[[...tool]].tsx`: a page
 
 ## How published changes reach the site
 
-1. **Sanity Live, for pages readers have open.** `src/lib/sanity/live.ts` uses `defineLive` from `next-sanity/live`: every `sanityFetch` result is cached under the sync tags Sanity returns with it, and `<SanityLive />` (rendered by `app/(main)/case-studies/layout.tsx` and the privacy policy page) subscribes the reader's browser to Sanity's Live Content API. When a document is published, it revalidates just the affected tags and refreshes the page in place, without a reload. In testing, an open page showed a published title change 3–8 seconds later. Any page that shows Sanity content must render `<SanityLive />` once.
+1. **Sanity Live, for pages readers have open.** `src/lib/sanity/live.ts` uses `defineLive` from `next-sanity/live`: every `sanityFetch` result is cached under the sync tags Sanity returns with it, and `<SanityLive />` (rendered by the home, about, policy pages and the case-studies layout) subscribes the reader's browser to Sanity's Live Content API. When a document is published, it revalidates just the affected tags and refreshes the page in place, without a reload. In testing, an open page showed a published title change 3–8 seconds later. Any page that shows Sanity content must render `<SanityLive />` once.
 2. **The webhook, for publishes nobody is watching** (optional, below): drops the `sanity` tag so the next visitor gets fresh content.
 3. **A one-minute expiry** on every Sanity fetch, as the safety net for both.
 
@@ -59,7 +61,7 @@ Sanity Live only reaches pages that are open when something is published. So tha
 
 - URL: `https://<site>/api/revalidate`
 - Dataset: `production`, trigger on create, update and delete
-- Filter: `_type in ["caseStudy", "caseStudyCategory", "legalPage"]`
+- Filter: `_type in ["homePage", "aboutPage", "caseStudy", "caseStudyCategory", "legalPage"]`
 - Secret: a random string, also set as `SANITY_REVALIDATE_SECRET` in the site's environment
 
 `src/app/api/revalidate/route.ts` checks the signature and drops the `sanity` cache tag.
@@ -88,7 +90,22 @@ Category names are translated (on the category document); category slugs are not
 
 **Editing with 13 languages.** Use the globe (language filter) button at the top of a document to show only the languages you work in; hidden languages are kept, not deleted. Under each translatable field, the `+ <language>` buttons add a translation, and "Add missing languages" adds them all.
 
-**Legal text is only published in reviewed translations.** The privacy policy is seeded in English only, and every language falls back to it. Add a translation in the Studio once a reviewed one exists.
+**The privacy policy is only published in reviewed translations.** Its text is seeded in English only, and every language falls back to it; add a translation in the Studio once a reviewed one exists. (Its page header, and the security policy and code of conduct, came with the translations the site already had.)
+
+## The pages
+
+| Studio (Pages) | Document | Used by |
+|---|---|---|
+| Home | `homePage` | `/`, and `/about` for the steps, figures, impact text and bottom banner |
+| About | `aboutPage` | `/about` |
+| Privacy policy | `privacyPolicy` (a `legalPage`) | `/privacy-policy`, with a numbered table of contents |
+| Security | `security` (a `legalPage`) | `/security` |
+| Code of conduct | `codeOfConduct` (a `legalPage`) | `/code-of-conduct` |
+
+- Home and About have one field group per page section. Repeated parts are lists editors can add to, remove from and reorder: the figures (with their numbers), the how-it-works steps and the questions.
+- Headings the design breaks over two lines keep the break: press Enter in the text field. The About page's languages description takes `{count}`, replaced with the number of languages.
+- A legal page has a header (label, title, description), a search title and description, and sections of rich text (paragraphs, subheadings, bullets, bold, links). An untitled section is an introduction, left out of the privacy policy's contents.
+- The queries (`HOME_PAGE_QUERY`, `ABOUT_PAGE_QUERY`, `LEGAL_PAGE_QUERY`) return every text as a string, empty when missing, so the page components need no null checks. The Home and About pages are client components that take this content as props from their server `page.tsx`, which also renders `<SanityLive />`.
 
 ## Seed content
 
@@ -97,12 +114,13 @@ Category names are translated (on the category document); category slugs are not
 - `sanity/seed/source.ts`: the English case studies and privacy policy, moved out of the frontend's old placeholder modules
 - `sanity/seed/categories.json`: category names in all 13 languages, moved out of `messages/*.json`
 - `sanity/seed/translations/<lang>.json`: case study text in the other 12 languages, keyed like `translations/en.json` (regenerate that with `pnpm sanity:seed:build --strings`)
+- `sanity/seed/pages/<lang>.json`: the text of the pages above in all 13 languages, moved out of `messages/*.json` with their keys (`Home.heroTitleLine1`), and turned into the page documents by `sanity/seed/pages.ts`
 
 The build refuses text containing U+FFFD ("�", a mangled character), which `sanity datasets import` rejects and machine translation occasionally produces.
 
 **The case study translations are machine drafts** and need review by native speakers before they are relied on. French and Swahili were checked and corrected by hand. Urdu and Punjabi were fixed where the script was broken. The rest (Luganda, Kinyarwanda, Amharic, Kikuyu, Sukuma, Luo, Oromo, Dinka) are unreviewed; low-resource languages such as Sukuma, Luo and Dinka are the most likely to be wrong. They exist to show the multilingual pages working end to end. The same caveat applies to the seed's placeholder stories themselves, which came from the Figma.
 
-After the first import, **the Studio is the source of truth**. `pnpm sanity:setup` only seeds an empty dataset, but `pnpm sanity:seed` replaces the seed documents (same IDs) and discards edits made to them in the Studio: use it only to reset.
+After the first import, **the Studio is the source of truth**. `pnpm sanity:setup` only adds what the dataset lacks (`sanity/seed/sync.ts` works it out: missing documents go to `sanity datasets import`, and existing documents get only missing top-level fields, on the published version and any draft). `pnpm sanity:seed` replaces the seed documents (same IDs) and discards edits made to them in the Studio: use it only to reset.
 
 ## Adding content types
 

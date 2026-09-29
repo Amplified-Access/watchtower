@@ -1,0 +1,133 @@
+import { defineArrayMember, defineField, defineType } from "sanity";
+import { House, Info } from "lucide-react";
+import { requireBaseLanguage } from "./localized";
+
+// The home and about pages. The layout (images, links, order of sections) is
+// code; these hold every text on them, section by section, so editors can
+// change the wording and translations without a deploy. Headings whose
+// design breaks them over two lines keep the break: press Enter in the text.
+
+type TextOptions = {
+  title?: string;
+  description?: string;
+  /** Only for `text`: the height of the box. */
+  rows?: number;
+  validation?: typeof requireBaseLanguage;
+};
+
+const string = (name: string, { rows: _rows, ...options }: TextOptions = {}) =>
+  defineField({ name, type: "internationalizedArrayString", ...options });
+const text = (name: string, options: TextOptions = {}) =>
+  defineField({ name, type: "internationalizedArrayText", ...options });
+const section = (name: string, title: string, fields: ReturnType<typeof defineField>[], description?: string) =>
+  defineField({ name, title, type: "object", description, options: { collapsible: true }, fields });
+
+export const homePage = defineType({
+  name: "homePage",
+  title: "Home page",
+  type: "document",
+  icon: House,
+  fields: [
+    section("hero", "Header", [
+      string("titleLine1", { title: "Title, first line", validation: requireBaseLanguage }),
+      string("titleLine2", { title: "Title, second line" }),
+      text("description", { validation: requireBaseLanguage }),
+      string("primaryCta", { title: "Main button", description: "Opens the report form." }),
+      string("secondaryCta", { title: "Second button", description: "Opens the sign-in page." }),
+    ]),
+    section("explore", "Explore the map", [string("heading"), text("description")]),
+    defineField({
+      name: "stats",
+      title: "Figures",
+      type: "array",
+      description: "The band of figures under the map. Also shown on the About page.",
+      of: [defineArrayMember({ type: "figure" })],
+      validation: (rule) => rule.max(4),
+    }),
+    section(
+      "howItWorks",
+      "How it works",
+      [
+        string("heading"),
+        text("description"),
+        defineField({ name: "steps", type: "array", of: [defineArrayMember({ type: "step" })] }),
+      ],
+      "Also shown on the About page.",
+    ),
+    section("speakNaturally", "Report in your language", [
+      text("title", { rows: 2, description: "Press Enter where the heading should break." }),
+      text("description"),
+      string("cta", { title: "Button" }),
+    ]),
+    section(
+      "insights",
+      "Insights",
+      [
+        string("label"),
+        string("heading"),
+        text("description"),
+        string("cta", { title: "Link to all insights" }),
+        string("readStory", { title: "Card link" }),
+        defineField({
+          name: "sampleTitles",
+          title: "Sample stories",
+          description: "Titles shown while there are no published insights yet.",
+          type: "array",
+          of: [
+            defineArrayMember({
+              name: "sampleStory",
+              type: "object",
+              fields: [string("title")],
+            }),
+          ],
+        }),
+      ],
+      "Hidden on the site until insights launch.",
+    ),
+    section("faqs", "Questions", [
+      string("label", { description: "Also the label of the About page's questions." }),
+      string("heading"),
+      text("description"),
+      defineField({ name: "items", title: "Questions", type: "array", of: [defineArrayMember({ type: "faqItem" })] }),
+    ]),
+    section("impact", "Impact", [string("title"), text("description")], "Shown on the About page, above the figures."),
+    section(
+      "banner",
+      "Banner above the footer",
+      [string("text"), string("cta", { title: "Button" })],
+      "The blue strip at the bottom of the Home and About pages.",
+    ),
+  ],
+  preview: { prepare: () => ({ title: "Home page" }) },
+});
+
+export const aboutPage = defineType({
+  name: "aboutPage",
+  title: "About page",
+  type: "document",
+  icon: Info,
+  description: "The steps, figures, impact text and bottom banner are edited on the Home page.",
+  fields: [
+    section("hero", "Header", [
+      string("title", { validation: requireBaseLanguage }),
+      text("description"),
+      text("objective", { title: "Second paragraph" }),
+    ]),
+    section("languages", "Languages", [
+      string("heading"),
+      text("description", { description: "Write {count} where the number of languages goes." }),
+    ]),
+    section("safety", "Your safety", [
+      text("title", { rows: 2, description: "Press Enter where the heading should break." }),
+      text("description"),
+      defineField({ name: "items", title: "Questions", type: "array", of: [defineArrayMember({ type: "faqItem" })] }),
+    ]),
+    section("cta", "Call to action", [
+      string("title"),
+      text("description"),
+      string("primaryCta", { title: "Main button", description: "Opens the report form." }),
+      string("secondaryCta", { title: "Second button", description: "Opens the live map." }),
+    ]),
+  ],
+  preview: { prepare: () => ({ title: "About page" }) },
+});

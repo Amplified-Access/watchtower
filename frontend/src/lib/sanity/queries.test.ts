@@ -7,13 +7,24 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { evaluate, parse } from "groq-js";
+import { locales } from "@/i18n/locales";
 import {
+  ABOUT_PAGE_QUERY,
   CASE_STUDIES_QUERY,
   CASE_STUDY_CATEGORIES_QUERY,
   CASE_STUDY_QUERY,
+  HOME_PAGE_QUERY,
   LEGAL_PAGE_QUERY,
 } from "./queries";
-import type { CaseStudy, CaseStudyCategory, CaseStudySummary, LegalPage } from "./types";
+import type {
+  CaseStudy,
+  CaseStudyCategory,
+  CaseStudySummary,
+  HomePageContent,
+  LegalPage,
+  SharedHomeSections,
+  AboutPageContent,
+} from "./types";
 
 type Doc = Record<string, unknown>;
 
@@ -157,5 +168,89 @@ describe("legal page query against the seed", () => {
       titleLanguage: "en",
       language: "en",
     });
+  });
+});
+
+// Every string anywhere in a query result, with its path, for completeness checks.
+const strings = (value: unknown, path = ""): [string, string][] =>
+  typeof value === "string"
+    ? [[path, value]]
+    : Array.isArray(value)
+      ? value.flatMap((item, i) => strings(item, `${path}[${i}]`))
+      : value && typeof value === "object"
+        ? Object.entries(value).flatMap(([key, item]) => (key === "_key" ? [] : strings(item, `${path}.${key}`)))
+        : [];
+
+type AboutResult = { about: Omit<AboutPageContent, "home">; home: SharedHomeSections };
+
+// The text blocks of a policy body, for inspecting their marks and links.
+type TextBlock = { style?: string; markDefs: { href: string }[]; children: { marks: string[]; text: string }[] };
+const textBlocks = (body: LegalPage["sections"][number]["body"]) => body as unknown as TextBlock[];
+
+describe("page queries against the seed", () => {
+  it("fills every text on the home and about pages in every language", async () => {
+    for (const locale of locales) {
+      const home = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale });
+      const about = await run<AboutResult>(ABOUT_PAGE_QUERY, seed, { locale });
+      const empty = [...strings(home, "home"), ...strings(about, "about")].filter(([, text]) => !text.trim());
+      expect({ locale, empty }).toEqual({ locale, empty: [] });
+    }
+  });
+
+  it("returns the home page's repeated sections as lists, and its headings' line breaks", async () => {
+    const home = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "en" });
+    expect(home.stats.map((stat) => stat.value)).toEqual(["2,000+", "22", "13", "6"]);
+    expect(home.howItWorks.steps).toHaveLength(3);
+    expect(home.faqs.items).toHaveLength(5);
+    expect(home.insights.sampleTitles).toHaveLength(3);
+    expect(home.speakNaturally.title).toBe("Report naturally\nin your language.");
+  });
+
+  it("translates the home page", async () => {
+    const en = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "en" });
+    const fr = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "fr" });
+    expect(fr.hero.description).not.toBe(en.hero.description);
+    expect(fr.stats[0].label).not.toBe(en.stats[0].label);
+    expect(fr.stats[0].value).toBe(en.stats[0].value);
+  });
+
+  it("gives the about page the sections it shares with the home page", async () => {
+    const home = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "sw" });
+    const { about, home: shared } = await run<AboutResult>(ABOUT_PAGE_QUERY, seed, { locale: "sw" });
+    expect(shared.howItWorks).toEqual(home.howItWorks);
+    expect(shared.stats).toEqual(home.stats);
+    expect(about.safety.items).toHaveLength(5);
+    expect(about.languages.description).toContain("{count}");
+  });
+});
+
+describe("policy page queries against the seed", () => {
+  it("returns the security policy's header, search title and an untitled introduction", async () => {
+    const page = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "security", locale: "fr" });
+    expect(page.hero.title).toBeTruthy();
+    expect(page.seo.title).toBeTruthy();
+    expect(page.sections[0]).toMatchObject({ id: "introduction", title: null, language: "fr" });
+    const disclosure = page.sections.find((s) => s.id === "disclosure-policy")!;
+    const [paragraph] = textBlocks(disclosure.body);
+    expect(paragraph.markDefs[0].href).toContain("Coordinated_vulnerability_disclosure");
+  });
+
+  it("keeps the code of conduct's subheadings, bold labels and links", async () => {
+    const page = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "codeOfConduct", locale: "en" });
+    const guidelines = textBlocks(page.sections.find((s) => s.id === "enforcement-guidelines")!.body);
+    expect(guidelines.filter((b) => b.style === "h3")).toHaveLength(4);
+    expect(guidelines[2].children[0]).toMatchObject({ marks: ["strong"], text: "Community Impact:" });
+    const attribution = textBlocks(page.sections.at(-1)!.body);
+    expect(attribution[0].markDefs.map((d) => d.href)).toEqual([
+      "https://www.contributor-covenant.org",
+      "https://www.contributor-covenant.org/version/2/1/code_of_conduct/",
+    ]);
+  });
+
+  it("gives the privacy policy a translated header", async () => {
+    const en = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "privacyPolicy", locale: "en" });
+    const fr = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "privacyPolicy", locale: "fr" });
+    expect(en.hero.title).toBe("Your privacy matters.");
+    expect(fr.hero.title).not.toBe(en.hero.title);
   });
 });
