@@ -17,14 +17,13 @@ const Page = async () => {
     getLegalPage("privacyPolicy", locale),
   ]);
   const sections = policy?.sections ?? [];
-  const tocItems = sections.map(({ id, title, titleLanguage }) => ({
-    id,
-    title,
-    lang: titleLanguage !== locale ? titleLanguage : undefined,
-  }));
+  // Untitled (introductory) sections aren't listed in the contents.
+  const tocItems = sections.flatMap(({ id, title, titleLanguage }) =>
+    title ? [{ id, title, lang: titleLanguage !== locale ? titleLanguage : undefined }] : [],
+  );
 
   const lastUpdated =
-    policy &&
+    policy?.lastUpdated &&
     new Intl.DateTimeFormat(locale, {
       month: "long",
       year: "numeric",

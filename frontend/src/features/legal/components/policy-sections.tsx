@@ -70,12 +70,14 @@ const PolicySections = ({ sections, locale }: PolicySectionsProps) => {
       {sections.map((section) => (
         <section key={section.id} id={section.id} className="scroll-mt-40">
           {/* Title and body are translated separately, so each says its own language. */}
-          <h2
-            lang={section.titleLanguage !== locale ? section.titleLanguage : undefined}
-            className="font-title text-3xl font-medium text-dark md:text-4xl"
-          >
-            {section.title}
-          </h2>
+          {section.title && (
+            <h2
+              lang={section.titleLanguage !== locale ? section.titleLanguage : undefined}
+              className="font-title text-3xl font-medium text-dark md:text-4xl"
+            >
+              {section.title}
+            </h2>
+          )}
           {/* A list sits right under the bold line that introduces it. */}
           <div
             lang={section.language !== locale ? section.language : undefined}

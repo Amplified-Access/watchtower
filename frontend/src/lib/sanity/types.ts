@@ -61,7 +61,8 @@ export type PolicyBodyBlock =
 
 export interface PolicySection {
   id: string;
-  title: string;
+  /** Null for an untitled (introductory) section. */
+  title: string | null;
   /** Language the title is in: the reader's, or English when it isn't translated. */
   titleLanguage: string;
   body: PolicyBodyBlock[];
@@ -69,7 +70,58 @@ export interface PolicySection {
   language: string;
 }
 
+export interface PageHero {
+  eyebrow: string;
+  title: string;
+  description: string;
+}
+
 export interface LegalPage {
-  lastUpdated: string;
+  hero: PageHero;
+  seo: { title: string; description: string };
+  /** Only the privacy policy shows one. */
+  lastUpdated: string | null;
   sections: PolicySection[];
+}
+
+export interface FaqItem {
+  _key: string;
+  question: string;
+  answer: string;
+}
+
+/** The home page sections the about page shows too. */
+export interface SharedHomeSections {
+  stats: { _key: string; value: string; label: string }[];
+  howItWorks: { heading: string; description: string; steps: { _key: string; title: string; description: string }[] };
+  faqsLabel: string;
+  impact: { title: string; description: string };
+  banner: { text: string; cta: string };
+}
+
+export interface HomePageContent extends SharedHomeSections {
+  hero: { titleLine1: string; titleLine2: string; description: string; primaryCta: string; secondaryCta: string };
+  explore: { heading: string; description: string };
+  /** `title` may hold line breaks. */
+  speakNaturally: { title: string; description: string; cta: string };
+  insights: {
+    label: string;
+    heading: string;
+    description: string;
+    cta: string;
+    readStory: string;
+    sampleTitles: { _key: string; title: string }[];
+  };
+  faqs: { label: string; heading: string; description: string; items: FaqItem[] };
+}
+
+export interface AboutPageContent {
+  hero: { title: string; description: string; objective: string };
+  /** `description` contains {count}, the number of languages. */
+  languages: { heading: string; description: string };
+  /** `title` may hold line breaks. */
+  safety: { title: string; description: string; items: FaqItem[] };
+  cta: { title: string; description: string; primaryCta: string; secondaryCta: string };
+  /** From the home page document. */
+  home: SharedHomeSections;
 }
