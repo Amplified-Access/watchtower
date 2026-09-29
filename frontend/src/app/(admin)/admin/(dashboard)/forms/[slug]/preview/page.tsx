@@ -5,7 +5,7 @@ import FormPreview from "@/features/admin/components/forms/form-preview-page";
 
 const FormPreviewPage = () => {
   const params = useParams();
-  const formId = params.slug as string;
+  const formId = params?.slug as string;
 
   return <FormPreview formId={formId} />;
 };

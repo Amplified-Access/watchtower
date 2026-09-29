@@ -16,7 +16,7 @@ import Link from "next/link";
 
 export default function OrganizationDetailPage() {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = params?.slug as string;
 
   // Fetch organization by slug
   const {

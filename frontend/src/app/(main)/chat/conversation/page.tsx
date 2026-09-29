@@ -76,8 +76,8 @@ function ChatContent() {
   );
 
   // Get the conversation starter from URL params
-  const starter = searchParams.get("starter");
-  const topic = searchParams.get("topic");
+  const starter = searchParams?.get("starter") ?? null;
+  const topic = searchParams?.get("topic") ?? null;
 
   // Auto-send the conversation starter when the conversation is still empty.
   useEffect(() => {
