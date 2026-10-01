@@ -377,6 +377,17 @@ func scanIncidents(rows *sql.Rows) ([]*entity.Incident, error) {
 	return incidents, rows.Err()
 }
 
+// textArray is a report's entities as the text[] column takes them: pgx
+// encodes a []string as a Postgres array, where JSON ("[]") is rejected as a
+// malformed array literal. Never nil, as the column is NOT NULL. Reads select
+// array_to_json(entities), which the scanners unmarshal.
+func textArray(values []string) []string {
+	if values == nil {
+		return []string{}
+	}
+	return values
+}
+
 type AnonymousIncidentReportRepository struct {
 	db *sql.DB
 }
@@ -386,7 +397,7 @@ func NewAnonymousIncidentReportRepository(db *sql.DB) *AnonymousIncidentReportRe
 }
 
 func (r *AnonymousIncidentReportRepository) FindAll(ctx context.Context, country, category *string, since *time.Time) ([]*entity.AnonymousIncidentReport, error) {
-	q := `SELECT id, incident_type_id, location, description, entities, injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at
+	q := `SELECT id, incident_type_id, location, description, array_to_json(entities), injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at
 		FROM anonymous_incident_reports WHERE 1=1`
 	args := []interface{}{}
 	idx := 1
@@ -414,7 +425,7 @@ func (r *AnonymousIncidentReportRepository) FindAll(ctx context.Context, country
 }
 
 func (r *AnonymousIncidentReportRepository) FindByID(ctx context.Context, id string) (*entity.AnonymousIncidentReport, error) {
-	const q = `SELECT id, incident_type_id, location, description, entities, injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at
+	const q = `SELECT id, incident_type_id, location, description, array_to_json(entities), injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at
 		FROM anonymous_incident_reports WHERE id=$1`
 	rows, err := r.db.QueryContext(ctx, q, id)
 	if err != nil {
@@ -436,16 +447,12 @@ func (r *AnonymousIncidentReportRepository) Create(ctx context.Context, report *
 	if err != nil {
 		return err
 	}
-	entitiesJSON, err := json.Marshal(report.Entities)
-	if err != nil {
-		return err
-	}
 	now := time.Now()
 	_, err = r.db.ExecContext(ctx,
 		`INSERT INTO anonymous_incident_reports
 		(id, incident_type_id, location, description, entities, injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-		report.ID, report.IncidentTypeID, locJSON, report.Description, string(entitiesJSON),
+		report.ID, report.IncidentTypeID, locJSON, report.Description, textArray(report.Entities),
 		report.Injuries, report.Fatalities, report.EvidenceFileKey, report.AudioFileKey, now, now)
 	return err
 }
@@ -708,7 +715,7 @@ func (r *OrganizationIncidentReportRepository) FindByOrganizationID(ctx context.
 		return nil, 0, err
 	}
 	const q = `SELECT id, organization_id, reported_by_user_id, incident_type_id, location, description,
-		entities, injuries, fatalities, evidence_file_key, audio_file_key, severity, verified,
+		array_to_json(entities), injuries, fatalities, evidence_file_key, audio_file_key, severity, verified,
 		verified_at, verified_by_user_id, created_at, updated_at
 		FROM organization_incident_reports WHERE organization_id=$1
 		ORDER BY created_at DESC LIMIT $2 OFFSET $3`
@@ -729,7 +736,7 @@ func (r *OrganizationIncidentReportRepository) FindByUserID(ctx context.Context,
 		return nil, 0, err
 	}
 	const q = `SELECT id, organization_id, reported_by_user_id, incident_type_id, location, description,
-		entities, injuries, fatalities, evidence_file_key, audio_file_key, severity, verified,
+		array_to_json(entities), injuries, fatalities, evidence_file_key, audio_file_key, severity, verified,
 		verified_at, verified_by_user_id, created_at, updated_at
 		FROM organization_incident_reports WHERE organization_id=$1 AND reported_by_user_id=$2
 		ORDER BY created_at DESC LIMIT $3 OFFSET $4`
@@ -744,7 +751,7 @@ func (r *OrganizationIncidentReportRepository) FindByUserID(ctx context.Context,
 
 func (r *OrganizationIncidentReportRepository) FindByID(ctx context.Context, id string) (*entity.OrganizationIncidentReport, error) {
 	const q = `SELECT id, organization_id, reported_by_user_id, incident_type_id, location, description,
-		entities, injuries, fatalities, evidence_file_key, audio_file_key, severity, verified,
+		array_to_json(entities), injuries, fatalities, evidence_file_key, audio_file_key, severity, verified,
 		verified_at, verified_by_user_id, created_at, updated_at
 		FROM organization_incident_reports WHERE id=$1`
 	rows, err := r.db.QueryContext(ctx, q, id)
@@ -767,10 +774,6 @@ func (r *OrganizationIncidentReportRepository) Create(ctx context.Context, repor
 	if err != nil {
 		return err
 	}
-	entitiesJSON, err := json.Marshal(report.Entities)
-	if err != nil {
-		return err
-	}
 	now := time.Now()
 	_, err = r.db.ExecContext(ctx,
 		`INSERT INTO organization_incident_reports
@@ -778,7 +781,7 @@ func (r *OrganizationIncidentReportRepository) Create(ctx context.Context, repor
 		injuries, fatalities, evidence_file_key, audio_file_key, severity, verified, created_at, updated_at)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
 		report.ID, report.OrganizationID, report.ReportedByUserID, report.IncidentTypeID, locJSON,
-		report.Description, string(entitiesJSON), report.Injuries, report.Fatalities,
+		report.Description, textArray(report.Entities), report.Injuries, report.Fatalities,
 		report.EvidenceFileKey, report.AudioFileKey, string(report.Severity), report.Verified, now, now)
 	return err
 }
