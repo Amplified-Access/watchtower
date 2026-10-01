@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,16 +30,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Loader2, MapPin, X } from "lucide-react";
+import { Loader2, MapPin } from "lucide-react";
+import PlaceSearchCombobox from "@/components/common/place-search-combobox";
 import {
   organizationIncidentFormSchema,
   type OrganizationIncidentFormData,
-  type OrganizationLocationData,
+  emptyLocation,
   entityOptions,
   casualtyOptions,
   severityOptions,
 } from "../schemas/organization-incident-form-schema";
-import type { LocationSuggestion } from "../domain/organization-incident-report";
 import { trpc } from "@/_trpc/client";
 
 interface OrganizationIncidentReportFormProps {
@@ -52,49 +51,6 @@ interface OrganizationIncidentReportFormProps {
 const OrganizationIncidentReportForm: React.FC<
   OrganizationIncidentReportFormProps
 > = ({ isOpen, onClose, onSuccess }) => {
-  const [locationSearch, setLocationSearch] = useState("");
-  const [locations, setLocations] = useState<LocationSuggestion[]>([]);
-  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] =
-    useState<LocationSuggestion | null>(null);
-
-  // Transform LocationIQ API response to our simplified format
-  const transformLocationData = (
-    locationIQResponse: LocationSuggestion,
-  ): OrganizationLocationData => {
-    // Parse the display_name to extract region and admin1
-    const displayName = locationIQResponse.display_name || "";
-    const parts = displayName.split(", ");
-
-    // Try to extract country, region, and admin1 from the display_name
-    // Format is usually: "City, Admin1, Country" or "Admin1, Country"
-    const country = parts[parts.length - 1] || "";
-    const admin1 = parts.length > 1 ? parts[parts.length - 2] : "";
-
-    // For region, we'll use a mapping based on country or a default
-    const getRegionForCountry = (country: string): string => {
-      const regionMap: Record<string, string> = {
-        Kenya: "Eastern Africa",
-        Ethiopia: "Eastern Africa",
-        Uganda: "Eastern Africa",
-        Tanzania: "Eastern Africa",
-        Sudan: "Eastern Africa",
-        Eritrea: "Eastern Africa",
-        Djibouti: "Eastern Africa",
-        Rwanda: "Eastern Africa",
-      };
-      return regionMap[country] || "Unknown Region";
-    };
-
-    return {
-      lat: parseFloat(locationIQResponse.lat ?? "") || 0,
-      lon: parseFloat(locationIQResponse.lon ?? "") || 0,
-      admin1: admin1 || "Unknown",
-      region: getRegionForCountry(country),
-      country: country || "Unknown",
-    };
-  };
-
   // Get organization's incident types
   const {
     data: incidentTypesData,
@@ -110,6 +66,7 @@ const OrganizationIncidentReportForm: React.FC<
     resolver: zodResolver(organizationIncidentFormSchema),
     mode: "onChange", // Enable real-time validation
     defaultValues: {
+      location: emptyLocation,
       entities: [],
       severity: "medium",
     },
@@ -121,8 +78,6 @@ const OrganizationIncidentReportForm: React.FC<
       onSuccess: () => {
         toast.success("Incident report submitted successfully!");
         form.reset();
-        setSelectedLocation(null);
-        setLocationSearch("");
         onSuccess?.();
         onClose();
       },
@@ -131,56 +86,11 @@ const OrganizationIncidentReportForm: React.FC<
       },
     });
 
-  // Location search
-  const searchLocation = trpc.anonymousReports.searchLocation.useQuery(
-    { searchTerm: locationSearch },
-    {
-      enabled: locationSearch.length > 2,
-    },
-  );
-
-  // Handle location search results
-  useEffect(() => {
-    if (searchLocation.data?.success) {
-      // Copies the query result into local state, which several other
-      // handlers also write. Deriving it from the query instead is the real
-      // fix; the warning only appeared once useWatch let the compiler
-      // analyse this component at all.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLocations(searchLocation.data.data);
-      setIsSearchingLocation(false);
-    } else if (searchLocation.error) {
-      setIsSearchingLocation(false);
-      setLocations([]);
-    }
-  }, [searchLocation.data, searchLocation.error]);
-
   // useWatch rather than form.watch(): watch() returns a value the React
   // Compiler cannot memoize, so it skips optimising this whole component.
   const selectedEntities = useWatch({ control: form.control, name: "entities" }) || [];
   // Only read by the development-only debug panel below.
   const debugValues = useWatch({ control: form.control });
-
-  // Handle location search with debouncing
-  const handleLocationSearch = useCallback((value: string) => {
-    setLocationSearch(value);
-    if (value.length > 2) {
-      setIsSearchingLocation(true);
-    } else {
-      setLocations([]);
-      setIsSearchingLocation(false);
-    }
-  }, []);
-
-  // Handle location selection
-  const handleLocationSelect = (location: LocationSuggestion) => {
-    setSelectedLocation(location);
-    // Transform the LocationIQ response to our simplified format
-    const transformedLocation = transformLocationData(location);
-    form.setValue("location", transformedLocation);
-    setLocationSearch(location.display_name ?? "");
-    setLocations([]);
-  };
 
   // Handle entity toggle
   const handleEntityToggle = (entityValue: string, checked: boolean) => {
@@ -212,10 +122,10 @@ const OrganizationIncidentReportForm: React.FC<
       injuries: toCount(data.injuries),
       fatalities: toCount(data.fatalities),
       location: {
-        latitude: data.location.lat,
-        longitude: data.location.lon,
-        address: data.location.admin1,
-        country: data.location.country,
+        latitude: data.location.latitude,
+        longitude: data.location.longitude,
+        address: data.location.address,
+        country: data.location.country ?? undefined,
       },
     };
     submitReport.mutate(submissionData);
@@ -225,12 +135,6 @@ const OrganizationIncidentReportForm: React.FC<
   useEffect(() => {
     if (!isOpen) {
       form.reset();
-      // Clearing the form is a response to the dialog closing, an event
-      // outside React's state, so it belongs in an effect.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedLocation(null);
-      setLocationSearch("");
-      setLocations([]);
     }
   }, [isOpen, form]);
 
@@ -285,64 +189,25 @@ const OrganizationIncidentReportForm: React.FC<
             />
 
             {/* Location */}
-            <div className="space-y-2">
-              <Label htmlFor="location">Location *</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search for location..."
-                  value={locationSearch}
-                  onChange={(e) => handleLocationSearch(e.target.value)}
-                  className="pl-10"
-                />
-                {isSearchingLocation && (
-                  <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin" />
-                )}
-              </div>
-
-              {/* Location suggestions */}
-              {locations.length > 0 && (
-                <div className="border rounded-md bg-white shadow-lg max-h-40 overflow-y-auto">
-                  {locations.map((location, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      className="w-full text-left px-3 py-2 hover:bg-gray-50 border-b last:border-b-0"
-                      onClick={() => handleLocationSelect(location)}
-                    >
-                      <div className="font-medium">{location.display_name}</div>
-                    </button>
-                  ))}
-                </div>
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location *</FormLabel>
+                  <FormControl>
+                    <PlaceSearchCombobox
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Search for location..."
+                      icon={<MapPin className="size-4 shrink-0 text-muted-foreground" />}
+                      className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs aria-invalid:border-destructive"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-
-              {selectedLocation && (
-                <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded">
-                  <MapPin className="h-4 w-4 text-green-600" />
-                  <span className="text-sm text-green-700 flex-1">
-                    {selectedLocation.display_name}
-                  </span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedLocation(null);
-                      setLocationSearch("");
-                      form.resetField("location");
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-
-              {form.formState.errors.location && (
-                <p className="text-sm text-red-500">
-                  {form.formState.errors.location.message}
-                </p>
-              )}
-            </div>
+            />
 
             {/* Description */}
             <FormField
@@ -491,7 +356,6 @@ const OrganizationIncidentReportForm: React.FC<
                       ? "✅"
                       : "❌"}
                   </div>
-                  <div>Selected Location: {selectedLocation ? "✅" : "❌"}</div>
                   <div>
                     Form Errors:{" "}
                     {JSON.stringify(form.formState.errors, null, 2)}
@@ -505,7 +369,6 @@ const OrganizationIncidentReportForm: React.FC<
                   onClick={() => {
                     console.log("🔍 Current form state:", form.getValues());
                     console.log("❌ Current errors:", form.formState.errors);
-                    console.log("📍 Selected location:", selectedLocation);
                   }}
                   className="mt-2 text-xs"
                   size="sm"
