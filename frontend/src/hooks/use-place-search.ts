@@ -42,7 +42,12 @@ export function usePlaceSearch() {
 
   const select = async (placeId: string) => {
     try {
-      return await utils.places.details.fetch({ placeId, sessionToken }, { staleTime: Infinity });
+      const place = await utils.places.details.fetch({ placeId, sessionToken }, { staleTime: Infinity });
+      // Clear the search with the token below, or the old text would be
+      // searched again (and billed) under the new session.
+      setQuery("");
+      setDebounced("");
+      return place;
     } finally {
       // The details request ends the session; the next search starts a new one.
       setSessionToken(newSessionToken());
