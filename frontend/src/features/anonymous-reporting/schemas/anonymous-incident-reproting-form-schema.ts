@@ -1,8 +1,9 @@
 import z from "zod";
 
-// The incident's location: a place picked from Google's suggestions (see
-// lib/google/places.ts). `label` is what the reporter picked, in their
-// language; the address and country are English, as reports are stored.
+// The incident's location: a place picked from Google's suggestions with
+// PlaceSearchCombobox (components/common). `label` is what the reporter
+// picked, in their language; the address and country are English, as reports
+// are stored. The organisation report forms use it too.
 export const locationSchema = z.object({
   placeId: z.string(),
   label: z.string(),
@@ -11,6 +12,20 @@ export const locationSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
 });
+
+/** The form value before a place is picked; fails `pickedLocation`. */
+export const emptyLocation: z.infer<typeof locationSchema> = {
+  placeId: "",
+  label: "",
+  address: "",
+  country: null,
+  latitude: 0,
+  longitude: 0,
+};
+
+/** A location field that requires a place to have been picked. */
+export const pickedLocation = (message: string) =>
+  locationSchema.refine((location) => location.placeId, { message });
 
 export const entityOptions = [
   "law-enforcement",
@@ -41,9 +56,7 @@ export const formSchema = z.object({
       message: "Please select an incident category.",
     })
     .describe("The ID of the selected incident category"),
-  location: locationSchema.refine((location) => location.placeId, {
-    message: "Please select a valid location.",
-  }),
+  location: pickedLocation("Please select a valid location."),
   description: z
     .string()
     .min(10, {
