@@ -42,7 +42,7 @@ func (h *IncidentHandler) GetAllTypes(c *gin.Context) {
 // SubmitAnonymousReport godoc
 //
 //	@Summary		Submit anonymous incident report
-//	@Description	Submits an incident report without requiring authentication
+//	@Description	Submits an incident report without requiring authentication. It needs a description, an audioFileKey (a voice note) or both.
 //	@Tags			Incidents
 //	@Accept			json
 //	@Produce		json
@@ -55,7 +55,8 @@ func (h *IncidentHandler) SubmitAnonymousReport(c *gin.Context) {
 	var input struct {
 		IncidentTypeID string          `json:"incidentTypeId" binding:"required"`
 		Location       entity.Location `json:"location" binding:"required"`
-		Description    string          `json:"description" binding:"required"`
+		// Optional when there's a voice note; the usecase requires one or the other.
+		Description    string          `json:"description"`
 		Entities       []string        `json:"entities"`
 		Injuries       int             `json:"injuries"`
 		Fatalities     int             `json:"fatalities"`

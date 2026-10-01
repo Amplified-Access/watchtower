@@ -2,6 +2,7 @@ package incidentusecase
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"backend/internal/domain/entity"
@@ -101,7 +102,14 @@ func (uc *UseCase) GetPendingIncidents(ctx context.Context, orgID string) ([]*en
 	return uc.incidentRepo.GetPending(ctx, orgID)
 }
 
+// SubmitAnonymousReport saves a public report. It needs a description, a
+// voice note or both: the form lets people speak instead of typing.
 func (uc *UseCase) SubmitAnonymousReport(ctx context.Context, report *entity.AnonymousIncidentReport) error {
+	report.Description = strings.TrimSpace(report.Description)
+	hasAudio := report.AudioFileKey != nil && strings.TrimSpace(*report.AudioFileKey) != ""
+	if report.Description == "" && !hasAudio {
+		return domainerrors.NewBadRequest("a description or a voice note is required")
+	}
 	return uc.anonRepo.Create(ctx, report)
 }
 
