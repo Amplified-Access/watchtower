@@ -30,6 +30,7 @@ describe("autocompletePlaces", () => {
     expect(url).toBe("https://places.googleapis.com/v1/places:autocomplete");
     expect(init.headers["X-Goog-Api-Key"]).toBe("test-key");
     expect(JSON.parse(init.body)).toEqual({ input: "Kampala Road", sessionToken: TOKEN, languageCode: "sw" });
+    expect(init.signal).toBeInstanceOf(AbortSignal);
   });
 
   it("returns each prediction's main and secondary text", async () => {
@@ -80,6 +81,7 @@ describe("getPlaceDetails", () => {
     expect(parsed.searchParams.get("sessionToken")).toBe(TOKEN);
     expect(parsed.searchParams.get("languageCode")).toBe("en");
     expect(init.headers["X-Goog-FieldMask"]).toBe("id,displayName,formattedAddress,location,addressComponents");
+    expect(init.signal).toBeInstanceOf(AbortSignal);
   });
 
   it("returns coordinates, address and the country from the address components", async () => {

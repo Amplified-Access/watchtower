@@ -14,6 +14,9 @@ const AUTOCOMPLETE_URL = "https://places.googleapis.com/v1/places:autocomplete";
 const DETAILS_URL = "https://places.googleapis.com/v1/places/";
 // Only what the form stores; the field mask also decides the price tier.
 const DETAILS_FIELDS = "id,displayName,formattedAddress,location,addressComponents";
+// Google normally answers in well under a second; give up long before the
+// platform's function timeout so the form shows an error instead of spinning.
+const REQUEST_TIMEOUT_MS = 8000;
 
 export interface PlaceSuggestion {
   placeId: string;
@@ -85,6 +88,7 @@ export const autocompletePlaces = async ({
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Goog-Api-Key": key },
     body: JSON.stringify({ input, sessionToken, ...(languageCode ? { languageCode } : {}) }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) throw await googleError(response);
 
@@ -130,6 +134,7 @@ export const getPlaceDetails = async ({
   url.searchParams.set("languageCode", "en");
   const response = await fetch(url, {
     headers: { "X-Goog-Api-Key": key, "X-Goog-FieldMask": DETAILS_FIELDS },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) throw await googleError(response);
 
