@@ -79,6 +79,5 @@ export const formSchema = z.object({
 });
 
 export type FormData = z.infer<typeof formSchema>;
-// The public report form adds a translated consent checkbox on top of formSchema.
-export type ReportFormValues = FormData & { consent: boolean };
+export type ReportFormValues = FormData;
 export type LocationData = z.infer<typeof locationSchema>;

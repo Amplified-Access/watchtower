@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
@@ -11,7 +10,6 @@ import { ArrowRight } from "lucide-react";
 import { trpc } from "@/_trpc/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import Loader from "@/components/common/loader";
 import LanguageSelector from "@/components/common/language-selector";
@@ -24,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  emptyLocation,
   formSchema,
   type ReportFormValues,
 } from "../../schemas/anonymous-incident-reproting-form-schema";
@@ -39,27 +38,16 @@ import { uploadFile as uploadFileToStorage } from "@/utils/file-upload";
 const AnonymousIncidentReportForm = () => {
   const t = useTranslations("IncidentReporting");
 
-  // Consent lives here rather than in the shared schema so its message can be
-  // translated.
-  const schema = useMemo(
-    () =>
-      formSchema.extend({
-        consent: z.boolean().refine((value) => value, t("consentRequired")),
-      }),
-    [t],
-  );
-
   const form = useForm<ReportFormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       category: "",
-      location: { placeId: "", label: "", address: "", country: null, latitude: 0, longitude: 0 },
+      location: emptyLocation,
       description: "",
       // Entities and casualty counts aren't asked for in the redesigned form.
       entities: [],
       injuries: "0",
       fatalities: "0",
-      consent: false,
     },
   });
 
@@ -173,35 +161,20 @@ const AnonymousIncidentReportForm = () => {
           <EvidenceUpload key={evidenceUploadKey} file={evidenceFile} setFile={setEvidenceFile} />
         </div>
 
-        <FormField
-          control={form.control}
-          name="consent"
-          render={({ field }) => (
-            <FormItem className="gap-2">
-              <div className="flex items-start gap-3">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={(checked) => field.onChange(checked === true)}
-                    className="mt-0.5 size-4.5"
-                  />
-                </FormControl>
-                <FormLabel className="block font-title text-sm font-normal leading-snug text-dark">
-                  {t("consentText")}{" "}
-                  <Link
-                    href="/privacy-policy"
-                    target="_blank"
-                    className="text-primary underline-offset-4 hover:underline"
-                  >
-                    {t("privacyPolicy")}
-                  </Link>
-                  .
-                </FormLabel>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Agreement is implied by submitting; there's no box to tick. */}
+        <p className="font-title text-sm leading-snug text-dark/70">
+          {t.rich("submitAgreement", {
+            privacy: (chunks) => (
+              <Link
+                href="/privacy-policy"
+                target="_blank"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
 
         <Button
           type="submit"

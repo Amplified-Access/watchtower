@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -87,7 +87,6 @@ const AlertSubscriptionForm: React.FC = () => {
           .min(1, t("validationRadiusMin"))
           .max(100, t("validationRadiusMax")),
         alertFrequency: z.enum(ALERT_FREQUENCIES),
-        consent: z.boolean().refine((value) => value, t("consentRequired")),
       }),
     [t],
   );
@@ -107,7 +106,6 @@ const AlertSubscriptionForm: React.FC = () => {
       incidentTypes: [],
       location: emptyLocation,
       alertFrequency: "daily",
-      consent: false,
     },
   });
 
@@ -351,27 +349,20 @@ const AlertSubscriptionForm: React.FC = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="consent"
-          render={({ field }) => (
-            <FormItem className="gap-2">
-              <div className="flex items-start gap-3">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={(checked) => field.onChange(checked === true)}
-                    className="mt-0.5 size-4.5"
-                  />
-                </FormControl>
-                <FormLabel className="font-title text-sm font-normal leading-snug text-dark">
-                  {t("agreementText")}
-                </FormLabel>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Agreement is implied by subscribing; there's no box to tick. */}
+        <p className="font-title text-sm leading-snug text-dark/70">
+          {t.rich("subscribeAgreement", {
+            privacy: (chunks) => (
+              <Link
+                href="/privacy-policy"
+                target="_blank"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
 
         <Button
           type="submit"
