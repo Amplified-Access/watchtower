@@ -8,6 +8,7 @@ import { adminApi } from "@/lib/api/admin";
 import { anonymousReportingRouter } from "./anonymous-reporting";
 import { alertSubscriptionsRouter } from "./alert-subscriptions";
 import { organizationReportingRouter } from "./organization-reporting";
+import { placesRouter } from "./places";
 
 export const coreRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -86,4 +87,5 @@ export const coreRouter = router({
   anonymousReports: anonymousReportingRouter,
   organizationReports: organizationReportingRouter,
   alertSubscriptions: alertSubscriptionsRouter,
+  places: placesRouter,
 });
