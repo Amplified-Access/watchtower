@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -38,6 +38,11 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { MapPin, Check, ChevronDown, Loader2, ArrowRight } from "lucide-react";
+import PlaceSearchCombobox from "@/components/common/place-search-combobox";
+import {
+  emptyLocation,
+  pickedLocation,
+} from "@/features/anonymous-reporting/schemas/anonymous-incident-reproting-form-schema";
 import { trpc } from "@/_trpc/client";
 import { cn } from "@/lib/utils";
 import { useLocale, useTranslations } from "next-intl";
@@ -59,13 +64,6 @@ const ALL_SEVERITY_LEVELS: ("low" | "medium" | "high" | "critical")[] = [
   "critical",
 ];
 
-interface SelectedLocation {
-  name: string;
-  display_name: string;
-  lat: number;
-  lon: number;
-}
-
 const labelClassName = "font-title text-base font-medium text-dark";
 const fieldClassName =
   "h-12 w-full rounded-md border-input bg-white px-4 font-title text-sm text-dark shadow-none placeholder:text-dark/70 md:text-base";
@@ -83,7 +81,7 @@ const AlertSubscriptionForm: React.FC = () => {
           .email(t("validationEmailInvalid")),
         name: z.string().min(1, t("validationNameRequired")),
         incidentTypes: z.array(z.string()).min(1, t("validationIncidentTypesRequired")),
-        location: z.string().min(1, t("validationLocationRequired")),
+        location: pickedLocation(t("validationLocationRequired")),
         radius: z
           .number({ message: t("validationRadiusMin") })
           .min(1, t("validationRadiusMin"))
@@ -95,57 +93,10 @@ const AlertSubscriptionForm: React.FC = () => {
   );
   type AlertSubscriptionFormData = z.infer<typeof schema>;
 
-  // State for location search and selection
-  const [locationSearch, setLocationSearch] = useState("");
-  const [debouncedLocationSearch, setDebouncedLocationSearch] = useState("");
-  const [selectedLocation, setSelectedLocation] =
-    useState<SelectedLocation | null>(null);
   const [isIncidentTypesOpen, setIsIncidentTypesOpen] = useState(false);
-  const [isLocationOpen, setIsLocationOpen] = useState(false);
-  const debounceTimerRef = useRef<NodeJS.Timeout>(null);
 
   const { data: incidentTypesData, isLoading: isLoadingTypes } =
     trpc.anonymousReports.getAllIncidentTypes.useQuery();
-
-  // Debounce location search
-  useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-
-    debounceTimerRef.current = setTimeout(() => {
-      setDebouncedLocationSearch(locationSearch);
-    }, 500);
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [locationSearch]);
-
-  const searchLocation = trpc.anonymousReports.searchLocation.useQuery(
-    { searchTerm: debouncedLocationSearch },
-    {
-      enabled: debouncedLocationSearch.length > 2,
-      staleTime: 5000,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-    },
-  );
-
-  const locations = useMemo<SelectedLocation[]>(() => {
-    const locationData = searchLocation.data?.data;
-    if (!Array.isArray(locationData)) return [];
-    // LocationIQ results are untyped JSON from the tRPC router.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return locationData.map((location: any) => ({
-      name: location.display_name,
-      display_name: location.display_name,
-      lat: Number.parseFloat(location.lat),
-      lon: Number.parseFloat(location.lon),
-    }));
-  }, [searchLocation.data]);
 
   const form = useForm<AlertSubscriptionFormData>({
     resolver: zodResolver(schema),
@@ -154,7 +105,7 @@ const AlertSubscriptionForm: React.FC = () => {
       email: "",
       name: "",
       incidentTypes: [],
-      location: "",
+      location: emptyLocation,
       alertFrequency: "daily",
       consent: false,
     },
@@ -164,30 +115,13 @@ const AlertSubscriptionForm: React.FC = () => {
     onSuccess: (data) => {
       toast.success(data.message || t("subscribeSuccess"));
       form.reset();
-      setSelectedLocation(null);
-      setLocationSearch("");
     },
     onError: (error) => {
       toast.error(error.message || t("subscribeFailed"));
     },
   });
 
-  const handleLocationSelect = useCallback(
-    (location: SelectedLocation) => {
-      setSelectedLocation(location);
-      form.setValue("location", location.display_name, { shouldValidate: true });
-      setLocationSearch(location.display_name);
-      setIsLocationOpen(false);
-    },
-    [form],
-  );
-
   const onSubmit = async (values: AlertSubscriptionFormData) => {
-    if (!selectedLocation) {
-      toast.error(t("selectValidLocation"));
-      return;
-    }
-
     try {
       await createSubscription.mutateAsync({
         email: values.email,
@@ -196,8 +130,8 @@ const AlertSubscriptionForm: React.FC = () => {
         locations: [
           {
             radius: values.radius,
-            lat: Number(selectedLocation.lat) || 0,
-            lon: Number(selectedLocation.lon) || 0,
+            lat: values.location.latitude,
+            lon: values.location.longitude,
           },
         ],
         severityLevels: ALL_SEVERITY_LEVELS,
@@ -344,72 +278,21 @@ const AlertSubscriptionForm: React.FC = () => {
           <FormField
             control={form.control}
             name="location"
-            render={() => (
+            render={({ field }) => (
               <FormItem className="gap-2.5">
                 <FormLabel className={labelClassName}>
                   {t("incidentLocationLabel")}
                 </FormLabel>
-                <Popover open={isLocationOpen} onOpenChange={setIsLocationOpen}>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <button
-                        type="button"
-                        className={cn(fieldClassName, "flex items-center justify-between border text-left")}
-                      >
-                        <span className={cn("truncate", !selectedLocation && "text-dark/70")}>
-                          {selectedLocation ? selectedLocation.display_name : t("location")}
-                        </span>
-                        <MapPin className="size-4 shrink-0 text-dark/50" />
-                      </button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 p-0" align="start">
-                    <Command shouldFilter={false}>
-                      <CommandInput
-                        placeholder={t("searchLocation")}
-                        value={locationSearch}
-                        onValueChange={setLocationSearch}
-                      />
-                      <CommandList>
-                        {searchLocation.isFetching ? (
-                          <div className="flex items-center justify-center p-4">
-                            <Loader2 className="size-4 animate-spin" />
-                            <span className="ml-2 text-sm">{t("searching")}</span>
-                          </div>
-                        ) : locations.length === 0 && locationSearch.length > 2 ? (
-                          <CommandEmpty>{t("noLocationsFoundSearch")}</CommandEmpty>
-                        ) : locations.length === 0 ? (
-                          <div className="p-4 text-center text-sm text-muted-foreground">
-                            {t("typeToSearch")}
-                          </div>
-                        ) : (
-                          <CommandGroup>
-                            {locations.map((location, index) => (
-                              <CommandItem
-                                key={`${location.display_name}-${index}`}
-                                value={location.display_name}
-                                onSelect={() => handleLocationSelect(location)}
-                              >
-                                <MapPin className="mr-2 size-4 text-muted-foreground" />
-                                <span className="min-w-0 flex-1 truncate">
-                                  {location.display_name}
-                                </span>
-                                <Check
-                                  className={cn(
-                                    "ml-2 size-4 shrink-0",
-                                    selectedLocation?.display_name === location.display_name
-                                      ? "opacity-100"
-                                      : "opacity-0",
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        )}
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <FormControl>
+                  <PlaceSearchCombobox
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder={t("location")}
+                    icon={<MapPin className="size-4 shrink-0 text-dark/50" />}
+                    className={cn(fieldClassName, "border")}
+                    contentClassName="w-80"
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
