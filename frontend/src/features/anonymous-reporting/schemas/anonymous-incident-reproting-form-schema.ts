@@ -1,19 +1,31 @@
 import z from "zod";
 
-// Location object schema based on LocationIQ API response
+// The incident's location: a place picked from Google's suggestions with
+// PlaceSearchCombobox (components/common). `label` is what the reporter
+// picked, in their language; the address and country are English, as reports
+// are stored. The organisation report forms use it too.
 export const locationSchema = z.object({
-  place_id: z.string(),
-  licence: z.string(),
-  osm_type: z.string(),
-  osm_id: z.string(),
-  boundingbox: z.array(z.string()),
-  lat: z.string(),
-  lon: z.string(),
-  display_name: z.string(),
-  class: z.string().optional(),
-  type: z.string().optional(),
-  importance: z.number().optional(),
+  placeId: z.string(),
+  label: z.string(),
+  address: z.string(),
+  country: z.string().nullable(),
+  latitude: z.number(),
+  longitude: z.number(),
 });
+
+/** The form value before a place is picked; fails `pickedLocation`. */
+export const emptyLocation: z.infer<typeof locationSchema> = {
+  placeId: "",
+  label: "",
+  address: "",
+  country: null,
+  latitude: 0,
+  longitude: 0,
+};
+
+/** A location field that requires a place to have been picked. */
+export const pickedLocation = (message: string) =>
+  locationSchema.refine((location) => location.placeId, { message });
 
 export const entityOptions = [
   "law-enforcement",
@@ -44,9 +56,7 @@ export const formSchema = z.object({
       message: "Please select an incident category.",
     })
     .describe("The ID of the selected incident category"),
-  location: locationSchema.refine((location) => location.place_id, {
-    message: "Please select a valid location.",
-  }),
+  location: pickedLocation("Please select a valid location."),
   description: z
     .string()
     .min(10, {
@@ -69,6 +79,5 @@ export const formSchema = z.object({
 });
 
 export type FormData = z.infer<typeof formSchema>;
-// The public report form adds a translated consent checkbox on top of formSchema.
-export type ReportFormValues = FormData & { consent: boolean };
+export type ReportFormValues = FormData;
 export type LocationData = z.infer<typeof locationSchema>;

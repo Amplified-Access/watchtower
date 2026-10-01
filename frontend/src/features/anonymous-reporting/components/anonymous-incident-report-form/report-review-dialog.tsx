@@ -22,7 +22,7 @@ interface ReportReviewDialogProps {
 }
 
 // Read-only summary of what's been entered so far. Submitting still happens
-// from the form itself, after the user closes this and confirms consent.
+// from the form itself, after the user closes this.
 const ReportReviewDialog = ({
   open,
   onOpenChange,
