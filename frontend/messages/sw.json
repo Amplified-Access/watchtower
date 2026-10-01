@@ -446,7 +446,7 @@
   },
   "PrivacyPolicyPage": {
     "lastUpdated": "Ilisasishwa mwisho: {date}",
-    "inThisPolicy": "Katika sera hii"
+    "onThisPage": "Kwenye ukurasa huu"
   },
   "LogoCloud": {
     "heading": "Kuwezesha timu bora zaidi"

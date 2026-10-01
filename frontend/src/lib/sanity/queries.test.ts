@@ -250,7 +250,7 @@ describe("policy page queries against the seed", () => {
   it("gives the privacy policy a translated header", async () => {
     const en = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "privacyPolicy", locale: "en" });
     const fr = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "privacyPolicy", locale: "fr" });
-    expect(en.hero.title).toBe("Your privacy matters.");
+    expect(en.hero.title).toBe("Privacy Policy");
     expect(fr.hero.title).not.toBe(en.hero.title);
   });
 });

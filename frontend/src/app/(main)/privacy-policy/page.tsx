@@ -6,9 +6,10 @@ import PolicyToc from "@/features/legal/components/policy-toc";
 import { getLegalPage } from "@/lib/sanity/content";
 import { SanityLive } from "@/lib/sanity/live";
 
-// The header and the policy text are the `privacyPolicy` document in Sanity;
+// The title and the policy text are the `privacyPolicy` document in Sanity;
 // the "Last updated" and contents labels are UI copy in messages/*.json. The
-// text is only translated once a reviewed translation exists — until then
+// header is just the title and the date, styled like the other pages' headers.
+// The text is only translated once a reviewed translation exists — until then
 // each section falls back to English.
 const Page = async () => {
   const locale = await getLocale();
@@ -41,15 +42,11 @@ const Page = async () => {
 
         <div className="border-b border-border">
           <div className="mx-auto max-w-3xl px-8 pt-40 pb-16 text-center md:pt-44 md:pb-20">
-            <p className="mb-4 font-title text-sm font-medium uppercase tracking-wide text-primary">
-              {policy?.hero.eyebrow}
-            </p>
-            <h1 className="font-title text-4xl font-medium leading-tight text-dark md:text-6xl">
+            <h1 className="font-title text-4xl font-semibold leading-tight text-dark">
               {policy?.hero.title}
             </h1>
-            <p className="mx-auto mt-6 max-w-lg text-dark leading-snug md:text-lg">{policy?.hero.description}</p>
             {lastUpdated && (
-              <p className="mt-10 font-title font-semibold text-dark md:text-lg">
+              <p className="mx-auto mt-4 max-w-lg text-dark/60 leading-snug">
                 {t("lastUpdated", { date: lastUpdated })}
               </p>
             )}
@@ -59,7 +56,7 @@ const Page = async () => {
         <div className="mx-auto grid max-w-360 px-4 md:px-8 lg:grid-cols-[18rem_1fr] xl:grid-cols-[20rem_1fr] xl:px-16">
           <aside className="border-b border-border lg:border-r lg:border-b-0">
             <div className="lg:sticky lg:top-32">
-              <PolicyToc label={t("inThisPolicy")} items={tocItems} />
+              <PolicyToc label={t("onThisPage")} items={tocItems} />
             </div>
           </aside>
           <div className="px-6 py-12 md:px-12 md:py-16 xl:px-24">

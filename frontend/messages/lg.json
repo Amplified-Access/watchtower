@@ -446,7 +446,7 @@
   },
   "PrivacyPolicyPage": {
     "lastUpdated": "Kyasembayo okukyusibwa: {date}",
-    "inThisPolicy": "Mu nkola eno"
+    "onThisPage": "Ku lupapula luno"
   },
   "LogoCloud": {
     "heading": "Okuwagira emirimu emisinga obulungi"

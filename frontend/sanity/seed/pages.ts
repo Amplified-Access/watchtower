@@ -323,9 +323,7 @@ export const buildPageDocs = (pages: Record<Language, Strings>) => {
   };
 
   const privacyHero = {
-    eyebrow: string("PrivacyPolicyPage.eyebrow"),
     title: string("PrivacyPolicyPage.heading"),
-    description: text("PrivacyPolicyPage.intro"),
   };
 
   return { home, about, security, codeOfConduct, privacyHero };

@@ -446,7 +446,7 @@
   },
   "PrivacyPolicyPage": {
     "lastUpdated": "آخری تازہ کاری: {date}",
-    "inThisPolicy": "اس پالیسی میں"
+    "onThisPage": "اس صفحے پر"
   },
   "LogoCloud": {
     "heading": "بہترین ٹیموں کو بااختیار بنانا"

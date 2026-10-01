@@ -144,7 +144,5 @@
   "CodeOfConduct.permanentBanConsequenceText": "Ihagarikwa ry'iteka ry'ubwoko bwose bw'ubucuti rusange mu muryango.",
   "CodeOfConduct.attributionTitle": "Inkomoko",
   "CodeOfConduct.attributionText": "Aya Mahame y'Imyitwarire yavuye ku <covenantLink>Contributor Covenant</covenantLink>, verisiyo 2.1, iboneka kuri <versionLink>contributor-covenant.org/version/2/1/code_of_conduct</versionLink>.",
-  "PrivacyPolicyPage.eyebrow": "Politiki y'Ibanga",
-  "PrivacyPolicyPage.heading": "Ibanga ryawe rifite agaciro.",
-  "PrivacyPolicyPage.intro": "WatchTower yakozwe kugira ngo ifashe abantu gutanga raporo ku bibera mu miryango yabo, ibaha uburenganzira busobanutse ku makuru basangiza."
+  "PrivacyPolicyPage.heading": "Politiki y'Ibanga"
 }

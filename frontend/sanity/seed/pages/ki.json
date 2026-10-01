@@ -144,7 +144,5 @@
   "CodeOfConduct.permanentBanConsequenceText": "Gũthingatwo gwa tene na tene kwa mũthemba o wothe wa kwaranĩria kwa andũ othe thĩinĩ wa mũcemanio.",
   "CodeOfConduct.attributionTitle": "Kuuma",
   "CodeOfConduct.attributionText": "Watho ũyũ wa Mĩtugo nĩ ũrutĩtwo kuuma <covenantLink>Contributor Covenant</covenantLink>, mũhari wa 2.1, ũrĩa ũrĩ kũrĩ <versionLink>contributor-covenant.org/version/2/1/code_of_conduct</versionLink>.",
-  "PrivacyPolicyPage.eyebrow": "Watho wa Hitho",
-  "PrivacyPolicyPage.heading": "Kũhitho gwaku nĩ ũhoro.",
-  "PrivacyPolicyPage.intro": "WatchTower nĩ ũthiithe gũteithia andũ kũrũtũrania mahũtĩko ma gĩthaka na kũheana wega ũrĩa marũpoti ma makana."
+  "PrivacyPolicyPage.heading": "Watho wa Hitho"
 }

@@ -446,7 +446,7 @@
   },
   "PrivacyPolicyPage": {
     "lastUpdated": "ለመጨረሻ ጊዜ የተሻሻለው፦ {date}",
-    "inThisPolicy": "በዚህ ፖሊሲ ውስጥ"
+    "onThisPage": "በዚህ ገጽ ላይ"
   },
   "LogoCloud": {
     "heading": "ምርጥ ቡድኖችን ማብቃት"

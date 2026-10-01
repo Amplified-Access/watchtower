@@ -144,7 +144,5 @@
   "CodeOfConduct.permanentBanConsequenceText": "በማህበረሰቡ ውስጥ ለማንኛውም ዓይነት ይፋዊ መስተጋብር ቋሚ እገዳ።",
   "CodeOfConduct.attributionTitle": "ምንጭ",
   "CodeOfConduct.attributionText": "ይህ የስነ ምግባር ደንብ ከ<covenantLink>Contributor Covenant</covenantLink>፣ ስሪት 2.1፣ በ<versionLink>contributor-covenant.org/version/2/1/code_of_conduct</versionLink> ላይ የሚገኝ ተስተካክሏል።",
-  "PrivacyPolicyPage.eyebrow": "የግላዊነት ፖሊሲ",
-  "PrivacyPolicyPage.heading": "ግላዊነትዎ አስፈላጊ ነው።",
-  "PrivacyPolicyPage.intro": "WatchTower ሰዎች በማህበረሰባቸው ውስጥ የሚሆነውን እንዲዘግቡ ለመርዳት እና ስለሚያጋሩት መረጃ ግልጽ ምርጫ እንዲሰጣቸው ተደርጎ የተሰራ ነው።"
+  "PrivacyPolicyPage.heading": "የግላዊነት ፖሊሲ"
 }

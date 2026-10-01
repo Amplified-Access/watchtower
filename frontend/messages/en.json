@@ -446,7 +446,7 @@
   },
   "PrivacyPolicyPage": {
     "lastUpdated": "Last updated: {date}",
-    "inThisPolicy": "In this policy"
+    "onThisPage": "On this page"
   },
   "LogoCloud": {
     "heading": "Powering the best teams"
