@@ -3,14 +3,24 @@ import { baseValue, requireBaseLanguage } from "./localized";
 
 // Building blocks the page documents share. Every text is translated.
 
+// The privacy policy's header is only its title (and the date, set on the
+// document), so the label and description are hidden there.
+const isPrivacyPolicy = ({ document }: { document?: { _id?: string } }) =>
+  /(^|\.)privacyPolicy$/.test(document?._id ?? "");
+
 export const pageHero = defineType({
   name: "pageHero",
   title: "Page header",
   type: "object",
   fields: [
-    defineField({ name: "eyebrow", type: "internationalizedArrayString", description: "The small label above the title." }),
+    defineField({
+      name: "eyebrow",
+      type: "internationalizedArrayString",
+      description: "The small label above the title.",
+      hidden: isPrivacyPolicy,
+    }),
     defineField({ name: "title", type: "internationalizedArrayString", validation: requireBaseLanguage }),
-    defineField({ name: "description", type: "internationalizedArrayText" }),
+    defineField({ name: "description", type: "internationalizedArrayText", hidden: isPrivacyPolicy }),
   ],
 });
 

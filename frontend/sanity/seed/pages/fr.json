@@ -144,7 +144,5 @@
   "CodeOfConduct.permanentBanConsequenceText": "Une interdiction permanente de toute forme d'interaction publique au sein de la communauté.",
   "CodeOfConduct.attributionTitle": "Attribution",
   "CodeOfConduct.attributionText": "Ce Code de conduite est adapté du <covenantLink>Contributor Covenant</covenantLink>, version 2.1, disponible à <versionLink>contributor-covenant.org/version/2/1/code_of_conduct</versionLink>.",
-  "PrivacyPolicyPage.eyebrow": "Politique de confidentialité",
-  "PrivacyPolicyPage.heading": "Votre vie privée compte.",
-  "PrivacyPolicyPage.intro": "WatchTower est conçu pour aider les personnes à signaler ce qui se passe dans leurs communautés tout en leur offrant des choix clairs sur les informations qu'elles partagent."
+  "PrivacyPolicyPage.heading": "Politique de confidentialité"
 }

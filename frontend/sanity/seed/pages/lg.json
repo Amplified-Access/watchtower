@@ -144,7 +144,5 @@
   "CodeOfConduct.permanentBanConsequenceText": "Okugaanibwa emirembe gyonna okukolagana kwonna okw'olwatu munda mu kibiina.",
   "CodeOfConduct.attributionTitle": "Ensibuko",
   "CodeOfConduct.attributionText": "Amateeka gano ag'Empisa gaggibwa mu <covenantLink>Contributor Covenant</covenantLink>, ekitundu 2.1, ekisangibwa ku <versionLink>contributor-covenant.org/version/2/1/code_of_conduct</versionLink>.",
-  "PrivacyPolicyPage.eyebrow": "Enkola y'Ebyekyama",
-  "PrivacyPolicyPage.heading": "Ebyekyama byo bikulu.",
-  "PrivacyPolicyPage.intro": "WatchTower yakolebwa okuyamba abantu okuloopa ebigenda mu maaso mu bitundu byabwe, nga bibawa okulonda okw'olwatu ku bubaka bwe bagabana."
+  "PrivacyPolicyPage.heading": "Enkola y'Ebyekyama"
 }
