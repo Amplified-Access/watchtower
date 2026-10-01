@@ -49,6 +49,24 @@ export const entityOptions = [
 
 export const casualtyOptions = ["0", "1", "2", "3", "4", "5", "6+"] as const;
 
+/**
+ * What happened, in writing. A voice note can stand in for it, since the
+ * public form lets people speak instead of typing: with one recorded, the
+ * description is optional.
+ */
+export const descriptionSchema = ({
+  hasVoiceNote,
+  requiredMessage,
+}: {
+  hasVoiceNote: boolean;
+  requiredMessage: string;
+}) => {
+  const description = z.string().trim();
+  return (hasVoiceNote ? description : description.min(10, { message: requiredMessage })).max(2000, {
+    message: "Description cannot exceed 2000 characters.",
+  });
+};
+
 export const formSchema = z.object({
   category: z
     .string()
@@ -57,15 +75,10 @@ export const formSchema = z.object({
     })
     .describe("The ID of the selected incident category"),
   location: pickedLocation("Please select a valid location."),
-  description: z
-    .string()
-    .min(10, {
-      message:
-        "Please provide a detailed description (at least 10 characters).",
-    })
-    .max(2000, {
-      message: "Description cannot exceed 2000 characters.",
-    }),
+  description: descriptionSchema({
+    hasVoiceNote: false,
+    requiredMessage: "Please provide a detailed description (at least 10 characters).",
+  }),
   // Optional: the redesigned public form no longer asks for entities involved.
   entities: z.array(z.enum(entityOptions)),
   injuries: z.enum(casualtyOptions, {

@@ -202,6 +202,7 @@
     "typeToSearch": "Type at least 3 characters to search",
     "descriptionLabel": "Incident Description",
     "descriptionPrompt": "Describe what happened in your own words...",
+    "descriptionOrVoiceNote": "Describe what happened (at least 10 characters) or record a voice note.",
     "preferToSpeak": "Prefer to speak?",
     "recordVoiceReport": "Record a voice report",
     "evidenceLabel": "Evidence",

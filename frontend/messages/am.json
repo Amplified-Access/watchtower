@@ -202,6 +202,7 @@
     "typeToSearch": "ለመፈለግ ቢያንስ 3 ፊደላት ይጻፉ",
     "descriptionLabel": "የክስተት መግለጫ",
     "descriptionPrompt": "የተፈጠረውን በራስዎ ቃላት ይግለጹ...",
+    "descriptionOrVoiceNote": "የተፈጠረውን ይግለጹ (ቢያንስ 10 ፊደላት) ወይም የድምጽ ማስታወሻ ይቅረጹ።",
     "preferToSpeak": "መናገር ይመርጣሉ?",
     "recordVoiceReport": "የድምጽ ሪፖርት ይቅረጹ",
     "evidenceLabel": "ማስረጃ",

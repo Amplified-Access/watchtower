@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  descriptionSchema,
   emptyLocation,
   formSchema,
   type ReportFormValues,
@@ -38,8 +39,22 @@ import { uploadFile as uploadFileToStorage } from "@/utils/file-upload";
 const AnonymousIncidentReportForm = () => {
   const t = useTranslations("IncidentReporting");
 
+  const recorder = useVoiceRecorder({
+    onMicrophoneError: () => toast.error(t("microphoneError")),
+  });
+
+  // A voice note can replace the written description (see descriptionSchema).
+  const hasVoiceNote = recorder.audioBlob !== null;
+  const schema = useMemo(
+    () =>
+      formSchema.extend({
+        description: descriptionSchema({ hasVoiceNote, requiredMessage: t("descriptionOrVoiceNote") }),
+      }),
+    [hasVoiceNote, t],
+  );
+
   const form = useForm<ReportFormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       category: "",
       location: emptyLocation,
@@ -51,9 +66,12 @@ const AnonymousIncidentReportForm = () => {
     },
   });
 
-  const recorder = useVoiceRecorder({
-    onMicrophoneError: () => toast.error(t("microphoneError")),
-  });
+  // After a failed submit, recording or discarding a voice note changes
+  // whether the description is needed, so check it again.
+  const { isSubmitted } = form.formState;
+  useEffect(() => {
+    if (isSubmitted) void form.trigger("description");
+  }, [hasVoiceNote, isSubmitted, form]);
 
   const [evidenceFile, setEvidenceFile] = useState<EvidenceFile | null>(null);
   // Bumped after a successful submit to remount (and clear) EvidenceUpload,
@@ -87,6 +105,9 @@ const AnonymousIncidentReportForm = () => {
           t("audioUploadError"),
         )
       : undefined;
+    // The voice note was the whole report and didn't upload; uploadFile has
+    // already said so.
+    if (!values.description && !audioFileKey) return;
 
     try {
       await submitMutation.mutateAsync({
