@@ -53,16 +53,7 @@ const AnonymousIncidentReportForm = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       category: "",
-      location: {
-        place_id: "",
-        licence: "",
-        osm_type: "",
-        osm_id: "",
-        boundingbox: [],
-        lat: "",
-        lon: "",
-        display_name: "",
-      },
+      location: { placeId: "", label: "", address: "", country: null, latitude: 0, longitude: 0 },
       description: "",
       // Entities and casualty counts aren't asked for in the redesigned form.
       entities: [],
@@ -113,10 +104,10 @@ const AnonymousIncidentReportForm = () => {
       await submitMutation.mutateAsync({
         incidentTypeId: values.category,
         location: {
-          latitude: Number(values.location.lat),
-          longitude: Number(values.location.lon),
-          address: values.location.display_name,
-          country: values.location.display_name?.split(",").pop()?.trim(),
+          latitude: values.location.latitude,
+          longitude: values.location.longitude,
+          address: values.location.address,
+          country: values.location.country ?? undefined,
         },
         description: values.description,
         entities: values.entities,
@@ -245,7 +236,7 @@ const AnonymousIncidentReportForm = () => {
           open={isReviewOpen}
           onOpenChange={setIsReviewOpen}
           category={categoryName}
-          location={watched.location?.display_name}
+          location={watched.location?.label}
           description={watched.description}
           voiceNote={
             recorder.audioBlob

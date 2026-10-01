@@ -1,18 +1,15 @@
 import z from "zod";
 
-// Location object schema based on LocationIQ API response
+// The incident's location: a place picked from Google's suggestions (see
+// lib/google/places.ts). `label` is what the reporter picked, in their
+// language; the address and country are English, as reports are stored.
 export const locationSchema = z.object({
-  place_id: z.string(),
-  licence: z.string(),
-  osm_type: z.string(),
-  osm_id: z.string(),
-  boundingbox: z.array(z.string()),
-  lat: z.string(),
-  lon: z.string(),
-  display_name: z.string(),
-  class: z.string().optional(),
-  type: z.string().optional(),
-  importance: z.number().optional(),
+  placeId: z.string(),
+  label: z.string(),
+  address: z.string(),
+  country: z.string().nullable(),
+  latitude: z.number(),
+  longitude: z.number(),
 });
 
 export const entityOptions = [
@@ -44,7 +41,7 @@ export const formSchema = z.object({
       message: "Please select an incident category.",
     })
     .describe("The ID of the selected incident category"),
-  location: locationSchema.refine((location) => location.place_id, {
+  location: locationSchema.refine((location) => location.placeId, {
     message: "Please select a valid location.",
   }),
   description: z
