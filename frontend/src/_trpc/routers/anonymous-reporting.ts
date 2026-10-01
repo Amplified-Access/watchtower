@@ -25,23 +25,6 @@ export const anonymousReportingRouter = router({
     }
   }),
 
-  searchLocation: publicProcedure
-    .input(z.object({ searchTerm: z.string() }))
-    .query(async ({ input }) => {
-      try {
-        const apiKey = process.env.LOCATION_IQ_API_KEY;
-        if (!apiKey) return { success: true, data: [] };
-        const url = `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(input.searchTerm)}&format=json&limit=5`;
-        const res = await fetch(url);
-        if (!res.ok) return { success: true, data: [] };
-        const data = await res.json();
-        return { success: true, data };
-      } catch (error) {
-        console.error("Failed to search location:", error);
-        return { success: false, message: "Failed to fetch places.", data: [] };
-      }
-    }),
-
   submitAmonymousIncidentReport: publicProcedure
     .input(
       z.object({
