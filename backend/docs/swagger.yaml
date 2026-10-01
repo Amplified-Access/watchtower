@@ -1911,7 +1911,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Submits an incident report without requiring authentication
+      description: Submits an incident report without requiring authentication. It
+        needs a description, an audioFileKey (a voice note) or both.
       parameters:
       - description: Anonymous report payload
         in: body

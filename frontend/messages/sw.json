@@ -202,6 +202,7 @@
     "typeToSearch": "Andika angalau herufi 3 kutafuta",
     "descriptionLabel": "Maelezo ya Tukio",
     "descriptionPrompt": "Eleza kilichotokea kwa maneno yako mwenyewe...",
+    "descriptionOrVoiceNote": "Eleza kilichotokea (angalau herufi 10) au rekodi ujumbe wa sauti.",
     "preferToSpeak": "Ungependa kuongea?",
     "recordVoiceReport": "Rekodi ripoti ya sauti",
     "evidenceLabel": "Ushahidi",

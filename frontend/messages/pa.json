@@ -202,6 +202,7 @@
     "typeToSearch": "ਖੋਜਣ ਲਈ ਘੱਟੋ-ਘੱਟ 3 ਅੱਖਰ ਲਿਖੋ",
     "descriptionLabel": "ਘਟਨਾ ਦਾ ਵੇਰਵਾ",
     "descriptionPrompt": "ਆਪਣੇ ਸ਼ਬਦਾਂ ਵਿੱਚ ਦੱਸੋ ਕਿ ਕੀ ਹੋਇਆ...",
+    "descriptionOrVoiceNote": "ਦੱਸੋ ਕਿ ਕੀ ਹੋਇਆ (ਘੱਟੋ-ਘੱਟ 10 ਅੱਖਰ) ਜਾਂ ਆਵਾਜ਼ ਨੋਟ ਰਿਕਾਰਡ ਕਰੋ।",
     "preferToSpeak": "ਬੋਲਣਾ ਪਸੰਦ ਕਰੋਗੇ?",
     "recordVoiceReport": "ਆਵਾਜ਼ ਰਿਪੋਰਟ ਰਿਕਾਰਡ ਕਰੋ",
     "evidenceLabel": "ਸਬੂਤ",

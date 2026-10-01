@@ -2583,7 +2583,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Submits an incident report without requiring authentication",
+                "description": "Submits an incident report without requiring authentication. It needs a description, an audioFileKey (a voice note) or both.",
                 "consumes": [
                     "application/json"
                 ],
