@@ -454,7 +454,7 @@
   },
   "PrivacyPolicyPage": {
     "lastUpdated": "Dernière mise à jour : {date}",
-    "inThisPolicy": "Dans cette politique"
+    "onThisPage": "Sur cette page"
   },
   "LogoCloud": {
     "heading": "Au service des meilleures équipes"
