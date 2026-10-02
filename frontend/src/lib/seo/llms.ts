@@ -60,6 +60,8 @@ type TextBlock = {
   _type: "block";
   style?: string;
   listItem?: string;
+  /** Nesting depth of a list item, from 1. */
+  level?: number;
   children?: Span[];
   markDefs?: { _key: string; href?: string }[];
 };
@@ -95,9 +97,10 @@ export const portableTextToMarkdown = (
   for (const block of blocks ?? []) {
     if (block._type === "block") {
       const text = spansToMarkdown(block as TextBlock).trim();
-      const { style, listItem } = block as TextBlock;
+      const { style, listItem, level = 1 } = block as TextBlock;
       if (listItem) {
-        list.push(`- ${text}`);
+        // Two spaces per level nests a bullet under the one before it.
+        list.push(`${"  ".repeat(Math.max(0, level - 1))}- ${text}`);
         continue;
       }
       flush();

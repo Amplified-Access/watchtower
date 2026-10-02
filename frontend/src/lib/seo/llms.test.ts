@@ -43,6 +43,18 @@ describe("portableTextToMarkdown", () => {
     ]);
   });
 
+  it("keeps nested bullets under the bullet they belong to", () => {
+    const body = [
+      block("Information you submit", { listItem: "bullet", level: 1 }),
+      block("Location", { listItem: "bullet", level: 2 }),
+      block("Photos", { listItem: "bullet", level: 2 }),
+      block("Information we collect", { listItem: "bullet", level: 1 }),
+    ] as PolicyBodyBlock[];
+    expect(portableTextToMarkdown(body, 4)).toBe(
+      "- Information you submit\n  - Location\n  - Photos\n- Information we collect",
+    );
+  });
+
   it("returns nothing for no body", () => {
     expect(portableTextToMarkdown(null, 4)).toBe("");
   });
