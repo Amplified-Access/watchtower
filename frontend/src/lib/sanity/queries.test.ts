@@ -15,6 +15,9 @@ import {
   CASE_STUDY_QUERY,
   HOME_PAGE_QUERY,
   LEGAL_PAGE_QUERY,
+  LLMS_QUERY,
+  SEO_SETTINGS_QUERY,
+  SITEMAP_QUERY,
 } from "./queries";
 import type {
   CaseStudy,
@@ -24,7 +27,12 @@ import type {
   LegalPage,
   SharedHomeSections,
   AboutPageContent,
+  LlmsContent,
+  SeoSettings,
+  SitemapContent,
 } from "./types";
+import { DEFAULT_PAGE_SEO, SEO_PAGE_KEYS } from "@/lib/seo/defaults";
+import { buildLlmsFull, buildLlmsTxt } from "@/lib/seo/llms";
 
 type Doc = Record<string, unknown>;
 
@@ -252,5 +260,72 @@ describe("policy page queries against the seed", () => {
     const fr = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "privacyPolicy", locale: "fr" });
     expect(en.hero.title).toBe("Privacy Policy");
     expect(fr.hero.title).not.toBe(en.hero.title);
+  });
+});
+
+describe("search and sharing queries against the seed", () => {
+  it("gives every code-built page a title and description in English, from the defaults", async () => {
+    const settings = await run<SeoSettings>(SEO_SETTINGS_QUERY, seed, { locale: "en" });
+    expect(settings.description).toBeTruthy();
+    expect(settings.image).toBeNull();
+    for (const key of SEO_PAGE_KEYS) {
+      expect(settings.pages[key]).toMatchObject(DEFAULT_PAGE_SEO[key]);
+    }
+  });
+
+  it("translates the pages the site already had text for, and falls back to English for the rest", async () => {
+    const fr = await run<SeoSettings>(SEO_SETTINGS_QUERY, seed, { locale: "fr" });
+    expect(fr.pages.maps.title).not.toBe(DEFAULT_PAGE_SEO.maps.title);
+    expect(fr.pages.report.description).not.toBe(DEFAULT_PAGE_SEO.report.description);
+    expect(fr.pages.thematicMap).toMatchObject(DEFAULT_PAGE_SEO.thematicMap);
+  });
+
+  it("gives the home, about and policy pages search text in every language", async () => {
+    for (const locale of locales) {
+      const home = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale });
+      const security = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "security", locale });
+      expect({ locale, home: !!home.seo.title && !!home.seo.description }).toEqual({ locale, home: true });
+      // The brand is added by the site: titles in Sanity leave it out.
+      expect(security.seo.title).not.toMatch(/WatchTower/);
+    }
+    const fr = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "fr" });
+    const en = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "en" });
+    expect(fr.seo.title).not.toBe(en.seo.title);
+    expect(fr.seo.title).not.toMatch(/[.!]$/);
+  });
+
+  it("describes the privacy policy, whose title stays the translated header", async () => {
+    const sw = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "privacyPolicy", locale: "sw" });
+    expect(sw.seo.title).toBe("");
+    expect(sw.seo.description).toBeTruthy();
+  });
+
+  it("lists every case study and page for the sitemap", async () => {
+    const sitemap = await run<SitemapContent>(SITEMAP_QUERY, seed, {});
+    expect(sitemap.caseStudies).toHaveLength(9);
+    expect(sitemap.pages.map((page) => page._id).sort()).toEqual(
+      ["aboutPage", "codeOfConduct", "homePage", "privacyPolicy", "security"].sort(),
+    );
+  });
+
+  it("builds llms.txt and llms-full.txt from the seed", async () => {
+    const content = await run<LlmsContent>(LLMS_QUERY, seed, { locale: "en" });
+    const input = {
+      content,
+      description: "WatchTower description.",
+      pages: DEFAULT_PAGE_SEO,
+      aboutDescription: "About description.",
+    };
+    const index = buildLlmsTxt(input);
+    const full = buildLlmsFull(input);
+    expect(index).toMatch(/^# WatchTower\n\n> WatchTower description\./);
+    expect(index).toContain("https://www.thewatchtower.tech/case-studies/water-access-kampala");
+    expect(index).toContain("https://www.thewatchtower.tech/privacy-policy");
+    expect(full).toContain("## Frequently asked questions");
+    expect(full).toContain("### When access to water becomes uncertain");
+    expect(full).toContain("#### Overview");
+    for (const text of [index, full]) {
+      expect(text).not.toMatch(/undefined|\[object Object\]|\n{3,}/);
+    }
   });
 });

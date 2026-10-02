@@ -1,4 +1,4 @@
-import { hotspotStyle, sanityImageLoader, sanityImageSrc } from "./image";
+import { hotspotStyle, sanityImageLoader, sanityImageSrc, sanityShareImageSrc } from "./image";
 
 const url = "https://cdn.sanity.io/images/p/production/abc-2000x1000.webp";
 const dimensions = { width: 2000, height: 1000 };
@@ -36,5 +36,28 @@ describe("hotspotStyle", () => {
 
   it("is unset without a hotspot", () => {
     expect(hotspotStyle({})).toBeUndefined();
+  });
+});
+
+describe("sanityShareImageSrc", () => {
+  it("is null without an image file", () => {
+    expect(sanityShareImageSrc(null)).toBeNull();
+    expect(sanityShareImageSrc({ url: null })).toBeNull();
+  });
+
+  it("asks for a 1200 by 630 JPEG, keeping the editor's crop", () => {
+    const src = new URL(
+      sanityShareImageSrc({ url, dimensions, crop: { top: 0, bottom: 0, left: 0.5, right: 0 } })!,
+    );
+    expect(Object.fromEntries(src.searchParams)).toMatchObject({ w: "1200", h: "630", fit: "crop", fm: "jpg", rect: "1000,0,1000,1000" });
+  });
+
+  it("crops around the focal point, relative to the editor's crop", () => {
+    const src = new URL(
+      sanityShareImageSrc({ url, dimensions, crop: { top: 0, bottom: 0, left: 0.5, right: 0 }, hotspot: { x: 0.75, y: 0.2 } })!,
+    );
+    expect(src.searchParams.get("crop")).toBe("focalpoint");
+    expect(src.searchParams.get("fp-x")).toBe("0.500");
+    expect(src.searchParams.get("fp-y")).toBe("0.200");
   });
 });
