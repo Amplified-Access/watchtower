@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default function NoOrganizationPage() {
   return (

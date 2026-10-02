@@ -1,8 +1,12 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import ThematicMap from "@/features/maps/components/thematic-map";
 import Loader from "@/components/common/loader";
+import { JsonLd } from "@/components/common/json-ld";
 import { notFound } from "next/navigation";
 import { incidentsApi } from "@/lib/api/incidents";
+import { codePageJsonLd, codePageMetadata, getCodePageSeo } from "@/lib/seo/page";
 
 const generateSlug = (name: string): string =>
   name
@@ -21,20 +25,41 @@ const toSentenceCase = (name: string) => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
+const findIncidentType = async (slug: string) => {
+  const { data: types } = await incidentsApi.getAllTypes(true);
+  return (types ?? []).find((t) => generateSlug(t.name) === slug);
+};
+
+// The search text is "Thematic maps" in the Studio's "Search and sharing",
+// with {type} replaced by the incident type.
+export async function generateMetadata({ params }: DynamicMapPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const incidentType = await findIncidentType(slug);
+  if (!incidentType) return {};
+  return codePageMetadata("thematicMap", `/maps/${slug}`, {
+    values: { type: toSentenceCase(incidentType.name) },
+  });
+}
+
 const DynamicMapPage = async ({ params }: DynamicMapPageProps) => {
   const { slug } = await params;
 
-  const { data: types } = await incidentsApi.getAllTypes(true);
-  const incidentType = (types ?? []).find((t) => generateSlug(t.name) === slug);
+  const incidentType = await findIncidentType(slug);
 
   if (!incidentType) {
     notFound();
   }
 
   const label = toSentenceCase(incidentType.name);
+  const maps = await getCodePageSeo("maps", await getLocale());
+  const jsonLd = await codePageJsonLd("thematicMap", `/maps/${slug}`, {
+    values: { type: label },
+    parents: [{ name: maps.title, path: "/maps" }],
+  });
 
   return (
     <section>
+      <JsonLd data={jsonLd} />
       <Suspense
         fallback={
           <div className="w-full h-screen grid place-items-center">
