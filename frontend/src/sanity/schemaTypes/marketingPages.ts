@@ -97,6 +97,11 @@ export const homePage = defineType({
       [string("text"), string("cta", { title: "Button" })],
       "The blue strip at the bottom of the Home and About pages.",
     ),
+    defineField({
+      name: "seo",
+      type: "seo",
+      description: "The site's main search result. The title shows as “WatchTower | <title>”.",
+    }),
   ],
   preview: { prepare: () => ({ title: "Home page" }) },
 });
@@ -128,6 +133,7 @@ export const aboutPage = defineType({
       string("primaryCta", { title: "Main button", description: "Opens the report form." }),
       string("secondaryCta", { title: "Second button", description: "Opens the live map." }),
     ]),
+    defineField({ name: "seo", type: "seo" }),
   ],
   preview: { prepare: () => ({ title: "About page" }) },
 });
