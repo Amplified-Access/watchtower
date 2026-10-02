@@ -50,7 +50,7 @@ Next merges metadata shallowly: a page's `openGraph` replaces the root layout's 
 
 **Language.** URLs carry no locale (it is a cookie), so there is one URL per page and no `hreflang`. Crawlers send no cookie and get English; readers get their tab title, share cards and structured data in their language. The WebSite node lists every language the site is offered in (`inLanguage`).
 
-If Sanity can't be reached, `getSeoSettings` returns empty settings and every page falls back to the English defaults, so an outage never takes pages down for want of a description.
+If Sanity can't be reached, `getSeoSettings` returns empty settings and every page falls back to the English defaults, so an outage never takes pages down for want of a description. The sitemap and the llms files do the same: they still list the pages that don't come from Sanity.
 
 **Kept out of search** (`noindex`): password reset pages, chat conversations (one reader's questions, in the URL) and `/no-organization`. Dashboards, the Studio and the API are disallowed in `robots.txt`.
 

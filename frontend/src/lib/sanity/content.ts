@@ -89,17 +89,25 @@ export const getAboutPage = cache(async (locale: string): Promise<AboutPageConte
   };
 });
 
+// The search and crawler content below is read by every route (the root
+// layout) or by machine-facing routes (sitemap, llms.txt) that can still
+// serve their static part. A Sanity outage therefore falls back to the
+// defaults with a warning rather than failing them. Unlike the pages' own
+// content, there is nothing on screen to break.
+const orNull = <T>(fetch: Promise<T | null>, what: string) =>
+  fetch.catch((error) => {
+    console.warn(`[sanity] ${what} unavailable, using the defaults:`, error);
+    return null;
+  });
+
 // The site's description and share image and the code-built pages' search
 // text, with every page present so callers can fall back field by field to
 // the English defaults.
 export const getSeoSettings = cache(async (locale: string): Promise<SeoSettings> => {
-  // The root layout reads this on every route, the report form and sign-in
-  // included, so a Sanity outage falls back to the English defaults rather
-  // than taking those pages down.
-  const result = await sanityFetch<Partial<SeoSettings>>(SEO_SETTINGS_QUERY, { locale }).catch((error) => {
-    console.warn("[sanity] Search and sharing settings unavailable, using the defaults:", error);
-    return null;
-  });
+  const result = await orNull(
+    sanityFetch<Partial<SeoSettings>>(SEO_SETTINGS_QUERY, { locale }),
+    "Search and sharing settings",
+  );
   return {
     description: result?.description ?? "",
     image: result?.image ?? null,
@@ -110,11 +118,11 @@ export const getSeoSettings = cache(async (locale: string): Promise<SeoSettings>
 });
 
 export const getSitemapContent = async (): Promise<SitemapContent> =>
-  (await sanityFetch<SitemapContent>(SITEMAP_QUERY)) ?? { caseStudies: [], pages: [] };
+  (await orNull(sanityFetch<SitemapContent>(SITEMAP_QUERY), "Sitemap content")) ?? { caseStudies: [], pages: [] };
 
 // In English: llms.txt is read by machines, which get the base language.
 export const getLlmsContent = async (): Promise<LlmsContent> =>
-  (await sanityFetch<LlmsContent>(LLMS_QUERY, { locale: defaultLocale })) ?? {
+  (await orNull(sanityFetch<LlmsContent>(LLMS_QUERY, { locale: defaultLocale }), "llms.txt content")) ?? {
     home: null,
     about: null,
     caseStudies: [],
