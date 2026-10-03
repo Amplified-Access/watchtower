@@ -94,7 +94,8 @@ const AnonymousIncidentReportForm = () => {
   // The router takes counts as numbers; the select stores "0".."5" and "6+".
   const toCount = (value: string) => (value === "6+" ? 6 : Number(value));
 
-  async function onSubmit(values: ReportFormValues) {
+  // Sends the report; true once it has been saved.
+  async function sendReport(values: ReportFormValues): Promise<boolean> {
     const evidenceFileKey = evidenceFile
       ? await uploadFile(evidenceFile.file, t("evidenceUploadFailed"), t("evidenceUploadError"))
       : undefined;
@@ -107,7 +108,7 @@ const AnonymousIncidentReportForm = () => {
       : undefined;
     // The voice note was the whole report and didn't upload; uploadFile has
     // already said so.
-    if (!values.description && !audioFileKey) return;
+    if (!values.description && !audioFileKey) return false;
 
     try {
       await submitMutation.mutateAsync({
@@ -127,22 +128,35 @@ const AnonymousIncidentReportForm = () => {
       });
     } catch {
       toast.error(t("submitError"));
-      return;
+      return false;
     }
 
     toast.success(t("reportSuccess"));
+    return true;
+  }
+
+  // The form is cleared only once handleSubmit has finished: it marks the
+  // form submitted after sendReport returns, so a reset inside sendReport
+  // would be undone, and the effect above would then flag the emptied
+  // description as missing.
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    let sent = false;
+    await form.handleSubmit(async (values) => {
+      sent = await sendReport(values);
+    })(event);
+    if (!sent) return;
     form.reset();
     setEvidenceFile(null);
     setEvidenceUploadKey((key) => key + 1);
     recorder.discard();
-  }
+  };
 
   const watched = useWatch({ control: form.control });
   const categoryName = categoriesData?.data?.find((c) => c.id === watched.category)?.name;
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6" noValidate>
+      <form onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
         <div className="flex items-center gap-6">
           <span className={reportLabelClassName}>{t("chooseLanguage")}</span>
           <LanguageSelector
