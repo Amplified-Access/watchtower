@@ -10,7 +10,6 @@ import HeadingTwo from "@/components/common/heading-two";
 import LanguageMarquee from "@/components/common/language-marquee";
 import LineBreaks from "@/components/common/line-breaks";
 import TextComponent from "@/components/common/text-component";
-import LoopingVideo from "@/components/common/looping-video";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Accordion,
@@ -23,26 +22,25 @@ import type { AboutPageContent } from "@/lib/sanity/types";
 // The about page. Its text comes from the `aboutPage` document in Sanity, and
 // the figures and the bottom banner from `homePage` (see
 // app/(main)/about/page.tsx). The language names in the marquee are UI copy in
-// messages/*.json. Layout and videos are code. Like the rest of the site, each
-// section has one heading and no label above it.
+// messages/*.json. Layout and the step screenshots are code.
 
-type Video = { src: string; poster: string; width: number; height: number };
+type Shot = { src: string; width: number; height: number };
 
-const video = (name: string, width: number, height: number): Video => ({
-  src: `/videos/${name}.mp4`,
-  poster: `/videos/${name}-poster.webp`,
+const shot = (name: string, width: number, height: number): Shot => ({
+  src: `/images/about/${name}.webp`,
   width,
   height,
 });
 
-// Each step shows its clip in front, with a second card offset behind (or, for
-// the report, in front): the report's evidence and submit clip, or a still from
-// later in the same clip (the globe, the featured case studies). In this order: reporting, the maps, case studies. A step
-// added in Sanity beyond these has no media.
-const STEP_MEDIA: { main: Video; second: Video | string; secondInFront?: boolean }[] = [
-  { main: video("report", 1080, 1200), second: video("report-evidence", 1080, 800), secondInFront: true },
-  { main: video("maps", 1600, 900), second: "/videos/maps-still.webp" },
-  { main: video("case-studies", 1600, 900), second: "/videos/case-studies-still.webp" },
+// Each step shows a screenshot of the page it describes, with a second one
+// offset beside it: the report form with its evidence and submit area in
+// front, the live map with a closer view behind, the case studies with a
+// featured photo behind. In this order: reporting, the maps, case studies. A
+// step added in Sanity beyond these has no screenshots.
+const STEP_MEDIA: { main: Shot; second: Shot; secondInFront?: boolean }[] = [
+  { main: shot("report-form", 1376, 1478), second: shot("report-evidence", 1376, 900), secondInFront: true },
+  { main: shot("live-map", 1800, 1126), second: shot("live-map-zoom", 1200, 1156) },
+  { main: shot("case-studies", 1800, 1210), second: shot("case-study-photo", 1370, 782) },
 ];
 
 // The fine grain over the blue sections, drawn by the browser rather than
@@ -66,31 +64,51 @@ const Rails = ({ className }: { className?: string }) => (
   </div>
 );
 
-const card = "overflow-hidden rounded-lg border border-border bg-white shadow-[0_12px_40px_rgb(0_0_0/0.06)]";
+// Mockup windows are outlined darker than the page's lines, as in the design.
+const card = "overflow-hidden rounded-lg border border-dark/20 bg-white shadow-[0_12px_40px_rgb(0_0_0/0.06)]";
+// The design's cards dissolve into the page at the bottom.
+const fade = "mask-[linear-gradient(to_bottom,black_55%,transparent)]";
 
-/** A step's clip, with its second card beside it on wider screens, fading out at the bottom. */
+const Screenshot = ({ src, width, height, className }: Shot & { className?: string }) => (
+  <Image
+    src={src}
+    alt=""
+    width={width}
+    height={height}
+    sizes="(min-width: 768px) 50vw, 100vw"
+    className={cn("h-full w-full object-cover object-top", className)}
+  />
+);
+
+/** A step's screenshots: two overlapping cards on wider screens, one on a phone. */
 const StepMedia = ({ main, second, secondInFront }: (typeof STEP_MEDIA)[number]) => (
-  <div className="relative md:aspect-2/1 md:mask-[linear-gradient(to_bottom,black_65%,transparent)]">
-    <div className={cn(card, "relative md:absolute md:top-0 md:left-0", secondInFront ? "md:w-[52%]" : "md:w-[64%]")}>
-      <div className={cn(secondInFront ? "aspect-square" : "aspect-video")}>
-        <LoopingVideo {...main} className="h-full object-cover object-top" />
-      </div>
-    </div>
+  <div className="relative aspect-4/3 md:aspect-2/1">
     <div
       className={cn(
         card,
-        "absolute top-[8%] right-0 hidden w-[50%] md:block",
-        secondInFront ? "z-10" : "-z-10 top-[5%] right-[2%] w-[44%]",
+        fade,
+        "absolute inset-0 md:right-auto",
+        secondInFront ? "md:w-[52%]" : "z-10 md:w-[64%]",
       )}
     >
-      <div className="relative aspect-3/2">
-        {typeof second === "string" ? (
-          <Image src={second} alt="" fill sizes="40vw" className="object-cover object-top-right" />
-        ) : (
-          <LoopingVideo {...second} className="h-full object-cover object-top" />
-        )}
-      </div>
+      <Screenshot {...main} className="object-top-left" />
     </div>
+    {secondInFront ? (
+      // The report's evidence card sits in front, whole.
+      <div className={cn(card, "absolute top-[11%] right-0 z-20 hidden h-[64%] w-[52%] md:block")}>
+        <Screenshot {...second} />
+      </div>
+    ) : (
+      // The others are a second window behind, with its own top bar, fading.
+      <div className={cn(card, fade, "absolute top-[5%] right-0 hidden h-[90%] w-[38%] flex-col md:flex")}>
+        <div aria-hidden className="flex h-10 shrink-0 items-center border-b border-border px-4">
+          <div className="h-5 w-3/5 rounded-full bg-[#f1f1f1]" />
+        </div>
+        <div className="min-h-0 flex-1">
+          <Screenshot {...second} className="object-center" />
+        </div>
+      </div>
+    )}
   </div>
 );
 
