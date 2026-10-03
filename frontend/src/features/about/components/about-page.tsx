@@ -6,7 +6,10 @@ import { ChevronRight, Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/layout/footer/page";
+import HeadingTwo from "@/components/common/heading-two";
+import LanguageMarquee from "@/components/common/language-marquee";
 import LineBreaks from "@/components/common/line-breaks";
+import TextComponent from "@/components/common/text-component";
 import LoopingVideo from "@/components/common/looping-video";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -20,7 +23,8 @@ import type { AboutPageContent } from "@/lib/sanity/types";
 // The about page. Its text comes from the `aboutPage` document in Sanity, and
 // the figures and the bottom banner from `homePage` (see
 // app/(main)/about/page.tsx). The language names in the marquee are UI copy in
-// messages/*.json. Layout, videos and the step numbers ("01.") are code.
+// messages/*.json. Layout and videos are code. Like the rest of the site, each
+// section has one heading and no label above it.
 
 type Video = { src: string; poster: string; width: number; height: number };
 
@@ -62,10 +66,6 @@ const Rails = ({ className }: { className?: string }) => (
   </div>
 );
 
-const Eyebrow = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <p className={cn("font-title text-sm uppercase tracking-wide text-primary", className)}>{children}</p>
-);
-
 const card = "overflow-hidden rounded-lg border border-border bg-white shadow-[0_12px_40px_rgb(0_0_0/0.06)]";
 
 /** A step's clip, with its second card beside it on wider screens, fading out at the bottom. */
@@ -95,7 +95,7 @@ const StepMedia = ({ main, second, secondInFront }: (typeof STEP_MEDIA)[number])
 );
 
 const AboutPage = ({ content }: { content: AboutPageContent }) => {
-  const { hero, approach, steps, languages: languagesText, audiences, safety, cta, home } = content;
+  const { hero, steps, languages: languagesText, audiences, safety, cta, home } = content;
   const t = useTranslations("About");
 
   const languageNames = [
@@ -120,52 +120,33 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
       <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#1f57ea,#386cec)] [zoom:var(--viewport-scale)]">
         <Grain />
         <Rails className="text-white/80" />
-        <div className="mx-auto max-w-4xl px-8 pt-28 pb-24 text-center md:pt-20 md:pb-32">
-          <Eyebrow className="text-white">{hero.eyebrow}</Eyebrow>
-          <h1 className="mt-14 font-title text-3xl font-medium leading-tight text-white md:mt-20 md:text-5xl">
+        {/* The fixed navigation bar covers the top of the hero by
+            --nav-height (in screen pixels, hence the division by the zoom),
+            so that much is added above the same padding as below: the title
+            sits centred in the blue that shows. */}
+        <div className="mx-auto max-w-4xl px-8 pt-[calc(var(--nav-height)/var(--viewport-scale)+4.5rem)] pb-18 text-center md:pt-[calc(var(--nav-height)/var(--viewport-scale)+6rem)] md:pb-24">
+          <h1 className="font-title text-4xl font-semibold leading-tight text-white">
             {hero.title}
           </h1>
         </div>
       </section>
 
-      {/* The brand, scrolling */}
-      <div
-        aria-hidden
-        className="overflow-hidden border-y border-border bg-[#f8f8f8] py-3.5 [zoom:var(--viewport-scale)]"
-      >
-        <div className="flex w-max animate-marquee">
-          {[0, 1].map((copy) => (
-            <div key={copy} className="flex shrink-0 items-center gap-12 pr-12">
-              {Array.from({ length: 8 }, (_, index) => (
-                <Image key={index} src="/brand/logo-black.svg" alt="" width={219} height={37} className="h-8 w-auto" />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* The languages WatchTower speaks, scrolling */}
+      <section className="bg-white">
+        <LanguageMarquee names={languageNames} label={languagesText.heading} />
+      </section>
 
-      {/* How we think about reporting, and the three steps */}
+      {/* The three steps */}
       <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
         <Rails className="text-border" />
-        <div className="mx-auto max-w-2xl px-8 pt-16 text-center md:pt-20">
-          <Eyebrow>{approach.eyebrow}</Eyebrow>
-          <h2 className="mt-4 font-title text-3xl font-medium leading-tight text-dark md:text-[2.5rem]">
-            <LineBreaks text={approach.heading} breakClassName="hidden md:inline" />
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl leading-snug text-dark/60">{approach.description}</p>
-        </div>
-
-        <div className="mx-auto flex max-w-6xl flex-col gap-20 px-8 pt-16 pb-16 md:gap-20 md:px-16 md:pt-20 md:pb-20">
+        <div className="mx-auto flex max-w-6xl flex-col gap-20 px-8 py-20 md:gap-20 md:px-16 md:py-24">
           {steps.map((step, index) => (
             <div key={step._key}>
-              <Eyebrow className="text-center">
-                {String(index + 1).padStart(2, "0")}. {step.label}
-              </Eyebrow>
-              <div className="mx-auto mt-6 grid max-w-4xl gap-6 md:grid-cols-2 md:items-center md:gap-16">
-                <h3 className="font-title text-3xl font-medium leading-tight text-dark md:text-[2.5rem]">
+              <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2 md:items-center md:gap-16">
+                <h3 className="font-title text-3xl font-semibold leading-tight text-dark md:text-4xl">
                   <LineBreaks text={step.title} breakClassName="hidden md:inline" />
                 </h3>
-                <p className="max-w-sm leading-snug text-dark/60">{step.description}</p>
+                <p className="max-w-md leading-relaxed text-dark/60">{step.description}</p>
               </div>
               {STEP_MEDIA[index] && (
                 <div className="mt-10 md:mt-12">
@@ -177,50 +158,29 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
         </div>
       </section>
 
-      {/* Languages */}
-      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,var(--color-primary)_0%,#95abe5_62%,#eef0f8_100%)] [zoom:var(--viewport-scale)]">
+      {/* Languages: brand blue lightening to a pale blue, with every language
+          scrolling along the bottom, ending on a hard edge against the white
+          section after it. */}
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,var(--color-primary)_0%,#95abe5_62%,#dde2f6_100%)] [zoom:var(--viewport-scale)]">
         <Grain />
         <Image
           src="/brand/Pattern.svg"
           alt=""
           width={1378}
           height={617}
-          className="pointer-events-none absolute -bottom-10 left-0 -z-10 h-auto w-full opacity-50"
+          className="pointer-events-none absolute bottom-0 left-0 -z-10 h-auto w-full opacity-50"
         />
         <div className="relative">
           <Rails className="text-white/80" />
-          <div className="mx-auto max-w-2xl px-8 pt-20 pb-28 text-center md:pt-24 md:pb-36">
-            <Eyebrow className="text-white">{languagesText.eyebrow}</Eyebrow>
-            <h2 className="mx-auto mt-14 max-w-md font-title text-3xl font-medium leading-tight text-white md:mt-20 md:text-5xl">
-              {languagesText.heading}
-            </h2>
-            <p className="mx-auto mt-6 max-w-xl leading-snug text-white">
+          <div className="mx-auto max-w-2xl px-8 py-28 text-center md:py-32">
+            <HeadingTwo className="text-white">{languagesText.heading}</HeadingTwo>
+            <TextComponent className="mx-auto mt-4 max-w-xl text-white/80">
               {languagesText.description.replace("{count}", String(languageNames.length))}
-            </p>
+            </TextComponent>
           </div>
         </div>
-        <div
-          role="marquee"
-          aria-label={languageNames.join(", ")}
-          className="overflow-hidden border-y border-white/70 bg-[#f3f3f3]/90 py-4"
-        >
-          <div className="flex w-max animate-marquee">
-            {[0, 1].map((copy) => (
-              <div
-                key={copy}
-                aria-hidden={copy === 1}
-                className="flex shrink-0 items-center font-title text-xl text-dark md:text-2xl"
-              >
-                {languageNames.map((name, index) => (
-                  <span key={index} className="flex items-center">
-                    <span className="px-8">{name}</span>
-                    <span>&bull;</span>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* The section is already scaled, so the marquee isn't scaled again. */}
+        <LanguageMarquee names={languageNames} label={languagesText.heading} className="border-white/70 bg-white/80 [zoom:1]" />
         <div className="h-14" />
       </section>
 
@@ -228,28 +188,27 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
       <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
         <Rails className="text-border" />
         <div className="mx-auto max-w-6xl px-8 py-20 md:px-16 md:py-24">
-          <Eyebrow>{audiences.eyebrow}</Eyebrow>
-          <h2 className="mt-4 max-w-sm font-title text-3xl font-medium leading-tight text-dark md:text-[2.5rem]">
+          <HeadingTwo className="leading-tight">
             <LineBreaks text={audiences.heading} breakClassName="hidden md:inline" />
-          </h2>
-          <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-x-6">
+          </HeadingTwo>
+          <div className="mt-12 grid gap-10 md:grid-cols-2 md:gap-x-6">
             {audiences.items.map((audience, index) => (
               <div
                 key={audience._key}
                 // The third card sits centred under the first two.
                 className={cn("flex flex-col", index === 2 && "md:col-span-2 md:mx-auto md:w-[calc(50%-0.75rem)]")}
               >
-                <p className="mb-4 font-title text-primary">{audience.label}</p>
-                <div className="flex-1 rounded-xl border border-[#c3d4ff] bg-[#f6f3f8] p-8 shadow-[0_12px_32px_rgb(0_66_231/0.06)] md:p-12">
+                <p className="mb-3 font-title text-sm font-medium text-primary">{audience.label}</p>
+                <div className="flex-1 rounded-xl border border-[#c3d4ff] bg-[#f6f3f8] p-8 shadow-[0_12px_32px_rgb(0_66_231/0.06)] md:p-10">
                   {/* The WatchTower mark, in brand blue. */}
                   <div
                     aria-hidden
-                    className="h-7 w-8 bg-primary [mask:url(/brand/icon-black.svg)_center/contain_no-repeat]"
+                    className="h-6 w-7 bg-primary [mask:url(/brand/icon-black.svg)_center/contain_no-repeat]"
                   />
-                  <h3 className="mt-5 font-title text-2xl font-medium leading-tight text-primary md:text-[1.7rem]">
+                  <h3 className="mt-4 font-title text-xl font-semibold leading-snug text-primary">
                     {audience.title}
                   </h3>
-                  <p className="mt-5 text-lg leading-snug text-dark md:text-xl">{audience.description}</p>
+                  <p className="mt-3 leading-relaxed text-dark/70">{audience.description}</p>
                 </div>
               </div>
             ))}
@@ -267,13 +226,13 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
               return (
                 <div
                   key={stat._key}
-                  className="flex flex-col items-center justify-center gap-2 border-r border-b border-border py-10 text-center first:border-l md:py-12 nth-3:border-l md:nth-3:border-l-0"
+                  className="flex flex-col items-center justify-center gap-1 border-r border-b border-border py-8 text-center first:border-l md:py-10 nth-3:border-l md:nth-3:border-l-0"
                 >
-                  <span className="flex items-center font-title text-4xl font-medium text-dark md:text-[2.5rem]">
+                  <span className="flex items-center font-title text-3xl font-semibold text-dark md:text-4xl">
                     {plus ? stat.value.slice(0, -1) : stat.value}
-                    {plus && <span className="ml-1 text-2xl">+</span>}
+                    {plus && <span className="ml-0.5 text-xl md:text-2xl">+</span>}
                   </span>
-                  <span className="text-lg text-dark/60 md:text-xl">{stat.label}</span>
+                  <span className="text-sm text-dark/60">{stat.label}</span>
                 </div>
               );
             })}
@@ -294,10 +253,10 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
             />
             <div className="grid gap-12 md:grid-cols-[1fr_1.2fr] md:gap-16">
               <div>
-                <h2 className="font-title text-3xl font-medium leading-tight text-white md:text-[2.5rem]">
+                <h2 className="font-title text-3xl font-semibold leading-tight text-white md:text-4xl">
                   <LineBreaks text={safety.title} breakClassName="hidden md:inline" />
                 </h2>
-                <p className="mt-8 max-w-xs leading-snug text-white/50">{safety.description}</p>
+                <p className="mt-4 max-w-xs leading-relaxed text-white/60">{safety.description}</p>
               </div>
 
               <Accordion type="single" collapsible defaultValue={safety.items[0]?._key} className="w-full">
@@ -307,7 +266,7 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
                     value={_key}
                     className="relative border-t border-b-0 border-white/20 last:border-b"
                   >
-                    <AccordionTrigger className="group py-9 pr-12 pl-8 font-title text-xl font-normal text-white hover:no-underline md:text-[1.65rem] md:leading-tight [&>svg]:hidden">
+                    <AccordionTrigger className="group py-6 pr-12 pl-6 font-title text-base text-white hover:no-underline [&>svg]:hidden">
                       <span className="flex-1 text-left">{question}</span>
                       {/* The toggle sits on the rule above the question. */}
                       <span className="absolute top-0 right-6 flex size-6 -translate-y-1/2 items-center justify-center bg-primary">
@@ -315,7 +274,7 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
                         <Minus className="hidden size-3.5 text-white group-data-[state=open]:block" />
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="pr-12 pb-9 pl-8 text-base leading-snug text-white/50">
+                    <AccordionContent className="pr-12 pb-6 pl-6 text-base leading-relaxed font-normal text-white/60">
                       {answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -337,14 +296,14 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
           className="pointer-events-none absolute -bottom-60 left-0 -z-10 h-auto w-full invert"
         />
         <div className="mx-auto max-w-2xl px-8 pt-20 pb-28 text-center md:pt-24 md:pb-32">
-          <h2 className="font-title text-3xl font-medium leading-tight text-dark md:text-5xl">{cta.title}</h2>
-          <p className="mx-auto mt-6 max-w-md leading-snug text-dark/60">{cta.description}</p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <HeadingTwo className="text-center">{cta.title}</HeadingTwo>
+          <TextComponent className="mx-auto mt-4 max-w-xl text-center">{cta.description}</TextComponent>
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/anonymous-reports"
               className={cn(
-                buttonVariants({ variant: "default", size: "lg" }),
-                "rounded-none bg-dark font-title font-medium text-white hover:bg-dark/90",
+                buttonVariants({ variant: "default" }),
+                "bg-dark font-title font-medium text-white hover:bg-dark/90",
               )}
             >
               {cta.primaryCta}
@@ -353,8 +312,8 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
             <Link
               href="/maps/live-incident-map"
               className={cn(
-                buttonVariants({ variant: "secondary", size: "lg" }),
-                "rounded-none font-title font-medium",
+                buttonVariants({ variant: "secondary" }),
+                "font-title font-medium",
               )}
             >
               {cta.secondaryCta}

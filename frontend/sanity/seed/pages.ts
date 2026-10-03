@@ -190,26 +190,18 @@ export const buildPageDocs = (pages: Record<Language, Strings>) => {
   const about = {
     _id: "aboutPage",
     _type: "aboutPage",
-    hero: { eyebrow: string("About.heroEyebrow"), title: string("About.heroTitle") },
-    approach: {
-      eyebrow: string("About.approachEyebrow"),
-      heading: text("About.approachHeading"),
-      description: text("About.approachDescription"),
-    },
+    hero: { title: string("About.heroTitle") },
     steps: [1, 2, 3].map((n, i) =>
       item("aboutStep", i, {
-        label: string(`About.step${n}Label`),
         title: text(`About.step${n}Title`),
         description: text(`About.step${n}Description`),
       }),
     ),
     languages: {
-      eyebrow: string("About.languagesEyebrow"),
       heading: string("About.languagesTitle"),
       description: text("About.languagesDescription"),
     },
     audiences: {
-      eyebrow: string("About.audiencesEyebrow"),
       heading: text("About.audiencesHeading"),
       items: ["Communities", "Organisations", "Evidence"].map((who, i) =>
         item("audience", i, {
