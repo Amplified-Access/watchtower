@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Raporo zisuzumwa gusa n'abakozi ba WatchTower bemejwe. Ibyo watanze ntibigabanywa ku mugaragaro hamwe n'amakuru amenyekanisha.",
   "About.faqVisibilityQuestion": "Ninde ushobora kubona raporo yanjye?",
   "About.heroDescription": "WatchTower ni urubuga rw'ubwenge bw'abenegihugu rushingiye ku baturage, rukoresha AI n'ikoranabuhanga ry'indimi z'aho abantu batuye kugira ngo bafashe abantu gutanga raporo ku bibaye, ingaruka n'ibirego by'uburenganzira mu ndimi zabo bwite, kandi bihindura izo raporo mu bumenyi bushobora gukoreshwa mu kubazwa no gusubiza.",
-  "About.heroTitle": "Vuga . Tegura . Kora",
+  "About.heroTitle": "Guhindura amajwi y'abantu ku giti cyabo ibikorwa",
   "About.languagesDescription": "WatchTower yubatswe hashingiwe ku ndimi abantu bakoresha koko. Ururimi rugaragara mu gihe cyose cyo gutanga raporo, bigafasha abantu kuvuga uko basanzwe mu gihe amakuru yumvikana mu ndimi zitandukanye.",
   "About.languagesTitle": "Indimi zishyigikiwe",
   "About.objectiveDescription": "Kwemeza ko buri muntu afite ubushobozi bwo gutanga raporo ku bibazo by'abenegihugu mu rurimi avuga, kugira ngo nta jwi ridasobanutse kandi buri wese ashobore kugira uruhare mu kubaza ababifitiye inshingano.",
@@ -160,5 +160,12 @@
   "About.audienceOrganisationsDescription": "Akira kandi usuzume raporo, ucunge ibikorwa kandi umenye imigendekere mu baturage batandukanye.",
   "About.audienceEvidenceLabel": "Abakoresha ibimenyetso",
   "About.audienceEvidenceTitle": "Menya ibyo raporo zigaragaza.",
-  "About.audienceEvidenceDescription": "Abashakashatsi, abanyamakuru n'imiryango iharanira inyungu rusange bashobora gusesengura raporo, ahantu n'imigendekere kugira ngo barusheho kumva ibyo abaturage bahura na byo."
+  "About.audienceEvidenceDescription": "Abashakashatsi, abanyamakuru n'imiryango iharanira inyungu rusange bashobora gusesengura raporo, ahantu n'imigendekere kugira ngo barusheho kumva ibyo abaturage bahura na byo.",
+  "About.heroEyebrow": "Ibyerekeye WatchTower",
+  "About.step1Label": "Tanga raporo",
+  "About.step2Label": "Gusobanukirwa n'imigendekere",
+  "About.step3Label": "Gutuma haba ibikorwa",
+  "About.languagesEyebrow": "Byubakiwe amajwi menshi",
+  "About.audiencesEyebrow": "Byubakiwe uruhare rwa bose",
+  "About.heroIntro": "WatchTower itangirira ku gitekerezo cyoroshye: korohereza abantu gutanga raporo ku bibera aho batuye, hanyuma izo raporo zikagira akamaro kurushaho hatibagiranye abantu bazitanze."
 }

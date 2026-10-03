@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "ሪፖርቶች የሚገመገሙት በተረጋገጡ የWatchTower አስተዳዳሪዎች ብቻ ነው። ማስገቢያዎ ማንኛውም መለያ መረጃ ተያይዞ በይፋ አይካፈልም።",
   "About.faqVisibilityQuestion": "ሪፖርቴን ማን ማየት ይችላል?",
   "About.heroDescription": "WatchTower ሰዎች ክስተቶችን፣ አደጋዎችን እና የመብት ጥሰቶችን በራሳቸው ቋንቋ ሪፖርት እንዲያደርጉ የሚያስችል እና እነዚህን ሪፖርቶች ለተጠያቂነት እና ምላሽ ወደ ተግባራዊ ግንዛቤዎች የሚቀይር AI እና የአካባቢ ቋንቋ ቴክኖሎጂዎችን የሚጠቀም ማህበረሰብ-ተኮር የሲቪክ ኢንተለጀንስ መድረክ ነው።",
-  "About.heroTitle": "ይናገሩ . ያደራጁ . ይተግብሩ",
+  "About.heroTitle": "የግለሰብ ድምፆችን ወደ እርምጃ መቀየር",
   "About.languagesDescription": "WatchTower የተነደፈው ሰዎች በእውነት በሚጠቀሙባቸው ቋንቋዎች ዙሪያ ነው። ቋንቋ በሪፖርት ሂደቱ ሁሉ ይታያል፤ ሰዎች በተፈጥሮ እንዲናገሩ እየረዳ መረጃን በቋንቋዎች መካከል ለመረዳት ያስችላል።",
   "About.languagesTitle": "የሚደገፉ ቋንቋዎች",
   "About.objectiveDescription": "እያንዳንዱ ሰው በሚናገረው ቋንቋ የሲቪክ ክስተቶችን ሪፖርት የማድረግ ኃይል እንዲኖረው ማረጋገጥ፣ ስለዚህ ምንም ድምጽ ሳይሰማ እንዳይቀር እና ሁሉም ሰው ተጠያቂዎችን በተጠያቂነት ለመያዝ እንዲሳተፍ።",
@@ -160,5 +160,12 @@
   "About.audienceOrganisationsDescription": "ሪፖርቶችን ይቀበሉ እና ይገምግሙ፣ ማሰማራቶችን ያስተዳድሩ እና በማህበረሰቦች ውስጥ ያሉ ሁኔታዎችን ይለዩ።",
   "About.audienceEvidenceLabel": "የማስረጃ ተጠቃሚዎች",
   "About.audienceEvidenceTitle": "ሪፖርቶቹ የሚያሳዩትን ያስሱ።",
-  "About.audienceEvidenceDescription": "ተመራማሪዎች፣ ጋዜጠኞች እና የሕዝብ ጥቅም ድርጅቶች ማህበረሰቦች የሚያጋጥማቸውን በተሻለ ለመረዳት ሪፖርቶችን፣ ቦታዎችን እና አዝማሚያዎችን ማሰስ ይችላሉ።"
+  "About.audienceEvidenceDescription": "ተመራማሪዎች፣ ጋዜጠኞች እና የሕዝብ ጥቅም ድርጅቶች ማህበረሰቦች የሚያጋጥማቸውን በተሻለ ለመረዳት ሪፖርቶችን፣ ቦታዎችን እና አዝማሚያዎችን ማሰስ ይችላሉ።",
+  "About.heroEyebrow": "ስለ WatchTower",
+  "About.step1Label": "ሪፖርት",
+  "About.step2Label": "አዝማሚያዎችን መረዳት",
+  "About.step3Label": "እርምጃ ማስወሰድ",
+  "About.languagesEyebrow": "ለብዙ ድምፆች የተሰራ",
+  "About.audiencesEyebrow": "ለተሳትፎ የተሰራ",
+  "About.heroIntro": "WatchTower የሚጀምረው በቀላል ሀሳብ ነው፦ ሰዎች እየሆነ ያለውን በቀላሉ ሪፖርት እንዲያደርጉ ማስቻል፣ ከዚያም ከሪፖርቶቹ ጀርባ ያሉትን ሰዎች ሳንዘነጋ ሪፖርቶቹን ይበልጥ ጠቃሚ ማድረግ።"
 }

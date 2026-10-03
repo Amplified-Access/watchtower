@@ -22,7 +22,8 @@ import type { AboutPageContent } from "@/lib/sanity/types";
 // The about page. Its text comes from the `aboutPage` document in Sanity, and
 // the figures and the bottom banner from `homePage` (see
 // app/(main)/about/page.tsx). The language names in the marquee are UI copy in
-// messages/*.json. Layout and the step screenshots are code.
+// messages/*.json. Layout, the step screenshots and their numbers ("01.") are
+// code.
 
 type Shot = { src: string; width: number; height: number };
 
@@ -54,6 +55,13 @@ const Grain = () => (
     className="pointer-events-none absolute inset-0 -z-10 opacity-25 mix-blend-soft-light"
     style={{ backgroundImage: GRAIN }}
   />
+);
+
+/** The small label above a heading, as the site sets it ("Step 1" on Home). */
+const Eyebrow = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <p className={cn("mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary", className)}>
+    {children}
+  </p>
 );
 
 /** The two vertical guide lines the site's sections share. */
@@ -134,18 +142,39 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#1f57ea,#386cec)] [zoom:var(--viewport-scale)]">
-        <Grain />
-        <Rails className="text-white/80" />
-        {/* The fixed navigation bar covers the top of the hero by
-            --nav-height (in screen pixels, hence the division by the zoom),
-            so that much is added above the same padding as below: the title
-            sits centred in the blue that shows. */}
-        <div className="mx-auto max-w-4xl px-8 pt-[calc(var(--nav-height)/var(--viewport-scale)+4.5rem)] pb-18 text-center md:pt-[calc(var(--nav-height)/var(--viewport-scale)+6rem)] md:pb-24">
-          <h1 className="font-title text-4xl font-semibold leading-tight text-white">
-            {hero.title}
-          </h1>
+      {/* Hero, as on the Maps page: a blue panel inside the page's guide
+          lines, with the brand pattern, a title and a short description. */}
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
+        <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
+          <div className="relative isolate overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-primary via-primary/85 to-primary/60" />
+            <Grain />
+            <Image
+              src="/brand/Pattern.svg"
+              alt=""
+              width={1378}
+              height={617}
+              className="pointer-events-none absolute top-24 -left-1/4 -z-10 h-auto w-full scale-150 opacity-60 invert"
+            />
+            <Image
+              src="/brand/Pattern.svg"
+              alt=""
+              width={1378}
+              height={617}
+              className="pointer-events-none absolute top-40 -right-1/3 -z-10 h-auto w-full rotate-180 scale-150 opacity-60 invert"
+            />
+            {/* The fixed navigation bar covers the top of the hero by
+                --nav-height (in screen pixels, hence the division by the
+                zoom), so that much is added above the same padding as below:
+                the text sits centred in the blue that shows. */}
+            <div className="px-6 pt-[calc(var(--nav-height)/var(--viewport-scale)+4rem)] pb-16 text-center md:pt-[calc(var(--nav-height)/var(--viewport-scale)+5rem)] md:pb-20">
+              <Eyebrow className="text-white/80">{hero.eyebrow}</Eyebrow>
+              <h1 className="mx-auto max-w-3xl font-title text-4xl font-semibold leading-tight text-balance text-white md:text-[2.5rem]">
+                {hero.title}
+              </h1>
+              <p className="mx-auto mt-4 max-w-md leading-snug text-white/90">{hero.description}</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -160,7 +189,10 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
         <div className="mx-auto flex max-w-6xl flex-col gap-20 px-8 py-20 md:gap-20 md:px-16 md:py-24">
           {steps.map((step, index) => (
             <div key={step._key}>
-              <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2 md:items-center md:gap-16">
+              <Eyebrow className="text-center">
+                {String(index + 1).padStart(2, "0")}. {step.label}
+              </Eyebrow>
+              <div className="mx-auto mt-6 grid max-w-4xl gap-6 md:grid-cols-2 md:items-center md:gap-16">
                 <h3 className="font-title text-3xl font-semibold leading-tight text-dark md:text-4xl">
                   <LineBreaks text={step.title} breakClassName="hidden md:inline" />
                 </h3>
@@ -191,6 +223,7 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
         <div className="relative">
           <Rails className="text-white/80" />
           <div className="mx-auto max-w-2xl px-8 py-28 text-center md:py-32">
+            <Eyebrow className="text-white/80">{languagesText.eyebrow}</Eyebrow>
             <HeadingTwo className="text-white">{languagesText.heading}</HeadingTwo>
             <TextComponent className="mx-auto mt-4 max-w-xl text-white/80">
               {languagesText.description.replace("{count}", String(languageNames.length))}
@@ -206,6 +239,7 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
       <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
         <Rails className="text-border" />
         <div className="mx-auto max-w-6xl px-8 py-20 md:px-16 md:py-24">
+          <Eyebrow>{audiences.eyebrow}</Eyebrow>
           <HeadingTwo className="leading-tight">
             <LineBreaks text={audiences.heading} breakClassName="hidden md:inline" />
           </HeadingTwo>

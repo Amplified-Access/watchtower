@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Les signalements sont examinés uniquement par des administrateurs WatchTower vérifiés. Votre soumission n'est jamais partagée publiquement avec des informations d'identification jointes.",
   "About.faqVisibilityQuestion": "Qui peut voir mon signalement ?",
   "About.heroDescription": "WatchTower est une plateforme d'intelligence civique centrée sur la communauté qui utilise l'IA et des technologies de langues locales pour permettre aux gens de signaler des incidents, des risques et des violations de droits dans leurs propres langues, et transforme ces signalements en informations exploitables pour la redevabilité et la réponse.",
-  "About.heroTitle": "S’exprimer . S’organiser . Agir",
+  "About.heroTitle": "Transformer les voix individuelles en action",
   "About.languagesDescription": "WatchTower est conçu autour des langues que les gens utilisent réellement. La langue reste visible tout au long du signalement : chacun s’exprime naturellement, et l’information reste compréhensible d’une langue à l’autre.",
   "About.languagesTitle": "Langues prises en charge",
   "About.objectiveDescription": "Veiller à ce que chaque personne ait le pouvoir de signaler des incidents civiques dans la langue qu'elle parle, afin qu'aucune voix ne reste inentendue et que chacun puisse participer à tenir les responsables pour compte.",
@@ -160,5 +160,12 @@
   "About.audienceOrganisationsDescription": "Recevez et examinez les signalements, gérez les déploiements et repérez les tendances d’une communauté à l’autre.",
   "About.audienceEvidenceLabel": "Utilisateurs des données",
   "About.audienceEvidenceTitle": "Découvrez ce que révèlent les signalements.",
-  "About.audienceEvidenceDescription": "Chercheurs, journalistes et organisations d’intérêt public peuvent explorer les signalements, les lieux et les tendances pour mieux comprendre ce que vivent les communautés."
+  "About.audienceEvidenceDescription": "Chercheurs, journalistes et organisations d’intérêt public peuvent explorer les signalements, les lieux et les tendances pour mieux comprendre ce que vivent les communautés.",
+  "About.heroEyebrow": "À propos de WatchTower",
+  "About.step1Label": "Signaler",
+  "About.step2Label": "Comprendre les tendances",
+  "About.step3Label": "Passer à l’action",
+  "About.languagesEyebrow": "Conçu pour de nombreuses voix",
+  "About.audiencesEyebrow": "Conçu pour la participation",
+  "About.heroIntro": "WatchTower part d’une idée simple : permettre à chacun de signaler plus facilement ce qui se passe, puis rendre ces signalements plus utiles sans perdre de vue les personnes qui les font."
 }

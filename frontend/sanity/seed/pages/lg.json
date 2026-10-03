@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Alipooti zikebererwa bakulembeze ba WatchTower abakakasiddwa bokka. Alipooti yo tegabanyizibwa mu lwatu n'ekintu kyonna ekiraga endaba.",
   "About.faqVisibilityQuestion": "Ani ayinza okulaba alipooti yange?",
   "About.heroDescription": "WatchTower lubu lwa magezi g'abannansi olusinziira ku bibiina olukozesa AI n'ebikozesebwa ku nnimi z'ekitundu okusobozesa abantu okuwaayo alipooti ku bintu ebibaddewo, obulabe n'okutyoboola kwa ddembe mu nnimi zaabwe ku bwabwe, era lufuula alipooti zino okuba amagezi agakozesebwa mu kuvunaanyizibwa n'okuddamu.",
-  "About.heroTitle": "Yogera . Tegeka . Kola",
+  "About.heroTitle": "Okufuula amaloboozi g’abantu kinoomu ebikolwa",
   "About.languagesDescription": "WatchTower ezimbiddwa okwetoloola ennimi abantu ze bakozesa ddala. Olulimi lulabika mu kuwaayo alipooti kwonna, ne kiyamba abantu okwogera mu ngeri ey’obulijjo nga n’amawulire gategeerekeka mu nnimi ez’enjawulo.",
   "About.languagesTitle": "Ennimi eziwagirwa",
   "About.objectiveDescription": "Okukakasa nti buli muntu alina obuyinza okuwaayo alipooti ku nsonga z'ekitundu mu lulimi lw'ayogera, obutabaawo ddoboozi lyonna eritawulirwa era buli omu n'asobola okwetaba mu kuvunaanyiza abavunaanyizibwa.",
@@ -160,5 +160,12 @@
   "About.audienceOrganisationsDescription": "Funa era wekkenneenye alipooti, ddukanya okussa era ozuule enkola ezeddiŋŋana mu bitundu.",
   "About.audienceEvidenceLabel": "Abakozesa obujulizi",
   "About.audienceEvidenceTitle": "Noonyereza alipooti kye ziraga.",
-  "About.audienceEvidenceDescription": "Abanoonyereza, bannamawulire n’ebibiina ebikola ku nsonga z’abantu bonna basobola okunoonyereza ku alipooti, ebifo n’enkyukakyuka okutegeera obulungi abantu kye bayitamu."
+  "About.audienceEvidenceDescription": "Abanoonyereza, bannamawulire n’ebibiina ebikola ku nsonga z’abantu bonna basobola okunoonyereza ku alipooti, ebifo n’enkyukakyuka okutegeera obulungi abantu kye bayitamu.",
+  "About.heroEyebrow": "Ku WatchTower",
+  "About.step1Label": "Waayo alipooti",
+  "About.step2Label": "Tegeera enkyukakyuka",
+  "About.step3Label": "Leeta enkyukakyuka",
+  "About.languagesEyebrow": "Ezimbiddwa ku lw’amaloboozi amangi",
+  "About.audiencesEyebrow": "Ezimbiddwa ku lw’okwetaba",
+  "About.heroIntro": "WatchTower etandikira ku kirowoozo ekyangu: okwanguyiza abantu okuwaayo alipooti ku bibaddewo, n’oluvannyuma okufuula alipooti ezo ez’omugaso okusingawo nga tetwerabidde bantu bazaawaddeyo."
 }

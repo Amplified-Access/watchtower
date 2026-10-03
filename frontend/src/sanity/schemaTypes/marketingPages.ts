@@ -112,30 +112,38 @@ export const aboutPage = defineType({
   icon: Info,
   description: "The figures and the bottom banner are edited on the Home page.",
   fields: [
-    section("hero", "Header", [string("title", { validation: requireBaseLanguage })]),
+    section("hero", "Header", [
+      string("eyebrow", { title: "Label", description: "The small label above the title." }),
+      string("title", { validation: requireBaseLanguage }),
+      text("description"),
+    ]),
     defineField({
       name: "steps",
       type: "array",
-      description: "Each has its video, in this order: reporting, the maps, case studies.",
+      description:
+        "Numbered 01, 02, 03 on the page. Each has its screenshots, in this order: reporting, the maps, case studies.",
       of: [
         defineArrayMember({
           name: "aboutStep",
           title: "Step",
           type: "object",
           fields: [
+            string("label", { description: "Shown after the number, e.g. “01. Report”." }),
             text("title", { rows: 2, description: "Press Enter where the heading should break." }),
             text("description"),
           ],
-          preview: { select: { title: "title" }, prepare: ({ title }) => ({ title: baseValue(title) }) },
+          preview: { select: { title: "label" }, prepare: ({ title }) => ({ title: baseValue(title) }) },
         }),
       ],
       validation: (rule) => rule.max(3),
     }),
     section("languages", "Languages", [
+      string("eyebrow", { title: "Label" }),
       string("heading"),
       text("description", { description: "Write {count} where the number of languages goes, if you need it." }),
     ]),
     section("audiences", "Who it is for", [
+      string("eyebrow", { title: "Label" }),
       text("heading", { rows: 3, description: "Press Enter where the heading should break." }),
       defineField({
         name: "items",
