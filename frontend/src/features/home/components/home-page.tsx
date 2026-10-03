@@ -28,11 +28,23 @@ import { MessageSquareWarning } from "@/components/animate-ui/icons/message-squa
 import { Gavel } from "@/components/animate-ui/icons/gavel";
 import { LoaderCircle } from "@/components/animate-ui/icons/loader-circle";
 import LineBreaks from "@/components/common/line-breaks";
+import LoopingVideo from "@/components/common/looping-video";
 import type { HomePageContent } from "@/lib/sanity/types";
 // import HealthCheck from "@/components/health-check"; helloooooo
 
 // TODO: re-enable once insights content is ready for launch
 const SHOW_INSIGHTS = false;
+
+// A clip for each How it works step, in order: reporting, the maps, case
+// studies. Each is a finished composition (its own background and browser
+// frame), shown as it is. The steps' text is in Sanity; a step added there
+// beyond these keeps the placeholder image.
+const STEP_VIDEOS = ["home-report", "home-maps", "home-case-studies"].map((name) => ({
+  src: `/videos/${name}.mp4`,
+  poster: `/videos/${name}-poster.webp`,
+  width: 1080,
+  height: 850,
+}));
 
 // The home page. Its text comes from the `homePage` document in Sanity (see
 // app/(main)/page.tsx); only the "Step {number}" label is UI copy.
@@ -191,13 +203,21 @@ const HomePage = ({ content }: { content: HomePageContent }) => {
                   />
                 )}
                 <div className={cn(index % 2 === 1 && "md:order-2")}>
-                  <Image
-                    src="/placeholder.png"
-                    alt=""
-                    width={677}
-                    height={561}
-                    className="h-auto w-full"
-                  />
+                  {STEP_VIDEOS[index] ? (
+                    // Rounded like the placeholder card it replaces. The wrapper
+                    // does the clipping: browsers don't reliably round a video itself.
+                    <div className="overflow-hidden rounded-xl">
+                      <LoopingVideo {...STEP_VIDEOS[index]} className="block" />
+                    </div>
+                  ) : (
+                    <Image
+                      src="/placeholder.png"
+                      alt=""
+                      width={677}
+                      height={561}
+                      className="h-auto w-full"
+                    />
+                  )}
                 </div>
                 <div className={cn(index % 2 === 1 && "md:order-1")}>
                   <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
