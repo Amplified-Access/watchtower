@@ -51,6 +51,21 @@ const Header = () => {
     };
   }, [bannerEl]);
 
+  // Publishes the navigation bar's height as --nav-height. Pages scroll
+  // under the bar (only the banner has a spacer), so a section that must
+  // look centred beneath it, like the About page's hero, needs to know how
+  // much of its top the bar covers. It changes with the viewport scale.
+  const [navEl, setNavEl] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!navEl) return;
+    const root = document.documentElement.style;
+    const update = () => root.setProperty("--nav-height", `${navEl.getBoundingClientRect().height}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(navEl);
+    return () => observer.disconnect();
+  }, [navEl]);
+
   const dismissBanner = () => {
     setShowBanner(false);
     localStorage.setItem(BANNER_DISMISSED_KEY, "1");
@@ -93,7 +108,7 @@ const Header = () => {
             <AnnouncementBanner onDismiss={dismissBanner} />
           </div>
         )}
-        <header className="flex items-center w-full bg-white border-b border-border py-4">
+        <header ref={setNavEl} className="flex items-center w-full bg-white border-b border-border py-4">
           <div
             className={cn(
               "mx-auto flex w-full max-w-360 items-center justify-between",
