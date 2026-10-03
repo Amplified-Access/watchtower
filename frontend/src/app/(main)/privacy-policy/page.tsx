@@ -1,10 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
+import { JsonLd } from "@/components/common/json-ld";
 import Footer from "@/components/layout/footer/page";
 import PolicySections from "@/features/legal/components/policy-sections";
 import PolicyToc from "@/features/legal/components/policy-toc";
 import { getLegalPage } from "@/lib/sanity/content";
 import { SanityLive } from "@/lib/sanity/live";
+import { DEFAULT_PRIVACY_SEO } from "@/lib/seo/defaults";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { legalPageSeo, pageJsonLd } from "@/lib/seo/page";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const seo = await legalPageSeo(await getLegalPage("privacyPolicy", locale), locale, DEFAULT_PRIVACY_SEO);
+  return pageMetadata({ ...seo, path: "/privacy-policy", locale });
+}
 
 // The title and the policy text are the `privacyPolicy` document in Sanity;
 // the "Last updated" and contents labels are UI copy in messages/*.json. The
@@ -18,6 +29,14 @@ const Page = async () => {
     getTranslations("AnnouncementBanner"),
     getLegalPage("privacyPolicy", locale),
   ]);
+  const seo = await legalPageSeo(policy, locale, DEFAULT_PRIVACY_SEO);
+  const jsonLd = await pageJsonLd({
+    path: "/privacy-policy",
+    name: seo.title,
+    description: seo.description,
+    image: seo.image,
+    dateModified: policy?.lastUpdated ?? policy?.updatedAt,
+  });
   const sections = policy?.sections ?? [];
   // Untitled (introductory) sections aren't listed in the contents.
   const tocItems = sections.flatMap(({ id, title, titleLanguage }) =>
@@ -34,6 +53,7 @@ const Page = async () => {
 
   return (
     <>
+      <JsonLd data={jsonLd} />
       <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
         <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
           <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />

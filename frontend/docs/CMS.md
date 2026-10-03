@@ -61,7 +61,7 @@ Sanity Live only reaches pages that are open when something is published. So tha
 
 - URL: `https://<site>/api/revalidate`
 - Dataset: `production`, trigger on create, update and delete
-- Filter: `_type in ["homePage", "aboutPage", "caseStudy", "caseStudyCategory", "legalPage"]`
+- Filter: `_type in ["homePage", "aboutPage", "caseStudy", "caseStudyCategory", "legalPage", "seoSettings"]`
 - Secret: a random string, also set as `SANITY_REVALIDATE_SECRET` in the site's environment
 
 `src/app/api/revalidate/route.ts` checks the signature and drops the `sanity` cache tag.
@@ -101,6 +101,7 @@ Category names are translated (on the category document); category slugs are not
 | Privacy policy | `privacyPolicy` (a `legalPage`) | `/privacy-policy`, with a numbered table of contents |
 | Security | `security` (a `legalPage`) | `/security` |
 | Code of conduct | `codeOfConduct` (a `legalPage`) | `/code-of-conduct` |
+| Search and sharing (sidebar, not under Pages) | `seoSettings` | The site's description and share image, and the search text of the code-built pages: see [SEO.md](./SEO.md) |
 
 - Home and About have one field group per page section. Repeated parts are lists editors can add to, remove from and reorder: the figures (with their numbers), the how-it-works steps and the questions.
 - Headings the design breaks over two lines keep the break: press Enter in the text field. The About page's languages description takes `{count}`, replaced with the number of languages.
@@ -115,6 +116,7 @@ Category names are translated (on the category document); category slugs are not
 - `sanity/seed/categories.json`: category names in all 13 languages, moved out of `messages/*.json`
 - `sanity/seed/translations/<lang>.json`: case study text in the other 12 languages, keyed like `translations/en.json` (regenerate that with `pnpm sanity:seed:build --strings`)
 - `sanity/seed/pages/<lang>.json`: the text of the pages above in all 13 languages, moved out of `messages/*.json` with their keys (`Home.heroTitleLine1`), and turned into the page documents by `sanity/seed/pages.ts`
+- `sanity/seed/seo.ts`: the "Search and sharing" text, English from `src/lib/seo/defaults.ts` and the other languages from page headings and introductions the site already had in them (`messages/*.json`, `seed/pages/<lang>.json`)
 
 The build refuses text containing U+FFFD ("�", a mangled character), which `sanity datasets import` rejects and machine translation occasionally produces.
 

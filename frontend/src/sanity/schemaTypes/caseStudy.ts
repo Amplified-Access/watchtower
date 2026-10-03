@@ -15,6 +15,7 @@ export const caseStudy = defineType({
   groups: [
     { name: "content", title: "Content", default: true },
     { name: "listing", title: "Listing" },
+    { name: "seo", title: "Search and sharing" },
   ],
   fields: [
     defineField({
@@ -98,6 +99,12 @@ export const caseStudy = defineType({
       group: "content",
       description:
         "The full write-up. Optional: without one, the page shows the summary as its introduction.",
+    }),
+    defineField({
+      name: "seo",
+      type: "seo",
+      group: "seo",
+      description: "Optional. Without these, search results and link previews use the title, summary and cover image.",
     }),
   ],
   orderings: [

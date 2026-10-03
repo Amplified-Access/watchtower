@@ -9,6 +9,7 @@
 // Kept free of server-only imports so the tests can run these queries against
 // the seed data with groq-js.
 import { defaultLocale } from "@/i18n/locales";
+import { SEO_PAGE_KEYS } from "@/lib/seo/defaults";
 
 // An empty string or an empty body counts as untranslated. `count` is null
 // for strings, hence the coalesce.
@@ -28,6 +29,21 @@ const imageFields = `"url": asset->url, "lqip": asset->metadata.lqip, "dimension
 const image = (field: string) => `${field}{
   ${imageFields},
   "alt": ${localized("alt")}
+}`;
+
+// Page text is always a string, empty when a field has no value in any
+// language, so the page components need no null checks.
+const text = (field: string) => `coalesce(${localized(field)}, "")`;
+const texts = (fields: Record<string, string>) =>
+  Object.entries(fields)
+    .map(([name, field]) => `"${name}": ${text(field)}`)
+    .join(", ");
+
+// A "Search and sharing" object: its title and description (empty when
+// missing, like page text) and its share image, null when there is none.
+const seo = (field: string) => `{
+  ${texts({ title: `${field}.title`, description: `${field}.description` })},
+  "image": ${field}.image{ ${imageFields} }
 }`;
 
 const caseStudyCard = `
@@ -63,6 +79,8 @@ export const CASE_STUDY_QUERY = `*[_type == "caseStudy" && slug.current == $slug
     _type == "bodyImage" => { ${imageFields} }
   },
   "bodyLanguage": ${servedLanguage("body")},
+  "updatedAt": _updatedAt,
+  "seo": ${seo("seo")},
   "related": *[_type == "caseStudy" && defined(slug.current) && slug.current != $slug]{
       ...,
       "sameCategory": category._ref == ^.category._ref
@@ -71,14 +89,6 @@ export const CASE_STUDY_QUERY = `*[_type == "caseStudy" && slug.current == $slug
 }`;
 
 // ── Pages ────────────────────────────────────────────────────────────────────
-// Page text is always a string, empty when a field has no value in any
-// language, so the page components need no null checks.
-const text = (field: string) => `coalesce(${localized(field)}, "")`;
-const texts = (fields: Record<string, string>) =>
-  Object.entries(fields)
-    .map(([name, field]) => `"${name}": ${text(field)}`)
-    .join(", ");
-
 const pageHero = `"hero": { ${texts({ eyebrow: "hero.eyebrow", title: "hero.title", description: "hero.description" })} }`;
 const faqItems = (field: string) =>
   `coalesce(${field}[]{ _key, ${texts({ question: "question", answer: "answer" })} }, [])`;
@@ -118,6 +128,7 @@ export const HOME_PAGE_QUERY = `*[_id == "homePage"][0] {
     ${texts({ label: "faqs.label", heading: "faqs.heading", description: "faqs.description" })},
     "items": ${faqItems("faqs.items")}
   },
+  "seo": ${seo("seo")},
   ${sharedHomeSections}
 }`;
 
@@ -134,7 +145,8 @@ export const ABOUT_PAGE_QUERY = `{
       description: "cta.description",
       primaryCta: "cta.primaryCta",
       secondaryCta: "cta.secondaryCta",
-    })} }
+    })} },
+    "seo": ${seo("seo")}
   },
   "home": *[_id == "homePage"][0] { ${sharedHomeSections} }
 }`;
@@ -143,13 +155,66 @@ export const ABOUT_PAGE_QUERY = `{
 // search title and sections.
 export const LEGAL_PAGE_QUERY = `*[_type == "legalPage" && _id == $id][0] {
   ${pageHero},
-  "seo": { ${texts({ title: "seo.title", description: "seo.description" })} },
+  "seo": ${seo("seo")},
   lastUpdated,
+  "updatedAt": _updatedAt,
   "sections": sections[defined(anchor.current)] {
     "id": anchor.current,
     "title": ${localized("title")},
     "titleLanguage": ${servedLanguage("title")},
     "body": ${localized("body")},
     "language": ${servedLanguage("body")}
+  }
+}`;
+
+// ── Search and sharing ───────────────────────────────────────────────────────
+
+// The site's description and share image, and the search text of the pages
+// whose content is code (SEO_PAGE_KEYS: the maps, forms and listings).
+export const SEO_SETTINGS_QUERY = `*[_id == "seoSettings"][0] {
+  "description": ${text("description")},
+  "image": image{ ${imageFields} },
+  "pages": { ${SEO_PAGE_KEYS.map((key) => `"${key}": ${seo(key)}`).join(", ")} }
+}`;
+
+// Every published address Sanity knows, with when it last changed, for the sitemap.
+export const SITEMAP_QUERY = `{
+  "caseStudies": *[_type == "caseStudy" && defined(slug.current)] | order(publishedAt desc) {
+    "slug": slug.current,
+    "updatedAt": _updatedAt
+  },
+  "pages": *[_id in ["homePage", "aboutPage", "privacyPolicy", "security", "codeOfConduct"]] {
+    _id,
+    "updatedAt": _updatedAt
+  }
+}`;
+
+// Everything llms-full.txt reproduces, in one request: the Home and About
+// text, every case study with its write-up, and the policy pages.
+export const LLMS_QUERY = `{
+  "home": ${HOME_PAGE_QUERY},
+  "about": *[_id == "aboutPage"][0] {
+    "hero": { ${texts({ title: "hero.title", description: "hero.description", objective: "hero.objective" })} },
+    "languages": { ${texts({ heading: "languages.heading", description: "languages.description" })} },
+    "safety": {
+      ${texts({ title: "safety.title", description: "safety.description" })},
+      "items": ${faqItems("safety.items")}
+    },
+    "seo": ${seo("seo")}
+  },
+  "caseStudies": *[_type == "caseStudy" && defined(slug.current)] | order(publishedAt desc) {
+    ${caseStudyCard},
+    "deployment": ${localized("deployment")},
+    "body": ${localized("body")}
+  },
+  "policies": *[_id in ["privacyPolicy", "security", "codeOfConduct"]] {
+    _id,
+    ${pageHero},
+    "seo": ${seo("seo")},
+    "sections": coalesce(sections[defined(anchor.current)] {
+      "id": anchor.current,
+      "title": ${localized("title")},
+      "body": ${localized("body")}
+    }, [])
   }
 }`;

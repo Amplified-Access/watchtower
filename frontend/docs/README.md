@@ -11,6 +11,7 @@ Architecture guides and reference docs for the Watchtower frontend.
 | [SCRIPTS.md](./SCRIPTS.md) | All pnpm scripts explained (dev, build, test, coverage, lint) |
 | [DYNAMIC_MAP.md](./DYNAMIC_MAP.md) | Dynamic map component: implementation approaches, data shape, customisation |
 | [CMS.md](./CMS.md) | Sanity content: setup, the Studio at /studio, how translation and English fallback work, seed content |
+| [SEO.md](./SEO.md) | Search, link previews and AI discoverability: metadata, canonical URLs, JSON-LD, robots.txt, sitemap, llms.txt, the share image, and what editors control in Sanity |
 
 ## Architecture Overview
 

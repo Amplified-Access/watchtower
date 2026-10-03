@@ -1,6 +1,7 @@
 // Shapes returned by the queries in ./queries.ts. The Studio schema
 // (src/sanity/schemaTypes/) is the source of truth; these follow its projections.
 import type { PortableTextBlock } from "@portabletext/react";
+import type { SeoPageKey } from "@/lib/seo/defaults";
 
 export interface SanityImage {
   /** Null when the image has no uploaded file. */
@@ -13,6 +14,13 @@ export interface SanityImage {
   crop?: { top: number; bottom: number; left: number; right: number } | null;
   /** Focal point chosen in the Studio, as fractions of the full image's width and height. */
   hotspot?: { x: number; y: number } | null;
+}
+
+/** A "Search and sharing" object. Empty strings and a null image mean "use the page's own". */
+export interface Seo {
+  title: string;
+  description: string;
+  image: SanityImage | null;
 }
 
 export interface CaseStudyCategory {
@@ -46,6 +54,9 @@ export interface CaseStudy extends CaseStudySummary {
   body: CaseStudyBodyBlock[] | null;
   /** Language the body is in: the reader's, or English when it isn't translated. */
   bodyLanguage: string;
+  /** When the document last changed (Sanity's `_updatedAt`). */
+  updatedAt: string;
+  seo: Seo;
   related: CaseStudySummary[];
 }
 
@@ -78,9 +89,11 @@ export interface PageHero {
 
 export interface LegalPage {
   hero: PageHero;
-  seo: { title: string; description: string };
+  seo: Seo;
   /** Only the privacy policy shows one. */
   lastUpdated: string | null;
+  /** When the document last changed (Sanity's `_updatedAt`). */
+  updatedAt: string;
   sections: PolicySection[];
 }
 
@@ -113,6 +126,7 @@ export interface HomePageContent extends SharedHomeSections {
     sampleTitles: { _key: string; title: string }[];
   };
   faqs: { label: string; heading: string; description: string; items: FaqItem[] };
+  seo: Seo;
 }
 
 export interface AboutPageContent {
@@ -122,6 +136,32 @@ export interface AboutPageContent {
   /** `title` may hold line breaks. */
   safety: { title: string; description: string; items: FaqItem[] };
   cta: { title: string; description: string; primaryCta: string; secondaryCta: string };
+  seo: Seo;
   /** From the home page document. */
   home: SharedHomeSections;
+}
+
+/** The `seoSettings` document: the site's description and share image, and each code-built page's search text. */
+export interface SeoSettings {
+  description: string;
+  image: SanityImage | null;
+  pages: Record<SeoPageKey, Seo>;
+}
+
+export interface SitemapContent {
+  caseStudies: { slug: string; updatedAt: string }[];
+  pages: { _id: string; updatedAt: string }[];
+}
+
+/** What llms-full.txt is built from, in English. */
+export interface LlmsContent {
+  home: HomePageContent | null;
+  about: Pick<AboutPageContent, "hero" | "languages" | "safety" | "seo"> | null;
+  caseStudies: (CaseStudySummary & { deployment: string | null; body: CaseStudyBodyBlock[] | null })[];
+  policies: {
+    _id: string;
+    hero: PageHero;
+    seo: Seo;
+    sections: { id: string; title: string | null; body: PolicyBodyBlock[] | null }[];
+  }[];
 }

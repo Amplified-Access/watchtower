@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { baseValue, requireBaseLanguage } from "./localized";
+import { baseValue, requireBaseLanguage, warnLongerThan } from "./localized";
 
 // Building blocks the page documents share. Every text is translated.
 
@@ -24,14 +24,37 @@ export const pageHero = defineType({
   ],
 });
 
+// How a page appears in search results, in AI assistants' citations and when
+// its link is shared. Every field is optional: without one, the page uses its
+// own title, summary or image, or the site's.
 export const seo = defineType({
   name: "seo",
   title: "Search and sharing",
   type: "object",
   options: { collapsible: true, collapsed: true },
   fields: [
-    defineField({ name: "title", type: "internationalizedArrayString", description: "The browser tab and search result title." }),
-    defineField({ name: "description", type: "internationalizedArrayText", description: "The search result summary." }),
+    defineField({
+      name: "title",
+      type: "internationalizedArrayString",
+      description:
+        "The browser tab and search result title. Leave out “WatchTower”: the site adds it. About 60 characters at most.",
+      validation: warnLongerThan(60),
+    }),
+    defineField({
+      name: "description",
+      type: "internationalizedArrayText",
+      description:
+        "The summary under the title in search results and link previews. Say what the page offers, in a sentence or two of 120 to 160 characters.",
+      validation: warnLongerThan(160),
+    }),
+    defineField({
+      name: "image",
+      title: "Share image",
+      type: "image",
+      description:
+        "Shown when the link is shared on social media and in messaging apps. Cropped to 1200 by 630 around the focal point, so keep the subject near it.",
+      options: { hotspot: true },
+    }),
   ],
 });
 

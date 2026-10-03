@@ -13,12 +13,14 @@
 //
 // The pages (Home, About, and the Security, Code of Conduct and Privacy
 // Policy headers and text) are built by seed/pages.ts from seed/pages/<lang>.json:
-// their text in every language, as it was in messages/*.json.
+// their text in every language, as it was in messages/*.json. Their search
+// text and the "Search and sharing" document come from seed/seo.ts.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { BASE_LANGUAGE, LANGUAGES } from "../../src/sanity/languages";
 import { buildPageDocs, loadPageStrings } from "./pages";
+import { buildSeoDocs } from "./seo";
 import {
   PLACEHOLDER_CASE_STUDIES,
   PRIVACY_POLICY_LAST_UPDATED,
@@ -263,13 +265,16 @@ const policyBody = (prefix: string, blocks: PolicyBlock[]) => {
 
 // ── Pages ───────────────────────────────────────────────────────────────────
 
-const pages = buildPageDocs(loadPageStrings(join(here, "pages")));
+const pageStrings = loadPageStrings(join(here, "pages"));
+const pages = buildPageDocs(pageStrings);
+const seo = buildSeoDocs(pageStrings, join(here, "../../messages"));
 
 const privacyPolicyDoc = {
   _id: "privacyPolicy",
   _type: "legalPage",
   name: "Privacy policy",
   hero: pages.privacyHero,
+  seo: seo.privacyPolicy,
   lastUpdated: PRIVACY_POLICY_LAST_UPDATED,
   sections: PRIVACY_POLICY_SECTIONS.map((section) => ({
     _key: section.id,
@@ -291,8 +296,9 @@ if (process.argv.includes("--strings")) {
   console.log(`Wrote ${Object.keys(translatable).length} strings to seed/translations/en.json`);
 } else {
   const docs = [
-    pages.home,
-    pages.about,
+    { ...pages.home, seo: seo.home },
+    { ...pages.about, seo: seo.about },
+    seo.settings,
     ...categoryDocs,
     ...caseStudyDocs,
     privacyPolicyDoc,

@@ -1,10 +1,17 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
+import { JsonLd } from "@/components/common/json-ld";
 import Footer from "@/components/layout/footer/page";
 import CaseStudiesList from "@/features/case-studies/components/case-studies-list";
 import FeaturedCaseStudies from "@/features/case-studies/components/featured-case-studies";
 import { getCaseStudies, getCaseStudyCategories } from "@/lib/sanity/content";
+import { codePageJsonLd, codePageMetadata, getCodePageSeo } from "@/lib/seo/page";
+import { caseStudyListNode } from "@/lib/seo/structured-data";
+
+// Filtered views (?category=, ?location=) share this canonical URL.
+export const generateMetadata = (): Promise<Metadata> => codePageMetadata("caseStudies", "/case-studies");
 
 const Page = async () => {
   const locale = await getLocale();
@@ -14,9 +21,17 @@ const Page = async () => {
     getCaseStudies(locale),
     getCaseStudyCategories(locale),
   ]);
+  // In the order the page shows them: featured first.
+  const listed = [...caseStudies.filter((c) => c.featured), ...caseStudies.filter((c) => !c.featured)];
+  const listing = await getCodePageSeo("caseStudies", locale);
+  const jsonLd = await codePageJsonLd("caseStudies", "/case-studies", {
+    type: "CollectionPage",
+    extra: [caseStudyListNode(listing.title, listed)],
+  });
 
   return (
     <>
+      <JsonLd data={jsonLd} />
       {/* Starts under the fixed header; the top padding clears header + banner. */}
       <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
         {/* The grid panel stops at the same gutters the next section runs its

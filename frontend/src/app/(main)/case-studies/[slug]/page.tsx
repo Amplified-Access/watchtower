@@ -2,20 +2,43 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
+import { JsonLd } from "@/components/common/json-ld";
 import Footer from "@/components/layout/footer/page";
 import CaseStudyHero from "@/features/case-studies/components/case-study-hero";
 import CaseStudyArticle from "@/features/case-studies/components/case-study-article";
 import RelatedCaseStudies from "@/features/case-studies/components/related-case-studies";
 import { getCaseStudy } from "@/lib/sanity/content";
+import type { CaseStudy } from "@/lib/sanity/types";
+import { ownTitle, pageMetadata } from "@/lib/seo/metadata";
+import { firstShareImage, getCodePageSeo, pageJsonLd } from "@/lib/seo/page";
+import { caseStudyArticleNode } from "@/lib/seo/structured-data";
 
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;
 }
 
+// A case study's "Search and sharing" fields override its title, summary and
+// cover image in search results and link previews; each is optional.
+const caseStudySeo = (caseStudy: CaseStudy) => ({
+  title: ownTitle(caseStudy.seo.title) || caseStudy.title,
+  description: caseStudy.seo.description || caseStudy.summary,
+  image: firstShareImage(caseStudy.seo.image, caseStudy.image),
+});
+
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const caseStudy = await getCaseStudy(slug, await getLocale());
-  return caseStudy ? { title: caseStudy.title, description: caseStudy.summary } : {};
+  const locale = await getLocale();
+  const caseStudy = await getCaseStudy(slug, locale);
+  if (!caseStudy) return {};
+  return pageMetadata({
+    ...caseStudySeo(caseStudy),
+    path: `/case-studies/${caseStudy.slug}`,
+    locale,
+    type: "article",
+    publishedTime: caseStudy.publishedAt,
+    modifiedTime: caseStudy.updatedAt,
+    section: caseStudy.category?.title,
+  });
 }
 
 const CaseStudyPage = async ({ params }: CaseStudyPageProps) => {
@@ -23,6 +46,18 @@ const CaseStudyPage = async ({ params }: CaseStudyPageProps) => {
   const locale = await getLocale();
   const caseStudy = await getCaseStudy(slug, locale);
   if (!caseStudy) notFound();
+
+  const seo = caseStudySeo(caseStudy);
+  const listing = await getCodePageSeo("caseStudies", locale);
+  const jsonLd = await pageJsonLd({
+    path: `/case-studies/${caseStudy.slug}`,
+    name: caseStudy.title,
+    description: seo.description,
+    image: seo.image,
+    dateModified: caseStudy.updatedAt,
+    parents: [{ name: listing.title, path: "/case-studies" }],
+    extra: [caseStudyArticleNode(caseStudy, seo.image)],
+  });
 
   const tBanner = await getTranslations("AnnouncementBanner");
   // Studies without a full write-up yet show their summary as the introduction.
@@ -40,6 +75,7 @@ const CaseStudyPage = async ({ params }: CaseStudyPageProps) => {
 
   return (
     <>
+      <JsonLd data={jsonLd} />
       <CaseStudyHero caseStudy={caseStudy} />
 
       <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
