@@ -171,7 +171,7 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
               <h1 className="mx-auto max-w-3xl font-title text-4xl font-semibold leading-tight text-balance text-white md:text-[2.5rem]">
                 {hero.title}
               </h1>
-              <p className="mx-auto mt-4 max-w-md leading-snug text-white/90">{hero.description}</p>
+              <p className="mx-auto mt-4 max-w-2xl leading-snug text-white/90">{hero.description}</p>
             </div>
           </div>
         </div>
