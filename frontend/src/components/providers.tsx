@@ -13,7 +13,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         {children}
         {/* <ReactQueryDevtools /> */}
      </Provider>
-      <Toaster richColors />
+      {/* White, like the rest of the site. The site is light only and has no
+          theme provider, so the default "system" theme followed the OS into
+          dark mode. The icon carries the status: brand blue or red. */}
+      <Toaster
+        theme="light"
+        toastOptions={{
+          classNames: {
+            toast: "font-title border-border shadow-lg",
+            success: "[&_[data-icon]]:text-primary",
+            error: "[&_[data-icon]]:text-destructive",
+          },
+        }}
+      />
     </>
   );
 }
