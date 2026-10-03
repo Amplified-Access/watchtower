@@ -134,8 +134,14 @@ export const HOME_PAGE_QUERY = `*[_id == "homePage"][0] {
 
 export const ABOUT_PAGE_QUERY = `{
   "about": *[_id == "aboutPage"][0] {
-    "hero": { ${texts({ title: "hero.title", description: "hero.description", objective: "hero.objective" })} },
-    "languages": { ${texts({ heading: "languages.heading", description: "languages.description" })} },
+    "hero": { ${texts({ eyebrow: "hero.eyebrow", title: "hero.title" })} },
+    "approach": { ${texts({ eyebrow: "approach.eyebrow", heading: "approach.heading", description: "approach.description" })} },
+    "steps": coalesce(steps[]{ _key, ${texts({ label: "label", title: "title", description: "description" })} }, []),
+    "languages": { ${texts({ eyebrow: "languages.eyebrow", heading: "languages.heading", description: "languages.description" })} },
+    "audiences": {
+      ${texts({ eyebrow: "audiences.eyebrow", heading: "audiences.heading" })},
+      "items": coalesce(audiences.items[]{ _key, ${texts({ label: "label", title: "title", description: "description" })} }, [])
+    },
     "safety": {
       ${texts({ title: "safety.title", description: "safety.description" })},
       "items": ${faqItems("safety.items")}
@@ -194,8 +200,11 @@ export const SITEMAP_QUERY = `{
 export const LLMS_QUERY = `{
   "home": ${HOME_PAGE_QUERY},
   "about": *[_id == "aboutPage"][0] {
-    "hero": { ${texts({ title: "hero.title", description: "hero.description", objective: "hero.objective" })} },
     "languages": { ${texts({ heading: "languages.heading", description: "languages.description" })} },
+    "audiences": {
+      ${texts({ heading: "audiences.heading" })},
+      "items": coalesce(audiences.items[]{ _key, ${texts({ label: "label", title: "title", description: "description" })} }, [])
+    },
     "safety": {
       ${texts({ title: "safety.title", description: "safety.description" })},
       "items": ${faqItems("safety.items")}

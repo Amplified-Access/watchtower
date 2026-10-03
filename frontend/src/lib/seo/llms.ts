@@ -194,8 +194,6 @@ export const buildLlmsFull = ({ content, description }: LlmsInput) => {
 
     "## What WatchTower is",
     home?.hero.description,
-    about?.hero.description !== home?.hero.description && about?.hero.description,
-    about?.hero.objective,
 
     home && "## How WatchTower works",
     home?.howItWorks.description,
@@ -204,6 +202,11 @@ export const buildLlmsFull = ({ content, description }: LlmsInput) => {
     home && "## Reporting in your language",
     home && [line(home.speakNaturally.title), home.speakNaturally.description].filter(Boolean).join(" "),
     about && [line(about.languages.heading), about.languages.description.replace(/\{count\}/g, languageCount)].filter(Boolean).join(": "),
+
+    !!about?.audiences.items.length && "## Who WatchTower is for",
+    ...(about?.audiences.items ?? []).map((audience) =>
+      `### ${line(audience.label)}: ${line(audience.title)}\n\n${audience.description}`,
+    ),
 
     !!home?.stats.length && `## ${line(home.impact.title) || "Impact"}`,
     home?.impact.description,

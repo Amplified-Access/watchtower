@@ -2,397 +2,320 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import Container from "@/components/common/container";
-import HeadingTwo from "@/components/common/heading-two";
-import TextComponent from "@/components/common/text-component";
-import Footer from "@/components/layout/footer/page";
-import LanguageMarquee from "@/components/common/language-marquee";
-import StepConnector from "@/components/common/step-connector";
-import { buttonVariants } from "@/components/ui/button";
 import { ChevronRight, Minus, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+import Footer from "@/components/layout/footer/page";
+import LineBreaks from "@/components/common/line-breaks";
+import LoopingVideo from "@/components/common/looping-video";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useTranslations } from "next-intl";
-import LineBreaks from "@/components/common/line-breaks";
 import type { AboutPageContent } from "@/lib/sanity/types";
 
 // The about page. Its text comes from the `aboutPage` document in Sanity, and
-// the steps, figures, impact text and bottom banner from `homePage` (see
-// app/(main)/about/page.tsx). Language names and regions, and "Step {number}",
-// are UI copy in messages/*.json.
-const AboutPage = ({ content }: { content: AboutPageContent }) => {
-  const { hero, languages: languagesText, safety, cta, home } = content;
-  const t = useTranslations("About");
-  const tHome = useTranslations("Home");
-  const tNav = useTranslations("Navigation");
+// the figures and the bottom banner from `homePage` (see
+// app/(main)/about/page.tsx). The language names in the marquee are UI copy in
+// messages/*.json. Layout, videos and the step numbers ("01.") are code.
 
-  const languages = [
-    { name: t("langEnglish"), region: t("regionGlobal"), code: "en" },
-    { name: t("langAmharic"), region: t("regionEthiopia"), code: "am" },
-    { name: t("langFrench"), region: t("regionGlobal"), code: "fr" },
-    { name: t("langKikuyu"), region: t("regionKenya"), code: "ki" },
-    { name: t("langLuganda"), region: t("regionUganda"), code: "lg" },
-    { name: t("langPunjabi"), region: t("regionSouthAsia"), code: "pa" },
-    { name: t("langKinyarwanda"), region: t("regionRwanda"), code: "rw" },
-    { name: t("langSukuma"), region: t("regionTanzania"), code: "suk" },
-    { name: t("langSwahili"), region: t("regionEastAfrica"), code: "sw" },
-    { name: t("langUrdu"), region: t("regionPakistan"), code: "ur" },
-    { name: t("langLuo"), region: t("regionKenya"), code: "luo" },
-    { name: t("langOromo"), region: t("regionEthiopia"), code: "om" },
-    { name: t("langDinka"), region: t("regionSouthSudan"), code: "din" },
+type Video = { src: string; poster: string; width: number; height: number };
+
+const video = (name: string, width: number, height: number): Video => ({
+  src: `/videos/${name}.mp4`,
+  poster: `/videos/${name}-poster.webp`,
+  width,
+  height,
+});
+
+// Each step shows its clip in front, with a second card offset behind (or, for
+// the report, in front): the report's evidence and submit clip, or a still from
+// later in the same clip (the globe, the featured case studies). In this order: reporting, the maps, case studies. A step
+// added in Sanity beyond these has no media.
+const STEP_MEDIA: { main: Video; second: Video | string; secondInFront?: boolean }[] = [
+  { main: video("report", 1080, 1200), second: video("report-evidence", 1080, 800), secondInFront: true },
+  { main: video("maps", 1600, 900), second: "/videos/maps-still.webp" },
+  { main: video("case-studies", 1600, 900), second: "/videos/case-studies-still.webp" },
+];
+
+// The fine grain over the blue sections, drawn by the browser rather than
+// shipped as an image.
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+
+const Grain = () => (
+  <div
+    aria-hidden
+    className="pointer-events-none absolute inset-0 -z-10 opacity-25 mix-blend-soft-light"
+    style={{ backgroundImage: GRAIN }}
+  />
+);
+
+/** The two vertical guide lines the site's sections share. */
+const Rails = ({ className }: { className?: string }) => (
+  <div className={cn("pointer-events-none absolute inset-0 mx-auto max-w-360", className)}>
+    <div className="absolute inset-y-0 left-4 w-px bg-current md:left-8 xl:left-16" />
+    <div className="absolute inset-y-0 right-4 w-px bg-current md:right-8 xl:right-16" />
+  </div>
+);
+
+const Eyebrow = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <p className={cn("font-title text-sm uppercase tracking-wide text-primary", className)}>{children}</p>
+);
+
+const card = "overflow-hidden rounded-lg border border-border bg-white shadow-[0_12px_40px_rgb(0_0_0/0.06)]";
+
+/** A step's clip, with its second card beside it on wider screens, fading out at the bottom. */
+const StepMedia = ({ main, second, secondInFront }: (typeof STEP_MEDIA)[number]) => (
+  <div className="relative md:aspect-2/1 md:mask-[linear-gradient(to_bottom,black_65%,transparent)]">
+    <div className={cn(card, "relative md:absolute md:top-0 md:left-0", secondInFront ? "md:w-[52%]" : "md:w-[64%]")}>
+      <div className={cn(secondInFront ? "aspect-square" : "aspect-video")}>
+        <LoopingVideo {...main} className="h-full object-cover object-top" />
+      </div>
+    </div>
+    <div
+      className={cn(
+        card,
+        "absolute top-[8%] right-0 hidden w-[50%] md:block",
+        secondInFront ? "z-10" : "-z-10 top-[5%] right-[2%] w-[44%]",
+      )}
+    >
+      <div className="relative aspect-3/2">
+        {typeof second === "string" ? (
+          <Image src={second} alt="" fill sizes="40vw" className="object-cover object-top-right" />
+        ) : (
+          <LoopingVideo {...second} className="h-full object-cover object-top" />
+        )}
+      </div>
+    </div>
+  </div>
+);
+
+const AboutPage = ({ content }: { content: AboutPageContent }) => {
+  const { hero, approach, steps, languages: languagesText, audiences, safety, cta, home } = content;
+  const t = useTranslations("About");
+
+  const languageNames = [
+    t("langEnglish"),
+    t("langFrench"),
+    t("langSwahili"),
+    t("langLuganda"),
+    t("langKinyarwanda"),
+    t("langAmharic"),
+    t("langPunjabi"),
+    t("langUrdu"),
+    t("langKikuyu"),
+    t("langSukuma"),
+    t("langLuo"),
+    t("langOromo"),
+    t("langDinka"),
   ];
 
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate overflow-hidden bg-primary [zoom:var(--viewport-scale)]">
-        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
-          <div className="absolute inset-y-0 left-4 w-px bg-white md:left-8 xl:left-16" />
-          <div className="absolute inset-y-0 right-4 w-px bg-white md:right-8 xl:right-16" />
-          <div className="absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-white md:block" />
-          {/* Watermark rides with the rails so it tucks just inside the right
-              one at every breakpoint, instead of drifting across it on wide
-              screens and getting sheared off by the section's overflow-hidden. */}
-          <Image
-            src="/brand/icon-white.svg"
-            alt=""
-            width={40}
-            height={37}
-            // 24px from the marquee below and 24px inside the right rail
-            // (right-4 / md:right-8 / xl:right-16) at every breakpoint.
-            className="absolute right-10 bottom-6 h-10 w-10 md:right-14 xl:right-22"
-          />
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#1f57ea,#386cec)] [zoom:var(--viewport-scale)]">
+        <Grain />
+        <Rails className="text-white/80" />
+        <div className="mx-auto max-w-4xl px-8 pt-28 pb-24 text-center md:pt-20 md:pb-32">
+          <Eyebrow className="text-white">{hero.eyebrow}</Eyebrow>
+          <h1 className="mt-14 font-title text-3xl font-medium leading-tight text-white md:mt-20 md:text-5xl">
+            {hero.title}
+          </h1>
         </div>
-        <div className="py-16 md:pt-20 md:pb-4">
-          <Container className="px-8 md:px-14 xl:px-24">
-            <div className="grid divide-y divide-white md:grid-cols-2 md:items-center md:divide-y-0">
-              <div className="py-10 md:pb-0 md:pr-12 xl:pr-16">
-                <p className="mb-4 font-title text-xs font-semibold uppercase tracking-widest text-white/70">
-                  {tNav("about")} WatchTower
-                </p>
-                <h1 className="max-w-xl font-title text-4xl font-semibold leading-tight text-white">
-                  {hero.title}
-                </h1>
-                <div className="mt-8 -ml-4 -mr-4 h-px bg-white md:-ml-6 md:-mr-12 xl:-ml-8 xl:-mr-16" />
-                <div className="mt-8 flex max-w-lg flex-col gap-4">
-                  <TextComponent className="text-white/70">
-                    {hero.description}
-                  </TextComponent>
-                  <TextComponent className="text-white/70">
-                    {hero.objective}
-                  </TextComponent>
-                </div>
-              </div>
+      </section>
 
-              <div className="relative mx-auto aspect-square w-full max-w-xs pt-10 md:max-w-sm md:pt-0 md:pl-12 xl:pl-16">
-                <Image
-                  src="/about-globe.png"
-                  alt=""
-                  width={459}
-                  height={459}
-                  className="h-full w-full object-contain"
-                />
-              </div>
+      {/* The brand, scrolling */}
+      <div
+        aria-hidden
+        className="overflow-hidden border-y border-border bg-[#f8f8f8] py-3.5 [zoom:var(--viewport-scale)]"
+      >
+        <div className="flex w-max animate-marquee">
+          {[0, 1].map((copy) => (
+            <div key={copy} className="flex shrink-0 items-center gap-12 pr-12">
+              {Array.from({ length: 8 }, (_, index) => (
+                <Image key={index} src="/brand/logo-black.svg" alt="" width={219} height={37} className="h-8 w-auto" />
+              ))}
             </div>
-          </Container>
+          ))}
         </div>
-      </section>
-      <section className="bg-white">
-        <LanguageMarquee />
-      </section>
+      </div>
 
-      {/* Mission
-      <section className="py-20 md:py-32 bg-dark text-background [zoom:var(--viewport-scale)]">
-        <Container size="text" className="text-center flex flex-col gap-6">
-          <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm">
-            Our Mission
-          </p>
-          <h2 className="font-title font-semibold text-3xl md:text-4xl leading-snug">
-            To empower communities to document, report, and respond to civic
-            incidents in the languages they speak
+      {/* How we think about reporting, and the three steps */}
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
+        <Rails className="text-border" />
+        <div className="mx-auto max-w-2xl px-8 pt-16 text-center md:pt-20">
+          <Eyebrow>{approach.eyebrow}</Eyebrow>
+          <h2 className="mt-4 font-title text-3xl font-medium leading-tight text-dark md:text-[2.5rem]">
+            <LineBreaks text={approach.heading} breakClassName="hidden md:inline" />
           </h2>
-          <p className="text-background/65 text-lg max-w-2xl mx-auto leading-relaxed">
-            Across Africa and beyond, critical civic events go unreported simply
-            because reporting tools do not speak people&apos;s languages.
-            WatchTower removes that barrier so that everyone can participate in
-            public accountability.
-          </p>
-        </Container>
-      </section> */}
+          <p className="mx-auto mt-6 max-w-xl leading-snug text-dark/60">{approach.description}</p>
+        </div>
 
-      {/* How It Works */}
-      <section className="bg-white py-16 md:py-24 isolate [zoom:var(--viewport-scale)]">
-        <Container size="lg">
-          <div className="text-center mb-14 md:mb-20">
-            {/* commented out while trying how-it-works configurations */}
-            {/* <p className="mb-3 font-title text-xs  font-semibold uppercase tracking-widest text-primary">
-              {home.howItWorks.heading}
-            </p> */}
-            <HeadingTwo className="text-center max-w-md mx-auto">
-              {home.howItWorks.heading}
-            </HeadingTwo>
-            <TextComponent className="mt-4 max-w-xl mx-auto text-center">
-              {home.howItWorks.description}
-            </TextComponent>
-          </div>
-
-          {/* Row gap matches the StepConnector height so the line spans it exactly */}
-          <div className="flex flex-col gap-16 md:gap-24 lg:gap-40">
-            {home.howItWorks.steps.map((step, index) => (
-              <div
-                key={step._key}
-                className="relative grid items-center gap-10 md:grid-cols-2 md:gap-16"
-              >
-                {index < home.howItWorks.steps.length - 1 && (
-                  <StepConnector
-                    from={index % 2 === 0 ? "left" : "right"}
-                    className="top-full hidden h-40 lg:block"
-                  />
-                )}
-                <div className={cn(index % 2 === 1 && "md:order-2")}>
-                  <Image
-                    src="/placeholder.png"
-                    alt=""
-                    width={677}
-                    height={561}
-                    className="h-auto w-full rounded-lg"
-                  />
-                </div>
-                <div className={cn(index % 2 === 1 && "md:order-1")}>
-                  <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
-                    {tHome("stepLabel", { number: index + 1 })}
-                  </p>
-                  <h3 className="font-title text-3xl font-semibold text-dark md:text-4xl">
-                    {step.title}
-                  </h3>
-                  <p className="mt-4 max-w-md text-dark/60 leading-relaxed">
-                    {step.description}
-                  </p>
-                  <Link
-                    href="#"
-                    className="mt-6 inline-flex items-center gap-1 font-title font-semibold text-primary hover:text-primary/80"
-                  >
-                    Learn more
-                    <ChevronRight className="size-4" />
-                  </Link>
-                </div>
+        <div className="mx-auto flex max-w-6xl flex-col gap-20 px-8 pt-16 pb-16 md:gap-20 md:px-16 md:pt-20 md:pb-20">
+          {steps.map((step, index) => (
+            <div key={step._key}>
+              <Eyebrow className="text-center">
+                {String(index + 1).padStart(2, "0")}. {step.label}
+              </Eyebrow>
+              <div className="mx-auto mt-6 grid max-w-4xl gap-6 md:grid-cols-2 md:items-center md:gap-16">
+                <h3 className="font-title text-3xl font-medium leading-tight text-dark md:text-[2.5rem]">
+                  <LineBreaks text={step.title} breakClassName="hidden md:inline" />
+                </h3>
+                <p className="max-w-sm leading-snug text-dark/60">{step.description}</p>
               </div>
-            ))}
-          </div>
-        </Container>
+              {STEP_MEDIA[index] && (
+                <div className="mt-10 md:mt-12">
+                  <StepMedia {...STEP_MEDIA[index]} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Languages */}
-      <section className="relative isolate overflow-hidden bg-linear-to-b from-primary to-white [zoom:var(--viewport-scale)]">
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,var(--color-primary)_0%,#95abe5_62%,#eef0f8_100%)] [zoom:var(--viewport-scale)]">
+        <Grain />
         <Image
           src="/brand/Pattern.svg"
           alt=""
           width={1378}
           height={617}
-          className="pointer-events-none absolute -bottom-30 right-0 -z-10 h-auto w-full rotate-180 invert"
+          className="pointer-events-none absolute -bottom-10 left-0 -z-10 h-auto w-full opacity-50"
         />
-        
-        <div className="pt-20 pb-16 md:pt-28 md:pb-20">
-          <Container size="xs" className="text-center">
-            <HeadingTwo className="text-white">
+        <div className="relative">
+          <Rails className="text-white/80" />
+          <div className="mx-auto max-w-2xl px-8 pt-20 pb-28 text-center md:pt-24 md:pb-36">
+            <Eyebrow className="text-white">{languagesText.eyebrow}</Eyebrow>
+            <h2 className="mx-auto mt-14 max-w-md font-title text-3xl font-medium leading-tight text-white md:mt-20 md:text-5xl">
               {languagesText.heading}
-            </HeadingTwo>
-            <TextComponent className="mx-auto mt-4 max-w-xl text-center text-white/70">
-              {languagesText.description.replace("{count}", String(languages.length))}
-            </TextComponent>
-          </Container>
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl leading-snug text-white">
+              {languagesText.description.replace("{count}", String(languageNames.length))}
+            </p>
+          </div>
         </div>
         <div
           role="marquee"
-          aria-label={`Supported languages: ${languages
-            .map((lang) => lang.name)
-            .join(", ")}`}
-          className="overflow-hidden bg-white py-2.5"
+          aria-label={languageNames.join(", ")}
+          className="overflow-hidden border-y border-white/70 bg-[#f3f3f3]/90 py-4"
         >
           <div className="flex w-max animate-marquee">
             {[0, 1].map((copy) => (
               <div
                 key={copy}
                 aria-hidden={copy === 1}
-                className="flex shrink-0 items-center font-title text-sm font-medium text-dark"
+                className="flex shrink-0 items-center font-title text-xl text-dark md:text-2xl"
               >
-                {languages.map((lang, index) => (
+                {languageNames.map((name, index) => (
                   <span key={index} className="flex items-center">
-                    <span className="px-3">{lang.name}</span>
-                    <span className="text-dark/40">&bull;</span>
+                    <span className="px-8">{name}</span>
+                    <span>&bull;</span>
                   </span>
                 ))}
               </div>
             ))}
           </div>
         </div>
+        <div className="h-14" />
       </section>
 
-      {/* Impact */}
-      <section className="relative isolate border-t border-border bg-white [zoom:var(--viewport-scale)]">
-        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
-          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
-          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
-        </div>
-        <Container size="xs" className="pt-16 md:pt-24">
-          <div className="text-center">
-            <h2 className="text-3xl md:text-4xl font-semibold font-title leading-tight">
-              {home.impact.title}
-            </h2>
-            <TextComponent className="mt-3 max-w-xl mx-auto text-center">
-              {home.impact.description}
-            </TextComponent>
-          </div>
-        </Container>
-        {/* Rail width, matching the dark block below, and no bottom padding so
-            the cells butt straight up against it. The top rule lives on each
-            cell rather than on the grid: that way it also serves as the row
-            divider in the 2-col layout without doubling up on the first row. */}
-        <div className="mx-auto mt-12 max-w-360 px-4 md:mt-16 md:px-8 xl:px-16">
-          <div className="grid grid-cols-2 divide-x divide-border md:grid-cols-4">
-            {home.stats.map((stat) => (
+      {/* Who it is for */}
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
+        <Rails className="text-border" />
+        <div className="mx-auto max-w-6xl px-8 py-20 md:px-16 md:py-24">
+          <Eyebrow>{audiences.eyebrow}</Eyebrow>
+          <h2 className="mt-4 max-w-sm font-title text-3xl font-medium leading-tight text-dark md:text-[2.5rem]">
+            <LineBreaks text={audiences.heading} breakClassName="hidden md:inline" />
+          </h2>
+          <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-x-6">
+            {audiences.items.map((audience, index) => (
               <div
-                key={stat._key}
-                className="flex flex-col items-center justify-center gap-1 border-t border-border py-8 text-center md:py-10"
+                key={audience._key}
+                // The third card sits centred under the first two.
+                className={cn("flex flex-col", index === 2 && "md:col-span-2 md:mx-auto md:w-[calc(50%-0.75rem)]")}
               >
-                <span className="font-title text-3xl font-semibold text-dark md:text-4xl">
-                  {stat.value}
-                </span>
-                <span className="text-sm text-dark/60">{stat.label}</span>
+                <p className="mb-4 font-title text-primary">{audience.label}</p>
+                <div className="flex-1 rounded-xl border border-[#c3d4ff] bg-[#f6f3f8] p-8 shadow-[0_12px_32px_rgb(0_66_231/0.06)] md:p-12">
+                  {/* The WatchTower mark, in brand blue. */}
+                  <div
+                    aria-hidden
+                    className="h-7 w-8 bg-primary [mask:url(/brand/icon-black.svg)_center/contain_no-repeat]"
+                  />
+                  <h3 className="mt-5 font-title text-2xl font-medium leading-tight text-primary md:text-[1.7rem]">
+                    {audience.title}
+                  </h3>
+                  <p className="mt-5 text-lg leading-snug text-dark md:text-xl">{audience.description}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* The Organisation */}
-      {/* <section className="py-20 md:py-32">
-        <Container size="xs">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
-            <div>
-              <p className="text-primary font-title font-semibold uppercase tracking-widest text-sm mb-4">
-                The Organisation
-              </p>
-              <HeadingTwo>
-                Accountable, transparent, and mission-driven
-              </HeadingTwo>
-              <TextComponent className="mt-6">
-                WatchTower is a product of Amplified Access, a registered
-                nonprofit dedicated to building technology that expands civic
-                participation in underserved communities.
-              </TextComponent>
-              <Link
-                href="https://amplifiedaccess.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 mt-6 text-sm font-title font-medium text-primary hover:opacity-70 transition-opacity"
-              >
-                amplifiedaccess.org
-              </Link>
-            </div>
-
-            <div className="flex flex-col divide-y divide-dark/10">
-              {[
-                {
-                  icon: Building2,
-                  label: "Legal status",
-                  value: "Registered nonprofit, United States",
-                },
-                {
-                  icon: Globe,
-                  label: "Operating since",
-                  value: "2022",
-                },
-                {
-                  icon: FileText,
-                  label: "Annual filings",
-                  value: "Form 990 available on request",
-                },
-                {
-                  icon: Users,
-                  label: "Leadership",
-                  value: "Noble and Aziz, Co-founders at Amplified Access",
-                },
-              ].map(({ icon: Icon, label, value }) => (
-                <div
-                  key={label}
-                  className="flex items-start gap-4 py-5 first:pt-0 last:pb-0"
-                >
-                  <div className="size-9 shrink-0 rounded-full border border-dark/10 flex items-center justify-center mt-0.5">
-                    <Icon size={15} className="text-dark/50" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-title uppercase tracking-widest text-dark/40 mb-1">
-                      {label}
-                    </p>
-                    <p className="text-dark font-medium text-sm">{value}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section> */}
-
-      {/* Your Safety */}
-      <section className="relative isolate bg-white pb-16 [zoom:var(--viewport-scale)]">
-        {/* Pattern spans the full width and stops at the bottom rule; the
-            container is marked only by the guide lines drawn over it. */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 bottom-16 -z-10 overflow-hidden">
-          <Image
-            src="/brand/Pattern.svg"
-            alt=""
-            width={1378}
-            height={617}
-            className="absolute inset-x-0 bottom-0 h-auto w-full opacity-40 invert"
-          />
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-border" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-16 h-px bg-border" />
-        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
-          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
-          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
-        </div>
+      {/* Figures */}
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
         <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
-          <div className="relative px-6 py-16 md:px-16 md:py-20">
-            <div className="grid gap-12 md:grid-cols-2 md:gap-16">
+          <div className="grid grid-cols-2 border-t border-border md:grid-cols-4">
+            {home.stats.map((stat) => {
+              // "2,000+": the plus is set smaller, as in the design.
+              const plus = stat.value.endsWith("+");
+              return (
+                <div
+                  key={stat._key}
+                  className="flex flex-col items-center justify-center gap-2 border-r border-b border-border py-10 text-center first:border-l md:py-12 nth-3:border-l md:nth-3:border-l-0"
+                >
+                  <span className="flex items-center font-title text-4xl font-medium text-dark md:text-[2.5rem]">
+                    {plus ? stat.value.slice(0, -1) : stat.value}
+                    {plus && <span className="ml-1 text-2xl">+</span>}
+                  </span>
+                  <span className="text-lg text-dark/60 md:text-xl">{stat.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Your safety */}
+      <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
+        <div className="mx-auto max-w-360 px-4 md:px-8 xl:px-16">
+          <div className="relative isolate overflow-hidden bg-dark px-6 py-16 md:px-14 md:py-24">
+            <Image
+              src="/brand/Pattern.svg"
+              alt=""
+              width={1378}
+              height={617}
+              className="pointer-events-none absolute -bottom-16 left-0 -z-10 h-auto w-full opacity-10"
+            />
+            <div className="grid gap-12 md:grid-cols-[1fr_1.2fr] md:gap-16">
               <div>
-                <p className="mb-3 font-title text-xs font-semibold uppercase tracking-widest text-primary">
-                  {home.faqsLabel}
-                </p>
-                <h2 className="font-title text-3xl font-semibold leading-tight text-dark md:text-4xl">
-                  <LineBreaks text={safety.title} />
+                <h2 className="font-title text-3xl font-medium leading-tight text-white md:text-[2.5rem]">
+                  <LineBreaks text={safety.title} breakClassName="hidden md:inline" />
                 </h2>
-                <p className="mt-4 max-w-xs text-dark/60 leading-relaxed">
-                  {safety.description}
-                </p>
+                <p className="mt-8 max-w-xs leading-snug text-white/50">{safety.description}</p>
               </div>
 
-              <Accordion
-                type="single"
-                collapsible
-                defaultValue={safety.items[0]?._key}
-                className="w-full"
-              >
+              <Accordion type="single" collapsible defaultValue={safety.items[0]?._key} className="w-full">
                 {safety.items.map(({ _key, question, answer }) => (
                   <AccordionItem
                     key={_key}
                     value={_key}
-                    className="border-dark/10"
+                    className="relative border-t border-b-0 border-white/20 last:border-b"
                   >
-                    <AccordionTrigger className="group gap-4 py-5 font-title text-base text-dark hover:no-underline [&>svg]:hidden">
-                      <span className="flex-1">{question}</span>
-                      <span className="relative flex size-6 shrink-0 items-center justify-center rounded bg-primary">
+                    <AccordionTrigger className="group py-9 pr-12 pl-8 font-title text-xl font-normal text-white hover:no-underline md:text-[1.65rem] md:leading-tight [&>svg]:hidden">
+                      <span className="flex-1 text-left">{question}</span>
+                      {/* The toggle sits on the rule above the question. */}
+                      <span className="absolute top-0 right-6 flex size-6 -translate-y-1/2 items-center justify-center bg-primary">
                         <Plus className="size-3.5 text-white group-data-[state=open]:hidden" />
-                        <Minus className="absolute size-3.5 text-white opacity-0 group-data-[state=open]:opacity-100" />
+                        <Minus className="hidden size-3.5 text-white group-data-[state=open]:block" />
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-5 text-base leading-relaxed font-normal text-dark/60">
+                    <AccordionContent className="pr-12 pb-9 pl-8 text-base leading-snug text-white/50">
                       {answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -403,12 +326,9 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Call to action */}
       <section className="relative isolate overflow-hidden bg-white [zoom:var(--viewport-scale)]">
-        <div className="pointer-events-none absolute inset-0 mx-auto max-w-360">
-          <div className="absolute inset-y-0 left-4 w-px bg-border md:left-8 xl:left-16" />
-          <div className="absolute inset-y-0 right-4 w-px bg-border md:right-8 xl:right-16" />
-        </div>
+        <Rails className="text-border" />
         <Image
           src="/brand/Pattern.svg"
           alt=""
@@ -416,20 +336,15 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
           height={617}
           className="pointer-events-none absolute -bottom-60 left-0 -z-10 h-auto w-full invert"
         />
-        {/* The FAQ section above ends with 64px of space below its rule, so the
-            top padding is trimmed and the bottom grown by the same amount:
-            same height, content centred between that rule and the ribbon. */}
-        <Container size="xs" className="pt-3 pb-29 text-center md:pt-7 md:pb-33">
-          <HeadingTwo className="text-center">{cta.title}</HeadingTwo>
-          <TextComponent className="mx-auto mt-4 max-w-xl text-center">
-            {cta.description}
-          </TextComponent>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div className="mx-auto max-w-2xl px-8 pt-20 pb-28 text-center md:pt-24 md:pb-32">
+          <h2 className="font-title text-3xl font-medium leading-tight text-dark md:text-5xl">{cta.title}</h2>
+          <p className="mx-auto mt-6 max-w-md leading-snug text-dark/60">{cta.description}</p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/anonymous-reports"
               className={cn(
-                buttonVariants({ variant: "default" }),
-                "font-title font-medium bg-dark text-white hover:bg-dark/90",
+                buttonVariants({ variant: "default", size: "lg" }),
+                "rounded-none bg-dark font-title font-medium text-white hover:bg-dark/90",
               )}
             >
               {cta.primaryCta}
@@ -438,15 +353,15 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
             <Link
               href="/maps/live-incident-map"
               className={cn(
-                buttonVariants({ variant: "secondary" }),
-                "font-title font-medium",
+                buttonVariants({ variant: "secondary", size: "lg" }),
+                "rounded-none font-title font-medium",
               )}
             >
               {cta.secondaryCta}
               <ChevronRight />
             </Link>
           </div>
-        </Container>
+        </div>
       </section>
 
       <section className="relative isolate bg-primary py-4 text-white [zoom:var(--viewport-scale)]">
