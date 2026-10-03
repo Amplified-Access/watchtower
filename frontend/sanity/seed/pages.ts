@@ -191,7 +191,6 @@ export const buildPageDocs = (pages: Record<Language, Strings>) => {
     _id: "aboutPage",
     _type: "aboutPage",
     hero: {
-      eyebrow: string("About.heroEyebrow"),
       title: string("About.heroTitle"),
       description: text("About.heroIntro"),
     },
@@ -203,12 +202,10 @@ export const buildPageDocs = (pages: Record<Language, Strings>) => {
       }),
     ),
     languages: {
-      eyebrow: string("About.languagesEyebrow"),
       heading: string("About.languagesTitle"),
       description: text("About.languagesDescription"),
     },
     audiences: {
-      eyebrow: string("About.audiencesEyebrow"),
       heading: text("About.audiencesHeading"),
       items: ["Communities", "Organisations", "Evidence"].map((who, i) =>
         item("audience", i, {

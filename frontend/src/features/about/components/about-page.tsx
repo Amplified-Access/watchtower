@@ -168,7 +168,6 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
                 zoom), so that much is added above the same padding as below:
                 the text sits centred in the blue that shows. */}
             <div className="px-6 pt-[calc(var(--nav-height)/var(--viewport-scale)+4rem)] pb-16 text-center md:pt-[calc(var(--nav-height)/var(--viewport-scale)+5rem)] md:pb-20">
-              <Eyebrow className="text-white/80">{hero.eyebrow}</Eyebrow>
               <h1 className="mx-auto max-w-3xl font-title text-4xl font-semibold leading-tight text-balance text-white md:text-[2.5rem]">
                 {hero.title}
               </h1>
@@ -223,7 +222,6 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
         <div className="relative">
           <Rails className="text-white/80" />
           <div className="mx-auto max-w-2xl px-8 py-28 text-center md:py-32">
-            <Eyebrow className="text-white/80">{languagesText.eyebrow}</Eyebrow>
             <HeadingTwo className="text-white">{languagesText.heading}</HeadingTwo>
             <TextComponent className="mx-auto mt-4 max-w-xl text-white/80">
               {languagesText.description.replace("{count}", String(languageNames.length))}
@@ -239,7 +237,6 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
       <section className="relative isolate bg-white [zoom:var(--viewport-scale)]">
         <Rails className="text-border" />
         <div className="mx-auto max-w-6xl px-8 py-20 md:px-16 md:py-24">
-          <Eyebrow>{audiences.eyebrow}</Eyebrow>
           <HeadingTwo className="leading-tight">
             <LineBreaks text={audiences.heading} breakClassName="hidden md:inline" />
           </HeadingTwo>

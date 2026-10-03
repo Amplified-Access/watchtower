@@ -239,7 +239,7 @@ describe("page queries against the seed", () => {
       "Turn evidence into\naction.",
     ]);
     expect(en.steps.map((step) => step.label)).toEqual(["Report", "Understand trends", "Drive action"]);
-    expect(en.hero).toMatchObject({ eyebrow: "About WatchTower", title: "Turning individual voices into action" });
+    expect(en.hero).toMatchObject({ title: "Turning individual voices into action" });
     expect(en.hero.description).toMatch(/^WatchTower begins with a simple idea/);
     expect(en.audiences.items).toHaveLength(3);
     expect(fr.hero.title).not.toBe(en.hero.title);

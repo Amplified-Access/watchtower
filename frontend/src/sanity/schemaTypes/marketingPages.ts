@@ -113,7 +113,6 @@ export const aboutPage = defineType({
   description: "The figures and the bottom banner are edited on the Home page.",
   fields: [
     section("hero", "Header", [
-      string("eyebrow", { title: "Label", description: "The small label above the title." }),
       string("title", { validation: requireBaseLanguage }),
       text("description"),
     ]),
@@ -138,12 +137,10 @@ export const aboutPage = defineType({
       validation: (rule) => rule.max(3),
     }),
     section("languages", "Languages", [
-      string("eyebrow", { title: "Label" }),
       string("heading"),
       text("description", { description: "Write {count} where the number of languages goes, if you need it." }),
     ]),
     section("audiences", "Who it is for", [
-      string("eyebrow", { title: "Label" }),
       text("heading", { rows: 3, description: "Press Enter where the heading should break." }),
       defineField({
         name: "items",
