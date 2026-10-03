@@ -228,7 +228,19 @@ describe("page queries against the seed", () => {
     expect(shared.howItWorks).toEqual(home.howItWorks);
     expect(shared.stats).toEqual(home.stats);
     expect(about.safety.items).toHaveLength(5);
-    expect(about.languages.description).toContain("{count}");
+  });
+
+  it("returns the about page's steps and audiences, translated, with their headings' line breaks", async () => {
+    const { about: en } = await run<AboutResult>(ABOUT_PAGE_QUERY, seed, { locale: "en" });
+    const { about: fr } = await run<AboutResult>(ABOUT_PAGE_QUERY, seed, { locale: "fr" });
+    expect(en.steps.map((step) => step.title)).toEqual([
+      "Share what’s\nhappening.",
+      "See the bigger\npicture.",
+      "Turn evidence into\naction.",
+    ]);
+    expect(en.audiences.items).toHaveLength(3);
+    expect(fr.steps[0].title).not.toBe(en.steps[0].title);
+    expect(fr.audiences.items[2].description).not.toBe(en.audiences.items[2].description);
   });
 });
 

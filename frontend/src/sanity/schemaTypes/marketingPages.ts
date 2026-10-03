@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { House, Info } from "lucide-react";
-import { requireBaseLanguage } from "./localized";
+import { baseValue, requireBaseLanguage } from "./localized";
 
 // The home and about pages. The layout (images, links, order of sections) is
 // code; these hold every text on them, section by section, so editors can
@@ -52,7 +52,6 @@ export const homePage = defineType({
         text("description"),
         defineField({ name: "steps", type: "array", of: [defineArrayMember({ type: "step" })] }),
       ],
-      "Also shown on the About page.",
     ),
     section("speakNaturally", "Report in your language", [
       text("title", { rows: 2, description: "Press Enter where the heading should break." }),
@@ -90,7 +89,7 @@ export const homePage = defineType({
       text("description"),
       defineField({ name: "items", title: "Questions", type: "array", of: [defineArrayMember({ type: "faqItem" })] }),
     ]),
-    section("impact", "Impact", [string("title"), text("description")], "Shown on the About page, above the figures."),
+    section("impact", "Impact", [string("title"), text("description")], "Not shown on the site at the moment."),
     section(
       "banner",
       "Banner above the footer",
@@ -111,16 +110,50 @@ export const aboutPage = defineType({
   title: "About page",
   type: "document",
   icon: Info,
-  description: "The steps, figures, impact text and bottom banner are edited on the Home page.",
+  description: "The figures and the bottom banner are edited on the Home page.",
   fields: [
-    section("hero", "Header", [
-      string("title", { validation: requireBaseLanguage }),
-      text("description"),
-      text("objective", { title: "Second paragraph" }),
-    ]),
+    section("hero", "Header", [string("title", { validation: requireBaseLanguage })]),
+    defineField({
+      name: "steps",
+      type: "array",
+      description: "Each has its video, in this order: reporting, the maps, case studies.",
+      of: [
+        defineArrayMember({
+          name: "aboutStep",
+          title: "Step",
+          type: "object",
+          fields: [
+            text("title", { rows: 2, description: "Press Enter where the heading should break." }),
+            text("description"),
+          ],
+          preview: { select: { title: "title" }, prepare: ({ title }) => ({ title: baseValue(title) }) },
+        }),
+      ],
+      validation: (rule) => rule.max(3),
+    }),
     section("languages", "Languages", [
       string("heading"),
-      text("description", { description: "Write {count} where the number of languages goes." }),
+      text("description", { description: "Write {count} where the number of languages goes, if you need it." }),
+    ]),
+    section("audiences", "Who it is for", [
+      text("heading", { rows: 3, description: "Press Enter where the heading should break." }),
+      defineField({
+        name: "items",
+        title: "Audiences",
+        type: "array",
+        of: [
+          defineArrayMember({
+            name: "audience",
+            type: "object",
+            fields: [
+              string("label", { description: "Above the card, e.g. “Communities”." }),
+              string("title"),
+              text("description"),
+            ],
+            preview: { select: { title: "label" }, prepare: ({ title }) => ({ title: baseValue(title) }) },
+          }),
+        ],
+      }),
     ]),
     section("safety", "Your safety", [
       text("title", { rows: 2, description: "Press Enter where the heading should break." }),

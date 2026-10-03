@@ -96,15 +96,16 @@ Category names are translated (on the category document); category slugs are not
 
 | Studio (Pages) | Document | Used by |
 |---|---|---|
-| Home | `homePage` | `/`, and `/about` for the steps, figures, impact text and bottom banner |
+| Home | `homePage` | `/`, and `/about` for the figures and the bottom banner |
 | About | `aboutPage` | `/about` |
 | Privacy policy | `privacyPolicy` (a `legalPage`) | `/privacy-policy`, with a numbered table of contents |
 | Security | `security` (a `legalPage`) | `/security` |
 | Code of conduct | `codeOfConduct` (a `legalPage`) | `/code-of-conduct` |
 | Search and sharing (sidebar, not under Pages) | `seoSettings` | The site's description and share image, and the search text of the code-built pages: see [SEO.md](./SEO.md) |
 
-- Home and About have one field group per page section. Repeated parts are lists editors can add to, remove from and reorder: the figures (with their numbers), the how-it-works steps and the questions.
-- Headings the design breaks over two lines keep the break: press Enter in the text field. The About page's languages description takes `{count}`, replaced with the number of languages.
+- Home and About have one field group per page section. Repeated parts are lists editors can add to, remove from and reorder: the figures (with their numbers), the how-it-works steps, the About page's steps and audiences, and the questions.
+- Each of the About page's steps has a looping video in code (`STEP_MEDIA` in `features/about/components/about-page.tsx`, files in `public/videos/`), in order: reporting, the maps, case studies. A fourth step would show without one.
+- Headings the design breaks over two lines keep the break: press Enter in the text field. On the About page the breaks apply from tablet width up; on a phone the heading wraps on its own. The About page's languages description may use `{count}`, replaced with the number of languages.
 - A legal page has a header (label, title, description), a search title and description, and sections of rich text (paragraphs, subheadings, bullets, bold, links). An untitled section is an introduction, left out of the privacy policy's contents. The privacy policy's header is only its title, with the last-updated date beneath it, so the Studio hides the label and description there.
 - The queries (`HOME_PAGE_QUERY`, `ABOUT_PAGE_QUERY`, `LEGAL_PAGE_QUERY`) return every text as a string, empty when missing, so the page components need no null checks. The Home and About pages are client components that take this content as props from their server `page.tsx`, which also renders `<SanityLive />`.
 

@@ -130,14 +130,18 @@ export interface HomePageContent extends SharedHomeSections {
 }
 
 export interface AboutPageContent {
-  hero: { title: string; description: string; objective: string };
-  /** `description` contains {count}, the number of languages. */
+  hero: { title: string };
+  /** `title` may hold line breaks. Shown with their videos, in order. */
+  steps: { _key: string; title: string; description: string }[];
+  /** `description` may contain {count}, the number of languages. */
   languages: { heading: string; description: string };
+  /** `heading` may hold line breaks. */
+  audiences: { heading: string; items: { _key: string; label: string; title: string; description: string }[] };
   /** `title` may hold line breaks. */
   safety: { title: string; description: string; items: FaqItem[] };
   cta: { title: string; description: string; primaryCta: string; secondaryCta: string };
   seo: Seo;
-  /** From the home page document. */
+  /** From the home page document: the figures and the bottom banner. */
   home: SharedHomeSections;
 }
 
@@ -156,7 +160,7 @@ export interface SitemapContent {
 /** What llms-full.txt is built from, in English. */
 export interface LlmsContent {
   home: HomePageContent | null;
-  about: Pick<AboutPageContent, "hero" | "languages" | "safety" | "seo"> | null;
+  about: Pick<AboutPageContent, "languages" | "audiences" | "safety" | "seo"> | null;
   caseStudies: (CaseStudySummary & { deployment: string | null; body: CaseStudyBodyBlock[] | null })[];
   policies: {
     _id: string;

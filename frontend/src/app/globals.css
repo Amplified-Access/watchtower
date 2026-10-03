@@ -91,6 +91,9 @@
 :root {
   /* Overwritten by the header with the banner's measured height (0 once dismissed). */
   --banner-height: 2.75rem;
+  /* The header's navigation bar, measured by the header; this is its height
+     at 1280px wide, for the first paint. */
+  --nav-height: 4.75rem;
   --viz-background: #f3f3f3;
   --viz-primary: #0042e7;
   --viz-dark: #000000;
