@@ -114,8 +114,10 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: #000000;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #f3f3f3;
-  --input: #f3f3f3;
+  /* The site's lines (guide rails, dividers, card and field outlines), as dark
+     as in the design: #f3f3f3 was too faint to read. */
+  --border: #e2e2e2;
+  --input: #e2e2e2;
   --ring: #0042e7;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);

@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Marũpoti nĩmethagĩrĩrio nĩ arũgamĩrĩri a WatchTower metĩkĩrĩkĩte. Rũpoti rwaku rũtirĩ hĩndĩ rũheanagwo kũrĩ andũ othe na ũhoro ũngĩmenyithania.",
   "About.faqVisibilityQuestion": "Nũũ ũngĩona rũpoti rwakwa?",
   "About.heroDescription": "WatchTower nĩ mũkuru wa ũũgĩ wa gĩthaka ũrĩa ũrũgamĩte na mĩcemanio na ũhũthagĩra AI na ũtaalamu wa thiomi cia gĩthaka nĩguo ũhotithie andũ kũheana marũpoti ma mahitũko, ũgwati, na mahĩtia ma kĩhooto na rũthiomi rwao mwene, na ũgarũraga marũpoti macio matuĩke ũmenyo ũngĩtũmĩka nĩ ũndũ wa ũrũgamĩrĩri na macokio.",
-  "About.heroTitle": "Aria . Bangĩra . Ĩka",
+  "About.heroTitle": "Kũgarũra mĩgambo ya o mũndũ ĩtuĩke wĩra",
   "About.languagesDescription": "WatchTower yakĩtwo ĩthiũrũrũkĩirie thiomi iria andũ mahũthagĩra ma. Rũthiomi rwonekaga ihinda rĩothe rĩa kũheana rũpoti, rũgĩteithia andũ kwaria na njĩra ya kĩmerero na ũhoro ũkamenyeka thiomi-inĩ ciothe.",
   "About.languagesTitle": "Thiomi Ciheanagwo Ũteithio",
   "About.objectiveDescription": "Kũmenyerera atĩ mũndũ o wothe arĩ na hinya wa kũheana marũpoti ma mathĩna ma gĩthaka na rũthiomi rũrĩa aragia, nĩguo gũtikagĩe na mũgambo ũtaiguĩkaga na o mũndũ ahote gũtonya kũrũgamĩrĩra arĩa marĩ na wĩra.",
@@ -160,5 +160,9 @@
   "About.audienceOrganisationsDescription": "Amũkĩra na ũthuthurie marũpoti, ũrũgamĩrĩre mĩrutĩro na ũmenye mĩthiĩre ĩrĩa ĩrĩ mĩhĩrĩga-inĩ.",
   "About.audienceEvidenceLabel": "Ahũthĩri a ũira",
   "About.audienceEvidenceTitle": "Thuthuria ũrĩa marũpoti moonanagia.",
-  "About.audienceEvidenceDescription": "Athuthuria, aandĩki a ũhoro na ikundi cia gũteithia andũ othe no mathuthurie marũpoti, kũndũ na mĩthiĩre nĩguo mamenye wega ũrĩa mĩhĩrĩga ĩrahĩtũkĩra."
+  "About.audienceEvidenceDescription": "Athuthuria, aandĩki a ũhoro na ikundi cia gũteithia andũ othe no mathuthurie marũpoti, kũndũ na mĩthiĩre nĩguo mamenye wega ũrĩa mĩhĩrĩga ĩrahĩtũkĩra.",
+  "About.step1Label": "Rũpoti",
+  "About.step2Label": "Menya mĩthiĩre",
+  "About.step3Label": "Rehe wĩra",
+  "About.heroIntro": "WatchTower ĩambagĩrĩria na wĩciria ũtarĩ mũritũ: gũtũma andũ mahote kũheana rũpoti rwa ũrĩa kũrathiĩ na ũhũthũ, na thuutha ũcio gũtũma marũpoti macio magĩe na bata makĩria tũtekũriganĩrwo nĩ andũ arĩa maamaheanire."
 }

@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Ripodhi nonre mana gi jorito mag WatchTower mosir. Gima ioro ok opog e lela gi fweny moro amora manyiso ngʼeyo.",
   "About.faqVisibilityQuestion": "Ng'a manyalo neno ripodhona?",
   "About.heroDescription": "WatchTower en kanyakla mar rieko mar oganda ma tiyo gi AI kod teknolojia mag dhok mag alworni mondo omi ji nyal ripodho gik motimore, masira, kod ketho mag ratiro e dhogi giwegi, kendo loko ripodhogo obed ngʼeyo minyalo tiyego ne miyo luor kod dwoko wach.",
-  "About.heroTitle": "Wuo . Chan . Tim",
+  "About.heroTitle": "Loko dwonde ji achiel achiel obed tich",
   "About.languagesDescription": "WatchTower olos kaluwore gi dhok ma ji tiyogo adier. Dhok neno e kinde duto mag ripodho, mamiyo ji wuoyo mayot to weche bedo ma winjore e dhok mopogore opogore.",
   "About.languagesTitle": "Dhok Mokony",
   "About.objectiveDescription": "Sirruok ni ngʼato ka ngʼato nigi teko mar ripodho gik motimore e oganda e dhok mowuoyego, mondo onge dwol ma ok owinji kendo ngʼato ka ngʼato nyalo riwo lwete e miyo joma nigi diragruok luor.",
@@ -160,5 +160,9 @@
   "About.audienceOrganisationsDescription": "Yud kendo inon ripode, rit tich kendo ifwen kit gik ma dwogore e oganda.",
   "About.audienceEvidenceLabel": "Jotich gi ranyisi",
   "About.audienceEvidenceTitle": "Non gima ripode nyiso.",
-  "About.audienceEvidenceDescription": "Jononro, jondiko weche kod riwruoke mag ber oganda nyalo nono ripode, kuonde kod kit wach mondo ging'e maber gik ma oganda kalo e iye."
+  "About.audienceEvidenceDescription": "Jononro, jondiko weche kod riwruoke mag ber oganda nyalo nono ripode, kuonde kod kit wach mondo ging'e maber gik ma oganda kalo e iye.",
+  "About.step1Label": "Ripodh",
+  "About.step2Label": "Ng'e kit wach",
+  "About.step3Label": "Kel lokruok",
+  "About.heroIntro": "WatchTower chakore gi paro mayot: miyo ji yot ripodho gima timore, eka miyo ripode go bedo gi ohala moloyo ka ok wawil gi ji ma ni chien mag ripode go."
 }

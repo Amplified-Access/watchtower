@@ -79,7 +79,7 @@ type AboutQueryResult = { about: Omit<AboutPageContent, "home"> | null; home: Sh
 export const getAboutPage = cache(async (locale: string): Promise<AboutPageContent> => {
   const result = await sanityFetch<AboutQueryResult>(ABOUT_PAGE_QUERY, { locale });
   return {
-    hero: { title: "" },
+    hero: { title: "", description: "" },
     steps: [],
     languages: { heading: "", description: "" },
     audiences: { heading: "", items: [] },

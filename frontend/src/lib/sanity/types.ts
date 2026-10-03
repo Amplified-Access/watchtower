@@ -130,9 +130,9 @@ export interface HomePageContent extends SharedHomeSections {
 }
 
 export interface AboutPageContent {
-  hero: { title: string };
-  /** `title` may hold line breaks. Shown with their videos, in order. */
-  steps: { _key: string; title: string; description: string }[];
+  hero: { title: string; description: string };
+  /** `title` may hold line breaks. Shown with their number and screenshots, in order. */
+  steps: { _key: string; label: string; title: string; description: string }[];
   /** `description` may contain {count}, the number of languages. */
   languages: { heading: string; description: string };
   /** `heading` may hold line breaks. */

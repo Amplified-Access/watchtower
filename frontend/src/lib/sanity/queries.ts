@@ -134,8 +134,8 @@ export const HOME_PAGE_QUERY = `*[_id == "homePage"][0] {
 
 export const ABOUT_PAGE_QUERY = `{
   "about": *[_id == "aboutPage"][0] {
-    "hero": { ${texts({ title: "hero.title" })} },
-    "steps": coalesce(steps[]{ _key, ${texts({ title: "title", description: "description" })} }, []),
+    "hero": { ${texts({ title: "hero.title", description: "hero.description" })} },
+    "steps": coalesce(steps[]{ _key, ${texts({ label: "label", title: "title", description: "description" })} }, []),
     "languages": { ${texts({ heading: "languages.heading", description: "languages.description" })} },
     "audiences": {
       ${texts({ heading: "audiences.heading" })},

@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Gabaasni to'attoota WatchTower mirkanaa'an qofaan ilaalama. Galmeen keessan odeeffannoo eenyummaa waliin uummataaf yeroo kamiyyuu hin qoodamu.",
   "About.faqVisibilityQuestion": "Gabaasa koo eenyutu argu danda'a?",
   "About.heroDescription": "WatchTower marsariitii ogummaa uummataa hawaasa irratti xiyyeeffate kan AI fi teknoolojii afaan naannoo fayyadamuun namoonni dhimmoota, sodaawwan fi cabiinsa mirgaa afaan mataa isaaniitiin akka gabaasan dandeessisuu fi gabaasa kana hubannoo itti gaafatamummaa fi deebii kennuuf fayyadu godhu.",
-  "About.heroTitle": "Dubbadhu . Qindeessi . Raawwadhu",
+  "About.heroTitle": "Sagalee dhuunfaa gara tarkaanfiitti jijjiiruu",
   "About.languagesDescription": "WatchTower afaanota namoonni dhugumaan itti fayyadaman irratti hundaa'ee kan qophaa'e dha. Afaan yeroo gabaasaa hunda keessatti mul'ata; namoonni uumamaan akka dubbatan gargaaree odeeffannoon afaanota adda addaa keessatti akka hubatamu taasisa.",
   "About.languagesTitle": "Afaanota Deggeraman",
   "About.objectiveDescription": "Namni hundi afaan dubbatuun dhimma hawaasaa gabaasuu akka danda'u mirkaneessuu, kanaanis sagaleen tokko iyyuu utuu hin dhaga'amiin akka hin hafne, namni hundis warra itti gaafatamummaa qaban gaafachuu keessatti akka hirmaatu.",
@@ -160,5 +160,9 @@
   "About.audienceOrganisationsDescription": "Gabaasota fudhadhu, gamaaggami, diriirsaawwan bulchi fi haalawwan hawaasa keessatti mul'atan adda baasi.",
   "About.audienceEvidenceLabel": "Fayyadamtoota ragaa",
   "About.audienceEvidenceTitle": "Waan gabaasonni mul'isan qoradhu.",
-  "About.audienceEvidenceDescription": "Qorattoonni, gaazexeessitoonni fi dhaabbileen faayidaa ummataa gabaasota, bakkeewwan fi adeemsa qorachuun waan hawaasni keessa darbaa jiru caalaatti hubachuu danda'u."
+  "About.audienceEvidenceDescription": "Qorattoonni, gaazexeessitoonni fi dhaabbileen faayidaa ummataa gabaasota, bakkeewwan fi adeemsa qorachuun waan hawaasni keessa darbaa jiru caalaatti hubachuu danda'u.",
+  "About.step1Label": "Gabaasi",
+  "About.step2Label": "Adeemsa hubadhu",
+  "About.step3Label": "Tarkaanfii fidi",
+  "About.heroIntro": "WatchTower yaada salphaa tokkoon jalqaba: namoonni waan ta'aa jiru akka salphaatti gabaasan gochuu, achiis namoota gabaasa sana duuba jiran osoo hin dagatin gabaasota sana caalaatti faayidaa qabeessa gochuu."
 }

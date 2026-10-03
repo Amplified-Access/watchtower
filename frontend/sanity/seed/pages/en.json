@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Reports are reviewed only by verified WatchTower administrators. Your submission is never shared publicly with any identifying information attached.",
   "About.faqVisibilityQuestion": "Who can see my report?",
   "About.heroDescription": "WatchTower is a community-centred, multilingual reporting and civic intelligence tool that enables people to report civic incidents and rights violations in the languages they speak.",
-  "About.heroTitle": "Speak . Organise . Act",
+  "About.heroTitle": "Turning individual voices into action",
   "About.languagesDescription": "WatchTower is designed around the languages people actually use. Language remains visible throughout the reporting experience, helping people speak naturally while making information understandable across languages.",
   "About.languagesTitle": "Supported languages",
   "About.objectiveDescription": "By helping reports become understandable, organised and connected, WatchTower makes it easier to see what communities are experiencing and where patterns may be emerging.",
@@ -160,5 +160,9 @@
   "About.audienceOrganisationsDescription": "Receive and review reports, manage deployments and identify patterns across communities.",
   "About.audienceEvidenceLabel": "Evidence users",
   "About.audienceEvidenceTitle": "Explore what the reports reveal.",
-  "About.audienceEvidenceDescription": "Researchers, journalists and public-interest organisations can explore reports, locations and trends to better understand what communities are experiencing."
+  "About.audienceEvidenceDescription": "Researchers, journalists and public-interest organisations can explore reports, locations and trends to better understand what communities are experiencing.",
+  "About.step1Label": "Report",
+  "About.step2Label": "Understand trends",
+  "About.step3Label": "Drive action",
+  "About.heroIntro": "WatchTower begins with a simple idea: make it easier for people to report what is happening, then make those reports more useful without losing sight of the people behind them."
 }

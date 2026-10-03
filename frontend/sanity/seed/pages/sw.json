@@ -61,7 +61,7 @@
   "About.faqVisibilityAnswer": "Ripoti zinakaguliwa tu na wasimamizi wa WatchTower waliothibitishwa. Uwasilishaji wako hauwahi kushirikiwa hadharani na taarifa yoyote ya utambulisho iliyoambatanishwa.",
   "About.faqVisibilityQuestion": "Ni nani anayeweza kuona ripoti yangu?",
   "About.heroDescription": "WatchTower ni jukwaa la akili ya kiraia linalozingatia jamii linalotumia AI na teknolojia za lugha za ndani kuwawezesha watu kuripoti matukio, hatari na ukiukaji wa haki katika lugha zao wenyewe, na kubadilisha ripoti hizi kuwa maarifa yanayoweza kutumika kwa uwajibikaji na mwitikio.",
-  "About.heroTitle": "Sema . Panga . Tenda",
+  "About.heroTitle": "Kugeuza sauti za mtu mmoja kuwa hatua",
   "About.languagesDescription": "WatchTower imeundwa kuzunguka lugha ambazo watu wanazitumia kweli. Lugha inaonekana katika hatua zote za kuripoti, ikiwasaidia watu kuongea kwa kawaida huku taarifa zikieleweka katika lugha mbalimbali.",
   "About.languagesTitle": "Lugha zinazotumika",
   "About.objectiveDescription": "Kuhakikisha kila mtu ana uwezo wa kuripoti matukio ya kiraia katika lugha anayozungumza, ili sauti isikose kusikika na kila mtu aweze kushiriki katika kuwawajibisha wanaohusika.",
@@ -160,5 +160,9 @@
   "About.audienceOrganisationsDescription": "Pokea na kukagua ripoti, simamia upelekaji na utambue mifumo katika jamii mbalimbali.",
   "About.audienceEvidenceLabel": "Watumiaji wa ushahidi",
   "About.audienceEvidenceTitle": "Chunguza kile ripoti zinachoonyesha.",
-  "About.audienceEvidenceDescription": "Watafiti, waandishi wa habari na mashirika ya maslahi ya umma wanaweza kuchunguza ripoti, maeneo na mielekeo ili kuelewa vizuri zaidi kile jamii zinachopitia."
+  "About.audienceEvidenceDescription": "Watafiti, waandishi wa habari na mashirika ya maslahi ya umma wanaweza kuchunguza ripoti, maeneo na mielekeo ili kuelewa vizuri zaidi kile jamii zinachopitia.",
+  "About.step1Label": "Ripoti",
+  "About.step2Label": "Elewa mielekeo",
+  "About.step3Label": "Leta hatua",
+  "About.heroIntro": "WatchTower inaanza na wazo rahisi: kuwarahisishia watu kuripoti kinachotokea, kisha kufanya ripoti hizo kuwa na manufaa zaidi bila kuwasahau watu walio nyuma yake."
 }
