@@ -103,8 +103,8 @@ interface GlobeMapProps {
    * zooming or popups (Mapbox attaches no listeners) and no pointer.
    */
   interactive?: boolean;
-  /** Space kept clear around the data when framing it, in px, on every side (overrides the default). */
-  padding?: number;
+  /** Space kept clear around the data when framing it, in px: one value for every side, or per side (overrides the default). */
+  padding?: number | { top: number; bottom: number; left: number; right: number };
 }
 
 const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(

@@ -26,6 +26,8 @@
   overflow: hidden;
   border-radius: 0.75rem;
   background: #fff;
+  /* Dissolves into the page at the bottom, as the step screenshots did. */
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
   font-family: var(--font-title);
   color: #000;
   user-select: none;

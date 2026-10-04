@@ -23,12 +23,16 @@ const FILTERS = {
 const noop = () => {};
 
 // The margin kept clear around the data: a share of the frame's shorter
-// side, so a phone's small frame doesn't zoom out to the whole world.
+// side, so a phone's small frame doesn't zoom out to the whole world. The
+// bottom keeps the data in the top 70% of the frame, where its fade (from
+// 55% down) has barely begun, so no cluster fades out; clearing the whole
+// fade would zoom out to most of the world.
 const MARGIN = 0.15;
+const BOTTOM = 0.3;
 
 const LiveMapPreview = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const [padding, setPadding] = useState<number | null>(null);
+  const [padding, setPadding] = useState<{ top: number; bottom: number; left: number; right: number } | null>(null);
   const { points } = useLivePreviewData(FILTERS);
 
   // Measured before the map is created, so its first framing uses it.
@@ -36,7 +40,8 @@ const LiveMapPreview = () => {
     const el = ref.current;
     if (!el) return;
     const { width, height } = el.getBoundingClientRect();
-    setPadding(Math.round(Math.min(width, height) * MARGIN));
+    const margin = Math.round(Math.min(width, height) * MARGIN);
+    setPadding({ top: margin, left: margin, right: margin, bottom: Math.round(height * BOTTOM) });
   }, []);
 
   return (
