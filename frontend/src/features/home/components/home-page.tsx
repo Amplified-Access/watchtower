@@ -23,6 +23,7 @@ import LanguageMarquee from "@/components/common/language-marquee";
 import StepConnector from "@/components/common/step-connector";
 // import ScrollFadeText from "@/components/common/scroll-fade-text";
 import LivePreviewSection from "@/features/home/components/live-preview-section";
+import TrendsInfographic from "@/features/home/components/trends-infographic";
 import VoiceReportInfographic from "@/features/home/components/voice-report-infographic";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
@@ -46,6 +47,12 @@ const STEP_VIDEOS = ["home-report", "home-maps", "home-case-studies"].map((name)
   width: 1080,
   height: 850,
 }));
+
+// Experiment: steps whose clip is replaced by an animated illustration.
+const STEP_INFOGRAPHICS: Record<number, React.ReactNode> = {
+  0: <VoiceReportInfographic />,
+  1: <TrendsInfographic />,
+};
 
 // The home page. Its text comes from the `homePage` document in Sanity (see
 // app/(main)/page.tsx); only the "Step {number}" label is UI copy.
@@ -204,11 +211,9 @@ const HomePage = ({ content }: { content: HomePageContent }) => {
                   />
                 )}
                 <div className={cn(index % 2 === 1 && "md:order-2")}>
-                  {index === 0 ? (
-                    // Experiment: an animated illustration instead of the clip.
-                    <div className="overflow-hidden rounded-xl">
-                      <VoiceReportInfographic />
-                    </div>
+                  {STEP_INFOGRAPHICS[index] ? (
+                    // Experiment: animated illustrations instead of the clips.
+                    <div className="overflow-hidden rounded-xl">{STEP_INFOGRAPHICS[index]}</div>
                   ) : STEP_VIDEOS[index] ? (
                     // Rounded like the placeholder card it replaces. The wrapper
                     // does the clipping: browsers don't reliably round a video itself.

@@ -8,7 +8,8 @@ import styles from "./voice-report-infographic.module.css";
 // built from HTML and CSS keyframes (see the stylesheet for the timeline),
 // so it stays sharp at any size and costs no video download. Decorative: the
 // step's text says what it shows. The words in it are part of the picture,
-// like the text in the videos it replaces, so they aren't translated.
+// like the text in the videos it replaces, so they aren't translated. The
+// category is one of the maps' incident types.
 
 // Waveform bars: height, oscillation period and offset, varied so the bars
 // don't move in step.
@@ -65,7 +66,7 @@ const VoiceReportInfographic = () => {
               <span className={`${styles.placeholder} ${styles.placeholderCategory}`}>Select incident type…</span>
               <span className={`${styles.value} ${styles.valueCategory}`}>
                 <span className={styles.dot} />
-                Water and sanitation
+                Community petitions
               </span>
               <Chevron />
             </div>
