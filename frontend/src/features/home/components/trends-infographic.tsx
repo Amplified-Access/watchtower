@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import InfographicBackdrop from "./infographic-backdrop";
 import styles from "./trends-infographic.module.css";
 
 // How it works, step 2: reports becoming insight. A 12-week trend draws
@@ -64,8 +65,7 @@ const TrendsInfographic = () => {
 
   return (
     <div ref={ref} className={styles.root} data-paused={paused} aria-hidden="true">
-      {/* eslint-disable-next-line @next/next/no-img-element -- a decorative texture, no sizing needed */}
-      <img src="/brand/Pattern.svg" alt="" className={styles.dots} />
+      <InfographicBackdrop />
 
       <div className={`${styles.card} ${styles.trend}`}>
         <div className={styles.windowDots}>

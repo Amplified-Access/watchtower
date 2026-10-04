@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import InfographicBackdrop from "./infographic-backdrop";
 import styles from "./voice-report-infographic.module.css";
 
 // How it works, step 1: a voice report, one stage at a time. A single white
@@ -50,8 +51,7 @@ const VoiceReportInfographic = () => {
 
   return (
     <div ref={ref} className={styles.root} data-paused={paused} aria-hidden="true">
-      {/* eslint-disable-next-line @next/next/no-img-element -- a decorative texture, no sizing needed */}
-      <img src="/brand/Pattern.svg" alt="" className={styles.dots} />
+      <InfographicBackdrop />
 
       <div className={`${styles.centre} ${styles.halo}`}>
         <span />

@@ -32,7 +32,9 @@
   aspect-ratio: 1080 / 850;
   width: 100%;
   overflow: hidden;
-  background: var(--blue);
+  isolation: isolate;
+  /* The About hero's gradient, grain and pattern: infographic-backdrop.tsx. */
+  background: #fff;
   font-family: var(--font-title);
   color: #000;
   user-select: none;
@@ -55,15 +57,6 @@
   }
 }
 
-.dots {
-  position: absolute;
-  right: -20%;
-  top: -10%;
-  width: 80%;
-  opacity: 0.3;
-  transform: rotate(180deg);
-  pointer-events: none;
-}
 
 .card {
   position: absolute;
