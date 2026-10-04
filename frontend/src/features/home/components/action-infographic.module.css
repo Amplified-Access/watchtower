@@ -1,34 +1,31 @@
 /*
- * The How it works step 3 illustration: an action plan worked through,
- * following up step 2's emerging pattern. One 12-second cycle (--cycle);
- * every keyframe is a percentage of it, so the loop is seamless. Timeline:
+ * How it works, step 3: the outcomes of acting on reports, arriving one
+ * after another in the middle of the blue panel. Only the outcomes, no
+ * surrounding text. One 12-second cycle (--cycle); every keyframe is a
+ * percentage of it, so the loop is seamless:
  *
- *   1.0s 2.4s 3.8s 5.2s 6.6s   the five tasks are checked off, one by one:
- *                              the box fills, the check draws, the task is
- *                              struck through, the progress steps forward
- *   1.3s 2.7s 4.1s             the case file gains a report, the evidence,
- *                              the partner brief
- *   5.6s                       "Shared with the district council"
- *   10.2s                      it all clears, and the plan resets
+ *   0.6s  1.9s  3.2s  4.5s   an outcome rises into place; its check pops and draws, then its text settles
+ *   9.3s  9.55s  9.8s  10.05s   they lift away in the same order; idle until the loop restarts
  *
- * The keyframes at the end of this file share one pattern, offset per task
- * (by 1.4s, 11.67% of the cycle): retime the tasks by editing all five
- * together, and the progress, count, case file and toast with them. Sizes are in cqw, so it scales as
- * one picture like steps 1 and 2. The base styles are the finished plan:
- * what readers who ask for reduced motion see.
+ * The per-outcome keyframes at the end share one pattern, offset per item:
+ * retime them together. Sizes are in cqw, so it scales as one picture like
+ * steps 1 and 2. The base styles show every outcome: what readers who ask
+ * for reduced motion see.
  */
 
 .root {
   --cycle: 12s;
   --ease: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Arrivals settle with a little give. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   /* The brand's colours only (globals.css). */
   --blue: #0042e7;
-  --line: #e2e2e2;
-  --muted: rgb(0 0 0 / 0.55);
   position: relative;
   container-type: inline-size;
+  display: grid;
   aspect-ratio: 1080 / 850;
   width: 100%;
+  place-items: center;
   overflow: hidden;
   background: var(--blue);
   font-family: var(--font-title);
@@ -55,523 +52,159 @@
 
 .dots {
   position: absolute;
-  left: -16%;
-  top: -14%;
-  width: 78%;
+  right: -18%;
+  bottom: -10%;
+  width: 80%;
   opacity: 0.3;
   pointer-events: none;
 }
 
-.card {
-  position: absolute;
+/* What's showing stays centred: with k of the 4 outcomes in, the stack sits
+   (4 - k) half-steps lower, and slides up as each new one arrives. A step
+   is an outcome's height (8.8cqw: 4.4cqw check + 2 x 2.2cqw padding) plus
+   the gap, 10.8cqw. */
+.outcomes {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+  animation-name: stack;
+}
+
+.outcome {
+  display: flex;
+  width: 52cqw;
+  align-items: center;
+  gap: 2cqw;
+  padding: 2.2cqw 2.8cqw;
   border-radius: 2cqw;
   background: #fff;
   box-shadow: 0 2cqw 5cqw rgb(0 0 0 / 0.16);
 }
 
-.windowDots {
-  position: absolute;
-  top: 1.8cqw;
-  left: 2cqw;
-  display: flex;
-  gap: 0.7cqw;
-}
-
-.windowDots span {
-  width: 1cqw;
-  height: 1cqw;
-  border-radius: 50%;
-  background: var(--line);
-}
-
-.cardLabel {
-  font-size: 1.5cqw;
-  font-weight: 500;
-  color: var(--muted);
-}
-
-/* ── The action plan ───────────────────────────────────────────────────── */
-
-.plan {
-  top: 7cqw;
-  left: 37cqw;
-  width: 58cqw;
-  padding: 4.4cqw 3.6cqw 2.4cqw;
-}
-
-.planHeader {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2cqw;
-}
-
-.title {
-  margin-top: 0.5cqw;
-  font-size: 3.2cqw;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-/* "n of 5 done": one label per count, cross-fading. */
-.count {
-  position: relative;
-  width: 12cqw;
-  height: 2cqw;
-  font-size: 1.5cqw;
-  color: var(--muted);
-}
-
-.count span {
-  position: absolute;
-  inset: 0;
-  text-align: right;
-  white-space: nowrap;
-  opacity: 0;
-}
-
-.count span:last-child {
-  opacity: 1;
-}
-
-.progress {
-  height: 1cqw;
-  margin-top: 1.6cqw;
-  border-radius: 99cqw;
-  background: #f3f3f3;
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  border-radius: 99cqw;
-  background: var(--blue);
-  clip-path: inset(0 0 0 0 round 99cqw);
-  animation-name: progress;
-}
-
-.tasks {
-  margin-top: 1.4cqw;
-}
-
-.task {
-  position: relative;
-  display: flex;
-  height: 5.6cqw;
-  align-items: center;
-  gap: 1.8cqw;
-  padding: 0 1.2cqw;
-  margin: 0 -1.2cqw;
-  border-radius: 1cqw;
-}
-
-.task + .task::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 1.2cqw;
-  right: 1.2cqw;
-  /* Scaled with the picture: a fixed 1px rounds to uneven greys. */
-  height: 0.12cqw;
-  background: var(--line);
-}
-
-/* The task being worked on is lit for a moment. */
-.flash {
-  position: absolute;
-  inset: 0;
-  border-radius: 1cqw;
-  background: #f3f3f3;
-  opacity: 0;
-}
-
-.box {
-  position: relative;
-  z-index: 1;
+.check {
   flex-shrink: 0;
-  width: 2.6cqw;
-  height: 2.6cqw;
-  border: 0.18cqw solid #c4c4c4;
-  border-radius: 0.6cqw;
-}
-
-.boxFill {
-  position: absolute;
-  inset: -0.18cqw;
-  display: grid;
-  place-items: center;
-  border-radius: 0.6cqw;
-  background: var(--blue);
-}
-
-.boxFill svg {
-  width: 1.8cqw;
-  height: 1.8cqw;
+  width: 4.4cqw;
+  height: 4.4cqw;
 }
 
 .tick {
-  stroke-dasharray: 20;
+  stroke-dasharray: 30;
   stroke-dashoffset: 0;
 }
 
-.taskText {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  font-size: 1.85cqw;
-  white-space: nowrap;
-}
-
-.label {
-  position: relative;
-  color: var(--muted);
-}
-
-/* The line drawn through a finished task. */
-.strike {
-  position: absolute;
-  top: 52%;
-  left: 0;
-  right: 0;
-  height: 0.14cqw;
-  background: var(--muted);
-  transform-origin: left center;
-}
-
-.due {
-  position: relative;
-  z-index: 1;
-  font-size: 1.4cqw;
-  color: var(--muted);
-}
-
-/* ── The case file ─────────────────────────────────────────────────────── */
-
-.caseFile {
-  left: 4cqw;
-  bottom: 6cqw;
-  z-index: 1;
-  /* Clear of the plan's checkboxes. */
-  width: 31cqw;
-  padding: 2.6cqw 2.8cqw 2.4cqw;
-}
-
-.caseHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.9cqw;
-}
-
-.caseHeader svg {
-  width: 2cqw;
-  height: 2cqw;
-  color: var(--blue);
-}
-
-.caseTitle {
-  font-size: 1.9cqw;
+.text {
+  font-size: 2.4cqw;
   font-weight: 600;
-}
-
-.items {
-  display: flex;
-  flex-direction: column;
-  gap: 1cqw;
-  margin-top: 1.8cqw;
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  gap: 1.2cqw;
-  padding: 1cqw 1.2cqw;
-  border-radius: 1cqw;
-  background: #f3f3f3;
-  font-size: 1.55cqw;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 
-.item svg {
-  flex-shrink: 0;
-  width: 1.8cqw;
-  height: 1.8cqw;
-  color: var(--blue);
+@keyframes stack {
+  /* One outcome in (from 0.6s): three half-steps low. */
+  0%, 15.83% { transform: translateY(16.2cqw); animation-timing-function: var(--ease-out); }
+  /* Each arrival (1.9s, 3.2s, 4.5s) lifts it half a step, in time. */
+  21.67%, 26.67% { transform: translateY(10.8cqw); animation-timing-function: var(--ease-out); }
+  32.5%, 37.5% { transform: translateY(5.4cqw); animation-timing-function: var(--ease-out); }
+  43.33%, 87.92% { transform: translateY(0); }
+  /* Back down once the last outcome has lifted away (unseen). */
+  88.33%, 100% { transform: translateY(16.2cqw); }
 }
 
-.itemMeta {
-  margin-left: auto;
-  font-size: 1.3cqw;
-  color: var(--muted);
+/* ── Timeline ──────────────────────────────────────────────────────────── */
+
+/* Outcome 1: arrives at 0.6s, lifts away at 9.3s */
+@keyframes outcome-1 {
+  0%, 5% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
+  10.83%, 77.5% { opacity: 1; transform: none; }
+  81.67%, 100% { opacity: 0; transform: translateY(-2cqw); }
 }
-
-/* ── Shared ────────────────────────────────────────────────────────────── */
-
-.toast {
-  top: 59cqw;
-  left: 41cqw;
-  display: flex;
-  align-items: center;
-  gap: 1.4cqw;
-  padding: 2cqw 2.6cqw;
-  font-size: 1.85cqw;
-  font-weight: 600;
-  white-space: nowrap;
-  animation-name: toast;
-}
-
-.toast svg {
-  width: 3.2cqw;
-  height: 3.2cqw;
-}
-
-/* ── Generated keyframes ───────────────────────────────────────────────── */
-
-@keyframes progress {
-  0%, 10.42% { clip-path: inset(0 100% 0 0 round 99cqw); }
-  14.17%, 22.08% { clip-path: inset(0 80% 0 0 round 99cqw); }
-  25.83%, 33.75% { clip-path: inset(0 60% 0 0 round 99cqw); }
-  37.5%, 45.42% { clip-path: inset(0 40% 0 0 round 99cqw); }
-  49.17%, 57.08% { clip-path: inset(0 20% 0 0 round 99cqw); }
-  60.83%, 85% { clip-path: inset(0 0% 0 0 round 99cqw); }
-  90.83%, 100% { clip-path: inset(0 100% 0 0 round 99cqw); }
-}
-
-@keyframes count-0 {
-  0%, 10.42% { opacity: 1; }
-  12.08%, 89.17% { opacity: 0; }
-  90.83%, 100% { opacity: 1; }
-}
-
-.count span:nth-child(1) { animation-name: count-0; }
-
-@keyframes count-1 {
-  0%, 10.42% { opacity: 0; }
-  12.08%, 22.08% { opacity: 1; }
-  23.75%, 100% { opacity: 0; }
-}
-
-.count span:nth-child(2) { animation-name: count-1; }
-
-@keyframes count-2 {
-  0%, 22.08% { opacity: 0; }
-  23.75%, 33.75% { opacity: 1; }
-  35.42%, 100% { opacity: 0; }
-}
-
-.count span:nth-child(3) { animation-name: count-2; }
-
-@keyframes count-3 {
-  0%, 33.75% { opacity: 0; }
-  35.42%, 45.42% { opacity: 1; }
-  47.08%, 100% { opacity: 0; }
-}
-
-.count span:nth-child(4) { animation-name: count-3; }
-
-@keyframes count-4 {
-  0%, 45.42% { opacity: 0; }
-  47.08%, 57.08% { opacity: 1; }
-  58.75%, 100% { opacity: 0; }
-}
-
-.count span:nth-child(5) { animation-name: count-4; }
-
-@keyframes count-5 {
-  0%, 57.08% { opacity: 0; }
-  58.75%, 85% { opacity: 1; }
-  86.67%, 100% { opacity: 0; }
-}
-
-.count span:nth-child(6) { animation-name: count-5; }
-
-/* Task 1, checked at 1.0s */
-@keyframes flash-1 {
-  0%, 5.42% { opacity: 0; }
-  7.5%, 12.08% { opacity: 1; }
-  15%, 100% { opacity: 0; }
-}
-@keyframes fill-1 {
-  0%, 8.33% { opacity: 0; transform: scale(0.6); }
-  9.83% { opacity: 1; transform: scale(1.08); }
-  11%, 85% { opacity: 1; transform: scale(1); }
-  90.83%, 100% { opacity: 0; transform: scale(1); }
+@keyframes check-1 {
+  0%, 6.67% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
+  9.58% { transform: scale(1.1); }
+  11.25%, 100% { transform: scale(1); }
 }
 @keyframes tick-1 {
-  0%, 9.17% { stroke-dashoffset: 20; }
+  0%, 8.33% { stroke-dashoffset: 30; }
   12.08%, 100% { stroke-dashoffset: 0; }
 }
-@keyframes label-1 {
-  0%, 9.17% { color: #000; }
-  12.5%, 85% { color: var(--muted); }
-  90.83%, 100% { color: #000; }
+@keyframes text-1 {
+  0%, 7.5% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
+  12.5%, 100% { opacity: 1; transform: none; }
 }
-@keyframes strike-1 {
-  0%, 9.58% { transform: scaleX(0); opacity: 1; }
-  13.33%, 85% { transform: scaleX(1); opacity: 1; }
-  90.83% { transform: scaleX(1); opacity: 0; }
-  91.25%, 100% { transform: scaleX(0); opacity: 0; }
-}
-.task:nth-child(1) .flash { animation-name: flash-1; }
-.task:nth-child(1) .boxFill { animation-name: fill-1; }
-.task:nth-child(1) .tick { animation-name: tick-1; }
-.task:nth-child(1) .label { animation-name: label-1; }
-.task:nth-child(1) .strike { animation-name: strike-1; }
+.outcome:nth-child(1) { animation-name: outcome-1; }
+.outcome:nth-child(1) .check { animation-name: check-1; }
+.outcome:nth-child(1) .tick { animation-name: tick-1; }
+.outcome:nth-child(1) .text { animation-name: text-1; }
 
-/* Task 2, checked at 2.4s */
-@keyframes flash-2 {
-  0%, 17.08% { opacity: 0; }
-  19.17%, 23.75% { opacity: 1; }
-  26.67%, 100% { opacity: 0; }
+/* Outcome 2: arrives at 1.9s, lifts away at 9.55s */
+@keyframes outcome-2 {
+  0%, 15.83% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
+  21.67%, 79.58% { opacity: 1; transform: none; }
+  83.75%, 100% { opacity: 0; transform: translateY(-2cqw); }
 }
-@keyframes fill-2 {
-  0%, 20% { opacity: 0; transform: scale(0.6); }
-  21.5% { opacity: 1; transform: scale(1.08); }
-  22.67%, 85% { opacity: 1; transform: scale(1); }
-  90.83%, 100% { opacity: 0; transform: scale(1); }
+@keyframes check-2 {
+  0%, 17.5% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
+  20.42% { transform: scale(1.1); }
+  22.08%, 100% { transform: scale(1); }
 }
 @keyframes tick-2 {
-  0%, 20.83% { stroke-dashoffset: 20; }
-  23.75%, 100% { stroke-dashoffset: 0; }
+  0%, 19.17% { stroke-dashoffset: 30; }
+  22.92%, 100% { stroke-dashoffset: 0; }
 }
-@keyframes label-2 {
-  0%, 20.83% { color: #000; }
-  24.17%, 85% { color: var(--muted); }
-  90.83%, 100% { color: #000; }
+@keyframes text-2 {
+  0%, 18.33% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
+  23.33%, 100% { opacity: 1; transform: none; }
 }
-@keyframes strike-2 {
-  0%, 21.25% { transform: scaleX(0); opacity: 1; }
-  25%, 85% { transform: scaleX(1); opacity: 1; }
-  90.83% { transform: scaleX(1); opacity: 0; }
-  91.25%, 100% { transform: scaleX(0); opacity: 0; }
-}
-.task:nth-child(2) .flash { animation-name: flash-2; }
-.task:nth-child(2) .boxFill { animation-name: fill-2; }
-.task:nth-child(2) .tick { animation-name: tick-2; }
-.task:nth-child(2) .label { animation-name: label-2; }
-.task:nth-child(2) .strike { animation-name: strike-2; }
+.outcome:nth-child(2) { animation-name: outcome-2; }
+.outcome:nth-child(2) .check { animation-name: check-2; }
+.outcome:nth-child(2) .tick { animation-name: tick-2; }
+.outcome:nth-child(2) .text { animation-name: text-2; }
 
-/* Task 3, checked at 3.8s */
-@keyframes flash-3 {
-  0%, 28.75% { opacity: 0; }
-  30.83%, 35.42% { opacity: 1; }
-  38.33%, 100% { opacity: 0; }
+/* Outcome 3: arrives at 3.2s, lifts away at 9.8s */
+@keyframes outcome-3 {
+  0%, 26.67% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
+  32.5%, 81.67% { opacity: 1; transform: none; }
+  85.83%, 100% { opacity: 0; transform: translateY(-2cqw); }
 }
-@keyframes fill-3 {
-  0%, 31.67% { opacity: 0; transform: scale(0.6); }
-  33.17% { opacity: 1; transform: scale(1.08); }
-  34.33%, 85% { opacity: 1; transform: scale(1); }
-  90.83%, 100% { opacity: 0; transform: scale(1); }
+@keyframes check-3 {
+  0%, 28.33% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
+  31.25% { transform: scale(1.1); }
+  32.92%, 100% { transform: scale(1); }
 }
 @keyframes tick-3 {
-  0%, 32.5% { stroke-dashoffset: 20; }
-  35.42%, 100% { stroke-dashoffset: 0; }
+  0%, 30% { stroke-dashoffset: 30; }
+  33.75%, 100% { stroke-dashoffset: 0; }
 }
-@keyframes label-3 {
-  0%, 32.5% { color: #000; }
-  35.83%, 85% { color: var(--muted); }
-  90.83%, 100% { color: #000; }
+@keyframes text-3 {
+  0%, 29.17% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
+  34.17%, 100% { opacity: 1; transform: none; }
 }
-@keyframes strike-3 {
-  0%, 32.92% { transform: scaleX(0); opacity: 1; }
-  36.67%, 85% { transform: scaleX(1); opacity: 1; }
-  90.83% { transform: scaleX(1); opacity: 0; }
-  91.25%, 100% { transform: scaleX(0); opacity: 0; }
-}
-.task:nth-child(3) .flash { animation-name: flash-3; }
-.task:nth-child(3) .boxFill { animation-name: fill-3; }
-.task:nth-child(3) .tick { animation-name: tick-3; }
-.task:nth-child(3) .label { animation-name: label-3; }
-.task:nth-child(3) .strike { animation-name: strike-3; }
+.outcome:nth-child(3) { animation-name: outcome-3; }
+.outcome:nth-child(3) .check { animation-name: check-3; }
+.outcome:nth-child(3) .tick { animation-name: tick-3; }
+.outcome:nth-child(3) .text { animation-name: text-3; }
 
-/* Task 4, checked at 5.2s */
-@keyframes flash-4 {
-  0%, 40.42% { opacity: 0; }
-  42.5%, 47.08% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+/* Outcome 4: arrives at 4.5s, lifts away at 10.05s */
+@keyframes outcome-4 {
+  0%, 37.5% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
+  43.33%, 83.75% { opacity: 1; transform: none; }
+  87.92%, 100% { opacity: 0; transform: translateY(-2cqw); }
 }
-@keyframes fill-4 {
-  0%, 43.33% { opacity: 0; transform: scale(0.6); }
-  44.83% { opacity: 1; transform: scale(1.08); }
-  46%, 85% { opacity: 1; transform: scale(1); }
-  90.83%, 100% { opacity: 0; transform: scale(1); }
+@keyframes check-4 {
+  0%, 39.17% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
+  42.08% { transform: scale(1.1); }
+  43.75%, 100% { transform: scale(1); }
 }
 @keyframes tick-4 {
-  0%, 44.17% { stroke-dashoffset: 20; }
-  47.08%, 100% { stroke-dashoffset: 0; }
+  0%, 40.83% { stroke-dashoffset: 30; }
+  44.58%, 100% { stroke-dashoffset: 0; }
 }
-@keyframes label-4 {
-  0%, 44.17% { color: #000; }
-  47.5%, 85% { color: var(--muted); }
-  90.83%, 100% { color: #000; }
+@keyframes text-4 {
+  0%, 40% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
+  45%, 100% { opacity: 1; transform: none; }
 }
-@keyframes strike-4 {
-  0%, 44.58% { transform: scaleX(0); opacity: 1; }
-  48.33%, 85% { transform: scaleX(1); opacity: 1; }
-  90.83% { transform: scaleX(1); opacity: 0; }
-  91.25%, 100% { transform: scaleX(0); opacity: 0; }
-}
-.task:nth-child(4) .flash { animation-name: flash-4; }
-.task:nth-child(4) .boxFill { animation-name: fill-4; }
-.task:nth-child(4) .tick { animation-name: tick-4; }
-.task:nth-child(4) .label { animation-name: label-4; }
-.task:nth-child(4) .strike { animation-name: strike-4; }
-
-/* Task 5, checked at 6.6s */
-@keyframes flash-5 {
-  0%, 52.08% { opacity: 0; }
-  54.17%, 58.75% { opacity: 1; }
-  61.67%, 100% { opacity: 0; }
-}
-@keyframes fill-5 {
-  0%, 55% { opacity: 0; transform: scale(0.6); }
-  56.5% { opacity: 1; transform: scale(1.08); }
-  57.67%, 85% { opacity: 1; transform: scale(1); }
-  90.83%, 100% { opacity: 0; transform: scale(1); }
-}
-@keyframes tick-5 {
-  0%, 55.83% { stroke-dashoffset: 20; }
-  58.75%, 100% { stroke-dashoffset: 0; }
-}
-@keyframes label-5 {
-  0%, 55.83% { color: #000; }
-  59.17%, 85% { color: var(--muted); }
-  90.83%, 100% { color: #000; }
-}
-@keyframes strike-5 {
-  0%, 56.25% { transform: scaleX(0); opacity: 1; }
-  60%, 85% { transform: scaleX(1); opacity: 1; }
-  90.83% { transform: scaleX(1); opacity: 0; }
-  91.25%, 100% { transform: scaleX(0); opacity: 0; }
-}
-.task:nth-child(5) .flash { animation-name: flash-5; }
-.task:nth-child(5) .boxFill { animation-name: fill-5; }
-.task:nth-child(5) .tick { animation-name: tick-5; }
-.task:nth-child(5) .label { animation-name: label-5; }
-.task:nth-child(5) .strike { animation-name: strike-5; }
-
-@keyframes item-1 {
-  0%, 10.83% { opacity: 0; transform: translateY(0.8cqw); }
-  14.58%, 85% { opacity: 1; transform: none; }
-  90.83%, 100% { opacity: 0; transform: none; }
-}
-.item:nth-child(1) { animation-name: item-1; }
-
-@keyframes item-2 {
-  0%, 22.5% { opacity: 0; transform: translateY(0.8cqw); }
-  26.25%, 85% { opacity: 1; transform: none; }
-  90.83%, 100% { opacity: 0; transform: none; }
-}
-.item:nth-child(2) { animation-name: item-2; }
-
-@keyframes item-3 {
-  0%, 34.17% { opacity: 0; transform: translateY(0.8cqw); }
-  37.92%, 85% { opacity: 1; transform: none; }
-  90.83%, 100% { opacity: 0; transform: none; }
-}
-.item:nth-child(3) { animation-name: item-3; }
-
-@keyframes toast {
-  0%, 46.67% { opacity: 0; transform: translateY(1.4cqw); }
-  50.83%, 85% { opacity: 1; transform: none; }
-  90.83%, 100% { opacity: 0; transform: translateY(1.4cqw); }
-}
+.outcome:nth-child(4) { animation-name: outcome-4; }
+.outcome:nth-child(4) .check { animation-name: check-4; }
+.outcome:nth-child(4) .tick { animation-name: tick-4; }
+.outcome:nth-child(4) .text { animation-name: text-4; }
