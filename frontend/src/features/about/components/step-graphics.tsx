@@ -1,21 +1,20 @@
 import InfographicBackdrop from "@/features/home/components/infographic-backdrop";
 import { OUTCOMES } from "@/features/home/components/action-infographic";
-import { CATEGORIES, TOTAL, TREND_CHART, WEEKLY } from "@/features/home/components/trends-infographic";
 import { cn } from "@/lib/utils";
 import styles from "./step-graphics.module.css";
 
-// The About page's step illustrations, in order: reporting, understanding
-// trends, driving action. Stills in the home page's illustration language
-// (and its story: a water problem in Kibera, Nairobi, its data and
+// The About page's step illustrations, in order: reporting, seeing the
+// bigger picture, driving action. Pictures in the home page's illustration
+// language (and its story: a water problem in Kibera, Nairobi, and its
 // outcomes), not screenshots. Decorative: each step's text says what it
 // shows. Step 1 is in Swahili, as on the home page, using the site's own
 // Swahili form strings.
 
 type GraphicProps = { className?: string };
 
-const Frame = ({ className, children }: GraphicProps & { children: React.ReactNode }) => (
+const Frame = ({ className, pattern, children }: GraphicProps & { pattern?: boolean; children: React.ReactNode }) => (
   <div aria-hidden="true" className={cn(styles.root, className)}>
-    <InfographicBackdrop />
+    <InfographicBackdrop pattern={pattern} />
     {children}
   </div>
 );
@@ -75,40 +74,47 @@ const ReportGraphic = ({ className }: GraphicProps) => (
   </Frame>
 );
 
-const TrendsGraphic = ({ className }: GraphicProps) => {
-  const max = Math.max(...CATEGORIES.map((c) => c.value));
-  return (
-    <Frame className={className}>
-      <div className={cn(styles.card, styles.trend)}>
-        <p className={styles.cardLabel}>Reports, last 12 weeks</p>
-        <p className={styles.total}>{TOTAL.toLocaleString("en")}</p>
-        <svg className={styles.chart} viewBox={`0 0 ${TREND_CHART.width} 200`}>
-          {TREND_CHART.gridY.map((gy) => (
-            <line key={gy} className={styles.grid} x1="0" x2={TREND_CHART.width} y1={gy} y2={gy} />
-          ))}
-          <path className={styles.area} d={TREND_CHART.area} />
-          <path className={styles.lineMark} d={TREND_CHART.line} />
-          <circle className={styles.endDot} cx={TREND_CHART.end.x} cy={TREND_CHART.end.y} r="7.5" />
-          <text className={styles.endLabel} x={TREND_CHART.end.x - 12} y={TREND_CHART.end.y - 14} textAnchor="end">
-            {WEEKLY[WEEKLY.length - 1]} this week
-          </text>
-        </svg>
-      </div>
-      <div className={cn(styles.card, styles.types)}>
-        <p className={styles.cardLabel}>By incident type</p>
-        <div className={styles.rows}>
-          {CATEGORIES.map(({ label, value }) => (
-            <div key={label} className={styles.row}>
-              <span className={styles.rowLabel}>{label}</span>
-              <span className={styles.bar} style={{ width: `calc(${((value / max) * 14).toFixed(2)} * var(--u))` }} />
-              <span className={styles.value}>{value}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Frame>
-  );
-};
+// "See the bigger picture": an abstract dot map in CommonMind's style. A
+// deterministic field of faint dots, with clusters of reports lit in white
+// (brighter towards their middles) and pulsing gently. No real geography.
+// 80 x 40 dots for the 2:1 frame; on phones the 4:3 frame crops the sides
+// (slice), so the clusters sit towards the middle.
+const MAP_W = 80;
+const MAP_H = 40;
+const CLUSTERS: [number, number, number][] = [
+  [40, 22, 7],
+  [24, 13, 5.5],
+  [55, 11, 4.6],
+  [58, 28, 4.2],
+  [21, 30, 3.8],
+  [66, 18, 2.8],
+];
+const MAP_DOTS = Array.from({ length: MAP_W * MAP_H }, (_, i) => {
+  const x = i % MAP_W;
+  const y = Math.floor(i / MAP_W);
+  const n = Math.abs(Math.sin(x * 7.13 + y * 3.71) * 9301.17) % 1;
+  const near = Math.min(...CLUSTERS.map(([cx, cy, r]) => Math.hypot(x - cx, y - cy) / r));
+  const tone = near < 1 && n > 0.32 ? (n > 0.62 && near < 0.85 ? "lit" : "mid") : n > 0.55 ? "dim" : "base";
+  return { x, y, tone, delay: (i % 13) * 0.27 };
+});
+
+// The backdrop's own dot pattern would muddle the grid, so it's left out.
+const MapGraphic = ({ className }: GraphicProps) => (
+  <Frame className={className} pattern={false}>
+    <svg className={styles.map} viewBox={`0 0 ${MAP_W} ${MAP_H}`} preserveAspectRatio="xMidYMid slice">
+      {MAP_DOTS.map(({ x, y, tone, delay }) => (
+        <circle
+          key={`${x}-${y}`}
+          cx={x + 0.5}
+          cy={y + 0.5}
+          r={tone === "lit" ? 0.3 : 0.26}
+          className={styles[tone]}
+          style={tone === "lit" ? { animationDelay: `${delay}s` } : undefined}
+        />
+      ))}
+    </svg>
+  </Frame>
+);
 
 // The picker wheel, stopped: two done above, the centre just done, two to
 // do below. Angle, scale and content opacity per position.
@@ -141,4 +147,4 @@ const ActionGraphic = ({ className }: GraphicProps) => (
 );
 
 /** One per About step, in order. A step added in Sanity beyond these shows none. */
-export const STEP_GRAPHICS = [ReportGraphic, TrendsGraphic, ActionGraphic];
+export const STEP_GRAPHICS = [ReportGraphic, MapGraphic, ActionGraphic];
