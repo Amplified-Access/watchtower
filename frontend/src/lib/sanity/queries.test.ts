@@ -245,6 +245,7 @@ describe("page queries against the seed", () => {
     const fr = await run<FooterContent>(FOOTER_QUERY, seed, { locale: "fr" });
     expect(en.columns.map((column) => column.links.length)).toEqual([5, 5, 3, 4]);
     expect(en.columns[3].links[1].href).toBe("mailto:hello@amplifiedaccess.org");
+    expect(en.columns[1].links[3].href).toBe("/#faqs");
     expect(en.legalLinks.map((link) => link.href)).toEqual(["/privacy-policy", "/terms-of-service", "/accessibility"]);
     expect(en.social.map((profile) => profile.platform)).toEqual(["linkedin", "x", "youtube"]);
     expect(en.organisation).toEqual({ name: "Amplified Access", url: "https://www.amplifiedaccess.org" });

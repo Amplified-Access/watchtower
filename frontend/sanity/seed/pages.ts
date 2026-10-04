@@ -373,7 +373,7 @@ export const buildPageDocs = (pages: Record<Language, Strings>) => {
     organisation: { name: PUBLISHER.name, url: PUBLISHER.url },
     columns: [
       column("explore", [["maps", "/maps"], ["reports", "/reports"], ["insights", "/insights"], ["askWatchtower", "/chat"], ["alerts", "/alerts"]], 0),
-      column("watchtower", [["about", "/about"], ["howItWorks", "/about"], ["storiesAndInsights", "/insights"], ["faqs", "/faqs"], ["alert", "/alerts"]], 1),
+      column("watchtower", [["about", "/about"], ["howItWorks", "/about"], ["storiesAndInsights", "/insights"], ["faqs", "/#faqs"], ["alert", "/alerts"]], 1),
       column("forOrganisations", [["deployments", "/organizations"], ["organisationSignIn", "/sign-in"], ["createADeployment", "/register-organization"]], 2),
       column("support", [["helpCentre", "/help-centre"], ["contact", `mailto:${PUBLISHER.email}`], ["privacyPolicy", "/privacy-policy"], ["termsOfUse", "/terms-of-service"]], 3),
     ],
