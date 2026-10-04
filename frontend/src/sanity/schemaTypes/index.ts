@@ -3,7 +3,7 @@ import { caseStudyBody } from "./caseStudyBody";
 import { caseStudyCategory } from "./caseStudyCategory";
 import { legalPage } from "./legalPage";
 import { aboutPage, homePage } from "./marketingPages";
-import { faqItem, figure, pageHero, seo, step } from "./pageParts";
+import { faqItem, figure, pageHero, partnerLogo, seo, step } from "./pageParts";
 import { policyBody } from "./policyBody";
 import { seoSettings } from "./seoSettings";
 
@@ -21,4 +21,5 @@ export const schemaTypes = [
   figure,
   step,
   faqItem,
+  partnerLogo,
 ];

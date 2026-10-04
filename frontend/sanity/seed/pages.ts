@@ -175,6 +175,22 @@ export const buildPageDocs = (pages: Record<Language, Strings>) => {
       readStory: string("Home.readStory"),
       sampleTitles: [1, 2, 3].map((n, i) => item("sampleStory", i, { title: string(`Home.insightsFallback${n}Title`) })),
     },
+    // The logos were in public/partners/, shown in this order, ACWJ's at half height.
+    partners: {
+      heading: string("LogoCloud.heading"),
+      logos: [
+        ["acwj", "ACWJ", "small"],
+        ["misr", "Misr", "regular"],
+        ["circular-design-hub", "Circular Design Hub", "regular"],
+        ["cghrds", "CGHRDS", "regular"],
+      ].map(([file, name, size], i) =>
+        item("partnerLogo", i, {
+          name,
+          size,
+          logo: { _type: "image", _sanityAsset: `image@file://./images/${file}.png` },
+        }),
+      ),
+    },
     faqs: {
       label: string("Home.faqsLabel"),
       heading: string("Home.faqsHeading"),

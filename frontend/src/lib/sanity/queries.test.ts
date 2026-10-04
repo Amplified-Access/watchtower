@@ -214,6 +214,20 @@ describe("page queries against the seed", () => {
     expect(home.speakNaturally.title).toBe("Report naturally\nin your language.");
   });
 
+  it("returns the partner logos in order, with their files, and a translated heading", async () => {
+    const en = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "en" });
+    const fr = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "fr" });
+    expect(en.partners.logos.map(({ name, size }) => [name, size])).toEqual([
+      ["ACWJ", "small"],
+      ["Misr", "regular"],
+      ["Circular Design Hub", "regular"],
+      ["CGHRDS", "regular"],
+    ]);
+    expect(en.partners.logos.every(({ logo }) => !!logo.url)).toBe(true);
+    expect(fr.partners.heading).not.toBe(en.partners.heading);
+    expect(fr.partners.logos).toEqual(en.partners.logos);
+  });
+
   it("translates the home page", async () => {
     const en = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "en" });
     const fr = await run<HomePageContent>(HOME_PAGE_QUERY, seed, { locale: "fr" });

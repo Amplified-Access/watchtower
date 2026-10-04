@@ -125,8 +125,18 @@ export interface HomePageContent extends SharedHomeSections {
     readStory: string;
     sampleTitles: { _key: string; title: string }[];
   };
+  /** Only logos with an uploaded file, in the editors' order. */
+  partners: { heading: string; logos: PartnerLogo[] };
   faqs: { label: string; heading: string; description: string; items: FaqItem[] };
   seo: Seo;
+}
+
+export interface PartnerLogo {
+  _key: string;
+  name: string;
+  /** "small" shows the logo at half the height. */
+  size: "regular" | "small";
+  logo: SanityImage;
 }
 
 export interface AboutPageContent {
