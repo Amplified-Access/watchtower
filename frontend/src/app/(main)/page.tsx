@@ -3,7 +3,6 @@ import { getLocale } from "next-intl/server";
 import { JsonLd } from "@/components/common/json-ld";
 import HomePage from "@/features/home/components/home-page";
 import { getHomePage, getSeoSettings } from "@/lib/sanity/content";
-import { SanityLive } from "@/lib/sanity/live";
 import { DEFAULT_HOME_SEO } from "@/lib/seo/defaults";
 import { ownTitle, pageMetadata } from "@/lib/seo/metadata";
 import { firstShareImage } from "@/lib/seo/page";
@@ -37,7 +36,6 @@ const Page = async () => {
     <>
       <JsonLd data={homeGraph({ name: title, description, siteDescription, image, locale, faqs: content.faqs.items })} />
       <HomePage content={content} />
-      <SanityLive />
     </>
   );
 };

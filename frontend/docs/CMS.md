@@ -1,8 +1,8 @@
 # Content management (Sanity)
 
-Editorial content for the Watchtower site: the **Home** and **About** pages, **case studies** (and their categories) and the **policy pages** (privacy policy, security policy, code of conduct). Editors change it in the Sanity Studio at **`/studio`** on the site itself, and published changes appear on the site within seconds, on pages readers already have open too (Sanity Live, below). Everything else stays where it was: incident data comes from the Go backend, and UI copy stays in `messages/*.json`.
+Editorial content for the Watchtower site: the **Home** and **About** pages, **case studies** (and their categories), the **policy pages** (privacy policy, security policy, code of conduct) and the **footer**. Editors change it in the Sanity Studio at **`/studio`** on the site itself, and published changes appear on the site within seconds, on pages readers already have open too (Sanity Live, below). Everything else stays where it was: incident data comes from the Go backend, and UI copy stays in `messages/*.json`.
 
-**What is in Sanity, and what is UI copy.** The words on a page that an editor would rewrite (headings, paragraphs, questions and answers, figures, button labels on those pages) are in Sanity. Text that belongs to the interface stays in `messages/*.json`: navigation, footer, the announcement banner, forms, the live map widget, labels built around a value ("Step {number}", "Last updated: {date}"), and the names of the site's languages and their regions on the About page, which go with the locale list. Page layout (images, links, the order of sections) is code, except the partner logos on the Home page, which editors add and reorder.
+**What is in Sanity, and what is UI copy.** The words on a page that an editor would rewrite (headings, paragraphs, questions and answers, figures, button labels on those pages) are in Sanity. Text that belongs to the interface stays in `messages/*.json`: navigation, the sign-in pages' small footer, the footer's "WatchTower" watermark, the announcement banner, forms, the live map widget, labels built around a value ("Step {number}", "Last updated: {date}"), and the names of the site's languages and their regions on the About page, which go with the locale list. Page layout (images, links, the order of sections) is code, except the partner logos on the Home page and the footer's links, which editors add and reorder.
 
 ```
 frontend/
@@ -45,7 +45,7 @@ The Studio is a React app rendered by `src/pages/studio/[[...tool]].tsx`: a page
 
 ## How published changes reach the site
 
-1. **Sanity Live, for pages readers have open.** `src/lib/sanity/live.ts` uses `defineLive` from `next-sanity/live`: every `sanityFetch` result is cached under the sync tags Sanity returns with it, and `<SanityLive />` (rendered by the home, about, policy pages and the case-studies layout) subscribes the reader's browser to Sanity's Live Content API. When a document is published, it revalidates just the affected tags and refreshes the page in place, without a reload. In testing, an open page showed a published title change 3–8 seconds later. Any page that shows Sanity content must render `<SanityLive />` once.
+1. **Sanity Live, for pages readers have open.** `src/lib/sanity/live.ts` uses `defineLive` from `next-sanity/live`: every `sanityFetch` result is cached under the sync tags Sanity returns with it, and `<SanityLive />` (rendered once, by the `(main)` layout that wraps every public page) subscribes the reader's browser to Sanity's Live Content API. When a document is published, it revalidates just the affected tags and refreshes the page in place, without a reload. In testing, an open page showed a published title change 3–8 seconds later. It is in the layout because the footer is Sanity content on every page; a Sanity-backed page outside `(main)` would have to render it itself.
 2. **The webhook, for publishes nobody is watching** (optional, below): drops the `sanity` tag so the next visitor gets fresh content.
 3. **A one-minute expiry** on every Sanity fetch, as the safety net for both.
 
@@ -61,7 +61,7 @@ Sanity Live only reaches pages that are open when something is published. So tha
 
 - URL: `https://<site>/api/revalidate`
 - Dataset: `production`, trigger on create, update and delete
-- Filter: `_type in ["homePage", "aboutPage", "caseStudy", "caseStudyCategory", "legalPage", "seoSettings"]`
+- Filter: `_type in ["homePage", "aboutPage", "caseStudy", "caseStudyCategory", "legalPage", "footer", "seoSettings"]`
 - Secret: a random string, also set as `SANITY_REVALIDATE_SECRET` in the site's environment
 
 `src/app/api/revalidate/route.ts` checks the signature and drops the `sanity` cache tag.
@@ -101,14 +101,16 @@ Category names are translated (on the category document); category slugs are not
 | Privacy policy | `privacyPolicy` (a `legalPage`) | `/privacy-policy`, with a numbered table of contents |
 | Security | `security` (a `legalPage`) | `/security` |
 | Code of conduct | `codeOfConduct` (a `legalPage`) | `/code-of-conduct` |
+| Footer (sidebar, not under Pages) | `footer` | The footer of every public page |
 | Search and sharing (sidebar, not under Pages) | `seoSettings` | The site's description and share image, and the search text of the code-built pages: see [SEO.md](./SEO.md) |
 
 - Home and About have one field group per page section. Repeated parts are lists editors can add to, remove from and reorder: the figures (with their numbers), the how-it-works steps, the About page's steps and audiences, and the questions.
 - The About page's steps are numbered by the page ("01."), and each shows two screenshots of the page it describes (`STEP_MEDIA` in `features/about/components/about-page.tsx`, images in `public/images/about/`), in order: reporting, the maps, case studies. A fourth step would show without any. They are static WebP captures of the real pages; retake them when those pages change.
 - The Home page's **Partners** group is the scrolling row of partner logos: a heading and a list of partners, each a name (read by screen readers in place of the logo, the same in every language), a logo (a transparent PNG or an SVG, shown in grey) and a size ("Small" halves the height, for a logo that looks heavier than the others). The row is hidden while it has no logos. `pnpm sanity:setup` doesn't add it to a dataset that already has the Home page, because its sync leaves fields holding images to the Studio: add the logos there.
+- The **Footer** holds the line under the logo, the link columns, the social profiles, the copyright line and the links beside it. Link labels and headings are translated; addresses are shared (a site path such as `/maps`, a web address or a `mailto:`). The line under the logo writes `{organisation}` where the organisation's name goes, so each language can put it where its grammar needs (Urdu and Amharic put it first); the name and its address are set once. The copyright writes `{year}`. A social profile without an address isn't shown: the seed has the profiles amplifiedaccess.org links to (LinkedIn, X, YouTube), and Facebook, Instagram and WhatsApp wait for theirs (the old footer linked them to `#`). The logo and the "WatchTower" watermark are code. The `(main)` layout fetches the footer once (`getFooter`) and provides it through React context, because client page components render the footer; if Sanity is unavailable the footer renders without its content rather than failing the page.
 - Headings the design breaks over two lines keep the break: press Enter in the text field. On the About page the breaks apply from tablet width up; on a phone the heading wraps on its own. The About page's languages description may use `{count}`, replaced with the number of languages.
 - A legal page has a header (label, title, description), a search title and description, and sections of rich text (paragraphs, subheadings, bullets, bold, links). An untitled section is an introduction, left out of the privacy policy's contents. The privacy policy's header is only its title, with the last-updated date beneath it, so the Studio hides the label and description there.
-- The queries (`HOME_PAGE_QUERY`, `ABOUT_PAGE_QUERY`, `LEGAL_PAGE_QUERY`) return every text as a string, empty when missing, so the page components need no null checks. The Home and About pages are client components that take this content as props from their server `page.tsx`, which also renders `<SanityLive />`.
+- The queries (`HOME_PAGE_QUERY`, `ABOUT_PAGE_QUERY`, `LEGAL_PAGE_QUERY`) return every text as a string, empty when missing, so the page components need no null checks. The Home and About pages are client components that take this content as props from their server `page.tsx`.
 
 ## Seed content
 

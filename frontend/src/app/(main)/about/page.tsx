@@ -3,7 +3,6 @@ import { getLocale } from "next-intl/server";
 import { JsonLd } from "@/components/common/json-ld";
 import AboutPage from "@/features/about/components/about-page";
 import { getAboutPage } from "@/lib/sanity/content";
-import { SanityLive } from "@/lib/sanity/live";
 import { DEFAULT_ABOUT_SEO } from "@/lib/seo/defaults";
 import { ownTitle, pageMetadata } from "@/lib/seo/metadata";
 import { firstShareImage, pageJsonLd, siteShareImage } from "@/lib/seo/page";
@@ -43,7 +42,6 @@ const Page = async () => {
     <>
       <JsonLd data={jsonLd} />
       <AboutPage content={content} />
-      <SanityLive />
     </>
   );
 };

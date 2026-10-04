@@ -4,7 +4,6 @@ import { JsonLd } from "@/components/common/json-ld";
 import Footer from "@/components/layout/footer/page";
 import LegalDocument from "@/features/legal/components/legal-document";
 import { getLegalPage } from "@/lib/sanity/content";
-import { SanityLive } from "@/lib/sanity/live";
 import { DEFAULT_SECURITY_SEO } from "@/lib/seo/defaults";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { legalPageSeo, pageJsonLd } from "@/lib/seo/page";
@@ -34,7 +33,6 @@ export default async function SecurityPage() {
       <JsonLd data={jsonLd} />
       <LegalDocument page={page} locale={locale} />
       <Footer />
-      <SanityLive />
     </>
   );
 }

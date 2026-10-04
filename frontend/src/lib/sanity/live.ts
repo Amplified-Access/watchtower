@@ -9,10 +9,11 @@ import { dataset, projectId } from "@/sanity/env";
 // tRPC or the browser.
 //
 // Sanity Live keeps it fresh. Every `sanityFetch` result is cached under the
-// sync tags Sanity returns with it, and <SanityLive /> (rendered on the pages
-// that show Sanity content) listens to the Live Content API from the browser:
-// when a document is published, it revalidates just the affected tags and
-// refreshes the page, for that reader and everyone after. Two fallbacks
+// sync tags Sanity returns with it, and <SanityLive /> (rendered once by the
+// (main) layout, as the footer is Sanity content on every page) listens to
+// the Live Content API from the browser: when a document is published, it
+// revalidates just the affected tags and refreshes the page, for that reader
+// and everyone after. Two fallbacks
 // cover the time no reader has a page open: the Sanity webhook
 // (/api/revalidate) drops the `sanity` tag every fetch also carries, and
 // fetches expire after a minute regardless.
