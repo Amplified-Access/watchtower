@@ -2,7 +2,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { internationalizedArray } from "sanity-plugin-internationalized-array";
-import { BookOpen, FileText, House, Info, PanelBottom, Scale, Search, ShieldCheck, Tag, Users } from "lucide-react";
+import { BookOpen, FileText, House, Info, PanelBottom, Scale, ScrollText, Search, ShieldCheck, Tag, Users } from "lucide-react";
 import { dataset, projectId } from "./src/sanity/env";
 import { BASE_LANGUAGE, LANGUAGES } from "./src/sanity/languages";
 import { schemaTypes } from "./src/sanity/schemaTypes";
@@ -17,6 +17,7 @@ const SINGLETONS = [
   { id: "homePage", type: "homePage", title: "Home", icon: House },
   { id: "aboutPage", type: "aboutPage", title: "About", icon: Info },
   { id: "privacyPolicy", type: "legalPage", title: "Privacy policy", icon: Scale },
+  { id: "termsOfUse", type: "legalPage", title: "Terms of use", icon: ScrollText },
   { id: "security", type: "legalPage", title: "Security", icon: ShieldCheck },
   { id: "codeOfConduct", type: "legalPage", title: "Code of conduct", icon: Users },
 ];

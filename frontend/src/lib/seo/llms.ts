@@ -27,6 +27,7 @@ export type LlmsInput = {
 
 const POLICY_PATHS: Record<string, string> = {
   privacyPolicy: "/privacy-policy",
+  termsOfUse: "/terms-of-use",
   security: "/security",
   codeOfConduct: "/code-of-conduct",
 };

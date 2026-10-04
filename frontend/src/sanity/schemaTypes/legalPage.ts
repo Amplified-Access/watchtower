@@ -2,10 +2,10 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 import { Scale } from "lucide-react";
 import { baseValue, requireBaseLanguage } from "./localized";
 
-// A long-form policy page: the privacy policy, the security policy and the
-// code of conduct. It holds the page header, the search title and the text,
-// split into sections (the privacy policy lists them in a numbered table of
-// contents). Section anchors are shared across languages so links such as
+// A long-form policy page: the privacy policy, the terms of use, the security
+// policy and the code of conduct. It holds the page header, the search title and the text,
+// split into sections (the privacy policy and terms of use list them in a
+// numbered table of contents). Section anchors are shared across languages so links such as
 // `#contact-us` work whatever the reader's language.
 export const legalPage = defineType({
   name: "legalPage",
@@ -25,7 +25,7 @@ export const legalPage = defineType({
       name: "lastUpdated",
       type: "date",
       description:
-        "Shown as “Last updated: <month year>” on the privacy policy. Change it whenever the policy text changes.",
+        "Shown as “Last updated: <month year>” on the privacy policy and terms of use. Change it whenever their text changes.",
     }),
     defineField({
       name: "sections",

@@ -170,6 +170,18 @@ describe("legal page query against the seed", () => {
     expect(contacts).toBeDefined();
   });
 
+  it("returns the terms of use, dated, in English for every language, with a translated title", async () => {
+    const en = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "termsOfUse", locale: "en" });
+    const fr = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "termsOfUse", locale: "fr" });
+    expect(en.lastUpdated).toBe("2026-10-04");
+    expect(en.hero.title).toBe("Terms of Use");
+    expect(fr.hero.title).not.toBe(en.hero.title);
+    expect(en.sections.map((s) => s.id)).toEqual(expect.arrayContaining(["not-an-emergency-service", "acceptable-use", "contact-us"]));
+    expect(fr.sections[0]).toMatchObject({ id: "about-these-terms", titleLanguage: "en", language: "en" });
+    expect(fr.sections).toHaveLength(en.sections.length);
+    expect(fr.seo.description).toBeTruthy();
+  });
+
   it("serves the English policy, marked as English, to other languages until a reviewed translation exists", async () => {
     const page = await run<LegalPage>(LEGAL_PAGE_QUERY, seed, { id: "privacyPolicy", locale: "sw" });
     expect(page.sections[0]).toMatchObject({
@@ -246,7 +258,7 @@ describe("page queries against the seed", () => {
     expect(en.columns.map((column) => column.links.length)).toEqual([5, 5, 3, 4]);
     expect(en.columns[3].links[1].href).toBe("mailto:hello@amplifiedaccess.org");
     expect(en.columns[1].links[3].href).toBe("/#faqs");
-    expect(en.legalLinks.map((link) => link.href)).toEqual(["/privacy-policy", "/terms-of-service", "/accessibility"]);
+    expect(en.legalLinks.map((link) => link.href)).toEqual(["/privacy-policy", "/terms-of-use"]);
     expect(en.social.map((profile) => profile.platform)).toEqual(["linkedin", "x", "youtube"]);
     expect(en.organisation).toEqual({ name: "Amplified Access", url: "https://www.amplifiedaccess.org" });
     expect(fr.columns[0].heading).not.toBe(en.columns[0].heading);
@@ -359,7 +371,7 @@ describe("search and sharing queries against the seed", () => {
     const sitemap = await run<SitemapContent>(SITEMAP_QUERY, seed, {});
     expect(sitemap.caseStudies).toHaveLength(9);
     expect(sitemap.pages.map((page) => page._id).sort()).toEqual(
-      ["aboutPage", "codeOfConduct", "homePage", "privacyPolicy", "security"].sort(),
+      ["aboutPage", "codeOfConduct", "homePage", "privacyPolicy", "security", "termsOfUse"].sort(),
     );
   });
 

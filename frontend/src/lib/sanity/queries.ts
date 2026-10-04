@@ -165,7 +165,7 @@ export const ABOUT_PAGE_QUERY = `{
   "home": *[_id == "homePage"][0] { ${sharedHomeSections} }
 }`;
 
-// A legal page (`privacyPolicy`, `security`, `codeOfConduct`): its header,
+// A legal page (`privacyPolicy`, `termsOfUse`, `security`, `codeOfConduct`): its header,
 // search title and sections.
 export const LEGAL_PAGE_QUERY = `*[_type == "legalPage" && _id == $id][0] {
   ${pageHero},
@@ -211,7 +211,7 @@ export const SITEMAP_QUERY = `{
     "slug": slug.current,
     "updatedAt": _updatedAt
   },
-  "pages": *[_id in ["homePage", "aboutPage", "privacyPolicy", "security", "codeOfConduct"]] {
+  "pages": *[_id in ["homePage", "aboutPage", "privacyPolicy", "termsOfUse", "security", "codeOfConduct"]] {
     _id,
     "updatedAt": _updatedAt
   }
@@ -238,7 +238,7 @@ export const LLMS_QUERY = `{
     "deployment": ${localized("deployment")},
     "body": ${localized("body")}
   },
-  "policies": *[_id in ["privacyPolicy", "security", "codeOfConduct"]] {
+  "policies": *[_id in ["privacyPolicy", "termsOfUse", "security", "codeOfConduct"]] {
     _id,
     ${pageHero},
     "seo": ${seo("seo")},

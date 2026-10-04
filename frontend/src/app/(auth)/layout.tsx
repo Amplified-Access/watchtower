@@ -49,12 +49,8 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
             {t("privacy")}
           </Link>
           <span aria-hidden>·</span>
-          <Link href="/terms-of-service" className="hover:underline">
+          <Link href="/terms-of-use" className="hover:underline">
             {t("terms")}
-          </Link>
-          <span aria-hidden>·</span>
-          <Link href="/accessibility" className="hover:underline">
-            {t("accessibility")}
           </Link>
         </nav>
       </footer>

@@ -47,6 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page("/chat", 0.6, "monthly"),
     page("/register-organization", 0.5, "yearly"),
     page("/privacy-policy", 0.3, "yearly", updated("privacyPolicy")),
+    page("/terms-of-use", 0.3, "yearly", updated("termsOfUse")),
     page("/security", 0.3, "yearly", updated("security")),
     page("/code-of-conduct", 0.3, "yearly", updated("codeOfConduct")),
     ...content.caseStudies.map((study) => page(`/case-studies/${study.slug}`, 0.7, "monthly", study.updatedAt)),

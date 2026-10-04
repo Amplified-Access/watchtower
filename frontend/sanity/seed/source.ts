@@ -485,3 +485,272 @@ export const PRIVACY_POLICY_SECTIONS: PolicySection[] = [
     ],
   },
 ];
+
+// The terms of use: plain language, written for WatchTower (anonymous civic
+// reporting, organisation deployments, AI translation and chat, public maps).
+// Like the privacy policy, English only until a reviewed translation exists.
+export const TERMS_OF_USE_LAST_UPDATED = "2026-10-04";
+
+export const TERMS_OF_USE_SECTIONS: PolicySection[] = [
+  {
+    id: "about-these-terms",
+    title: "About These Terms",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "WatchTower is a multilingual civic reporting platform operated by Amplified Access. These terms explain the rules for using WatchTower, including the website, the report form, the maps, alerts, the Ask WatchTower assistant and organisation accounts.",
+      },
+      {
+        type: "paragraph",
+        text: "By using WatchTower, you agree to these terms. If you use WatchTower on behalf of an organisation, you confirm that you are allowed to accept these terms for that organisation.",
+      },
+      {
+        type: "paragraph",
+        text: "Our privacy policy explains what information we collect and how we use it, and forms part of these terms.",
+      },
+      { type: "link", text: "Read the privacy policy", href: "/privacy-policy" },
+    ],
+  },
+  {
+    id: "not-an-emergency-service",
+    title: "WatchTower Is Not an Emergency Service",
+    blocks: [
+      {
+        type: "emphasis",
+        text: "If you or someone else is in immediate danger, contact your local emergency services or a trusted person nearby.",
+      },
+      {
+        type: "paragraph",
+        text: "Reports are not monitored around the clock, and submitting a report does not guarantee that anyone will respond. A report on WatchTower is not an official complaint to the police, a court or any government authority.",
+      },
+    ],
+  },
+  {
+    id: "using-watchtower",
+    title: "Using WatchTower",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "You may use WatchTower for lawful purposes and in line with these terms. If you are not yet an adult where you live, please use WatchTower with the knowledge of a parent, guardian or another trusted adult.",
+      },
+      {
+        type: "paragraph",
+        text: "We may change, add or remove features, and WatchTower may sometimes be unavailable, for example during maintenance.",
+      },
+    ],
+  },
+  {
+    id: "your-safety",
+    title: "Your Safety",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "You decide what to share. Before you submit a report, think about whether its details could identify you or put you or others at risk.",
+      },
+      {
+        type: "list",
+        items: [
+          "You do not need to give your name or phone number to submit a public report.",
+          "Avoid including details that identify you or other people unless they are necessary.",
+          "Anonymous reporting reduces risk but cannot remove it. Someone may recognise you from what a report describes, or from the device or network you use.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "your-reports",
+    title: "Your Reports and Content",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "You are responsible for what you submit. Reports should be accurate to the best of your knowledge, and you must have the right to share any photos, files or other material you upload.",
+      },
+      {
+        type: "paragraph",
+        text: "You keep any rights you have in your reports. By submitting one, you give Amplified Access a worldwide, non-exclusive, royalty-free permission to store, translate, transcribe, review, edit for privacy, display, analyse and share it, as described in our privacy policy, to run WatchTower and support its civic purpose, such as research, advocacy and accountability.",
+      },
+      {
+        type: "paragraph",
+        text: "Information that has been combined with other reports or anonymised, such as counts, trends and maps, may remain available after an individual report is removed.",
+      },
+    ],
+  },
+  {
+    id: "acceptable-use",
+    title: "Acceptable Use",
+    blocks: [
+      {
+        type: "list",
+        title: "When using WatchTower, you must not:",
+        items: [
+          "Submit reports you know to be false or misleading",
+          "Harass, threaten or abuse anyone, or encourage violence or hatred",
+          "Share someone's personal information to expose, target or harm them",
+          "Try to identify, locate or retaliate against people who submit reports or are named in them",
+          "Share content that sexualises children, or other illegal content",
+          "Pretend to be another person or organisation",
+          "Send spam or automated mass submissions",
+          "Upload malware, interfere with WatchTower's operation, or try to get around access controls",
+          "Use WatchTower for any unlawful purpose",
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "If you find a security vulnerability, please report it responsibly as described in our security policy instead of testing it on the live service.",
+      },
+      { type: "link", text: "Read the security policy", href: "/security" },
+    ],
+  },
+  {
+    id: "review-and-moderation",
+    title: "Review and Moderation",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "To keep WatchTower safe and useful, reports may be reviewed, verified, translated and edited for privacy, for example by removing identifying details or making a location less precise. We may decline to publish, hide or remove any report or content, including content that breaks these terms or could put someone at risk.",
+      },
+      {
+        type: "paragraph",
+        text: "We do not review every report before it appears, and publishing a report does not mean that WatchTower or Amplified Access has verified or endorses it.",
+      },
+    ],
+  },
+  {
+    id: "organisation-accounts",
+    title: "Organisation Accounts",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "Organisations can create deployments and accounts to receive, manage and analyse reports. If you have an organisation account:",
+      },
+      {
+        type: "list",
+        items: [
+          "Keep your login details secure, and tell us promptly if you think your account has been misused",
+          "You are responsible for activity on your account and for the people you invite to it",
+          "Treat reports confidentially, use them only for your deployment's purpose, and handle personal information in line with the data protection laws that apply to you",
+          "Do not use reports or reporters' information in ways that could expose them to harm",
+        ],
+      },
+    ],
+  },
+  {
+    id: "automated-features",
+    title: "Translation, AI and Automated Features",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "WatchTower uses automated tools, including AI models, to translate and transcribe reports, organise and categorise them, and answer questions in the Ask WatchTower assistant.",
+      },
+      {
+        type: "paragraph",
+        text: "These tools can make mistakes. Their output may be inaccurate or incomplete and is not legal, medical or safety advice. Check important information before relying on it.",
+      },
+    ],
+  },
+  {
+    id: "maps-and-information",
+    title: "Maps, Insights and Information",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "The maps, insights and other information on WatchTower are based on reports from the community. They may be unverified, incomplete, approximate or out of date, and they show what has been reported, not everything that has happened.",
+      },
+      {
+        type: "paragraph",
+        text: "Use this information for awareness, research and advocacy, not as the only basis for decisions that affect someone's safety or legal rights. If you reuse it, credit WatchTower and do not try to identify the people behind the reports.",
+      },
+    ],
+  },
+  {
+    id: "intellectual-property",
+    title: "Open Source and Intellectual Property",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "WatchTower's source code is open source under the MIT licence, which sets out how you may use, copy and change it.",
+      },
+      { type: "link", text: "View the source code", href: "https://github.com/Amplified-Access/watchtower" },
+      {
+        type: "paragraph",
+        text: "The WatchTower and Amplified Access names and logos, and the site's own text and design, belong to Amplified Access or its licensors. The open-source licence does not give you the right to use them in a way that suggests you are WatchTower or are endorsed by Amplified Access.",
+      },
+    ],
+  },
+  {
+    id: "third-party-services",
+    title: "Third-Party Services",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "WatchTower relies on services from other companies, for example for maps, location search, translation, AI and hosting, and it links to other websites. Their own terms and policies apply to them, and we are not responsible for websites we do not run.",
+      },
+    ],
+  },
+  {
+    id: "suspension-and-termination",
+    title: "Suspension and Termination",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "We may suspend or restrict access to WatchTower, or close an account, if we reasonably believe these terms have been broken or that doing so is needed to protect people, reports or the service.",
+      },
+      {
+        type: "paragraph",
+        text: "You can stop using WatchTower at any time. Organisations can ask us to close their account by contacting us.",
+      },
+    ],
+  },
+  {
+    id: "disclaimers",
+    title: "Disclaimers",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "WatchTower is provided free of charge, \"as is\" and \"as available\". As far as the law allows, we make no promises that it will always be available, secure or free of errors, or that information on it is accurate or complete.",
+      },
+    ],
+  },
+  {
+    id: "limitation-of-liability",
+    title: "Limitation of Liability",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "As far as the law allows, Amplified Access is not liable for any indirect or consequential loss, for loss of data, or for harm caused by what other people submit to WatchTower or do with information from it.",
+      },
+      {
+        type: "paragraph",
+        text: "Nothing in these terms limits any liability or rights that cannot be limited under the law that applies to you.",
+      },
+    ],
+  },
+  {
+    id: "changes-to-these-terms",
+    title: "Changes to These Terms",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "We may update these terms as WatchTower changes. The date at the top of this page shows when they last changed, and we will make significant changes clear on the site. If you keep using WatchTower after a change, the updated terms apply.",
+      },
+      {
+        type: "paragraph",
+        text: "These terms may be offered in several languages. If a translation differs from the English version, the English version applies.",
+      },
+    ],
+  },
+  {
+    id: "contact-us",
+    title: "Contact Us",
+    blocks: [
+      { type: "paragraph", text: "If you have questions about these terms, contact Amplified Access." },
+      {
+        type: "contact",
+        items: [
+          { label: "Email", email: "hello@amplifiedaccess.org" },
+          { label: "General Support", email: "support@amplifiedaccess.org" },
+        ],
+      },
+    ],
+  },
+];

@@ -93,6 +93,12 @@ export const DEFAULT_CODE_OF_CONDUCT_SEO: SeoText = {
     "The standards Amplified Access asks of everyone who contributes to or takes part in the WatchTower community, and how they are enforced.",
 };
 
+export const DEFAULT_TERMS_SEO: SeoText = {
+  title: "Terms of use",
+  description:
+    "The rules for using WatchTower: reporting safely, what you can and can't submit, how reports are reviewed and shared, and the limits of the maps and AI features.",
+};
+
 export const DEFAULT_PRIVACY_SEO: SeoText = {
   title: "Privacy policy",
   description:
