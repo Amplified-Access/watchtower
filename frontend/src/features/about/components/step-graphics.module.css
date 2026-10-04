@@ -178,31 +178,15 @@
 
 /* ── 2. See the bigger picture ─────────────────────────────────────────── */
 
+/* The live incident map, filling the frame. The zoom cancels the About
+   section's [zoom:var(--viewport-scale)]: Mapbox sizes its canvas from
+   getBoundingClientRect, so inside a zoomed ancestor the canvas came out
+   that much larger than the frame (1.5x at 1920px) and was cropped at the
+   right and bottom. As the maps landing page and thematic thumbnails do. */
 .map {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Dots: faint across the field, white where reports cluster. */
-.base { fill: rgb(255 255 255 / 0.07); }
-.dim { fill: rgb(255 255 255 / 0.14); }
-.mid { fill: rgb(255 255 255 / 0.5); }
-.lit {
-  fill: #fff;
-  animation: pulse 3.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lit {
-    animation: none;
-  }
+  zoom: calc(1 / var(--viewport-scale));
 }
 
 /* ── 3. Drive action ───────────────────────────────────────────────────── */

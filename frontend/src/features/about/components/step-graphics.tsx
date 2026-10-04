@@ -1,12 +1,13 @@
 import InfographicBackdrop from "@/features/home/components/infographic-backdrop";
 import { OUTCOMES } from "@/features/home/components/action-infographic";
 import { cn } from "@/lib/utils";
+import LiveMapPreview from "./live-map-preview";
 import styles from "./step-graphics.module.css";
 
 // The About page's step illustrations, in order: reporting, seeing the
-// bigger picture, driving action. Pictures in the home page's illustration
-// language (and its story: a water problem in Kibera, Nairobi, and its
-// outcomes), not screenshots. Decorative: each step's text says what it
+// bigger picture (the live incident map, as a picture), driving action.
+// Pictures in the home page's illustration language (and its story: a water
+// problem in Kibera, Nairobi, and its outcomes), not screenshots. Decorative: each step's text says what it
 // shows. Step 1 is in Swahili, as on the home page, using the site's own
 // Swahili form strings.
 
@@ -74,45 +75,14 @@ const ReportGraphic = ({ className }: GraphicProps) => (
   </Frame>
 );
 
-// "See the bigger picture": an abstract dot map in CommonMind's style. A
-// deterministic field of faint dots, with clusters of reports lit in white
-// (brighter towards their middles) and pulsing gently. No real geography.
-// 80 x 40 dots for the 2:1 frame; on phones the 4:3 frame crops the sides
-// (slice), so the clusters sit towards the middle.
-const MAP_W = 80;
-const MAP_H = 40;
-const CLUSTERS: [number, number, number][] = [
-  [40, 22, 7],
-  [24, 13, 5.5],
-  [55, 11, 4.6],
-  [58, 28, 4.2],
-  [21, 30, 3.8],
-  [66, 18, 2.8],
-];
-const MAP_DOTS = Array.from({ length: MAP_W * MAP_H }, (_, i) => {
-  const x = i % MAP_W;
-  const y = Math.floor(i / MAP_W);
-  const n = Math.abs(Math.sin(x * 7.13 + y * 3.71) * 9301.17) % 1;
-  const near = Math.min(...CLUSTERS.map(([cx, cy, r]) => Math.hypot(x - cx, y - cy) / r));
-  const tone = near < 1 && n > 0.32 ? (n > 0.62 && near < 0.85 ? "lit" : "mid") : n > 0.55 ? "dim" : "base";
-  return { x, y, tone, delay: (i % 13) * 0.27 };
-});
-
-// The backdrop's own dot pattern would muddle the grid, so it's left out.
+// "See the bigger picture": the live incident map itself, as a picture (no
+// sidebars, controls or interaction), filling the frame. The backdrop shows
+// until the map has loaded.
 const MapGraphic = ({ className }: GraphicProps) => (
   <Frame className={className} pattern={false}>
-    <svg className={styles.map} viewBox={`0 0 ${MAP_W} ${MAP_H}`} preserveAspectRatio="xMidYMid slice">
-      {MAP_DOTS.map(({ x, y, tone, delay }) => (
-        <circle
-          key={`${x}-${y}`}
-          cx={x + 0.5}
-          cy={y + 0.5}
-          r={tone === "lit" ? 0.3 : 0.26}
-          className={styles[tone]}
-          style={tone === "lit" ? { animationDelay: `${delay}s` } : undefined}
-        />
-      ))}
-    </svg>
+    <div className={styles.map}>
+      <LiveMapPreview />
+    </div>
   </Frame>
 );
 

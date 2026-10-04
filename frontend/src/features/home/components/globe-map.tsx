@@ -32,6 +32,7 @@ const RING = "rgba(255,255,255,0.85)";
 // visual "center" needs to be biased into the area they leave uncovered.
 const DESKTOP_PADDING = { top: 120, bottom: 16, left: 320, right: 320 };
 const MOBILE_PADDING = { top: 16, bottom: 16, left: 16, right: 16 };
+const NO_PADDING = { top: 0, bottom: 0, left: 0, right: 0 };
 
 // Docked panels sit beside the map rather than over it, so no bias is needed.
 const getMapPadding = (docked: boolean) =>
@@ -97,6 +98,13 @@ interface GlobeMapProps {
    * a link to the full map.
    */
   overlayControls?: boolean;
+  /**
+   * False for a map that is only a picture (the About page): no dragging,
+   * zooming or popups (Mapbox attaches no listeners) and no pointer.
+   */
+  interactive?: boolean;
+  /** Space kept clear around the data when framing it, in px, on every side (overrides the default). */
+  padding?: number;
 }
 
 const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
@@ -110,10 +118,14 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       docked = false,
       cooperativeGestures = false,
       overlayControls = true,
+      interactive = true,
+      padding,
     },
     ref,
   ) => {
   const t = useTranslations("HomeLivePreview");
+  // The map's own padding: the live map's, or none when `padding` is given.
+  const framePadding = () => (padding === undefined ? getMapPadding(docked) : NO_PADDING);
   const locale = useLocale();
   const trpcUtils = trpc.useUtils();
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
@@ -135,15 +147,16 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       attributionControl: false,
       logoPosition: "bottom-right",
       cooperativeGestures,
+      interactive,
       locale: {
         "ScrollZoomBlocker.CtrlMessage": t("scrollZoomHint", { key: "Ctrl" }),
         "ScrollZoomBlocker.CmdMessage": t("scrollZoomHint", { key: "⌘" }),
         "TouchPanBlocker.Message": t("touchPanHint"),
       },
     });
-    map.setPadding(getMapPadding(docked));
+    map.setPadding(framePadding());
 
-    const handleResize = () => map.setPadding(getMapPadding(docked));
+    const handleResize = () => map.setPadding(framePadding());
     window.addEventListener("resize", handleResize);
     // Docked panels opening and closing resize the container, not the window.
     const resizeObserver = new ResizeObserver(() => map.resize());
@@ -394,17 +407,20 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     const bounds = getDataBounds(points);
     if (!bounds) return false;
 
-    const padding = getMapPadding(docked);
-    const camera = map.cameraForBounds(bounds, { padding });
+    // With `padding`, as the thematic map fits: the camera that fits the
+    // data inside that margin, flown to with no padding of its own, so the
+    // margin isn't counted twice and no point is cropped.
+    const fitPadding = padding ?? framePadding();
+    const camera = map.cameraForBounds(bounds, { padding: fitPadding });
     if (!camera?.center) {
-      map.fitBounds(bounds, { padding, maxZoom: FIT_MAX_ZOOM, duration });
+      map.fitBounds(bounds, { padding: fitPadding, maxZoom: FIT_MAX_ZOOM, duration });
       return true;
     }
 
     map.flyTo({
       center: camera.center,
       zoom: Math.min(camera.zoom ?? FIT_MAX_ZOOM, FIT_MAX_ZOOM),
-      padding,
+      ...(padding === undefined ? { padding: fitPadding } : {}),
       duration,
       curve: 1.42,
     });
@@ -428,7 +444,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     mapRef.current?.flyTo({
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
-      padding: getMapPadding(docked),
+      padding: framePadding(),
     });
   };
 
@@ -436,7 +452,10 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
 
   return (
     <div className={className ?? "relative h-full w-full"}>
-      <div ref={setContainer} className="relative h-full w-full overflow-hidden" />
+      <div
+        ref={setContainer}
+        className={`relative h-full w-full overflow-hidden ${interactive ? "" : "pointer-events-none"}`}
+      />
 
       {/* Below lg the map isn't covered by other cards, so it carries its own overlay controls.
           At lg+, the parent renders equivalent controls as flex siblings of the cards instead. */}
