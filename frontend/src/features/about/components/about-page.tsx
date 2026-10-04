@@ -18,27 +18,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import type { AboutPageContent } from "@/lib/sanity/types";
+import { STEP_GRAPHICS } from "./step-graphics";
 
 // The about page. Its text comes from the `aboutPage` document in Sanity, and
 // the figures and the bottom banner from `homePage` (see
 // app/(main)/about/page.tsx). The language names in the marquee are UI copy in
-// messages/*.json. Layout, the step screenshots and their numbers ("01.") are
-// code.
-
-type Shot = { src: string; width: number; height: number };
-
-const shot = (name: string, width: number, height: number): Shot => ({
-  src: `/images/about/${name}.webp`,
-  width,
-  height,
-});
-
-// Each step shows one window with a screenshot of the page it describes, in
-// this order: reporting, the maps, case studies. All three are the real pages
-// captured the same way (1440 CSS pixels wide at 1.25x, banner dismissed, site
-// header at the top); the report page is cut off above its evidence upload.
-// A step added in Sanity beyond these has no screenshot.
-const STEP_MEDIA: Shot[] = [shot("report", 1800, 1100), shot("live-map", 1800, 1126), shot("case-studies", 1800, 1210)];
+// messages/*.json. Layout, the step illustrations (step-graphics.tsx) and
+// their numbers ("01.") are code.
 
 // The fine grain over the blue sections, drawn by the browser rather than
 // shipped as an image.
@@ -65,29 +51,6 @@ const Rails = ({ className }: { className?: string }) => (
   <div className={cn("pointer-events-none absolute inset-0 mx-auto max-w-360", className)}>
     <div className="absolute inset-y-0 left-4 w-px bg-current md:left-8 xl:left-16" />
     <div className="absolute inset-y-0 right-4 w-px bg-current md:right-8 xl:right-16" />
-  </div>
-);
-
-// Mockup windows are outlined darker than the page's lines, as in the design.
-const card = "overflow-hidden rounded-lg border border-dark/20 bg-white shadow-[0_12px_40px_rgb(0_0_0/0.06)]";
-// The design's cards dissolve into the page at the bottom.
-const fade = "mask-[linear-gradient(to_bottom,black_55%,transparent)]";
-
-const Screenshot = ({ src, width, height, className }: Shot & { className?: string }) => (
-  <Image
-    src={src}
-    alt=""
-    width={width}
-    height={height}
-    sizes="(min-width: 768px) 90vw, 100vw"
-    className={cn("h-full w-full object-cover object-top", className)}
-  />
-);
-
-/** A step's screenshot in one window spanning the media area, fading out at the bottom. */
-const StepMedia = (shot: Shot) => (
-  <div className={cn(card, fade, "aspect-4/3 md:aspect-2/1")}>
-    <Screenshot {...shot} className="object-top-left" />
   </div>
 );
 
@@ -168,9 +131,12 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
                 </h3>
                 <p className="max-w-md leading-relaxed text-dark/60">{step.description}</p>
               </div>
-              {STEP_MEDIA[index] && (
+              {STEP_GRAPHICS[index] && (
                 <div className="mt-10 md:mt-12">
-                  <StepMedia {...STEP_MEDIA[index]} />
+                  {(() => {
+                    const Graphic = STEP_GRAPHICS[index];
+                    return <Graphic className="aspect-4/3 md:aspect-2/1" />;
+                  })()}
                 </div>
               )}
             </div>

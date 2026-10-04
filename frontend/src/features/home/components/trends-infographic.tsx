@@ -12,10 +12,10 @@ import styles from "./trends-infographic.module.css";
 // and the incident types both add up to the total. The types are the ones
 // the maps use (the API's active incident types), in sentence case.
 
-const WEEKLY = [68, 74, 71, 86, 92, 89, 105, 117, 113, 132, 143, 158];
-const TOTAL = WEEKLY.reduce((sum, n) => sum + n, 0); // 1,248
+export const WEEKLY = [68, 74, 71, 86, 92, 89, 105, 117, 113, 132, 143, 158];
+export const TOTAL = WEEKLY.reduce((sum, n) => sum + n, 0); // 1,248
 
-const CATEGORIES = [
+export const CATEGORIES = [
   { label: "Public demonstrations", value: 352 },
   { label: "Election irregularities", value: 286 },
   { label: "Police misconduct", value: 214 },
@@ -47,6 +47,9 @@ const smooth = (pts: readonly (readonly [number, number])[]) =>
 const LINE = smooth(points);
 const AREA = `${LINE} L${W},${BASE} L0,${BASE} Z`;
 const [END_X, END_Y] = points[points.length - 1];
+
+/** The trend chart's geometry, for the About page's still of it. */
+export const TREND_CHART = { width: W, gridY: [0, 50, 100, 150].map(y), line: LINE, area: AREA, end: { x: END_X, y: END_Y } };
 
 const TrendsInfographic = () => {
   const ref = useRef<HTMLDivElement>(null);

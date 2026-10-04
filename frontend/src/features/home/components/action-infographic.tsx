@@ -12,7 +12,7 @@ import styles from "./action-infographic.module.css";
 // says what it shows. Six rows, so the wheel never shows one twice; they
 // reach the centre in this order.
 
-const OUTCOMES = [
+export const OUTCOMES = [
   "Shared with the district council",
   "Response team sent to Kibera",
   "Water supply restored",
