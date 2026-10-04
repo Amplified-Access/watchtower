@@ -1,0 +1,39 @@
+/*
+ * The pulse that runs along a step connector, as CommonMind's diagrams do:
+ * a short bright segment travelling down a faint line. The path has
+ * pathLength 100, so the dash is 10% of it wherever it is drawn. Each
+ * connector's pulse travels in the first half of the cycle and is off the
+ * end for the second; the next connector is delayed by half a cycle (in
+ * step-connector.tsx), so the pulse runs step to step down the section.
+ */
+
+.pulse {
+  fill: none;
+  stroke: var(--primary);
+  stroke-linecap: round;
+  stroke-dasharray: 10 200;
+  stroke-dashoffset: -100;
+  animation: energy var(--cycle) cubic-bezier(0.45, 0, 0.55, 1) infinite both;
+  animation-delay: var(--delay);
+}
+
+.core {
+  stroke-width: 2;
+}
+
+/* A soft glow around the core. */
+.glow {
+  stroke-width: 7;
+  opacity: 0.18;
+}
+
+@keyframes energy {
+  0% { stroke-dashoffset: 10; }
+  50%, 100% { stroke-dashoffset: -100; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    display: none;
+  }
+}

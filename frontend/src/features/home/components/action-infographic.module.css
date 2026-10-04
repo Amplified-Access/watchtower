@@ -1,0 +1,183 @@
+/*
+ * How it works, step 3: the outcomes of acting on reports, each its own
+ * card, on a wheel like the iPhone's date picker, turning continuously. The
+ * card in the centre is the largest and sharpest, and its check is
+ * introduced there; rows below are still to do, rows above are done. Cards
+ * stay solid white and tilt away towards the edges, as on a cylinder; their
+ * text and check dim with distance from the centre.
+ *
+ * The wheel holds for 1.4s, then rolls up one row in 0.6s: one row every
+ * 2s, one full turn of the six rows every 12s (--cycle). Every row runs
+ * the same journey (travel, check, tick), started at a different point by
+ * a negative delay, so the loop is seamless and each row reaches the
+ * centre 2s after the one before. A row is 22deg round a 23cqw wheel.
+ *
+ * Sizes are in cqw, so it scales as one picture like steps 1 and 2. Under
+ * reduced motion it holds still, as at the start.
+ */
+
+.root {
+  --cycle: 12s;
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* The brand's colours only (globals.css). */
+  --blue: #0042e7;
+  --line: #e2e2e2;
+  position: relative;
+  container-type: inline-size;
+  display: grid;
+  aspect-ratio: 1080 / 850;
+  width: 100%;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  /* The About hero's gradient, grain and pattern: infographic-backdrop.tsx. */
+  background: #fff;
+  font-family: var(--font-title);
+  color: #000;
+  user-select: none;
+}
+
+.root * {
+  animation-duration: var(--cycle);
+  animation-timing-function: var(--ease);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.root[data-paused="true"] * {
+  animation-play-state: paused;
+}
+
+
+/* The wheel's frame: just space on the blue; each outcome is its own card. */
+.picker {
+  position: relative;
+  width: 70cqw;
+  height: 62cqw;
+}
+
+.wheel {
+  position: absolute;
+  inset: 0;
+  perspective: 90cqw;
+  transform-style: preserve-3d;
+}
+
+/* Each outcome is a white card on the wheel. Rows are 8.6cqw apart at the
+   centre (23cqw x sin 22deg), so a 7.2cqw card leaves a gap. */
+.row {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: 56cqw;
+  height: 7.2cqw;
+  margin: -3.6cqw 0 0 -28cqw;
+  align-items: center;
+  gap: 2cqw;
+  padding: 0 2.6cqw;
+  border-radius: 1.8cqw;
+  background: #fff;
+  box-shadow: 0 1.2cqw 3cqw rgb(0 0 0 / 0.14);
+  backface-visibility: hidden;
+  animation-name: travel;
+}
+
+/* An empty circle, filled with the blue check once done. */
+.box {
+  position: relative;
+  flex-shrink: 0;
+  width: 4.4cqw;
+  height: 4.4cqw;
+  border: 0.22cqw solid #c4c4c4;
+  border-radius: 50%;
+}
+
+.fill {
+  position: absolute;
+  inset: -0.22cqw;
+  animation-name: check;
+}
+
+.fill svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tick {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 0;
+  animation-name: tick;
+}
+
+.text {
+  font-size: 2.8cqw;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* ── The journey ───────────────────────────────────────────────────────── */
+
+@keyframes travel {
+  0%, 11.67% { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  16.67%, 28.33% { transform: translateZ(-23cqw) rotateX(-22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+  33.33%, 45% { transform: translateZ(-23cqw) rotateX(0deg) translateZ(23cqw) scale(1); opacity: 1; }
+  50%, 61.67% { transform: translateZ(-23cqw) rotateX(22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+  66.67%, 78.33% { transform: translateZ(-23cqw) rotateX(44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  83.33%, 89.17% { transform: translateZ(-23cqw) rotateX(66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
+  89.58%, 95% { transform: translateZ(-23cqw) rotateX(-66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
+  100% { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+}
+
+/* The text and check: sharp in the centre, dimmer with distance. */
+@keyframes content {
+  0%, 11.67% { opacity: 0.28; }
+  16.67%, 28.33% { opacity: 0.45; }
+  33.33%, 45% { opacity: 1; }
+  50%, 61.67% { opacity: 0.45; }
+  66.67%, 78.33% { opacity: 0.28; }
+  83.33%, 95% { opacity: 0.28; }
+  100% { opacity: 0.28; }
+}
+
+.box,
+.text {
+  animation-name: content;
+}
+
+@keyframes check {
+  0%, 35% { opacity: 0; transform: scale(0.4); animation-timing-function: var(--ease-out); }
+  37.92% { opacity: 1; transform: scale(1.12); }
+  39.58%, 85% { opacity: 1; transform: scale(1); }
+  86.67%, 100% { opacity: 0; transform: scale(0.4); }
+}
+@keyframes tick {
+  0%, 36.25% { stroke-dashoffset: 30; }
+  40%, 85% { stroke-dashoffset: 0; }
+  86.67%, 100% { stroke-dashoffset: 30; }
+}
+
+.row:nth-child(1), .row:nth-child(1) :is(.box, .text, .fill, .tick) { animation-delay: -4s; }
+.row:nth-child(2), .row:nth-child(2) :is(.box, .text, .fill, .tick) { animation-delay: -2s; }
+.row:nth-child(3), .row:nth-child(3) :is(.box, .text, .fill, .tick) { animation-delay: 0s; }
+.row:nth-child(4), .row:nth-child(4) :is(.box, .text, .fill, .tick) { animation-delay: -10s; }
+.row:nth-child(5), .row:nth-child(5) :is(.box, .text, .fill, .tick) { animation-delay: -8s; }
+.row:nth-child(6), .row:nth-child(6) :is(.box, .text, .fill, .tick) { animation-delay: -6s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .root * {
+    animation: none !important;
+  }
+
+  .row:nth-child(1) { transform: translateZ(-23cqw) rotateX(0deg) translateZ(23cqw) scale(1); opacity: 1; }
+  .row:nth-child(2) { transform: translateZ(-23cqw) rotateX(-22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+  .row:nth-child(2) .fill { opacity: 0; }
+  .row:nth-child(3) { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  .row:nth-child(3) .fill { opacity: 0; }
+  .row:nth-child(4) { transform: translateZ(-23cqw) rotateX(66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
+  .row:nth-child(5) { transform: translateZ(-23cqw) rotateX(44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  .row:nth-child(6) { transform: translateZ(-23cqw) rotateX(22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+}
