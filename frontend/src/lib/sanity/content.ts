@@ -66,6 +66,7 @@ const EMPTY_HOME: HomePageContent = {
   explore: { heading: "", description: "" },
   speakNaturally: { title: "", description: "", cta: "" },
   insights: { label: "", heading: "", description: "", cta: "", readStory: "", sampleTitles: [] },
+  partners: { heading: "", logos: [] },
   faqs: { label: "", heading: "", description: "", items: [] },
   seo: EMPTY_SEO,
 };

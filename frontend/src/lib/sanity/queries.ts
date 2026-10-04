@@ -124,6 +124,15 @@ export const HOME_PAGE_QUERY = `*[_id == "homePage"][0] {
     })},
     "sampleTitles": coalesce(insights.sampleTitles[]{ _key, "title": ${text("title")} }, [])
   },
+  "partners": {
+    ${texts({ heading: "partners.heading" })},
+    "logos": coalesce(partners.logos[defined(logo.asset)]{
+      _key,
+      "name": coalesce(name, ""),
+      "size": coalesce(size, "regular"),
+      "logo": logo{ ${imageFields} }
+    }, [])
+  },
   "faqs": {
     ${texts({ label: "faqs.label", heading: "faqs.heading", description: "faqs.description" })},
     "items": ${faqItems("faqs.items")}

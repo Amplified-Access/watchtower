@@ -98,3 +98,40 @@ export const faqItem = defineType({
   ],
   preview: { select: { title: "question" }, prepare: ({ title }) => ({ title: baseValue(title) }) },
 });
+
+// A logo in the home page's scrolling row of partners. Not translated: the
+// name and logo are the same in every language.
+export const partnerLogo = defineType({
+  name: "partnerLogo",
+  title: "Partner",
+  type: "object",
+  fields: [
+    defineField({
+      name: "name",
+      type: "string",
+      description: "The partner's name. Screen readers read it in place of the logo.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "logo",
+      type: "image",
+      description: "A PNG with a transparent background, or an SVG. It is shown in grey.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "size",
+      type: "string",
+      description: "Small shows the logo at half the height, for one that looks heavier than the others.",
+      options: {
+        list: [
+          { title: "Regular", value: "regular" },
+          { title: "Small", value: "small" },
+        ],
+        layout: "radio",
+        direction: "horizontal",
+      },
+      initialValue: "regular",
+    }),
+  ],
+  preview: { select: { title: "name", media: "logo" } },
+});

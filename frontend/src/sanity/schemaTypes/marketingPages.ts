@@ -83,6 +83,20 @@ export const homePage = defineType({
       ],
       "Hidden on the site until insights launch.",
     ),
+    section(
+      "partners",
+      "Partners",
+      [
+        string("heading"),
+        defineField({
+          name: "logos",
+          type: "array",
+          description: "They scroll past in this order.",
+          of: [defineArrayMember({ type: "partnerLogo" })],
+        }),
+      ],
+      "The scrolling row of partner logos. Hidden on the site while it has no logos.",
+    ),
     section("faqs", "Questions", [
       string("label", { description: "Also the label of the About page's questions." }),
       string("heading"),

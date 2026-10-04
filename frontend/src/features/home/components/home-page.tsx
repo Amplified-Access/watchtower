@@ -49,7 +49,7 @@ const STEP_VIDEOS = ["home-report", "home-maps", "home-case-studies"].map((name)
 // The home page. Its text comes from the `homePage` document in Sanity (see
 // app/(main)/page.tsx); only the "Step {number}" label is UI copy.
 const HomePage = ({ content }: { content: HomePageContent }) => {
-  const { hero, explore, stats, howItWorks, speakNaturally, insights: insightsText, faqs, banner } = content;
+  const { hero, explore, stats, howItWorks, speakNaturally, insights: insightsText, partners, faqs, banner } = content;
   const t = useTranslations("Home");
   const { data: insightsData } = trpc.getPublicInsights.useQuery({ limit: 3 });
 
@@ -365,7 +365,7 @@ const HomePage = ({ content }: { content: HomePageContent }) => {
           </Container>
         </section>
       )}
-      <LogoCloud />
+      <LogoCloud heading={partners.heading} logos={partners.logos} />
       <section className="relative isolate bg-white pb-16 [zoom:var(--viewport-scale)]">
         {/* Pattern spans the full width and stops at the bottom rule; the
             container is marked only by the guide lines drawn over it. */}

@@ -1,14 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import Container from "./common/container";
 import H4 from "./common/heading-four";
+import SanityImage from "./common/sanity-image";
 import { InfiniteSlider } from "./ui/infinite-slider";
 import { ProgressiveBlur } from "./ui/progressive-blur";
-import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+import type { PartnerLogo } from "@/lib/sanity/types";
 
-export default function LogoCloud() {
-  const t = useTranslations("LogoCloud");
+// The home page's scrolling row of partner logos, edited in Sanity (Home page
+// → Partners). Hidden while it has none.
+export default function LogoCloud({ heading, logos }: { heading: string; logos: PartnerLogo[] }) {
+  if (logos.length === 0) return null;
 
   return (
     // The preceding section ends with its own 64px white strip (pb-16), so this
@@ -22,58 +25,21 @@ export default function LogoCloud() {
         <div className="flex flex-col items-center md:flex-row">
           <div className="md:max-w-44 shrink-0 md:border-r md:pr-6">
             <H4 className="text-3xl md:text-lg text-center md:text-left py-6">
-              {t("heading")}
+              {heading}
             </H4>
           </div>
           <div className="relative py-6 max-w-4xl mx-auto w-full">
             <InfiniteSlider speedOnHover={20} speed={40} gap={0}>
-              {[
-                {
-                  src: "/partners/acwj.png",
-                  alt: "ACWJ Logo",
-                  className: "mx-auto h-5 grayscale w-fit dark:invert",
-                },
-                // {
-                //   src: "/partners/engineers-without-borders.png",
-                //   alt: "Engineers Without Borders Logo",
-                //   className: "mx-auto h-10 grayscale w-fit dark:invert",
-                // },
-                {
-                  src: "/partners/misr.png",
-                  alt: "Misr Logo",
-                  className: "mx-auto h-10 grayscale w-fit dark:invert",
-                },
-                {
-                  src: "/partners/circular-design-hub.png",
-                  alt: "Circular Design Hub Logo",
-                  className: "mx-auto h-10 grayscale w-fit dark:invert",
-                },
-                {
-                  src: "/partners/cghrds.png",
-                  alt: "CGHRDS logo",
-                  className: "mx-auto h-10 grayscale w-fit dark:invert",
-                },
-                // {
-                //   src: "/partners/ucc.png",
-                //   alt: "UCC Logo",
-                //   className: "mx-auto h-10 grayscale w-fit dark:invert",
-                // },
-                // {
-                //   src: "/partners/peace-first.png",
-                //   alt: "Peace First Logo",
-                //   className: "mx-auto h-10 w-fit dark:invert grayscale",
-                // },
-              ].map((logo, idx) => (
-                <div
-                  className="flex items-center w-fit mr-8 md:mr-24"
-                  key={logo.src}
-                >
-                  <Image
-                    className={
-                      logo.className + " object-contain w-min max-w-40"
-                    }
-                    src={logo.src}
-                    alt={logo.alt}
+              {logos.map(({ _key, name, size, logo }) => (
+                <div className="flex items-center w-fit mr-8 md:mr-24" key={_key}>
+                  {/* No blur placeholder: on a transparent logo it shows as a
+                      grey box until the image loads. */}
+                  <SanityImage
+                    className={cn(
+                      "mx-auto grayscale w-fit dark:invert object-contain w-min max-w-40",
+                      size === "small" ? "h-5" : "h-10",
+                    )}
+                    image={{ ...logo, alt: name, lqip: null }}
                     height="20"
                     width={400}
                   />
