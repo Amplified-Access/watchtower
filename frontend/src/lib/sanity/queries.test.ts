@@ -13,6 +13,7 @@ import {
   CASE_STUDIES_QUERY,
   CASE_STUDY_CATEGORIES_QUERY,
   CASE_STUDY_QUERY,
+  FOOTER_QUERY,
   HOME_PAGE_QUERY,
   LEGAL_PAGE_QUERY,
   LLMS_QUERY,
@@ -23,6 +24,7 @@ import type {
   CaseStudy,
   CaseStudyCategory,
   CaseStudySummary,
+  FooterContent,
   HomePageContent,
   LegalPage,
   SharedHomeSections,
@@ -226,6 +228,28 @@ describe("page queries against the seed", () => {
     expect(en.partners.logos.every(({ logo }) => !!logo.url)).toBe(true);
     expect(fr.partners.heading).not.toBe(en.partners.heading);
     expect(fr.partners.logos).toEqual(en.partners.logos);
+  });
+
+  it("fills every footer text in every language, with its placeholders", async () => {
+    for (const locale of locales) {
+      const footer = await run<FooterContent>(FOOTER_QUERY, seed, { locale });
+      const empty = strings(footer, "footer").filter(([, text]) => !text.trim());
+      expect({ locale, empty }).toEqual({ locale, empty: [] });
+      expect({ locale, attribution: footer.attribution.includes("{organisation}") }).toEqual({ locale, attribution: true });
+      expect({ locale, copyright: footer.copyright.includes("{year}") }).toEqual({ locale, copyright: true });
+    }
+  });
+
+  it("returns the footer's columns and links, leaving out profiles without an address", async () => {
+    const en = await run<FooterContent>(FOOTER_QUERY, seed, { locale: "en" });
+    const fr = await run<FooterContent>(FOOTER_QUERY, seed, { locale: "fr" });
+    expect(en.columns.map((column) => column.links.length)).toEqual([5, 5, 3, 4]);
+    expect(en.columns[3].links[1].href).toBe("mailto:hello@amplifiedaccess.org");
+    expect(en.legalLinks.map((link) => link.href)).toEqual(["/privacy-policy", "/terms-of-service", "/accessibility"]);
+    expect(en.social.map((profile) => profile.platform)).toEqual(["linkedin", "x", "youtube"]);
+    expect(en.organisation).toEqual({ name: "Amplified Access", url: "https://www.amplifiedaccess.org" });
+    expect(fr.columns[0].heading).not.toBe(en.columns[0].heading);
+    expect(fr.columns[0].links.map((link) => link.href)).toEqual(en.columns[0].links.map((link) => link.href));
   });
 
   it("translates the home page", async () => {
