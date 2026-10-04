@@ -134,7 +134,7 @@ export const aboutPage = defineType({
       name: "steps",
       type: "array",
       description:
-        "Numbered 01, 02, 03 on the page. Each has its screenshots, in this order: reporting, the maps, case studies.",
+        "Numbered 01, 02, 03 on the page. Each has its screenshot, in this order: reporting, the maps, case studies.",
       of: [
         defineArrayMember({
           name: "aboutStep",
