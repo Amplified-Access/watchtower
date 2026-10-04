@@ -1,0 +1,263 @@
+/*
+ * The About page's step illustrations: still pictures in the same language
+ * as the home page's animated ones (white cards on the About hero's
+ * gradient, brand colours only), not screenshots. Every size is a multiple
+ * of --u (1% of the picture's width), so each scales as one picture,
+ * centred in its frame (2:1 from md up, 4:3 on phones). In a narrow frame
+ * each keeps only its main element, at about twice the size, so its text
+ * stays readable.
+ */
+
+.root {
+  /* Every size is a multiple of --u: 1% of the picture's width, larger on
+     phones (below). */
+  --u: 1cqw;
+  /* The brand's colours only (globals.css). */
+  --blue: #0042e7;
+  --line: #e2e2e2;
+  --muted: rgb(0 0 0 / 0.55);
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(4 * var(--u));
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #fff;
+  /* Dissolves into the page at the bottom, as the step screenshots did. */
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  font-family: var(--font-title);
+  color: #000;
+  user-select: none;
+}
+
+.card {
+  position: relative;
+  border-radius: calc(1.6 * var(--u));
+  background: #fff;
+  box-shadow: 0 calc(1.6 * var(--u)) calc(4 * var(--u)) rgb(0 0 0 / 0.16);
+}
+
+.cardLabel {
+  font-size: calc(1.25 * var(--u));
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* ── 1. Report ─────────────────────────────────────────────────────────── */
+
+.recorder {
+  display: flex;
+  width: calc(30 * var(--u));
+  align-items: center;
+  gap: calc(1.8 * var(--u));
+  padding: calc(1.6 * var(--u)) calc(2 * var(--u));
+  border-radius: calc(99 * var(--u));
+}
+
+.mic {
+  display: grid;
+  flex-shrink: 0;
+  width: calc(6 * var(--u));
+  height: calc(6 * var(--u));
+  place-items: center;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+}
+
+.mic svg {
+  width: calc(2.6 * var(--u));
+  height: calc(2.6 * var(--u));
+}
+
+.recMeta {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: calc(0.7 * var(--u));
+}
+
+.recLabel {
+  font-size: calc(1.3 * var(--u));
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.wave {
+  display: flex;
+  height: calc(3.2 * var(--u));
+  align-items: center;
+  gap: calc(0.4 * var(--u));
+}
+
+.wave span {
+  flex: 1;
+  border-radius: calc(99 * var(--u));
+  background: var(--blue);
+}
+
+/* The dotted path from the voice report to the form it filled in. */
+.flow {
+  width: calc(6 * var(--u));
+  height: calc(0.5 * var(--u));
+  margin: 0 calc(-2 * var(--u));
+  background: radial-gradient(circle, #fff 45%, transparent 50%) 0 50% / calc(1.2 * var(--u)) calc(0.5 * var(--u)) repeat-x;
+  opacity: 0.9;
+}
+
+.form {
+  width: calc(38 * var(--u));
+  padding: calc(2.6 * var(--u)) calc(3 * var(--u));
+}
+
+.formTitle {
+  text-align: center;
+  font-size: calc(2.2 * var(--u));
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.3 * var(--u));
+  margin-top: calc(1.8 * var(--u));
+}
+
+.label {
+  margin-bottom: calc(0.5 * var(--u));
+  font-size: calc(1.1 * var(--u));
+  font-weight: 500;
+}
+
+.box {
+  display: flex;
+  min-height: calc(3.4 * var(--u));
+  align-items: center;
+  gap: calc(0.7 * var(--u));
+  padding: 0 calc(1.1 * var(--u));
+  border: calc(0.1 * var(--u)) solid var(--line);
+  border-radius: calc(0.7 * var(--u));
+  font-size: calc(1.15 * var(--u));
+  white-space: nowrap;
+}
+
+.boxTall {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(0.4 * var(--u));
+  padding: calc(1 * var(--u)) calc(1.1 * var(--u));
+}
+
+.dot {
+  width: calc(0.8 * var(--u));
+  height: calc(0.8 * var(--u));
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.pin {
+  width: calc(1.3 * var(--u));
+  height: calc(1.3 * var(--u));
+  color: var(--blue);
+}
+
+.submit {
+  display: grid;
+  height: calc(3.4 * var(--u));
+  margin-top: calc(1.6 * var(--u));
+  place-items: center;
+  border-radius: calc(0.7 * var(--u));
+  background: var(--blue);
+  color: #fff;
+  font-size: calc(1.2 * var(--u));
+  font-weight: 600;
+}
+
+/* ── 2. See the bigger picture ─────────────────────────────────────────── */
+
+/* The live incident map, filling the frame. The zoom cancels the About
+   section's [zoom:var(--viewport-scale)]: Mapbox sizes its canvas from
+   getBoundingClientRect, so inside a zoomed ancestor the canvas came out
+   that much larger than the frame (1.5x at 1920px) and was cropped at the
+   right and bottom. As the maps landing page and thematic thumbnails do. */
+.map {
+  position: absolute;
+  inset: 0;
+  zoom: calc(1 / var(--viewport-scale));
+}
+
+/* ── 3. Drive action ───────────────────────────────────────────────────── */
+
+/* A still of the home page's picker wheel: the centre outcome done and
+   largest, done ones above, still to do below, tilting away. */
+.wheel {
+  position: relative;
+  width: calc(52 * var(--u));
+  height: calc(40 * var(--u));
+  perspective: calc(80 * var(--u));
+}
+
+.outcome {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: calc(46 * var(--u));
+  height: calc(6.2 * var(--u));
+  margin: calc(-3.1 * var(--u)) 0 0 calc(-23 * var(--u));
+  align-items: center;
+  gap: calc(1.6 * var(--u));
+  padding: 0 calc(2.2 * var(--u));
+  border-radius: calc(1.5 * var(--u));
+  background: #fff;
+  box-shadow: 0 calc(1 * var(--u)) calc(2.6 * var(--u)) rgb(0 0 0 / 0.14);
+  transform: translateZ(calc(-20 * var(--u))) rotateX(var(--a)) translateZ(calc(20 * var(--u))) scale(var(--s));
+}
+
+.outcome > * {
+  opacity: var(--o);
+}
+
+.circle {
+  flex-shrink: 0;
+  width: calc(3.4 * var(--u));
+  height: calc(3.4 * var(--u));
+  border: calc(0.2 * var(--u)) solid #c4c4c4;
+  border-radius: 50%;
+}
+
+.check {
+  flex-shrink: 0;
+  width: calc(3.4 * var(--u));
+  height: calc(3.4 * var(--u));
+}
+
+.outcomeText {
+  font-size: calc(2.1 * var(--u));
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* ── Narrow frames (phones) ────────────────────────────────────────────── */
+
+@container (max-width: 640px) {
+  .root > * {
+    --u: 1.9cqw;
+  }
+
+  .wheel,
+  .form {
+    --u: 1.75cqw;
+  }
+
+  .recorder,
+  .flow {
+    display: none;
+  }
+}
