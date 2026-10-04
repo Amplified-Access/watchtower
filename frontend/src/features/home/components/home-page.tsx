@@ -209,6 +209,8 @@ const HomePage = ({ content }: { content: HomePageContent }) => {
                 {index < howItWorks.steps.length - 1 && (
                   <StepConnector
                     from={index % 2 === 0 ? "left" : "right"}
+                    order={index}
+                    count={howItWorks.steps.length - 1}
                     className="top-full hidden h-40 lg:block"
                   />
                 )}
