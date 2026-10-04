@@ -1,25 +1,28 @@
 /*
- * How it works, step 3: the outcomes of acting on reports, arriving one
- * after another in the middle of the blue panel. Only the outcomes, no
- * surrounding text. One 12-second cycle (--cycle); every keyframe is a
- * percentage of it, so the loop is seamless:
+ * How it works, step 3: the outcomes of acting on reports, each its own
+ * card, on a wheel like the iPhone's date picker, turning continuously. The
+ * card in the centre is the largest and sharpest, and its check is
+ * introduced there; rows below are still to do, rows above are done. Cards
+ * stay solid white and tilt away towards the edges, as on a cylinder; their
+ * text and check dim with distance from the centre.
  *
- *   0.6s  1.9s  3.2s  4.5s   an outcome rises into place; its check pops and draws, then its text settles
- *   9.3s  9.55s  9.8s  10.05s   they lift away in the same order; idle until the loop restarts
+ * The wheel holds for 1.4s, then rolls up one row in 0.6s: one row every
+ * 2s, one full turn of the six rows every 12s (--cycle). Every row runs
+ * the same journey (travel, check, tick), started at a different point by
+ * a negative delay, so the loop is seamless and each row reaches the
+ * centre 2s after the one before. A row is 22deg round a 23cqw wheel.
  *
- * The per-outcome keyframes at the end share one pattern, offset per item:
- * retime them together. Sizes are in cqw, so it scales as one picture like
- * steps 1 and 2. The base styles show every outcome: what readers who ask
- * for reduced motion see.
+ * Sizes are in cqw, so it scales as one picture like steps 1 and 2. Under
+ * reduced motion it holds still, as at the start.
  */
 
 .root {
   --cycle: 12s;
   --ease: cubic-bezier(0.65, 0, 0.35, 1);
-  /* Arrivals settle with a little give. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   /* The brand's colours only (globals.css). */
   --blue: #0042e7;
+  --line: #e2e2e2;
   position: relative;
   container-type: inline-size;
   display: grid;
@@ -27,7 +30,9 @@
   width: 100%;
   place-items: center;
   overflow: hidden;
-  background: var(--blue);
+  isolation: isolate;
+  /* The About hero's gradient, grain and pattern: infographic-backdrop.tsx. */
+  background: #fff;
   font-family: var(--font-title);
   color: #000;
   user-select: none;
@@ -44,167 +49,135 @@
   animation-play-state: paused;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .root * {
-    animation: none !important;
-  }
-}
 
-.dots {
-  position: absolute;
-  right: -18%;
-  bottom: -10%;
-  width: 80%;
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-/* What's showing stays centred: with k of the 4 outcomes in, the stack sits
-   (4 - k) half-steps lower, and slides up as each new one arrives. A step
-   is an outcome's height (8.8cqw: 4.4cqw check + 2 x 2.2cqw padding) plus
-   the gap, 10.8cqw. */
-.outcomes {
+/* The wheel's frame: just space on the blue; each outcome is its own card. */
+.picker {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 2cqw;
-  animation-name: stack;
+  width: 70cqw;
+  height: 62cqw;
 }
 
-.outcome {
+.wheel {
+  position: absolute;
+  inset: 0;
+  perspective: 90cqw;
+  transform-style: preserve-3d;
+}
+
+/* Each outcome is a white card on the wheel. Rows are 8.6cqw apart at the
+   centre (23cqw x sin 22deg), so a 7.2cqw card leaves a gap. */
+.row {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   display: flex;
-  width: 52cqw;
+  width: 56cqw;
+  height: 7.2cqw;
+  margin: -3.6cqw 0 0 -28cqw;
   align-items: center;
   gap: 2cqw;
-  padding: 2.2cqw 2.8cqw;
-  border-radius: 2cqw;
+  padding: 0 2.6cqw;
+  border-radius: 1.8cqw;
   background: #fff;
-  box-shadow: 0 2cqw 5cqw rgb(0 0 0 / 0.16);
+  box-shadow: 0 1.2cqw 3cqw rgb(0 0 0 / 0.14);
+  backface-visibility: hidden;
+  animation-name: travel;
 }
 
-.check {
+/* An empty circle, filled with the blue check once done. */
+.box {
+  position: relative;
   flex-shrink: 0;
   width: 4.4cqw;
   height: 4.4cqw;
+  border: 0.22cqw solid #c4c4c4;
+  border-radius: 50%;
+}
+
+.fill {
+  position: absolute;
+  inset: -0.22cqw;
+  animation-name: check;
+}
+
+.fill svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .tick {
   stroke-dasharray: 30;
   stroke-dashoffset: 0;
+  animation-name: tick;
 }
 
 .text {
-  font-size: 2.4cqw;
+  font-size: 2.8cqw;
   font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
 }
 
-@keyframes stack {
-  /* One outcome in (from 0.6s): three half-steps low. */
-  0%, 15.83% { transform: translateY(16.2cqw); animation-timing-function: var(--ease-out); }
-  /* Each arrival (1.9s, 3.2s, 4.5s) lifts it half a step, in time. */
-  21.67%, 26.67% { transform: translateY(10.8cqw); animation-timing-function: var(--ease-out); }
-  32.5%, 37.5% { transform: translateY(5.4cqw); animation-timing-function: var(--ease-out); }
-  43.33%, 87.92% { transform: translateY(0); }
-  /* Back down once the last outcome has lifted away (unseen). */
-  88.33%, 100% { transform: translateY(16.2cqw); }
+/* ── The journey ───────────────────────────────────────────────────────── */
+
+@keyframes travel {
+  0%, 11.67% { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  16.67%, 28.33% { transform: translateZ(-23cqw) rotateX(-22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+  33.33%, 45% { transform: translateZ(-23cqw) rotateX(0deg) translateZ(23cqw) scale(1); opacity: 1; }
+  50%, 61.67% { transform: translateZ(-23cqw) rotateX(22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+  66.67%, 78.33% { transform: translateZ(-23cqw) rotateX(44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  83.33%, 89.17% { transform: translateZ(-23cqw) rotateX(66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
+  89.58%, 95% { transform: translateZ(-23cqw) rotateX(-66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
+  100% { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
 }
 
-/* ── Timeline ──────────────────────────────────────────────────────────── */
+/* The text and check: sharp in the centre, dimmer with distance. */
+@keyframes content {
+  0%, 11.67% { opacity: 0.28; }
+  16.67%, 28.33% { opacity: 0.45; }
+  33.33%, 45% { opacity: 1; }
+  50%, 61.67% { opacity: 0.45; }
+  66.67%, 78.33% { opacity: 0.28; }
+  83.33%, 95% { opacity: 0.28; }
+  100% { opacity: 0.28; }
+}
 
-/* Outcome 1: arrives at 0.6s, lifts away at 9.3s */
-@keyframes outcome-1 {
-  0%, 5% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
-  10.83%, 77.5% { opacity: 1; transform: none; }
-  81.67%, 100% { opacity: 0; transform: translateY(-2cqw); }
+.box,
+.text {
+  animation-name: content;
 }
-@keyframes check-1 {
-  0%, 6.67% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
-  9.58% { transform: scale(1.1); }
-  11.25%, 100% { transform: scale(1); }
-}
-@keyframes tick-1 {
-  0%, 8.33% { stroke-dashoffset: 30; }
-  12.08%, 100% { stroke-dashoffset: 0; }
-}
-@keyframes text-1 {
-  0%, 7.5% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
-  12.5%, 100% { opacity: 1; transform: none; }
-}
-.outcome:nth-child(1) { animation-name: outcome-1; }
-.outcome:nth-child(1) .check { animation-name: check-1; }
-.outcome:nth-child(1) .tick { animation-name: tick-1; }
-.outcome:nth-child(1) .text { animation-name: text-1; }
 
-/* Outcome 2: arrives at 1.9s, lifts away at 9.55s */
-@keyframes outcome-2 {
-  0%, 15.83% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
-  21.67%, 79.58% { opacity: 1; transform: none; }
-  83.75%, 100% { opacity: 0; transform: translateY(-2cqw); }
+@keyframes check {
+  0%, 35% { opacity: 0; transform: scale(0.4); animation-timing-function: var(--ease-out); }
+  37.92% { opacity: 1; transform: scale(1.12); }
+  39.58%, 85% { opacity: 1; transform: scale(1); }
+  86.67%, 100% { opacity: 0; transform: scale(0.4); }
 }
-@keyframes check-2 {
-  0%, 17.5% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
-  20.42% { transform: scale(1.1); }
-  22.08%, 100% { transform: scale(1); }
+@keyframes tick {
+  0%, 36.25% { stroke-dashoffset: 30; }
+  40%, 85% { stroke-dashoffset: 0; }
+  86.67%, 100% { stroke-dashoffset: 30; }
 }
-@keyframes tick-2 {
-  0%, 19.17% { stroke-dashoffset: 30; }
-  22.92%, 100% { stroke-dashoffset: 0; }
-}
-@keyframes text-2 {
-  0%, 18.33% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
-  23.33%, 100% { opacity: 1; transform: none; }
-}
-.outcome:nth-child(2) { animation-name: outcome-2; }
-.outcome:nth-child(2) .check { animation-name: check-2; }
-.outcome:nth-child(2) .tick { animation-name: tick-2; }
-.outcome:nth-child(2) .text { animation-name: text-2; }
 
-/* Outcome 3: arrives at 3.2s, lifts away at 9.8s */
-@keyframes outcome-3 {
-  0%, 26.67% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
-  32.5%, 81.67% { opacity: 1; transform: none; }
-  85.83%, 100% { opacity: 0; transform: translateY(-2cqw); }
-}
-@keyframes check-3 {
-  0%, 28.33% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
-  31.25% { transform: scale(1.1); }
-  32.92%, 100% { transform: scale(1); }
-}
-@keyframes tick-3 {
-  0%, 30% { stroke-dashoffset: 30; }
-  33.75%, 100% { stroke-dashoffset: 0; }
-}
-@keyframes text-3 {
-  0%, 29.17% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
-  34.17%, 100% { opacity: 1; transform: none; }
-}
-.outcome:nth-child(3) { animation-name: outcome-3; }
-.outcome:nth-child(3) .check { animation-name: check-3; }
-.outcome:nth-child(3) .tick { animation-name: tick-3; }
-.outcome:nth-child(3) .text { animation-name: text-3; }
+.row:nth-child(1), .row:nth-child(1) :is(.box, .text, .fill, .tick) { animation-delay: -4s; }
+.row:nth-child(2), .row:nth-child(2) :is(.box, .text, .fill, .tick) { animation-delay: -2s; }
+.row:nth-child(3), .row:nth-child(3) :is(.box, .text, .fill, .tick) { animation-delay: 0s; }
+.row:nth-child(4), .row:nth-child(4) :is(.box, .text, .fill, .tick) { animation-delay: -10s; }
+.row:nth-child(5), .row:nth-child(5) :is(.box, .text, .fill, .tick) { animation-delay: -8s; }
+.row:nth-child(6), .row:nth-child(6) :is(.box, .text, .fill, .tick) { animation-delay: -6s; }
 
-/* Outcome 4: arrives at 4.5s, lifts away at 10.05s */
-@keyframes outcome-4 {
-  0%, 37.5% { opacity: 0; transform: translateY(2.4cqw) scale(0.96); animation-timing-function: var(--ease-out); }
-  43.33%, 83.75% { opacity: 1; transform: none; }
-  87.92%, 100% { opacity: 0; transform: translateY(-2cqw); }
+@media (prefers-reduced-motion: reduce) {
+  .root * {
+    animation: none !important;
+  }
+
+  .row:nth-child(1) { transform: translateZ(-23cqw) rotateX(0deg) translateZ(23cqw) scale(1); opacity: 1; }
+  .row:nth-child(2) { transform: translateZ(-23cqw) rotateX(-22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+  .row:nth-child(2) .fill { opacity: 0; }
+  .row:nth-child(3) { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  .row:nth-child(3) .fill { opacity: 0; }
+  .row:nth-child(4) { transform: translateZ(-23cqw) rotateX(66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
+  .row:nth-child(5) { transform: translateZ(-23cqw) rotateX(44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+  .row:nth-child(6) { transform: translateZ(-23cqw) rotateX(22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
 }
-@keyframes check-4 {
-  0%, 39.17% { transform: scale(0.4); animation-timing-function: var(--ease-out); }
-  42.08% { transform: scale(1.1); }
-  43.75%, 100% { transform: scale(1); }
-}
-@keyframes tick-4 {
-  0%, 40.83% { stroke-dashoffset: 30; }
-  44.58%, 100% { stroke-dashoffset: 0; }
-}
-@keyframes text-4 {
-  0%, 40% { opacity: 0; transform: translateX(-1cqw); animation-timing-function: var(--ease-out); }
-  45%, 100% { opacity: 1; transform: none; }
-}
-.outcome:nth-child(4) { animation-name: outcome-4; }
-.outcome:nth-child(4) .check { animation-name: check-4; }
-.outcome:nth-child(4) .tick { animation-name: tick-4; }
-.outcome:nth-child(4) .text { animation-name: text-4; }
