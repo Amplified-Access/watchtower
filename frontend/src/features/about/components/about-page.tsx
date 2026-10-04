@@ -249,12 +249,7 @@ const AboutPage = ({ content }: { content: AboutPageContent }) => {
               >
                 <p className="mb-3 font-title text-sm font-medium text-primary">{audience.label}</p>
                 <div className="flex-1 rounded-xl border border-[#c3d4ff] bg-[#f6f3f8] p-8 shadow-[0_12px_32px_rgb(0_66_231/0.06)] md:p-10">
-                  {/* The WatchTower mark, in brand blue. */}
-                  <div
-                    aria-hidden
-                    className="h-6 w-7 bg-primary [mask:url(/brand/icon-black.svg)_center/contain_no-repeat]"
-                  />
-                  <h3 className="mt-4 font-title text-xl font-semibold leading-snug text-primary">
+                  <h3 className="font-title text-xl font-semibold leading-snug text-primary">
                     {audience.title}
                   </h3>
                   <p className="mt-3 leading-relaxed text-dark/70">{audience.description}</p>
