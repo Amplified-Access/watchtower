@@ -29,7 +29,7 @@ Everything a reader or a search engine sees as text is editable in the Studio, i
 | **Search and sharing** (sidebar) | The site's description and default share image; the search title and description of the pages whose content is code: Case studies, Maps, Live incident map, Thematic maps (`{type}` is replaced by the incident type), Report an incident, Alerts, Ask WatchTower, Create a deployment, Sign in |
 | Home, About: **Search and sharing** field | The page's title, description and share image. Home's title shows as "WatchTower \| \<title\>" |
 | A case study: **Search and sharing** tab | Optional overrides of the title, summary and cover image |
-| A policy page: **Search and sharing** field | Its title and description (the privacy policy's title is its translated header) |
+| A policy page: **Search and sharing** field | Its title and description (the privacy policy's and terms of use's title is their translated header) |
 
 Titles leave out "WatchTower": the site adds " | WatchTower". A title that ends with the brand anyway ("Security Policy - WatchTower") has it removed and added back the same way (`ownTitle`, `fullTitle`). The Studio warns when a title passes 60 characters or a description 160, where search results cut them off. Share images are cropped to 1200 by 630 around the image's focal point and served as JPEG from Sanity's CDN (`sanityShareImageSrc`).
 

@@ -366,7 +366,16 @@ const HomePage = ({ content }: { content: HomePageContent }) => {
         </section>
       )}
       <LogoCloud heading={partners.heading} logos={partners.logos} />
-      <section className="relative isolate bg-white pb-16 [zoom:var(--viewport-scale)]">
+      {/* The footer's FAQs link lands here (/#faqs). The fixed navigation
+          bar covers the top of the page by --nav-height (in screen pixels,
+          hence the division by the zoom), so the scroll stops that much
+          short. Not --banner-height: the home page has no banner, but the
+          jump happens before the header resets it (and on a direct visit,
+          while it still holds the stylesheet's default). */}
+      <section
+        id="faqs"
+        className="relative isolate scroll-mt-[calc(var(--nav-height)/var(--viewport-scale))] bg-white pb-16 [zoom:var(--viewport-scale)]"
+      >
         {/* Pattern spans the full width and stops at the bottom rule; the
             container is marked only by the guide lines drawn over it. */}
         <div className="pointer-events-none absolute inset-x-0 top-0 bottom-16 -z-10 overflow-hidden">

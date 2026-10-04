@@ -15,6 +15,7 @@ import {
   DEFAULT_HOME_SEO,
   DEFAULT_PAGE_SEO,
   DEFAULT_PRIVACY_SEO,
+  DEFAULT_TERMS_SEO,
   SEO_PAGE_KEYS,
   type SeoPageKey,
 } from "../../src/lib/seo/defaults";
@@ -85,8 +86,9 @@ export const buildSeoDocs = (pages: Record<string, Strings>, messagesDir: string
     settings,
     home: seo(DEFAULT_HOME_SEO, { title: { pages: "Home.heroTitleLine1" }, description: { pages: "Home.heroDescription" } }),
     about: seo(DEFAULT_ABOUT_SEO, { title: { messages: "Navigation.about" }, description: { pages: "About.heroDescription" } }),
-    // The policy is English only until a reviewed translation exists, and its
-    // title is the translated page header: only the description is seeded.
+    // The policies are English only until a reviewed translation exists, and
+    // their title is the translated page header: only the description is seeded.
     privacyPolicy: { _type: "seo", description: localized("Text", DEFAULT_PRIVACY_SEO.description) },
+    termsOfUse: { _type: "seo", description: localized("Text", DEFAULT_TERMS_SEO.description) },
   };
 };

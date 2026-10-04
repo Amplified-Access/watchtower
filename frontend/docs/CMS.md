@@ -1,6 +1,6 @@
 # Content management (Sanity)
 
-Editorial content for the Watchtower site: the **Home** and **About** pages, **case studies** (and their categories), the **policy pages** (privacy policy, security policy, code of conduct) and the **footer**. Editors change it in the Sanity Studio at **`/studio`** on the site itself, and published changes appear on the site within seconds, on pages readers already have open too (Sanity Live, below). Everything else stays where it was: incident data comes from the Go backend, and UI copy stays in `messages/*.json`.
+Editorial content for the Watchtower site: the **Home** and **About** pages, **case studies** (and their categories), the **policy pages** (privacy policy, terms of use, security policy, code of conduct) and the **footer**. Editors change it in the Sanity Studio at **`/studio`** on the site itself, and published changes appear on the site within seconds, on pages readers already have open too (Sanity Live, below). Everything else stays where it was: incident data comes from the Go backend, and UI copy stays in `messages/*.json`.
 
 **What is in Sanity, and what is UI copy.** The words on a page that an editor would rewrite (headings, paragraphs, questions and answers, figures, button labels on those pages) are in Sanity. Text that belongs to the interface stays in `messages/*.json`: navigation, the sign-in pages' small footer, the footer's "WatchTower" watermark, the announcement banner, forms, the live map widget, labels built around a value ("Step {number}", "Last updated: {date}"), and the names of the site's languages and their regions on the About page, which go with the locale list. Page layout (images, links, the order of sections) is code, except the partner logos on the Home page and the footer's links, which editors add and reorder.
 
@@ -90,7 +90,7 @@ Category names are translated (on the category document); category slugs are not
 
 **Editing with 13 languages.** Use the globe (language filter) button at the top of a document to show only the languages you work in; hidden languages are kept, not deleted. Under each translatable field, the `+ <language>` buttons add a translation, and "Add missing languages" adds them all.
 
-**The privacy policy is only published in reviewed translations.** Its text is seeded in English only, and every language falls back to it; add a translation in the Studio once a reviewed one exists. (Its page header, and the security policy and code of conduct, came with the translations the site already had.)
+**The privacy policy and terms of use are only published in reviewed translations.** Their text is seeded in English only, and every language falls back to it; add a translation in the Studio once a reviewed one exists. The terms say the English version applies where a translation differs. (Their titles, and the security policy and code of conduct, came with the translations the site already had: the terms' title is the footer's "Terms of Use" label.)
 
 ## The pages
 
@@ -99,6 +99,7 @@ Category names are translated (on the category document); category slugs are not
 | Home | `homePage` | `/`, and `/about` for the figures and the bottom banner |
 | About | `aboutPage` | `/about` |
 | Privacy policy | `privacyPolicy` (a `legalPage`) | `/privacy-policy`, with a numbered table of contents |
+| Terms of use | `termsOfUse` (a `legalPage`) | `/terms-of-use`, laid out like the privacy policy |
 | Security | `security` (a `legalPage`) | `/security` |
 | Code of conduct | `codeOfConduct` (a `legalPage`) | `/code-of-conduct` |
 | Footer (sidebar, not under Pages) | `footer` | The footer of every public page |
@@ -109,14 +110,14 @@ Category names are translated (on the category document); category slugs are not
 - The Home page's **Partners** group is the scrolling row of partner logos: a heading and a list of partners, each a name (read by screen readers in place of the logo, the same in every language), a logo (a transparent PNG or an SVG, shown in grey) and a size ("Small" halves the height, for a logo that looks heavier than the others). The row is hidden while it has no logos. `pnpm sanity:setup` doesn't add it to a dataset that already has the Home page, because its sync leaves fields holding images to the Studio: add the logos there.
 - The **Footer** holds the line under the logo, the link columns, the social profiles, the copyright line and the links beside it. Link labels and headings are translated; addresses are shared (a site path such as `/maps`, a web address or a `mailto:`). The line under the logo writes `{organisation}` where the organisation's name goes, so each language can put it where its grammar needs (Urdu and Amharic put it first); the name and its address are set once. The copyright writes `{year}`. A social profile without an address isn't shown: the seed has the profiles amplifiedaccess.org links to (LinkedIn, X, YouTube), and Facebook, Instagram and WhatsApp wait for theirs (the old footer linked them to `#`). The logo and the "WatchTower" watermark are code. The `(main)` layout fetches the footer once (`getFooter`) and provides it through React context, because client page components render the footer; if Sanity is unavailable the footer renders without its content rather than failing the page.
 - Headings the design breaks over two lines keep the break: press Enter in the text field. On the About page the breaks apply from tablet width up; on a phone the heading wraps on its own. The About page's languages description may use `{count}`, replaced with the number of languages.
-- A legal page has a header (label, title, description), a search title and description, and sections of rich text (paragraphs, subheadings, bullets, bold, links). An untitled section is an introduction, left out of the privacy policy's contents. The privacy policy's header is only its title, with the last-updated date beneath it, so the Studio hides the label and description there.
+- A legal page has a header (label, title, description), a search title and description, and sections of rich text (paragraphs, subheadings, bullets, bold, links). An untitled section is an introduction, left out of the contents. The privacy policy's and terms of use's header is only the title, with the last-updated date beneath it, so the Studio hides the label and description there; both pages render `features/legal/components/dated-policy-page.tsx`. Change "Last updated" whenever their text changes.
 - The queries (`HOME_PAGE_QUERY`, `ABOUT_PAGE_QUERY`, `LEGAL_PAGE_QUERY`) return every text as a string, empty when missing, so the page components need no null checks. The Home and About pages are client components that take this content as props from their server `page.tsx`.
 
 ## Seed content
 
 `sanity/seed/seed.ndjson` is what `pnpm sanity:setup` imports. It is generated. Edit the inputs and run `pnpm sanity:seed:build`:
 
-- `sanity/seed/source.ts`: the English case studies and privacy policy, moved out of the frontend's old placeholder modules
+- `sanity/seed/source.ts`: the English case studies and privacy policy, moved out of the frontend's old placeholder modules, and the terms of use
 - `sanity/seed/categories.json`: category names in all 13 languages, moved out of `messages/*.json`
 - `sanity/seed/translations/<lang>.json`: case study text in the other 12 languages, keyed like `translations/en.json` (regenerate that with `pnpm sanity:seed:build --strings`)
 - `sanity/seed/pages/<lang>.json`: the text of the pages above in all 13 languages, moved out of `messages/*.json` with their keys (`Home.heroTitleLine1`), and turned into the page documents by `sanity/seed/pages.ts`

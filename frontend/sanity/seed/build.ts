@@ -25,6 +25,8 @@ import {
   PLACEHOLDER_CASE_STUDIES,
   PRIVACY_POLICY_LAST_UPDATED,
   PRIVACY_POLICY_SECTIONS,
+  TERMS_OF_USE_LAST_UPDATED,
+  TERMS_OF_USE_SECTIONS,
   type CaseStudyBlock,
   type PolicyBlock,
 } from "./source";
@@ -32,9 +34,11 @@ import {
 const here = dirname(fileURLToPath(import.meta.url));
 const translationsDir = join(here, "translations");
 
-// Legal text needs a reviewed translation, so the privacy policy is seeded in
-// English only (every language falls back to it) until one exists.
-const LEGAL_KEY_PREFIX = "privacy.";
+// Legal text needs a reviewed translation, so the privacy policy and the terms
+// of use are seeded in English only (every language falls back to it) until
+// one exists.
+const LEGAL_KEY_PREFIXES = ["privacy.", "terms."];
+const isLegalKey = (key: string) => LEGAL_KEY_PREFIXES.some((prefix) => key.startsWith(prefix));
 
 // ── Translatable strings ────────────────────────────────────────────────────
 
@@ -61,7 +65,7 @@ const localized = <T>(valueType: string, build: (t: (key: string) => string) => 
     let missing = false;
     const value = build((key) => {
       const text = translate(key, id);
-      if (text === undefined || (id !== BASE_LANGUAGE && key.startsWith(LEGAL_KEY_PREFIX))) missing = true;
+      if (text === undefined || (id !== BASE_LANGUAGE && isLegalKey(key))) missing = true;
       return text ?? "";
     });
     return missing ? [] : [{ _key: id, _type: `internationalizedArray${valueType}Value`, language: id, value }];
@@ -186,7 +190,7 @@ const caseStudyDocs = PLACEHOLDER_CASE_STUDIES.map((cs) => {
   };
 });
 
-// ── Privacy policy ──────────────────────────────────────────────────────────
+// ── Privacy policy and terms of use ──────────────────────────────────────────────────────────
 
 const policyBody = (prefix: string, blocks: PolicyBlock[]) => {
   const keyed = blocks.map((b, i) => {
@@ -269,28 +273,50 @@ const pageStrings = loadPageStrings(join(here, "pages"));
 const pages = buildPageDocs(pageStrings);
 const seo = buildSeoDocs(pageStrings, join(here, "../../messages"));
 
-const privacyPolicyDoc = {
-  _id: "privacyPolicy",
+// Both have a header of only the title (translated, from seed/pages) and the
+// last-updated date, and text keyed under `prefix`, which keeps it English.
+const datedLegalDoc = (
+  _id: string,
+  name: string,
+  prefix: string,
+  rest: { hero: object; seo: object; lastUpdated: string },
+  sections: typeof PRIVACY_POLICY_SECTIONS,
+) => ({
+  _id,
   _type: "legalPage",
-  name: "Privacy policy",
-  hero: pages.privacyHero,
-  seo: seo.privacyPolicy,
-  lastUpdated: PRIVACY_POLICY_LAST_UPDATED,
-  sections: PRIVACY_POLICY_SECTIONS.map((section) => ({
+  name,
+  ...rest,
+  sections: sections.map((section) => ({
     _key: section.id,
     _type: "policySection",
     anchor: { _type: "slug", current: section.id },
-    title: localizedString(str(`privacy.${section.id}.title`, section.title)),
-    body: policyBody(`privacy.${section.id}.body`, section.blocks),
+    title: localizedString(str(`${prefix}.${section.id}.title`, section.title)),
+    body: policyBody(`${prefix}.${section.id}.body`, section.blocks),
   })),
-};
+});
+
+const privacyPolicyDoc = datedLegalDoc(
+  "privacyPolicy",
+  "Privacy policy",
+  "privacy",
+  { hero: pages.privacyHero, seo: seo.privacyPolicy, lastUpdated: PRIVACY_POLICY_LAST_UPDATED },
+  PRIVACY_POLICY_SECTIONS,
+);
+
+const termsOfUseDoc = datedLegalDoc(
+  "termsOfUse",
+  "Terms of use",
+  "terms",
+  { hero: pages.termsHero, seo: seo.termsOfUse, lastUpdated: TERMS_OF_USE_LAST_UPDATED },
+  TERMS_OF_USE_SECTIONS,
+);
 
 // ── Output ──────────────────────────────────────────────────────────────────
 
 if (process.argv.includes("--strings")) {
   // Legal strings are left out: they need a reviewed translation.
   const translatable = Object.fromEntries(
-    Object.entries(strings).filter(([key]) => !key.startsWith(LEGAL_KEY_PREFIX)),
+    Object.entries(strings).filter(([key]) => !isLegalKey(key)),
   );
   writeFileSync(join(translationsDir, "en.json"), `${JSON.stringify(translatable, null, 2)}\n`);
   console.log(`Wrote ${Object.keys(translatable).length} strings to seed/translations/en.json`);
@@ -303,6 +329,7 @@ if (process.argv.includes("--strings")) {
     ...categoryDocs,
     ...caseStudyDocs,
     privacyPolicyDoc,
+    termsOfUseDoc,
     pages.security,
     pages.codeOfConduct,
   ];

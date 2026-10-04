@@ -421,8 +421,7 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "cookies": "Cookies",
-    "watchtower": "WatchTower",
-    "accessibility": "Accessibility"
+    "watchtower": "WatchTower"
   },
   "PrivacyPolicyPage": {
     "lastUpdated": "Last updated: {date}",
