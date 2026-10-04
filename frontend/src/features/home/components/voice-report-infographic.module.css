@@ -88,7 +88,7 @@
 }
 
 .stageRecord { width: 48cqw; height: 14cqw; opacity: 0; animation-name: stage-record; }
-.stageTranscript { width: 54cqw; height: 21cqw; opacity: 0; animation-name: stage-transcript; }
+.stageTranscript { width: 54cqw; height: 16.5cqw; opacity: 0; animation-name: stage-transcript; }
 .stageForm { width: 54cqw; height: 66cqw; animation-name: stage-form; }
 
 /* While listening, the pill breathes: soft white rings behind it. */
@@ -287,7 +287,7 @@
 }
 
 .boxTall {
-  height: 12cqw;
+  height: 11cqw;
   align-items: flex-start;
 }
 
@@ -410,7 +410,7 @@
 
 @keyframes morph {
   0%, 25.83% { width: 48cqw; height: 14cqw; border-radius: 7cqw; }
-  30.83%, 49.17% { width: 54cqw; height: 21cqw; border-radius: 2.6cqw; }
+  30.83%, 49.17% { width: 54cqw; height: 16.5cqw; border-radius: 2.6cqw; }
   55%, 91.67% { width: 54cqw; height: 66cqw; border-radius: 2cqw; }
   96.67%, 100% { width: 48cqw; height: 14cqw; border-radius: 7cqw; }
 }
@@ -461,27 +461,20 @@
 
 @keyframes speech-1 {
   0%, 32.08% { clip-path: inset(0 100% 0 0); }
-  37.5%, 50% { clip-path: inset(0 0 0 0); }
+  39.58%, 50% { clip-path: inset(0 0 0 0); }
   50.42%, 100% { clip-path: inset(0 100% 0 0); }
 }
 
 .speech1 { animation-name: speech-1; }
 
 @keyframes speech-2 {
-  0%, 37.5% { clip-path: inset(0 100% 0 0); }
-  42.5%, 50% { clip-path: inset(0 0 0 0); }
+  0%, 39.58% { clip-path: inset(0 100% 0 0); }
+  46.67%, 50% { clip-path: inset(0 0 0 0); }
   50.42%, 100% { clip-path: inset(0 100% 0 0); }
 }
 
 .speech2 { animation-name: speech-2; }
 
-@keyframes speech-3 {
-  0%, 42.5% { clip-path: inset(0 100% 0 0); }
-  46.67%, 50% { clip-path: inset(0 0 0 0); }
-  50.42%, 100% { clip-path: inset(0 100% 0 0); }
-}
-
-.speech3 { animation-name: speech-3; }
 
 @keyframes focus-category {
   0%, 56.25% { opacity: 0; }
@@ -546,27 +539,20 @@
 
 @keyframes desc-1 {
   0%, 66.67% { clip-path: inset(0 100% 0 0); }
-  70.42%, 93.33% { clip-path: inset(0 0 0 0); }
+  71.67%, 93.33% { clip-path: inset(0 0 0 0); }
   93.75%, 100% { clip-path: inset(0 100% 0 0); }
 }
 
 .desc1 { animation-name: desc-1; }
 
 @keyframes desc-2 {
-  0%, 70.42% { clip-path: inset(0 100% 0 0); }
-  73.75%, 93.33% { clip-path: inset(0 0 0 0); }
+  0%, 71.67% { clip-path: inset(0 100% 0 0); }
+  75%, 93.33% { clip-path: inset(0 0 0 0); }
   93.75%, 100% { clip-path: inset(0 100% 0 0); }
 }
 
 .desc2 { animation-name: desc-2; }
 
-@keyframes desc-3 {
-  0%, 73.75% { clip-path: inset(0 100% 0 0); }
-  75.42%, 93.33% { clip-path: inset(0 0 0 0); }
-  93.75%, 100% { clip-path: inset(0 100% 0 0); }
-}
-
-.desc3 { animation-name: desc-3; }
 
 
 @keyframes submit {

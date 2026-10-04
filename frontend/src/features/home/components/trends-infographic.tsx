@@ -121,7 +121,7 @@ const TrendsInfographic = () => {
         <span className={styles.pulse} />
         <div>
           <p className={styles.calloutLabel}>Emerging pattern</p>
-          <p className={styles.calloutText}>Public demonstrations up 38% in Kampala</p>
+          <p className={styles.calloutText}>Public demonstrations up 38% in Nairobi</p>
         </div>
       </div>
     </div>

@@ -93,9 +93,9 @@ const VoiceReportInfographic = () => {
               Kiswahili
             </span>
             <div className={styles.lines}>
-              <span className={`${styles.typed} ${styles.speech1}`}>Hakuna maji katika Soko la</span>
-              <span className={`${styles.typed} ${styles.speech2}`}>Nakawa kwa siku tatu sasa.</span>
-              <span className={`${styles.typed} ${styles.speech3}`}>Familia nyingi zimeathirika.</span>
+              {/* Broken to fill the bubble's width (each line under 96% of it). */}
+              <span className={`${styles.typed} ${styles.speech1}`}>Hakuna maji katika Kibera kwa siku tatu</span>
+              <span className={`${styles.typed} ${styles.speech2}`}>sasa. Familia nyingi zimeathirika.</span>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@ const VoiceReportInfographic = () => {
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
-                    Nakawa Market, Kampala, Uganda
+                    Kibera, Nairobi, Kenya
                   </span>
                   <Chevron />
                 </div>
@@ -140,9 +140,8 @@ const VoiceReportInfographic = () => {
                     Eleza kilichotokea kwa maneno yako mwenyewe…
                   </span>
                   <span className={styles.value}>
-                    <span className={`${styles.typed} ${styles.desc1}`}>Hakuna maji katika Soko la Nakawa</span>
-                    <span className={`${styles.typed} ${styles.desc2}`}>kwa siku tatu sasa. Familia nyingi</span>
-                    <span className={`${styles.typed} ${styles.desc3}`}>zimeathirika.</span>
+                    <span className={`${styles.typed} ${styles.desc1}`}>Hakuna maji katika Kibera kwa siku tatu sasa.</span>
+                    <span className={`${styles.typed} ${styles.desc2}`}>Familia nyingi zimeathirika.</span>
                   </span>
                 </div>
               </div>

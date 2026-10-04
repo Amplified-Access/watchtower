@@ -57,7 +57,7 @@ const ActionInfographic = () => {
         </div>
         <div className={styles.planHeader}>
           <div>
-            <p className={styles.cardLabel}>Public demonstrations · Kampala</p>
+            <p className={styles.cardLabel}>Public demonstrations · Nairobi</p>
             <p className={styles.title}>Action plan</p>
           </div>
           <div className={styles.count}>
