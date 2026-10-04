@@ -33,16 +33,12 @@ const shot = (name: string, width: number, height: number): Shot => ({
   height,
 });
 
-// Each step shows a screenshot of the page it describes, with a second one
-// offset beside it: the report form with its evidence and submit area in
-// front, the live map with a closer view behind, the case studies with a
-// featured photo behind. In this order: reporting, the maps, case studies. A
-// step added in Sanity beyond these has no screenshots.
-const STEP_MEDIA: { main: Shot; second: Shot; secondInFront?: boolean }[] = [
-  { main: shot("report-form", 1376, 1478), second: shot("report-evidence", 1376, 900), secondInFront: true },
-  { main: shot("live-map", 1800, 1126), second: shot("live-map-zoom", 1200, 1156) },
-  { main: shot("case-studies", 1800, 1210), second: shot("case-study-photo", 1370, 782) },
-];
+// Each step shows one window with a screenshot of the page it describes, in
+// this order: reporting, the maps, case studies. All three are the real pages
+// captured the same way (1440 CSS pixels wide at 1.25x, banner dismissed, site
+// header at the top); the report page is cut off above its evidence upload.
+// A step added in Sanity beyond these has no screenshot.
+const STEP_MEDIA: Shot[] = [shot("report", 1800, 1100), shot("live-map", 1800, 1126), shot("case-studies", 1800, 1210)];
 
 // The fine grain over the blue sections, drawn by the browser rather than
 // shipped as an image.
@@ -83,40 +79,15 @@ const Screenshot = ({ src, width, height, className }: Shot & { className?: stri
     alt=""
     width={width}
     height={height}
-    sizes="(min-width: 768px) 50vw, 100vw"
+    sizes="(min-width: 768px) 90vw, 100vw"
     className={cn("h-full w-full object-cover object-top", className)}
   />
 );
 
-/** A step's screenshots: two overlapping cards on wider screens, one on a phone. */
-const StepMedia = ({ main, second, secondInFront }: (typeof STEP_MEDIA)[number]) => (
-  <div className="relative aspect-4/3 md:aspect-2/1">
-    <div
-      className={cn(
-        card,
-        fade,
-        "absolute inset-0 md:right-auto",
-        secondInFront ? "md:w-[52%]" : "z-10 md:w-[64%]",
-      )}
-    >
-      <Screenshot {...main} className="object-top-left" />
-    </div>
-    {secondInFront ? (
-      // The report's evidence card sits in front, whole.
-      <div className={cn(card, "absolute top-[11%] right-0 z-20 hidden h-[64%] w-[52%] md:block")}>
-        <Screenshot {...second} />
-      </div>
-    ) : (
-      // The others are a second window behind, with its own top bar, fading.
-      <div className={cn(card, fade, "absolute top-[5%] right-0 hidden h-[90%] w-[38%] flex-col md:flex")}>
-        <div aria-hidden className="flex h-10 shrink-0 items-center border-b border-border px-4">
-          <div className="h-5 w-3/5 rounded-full bg-[#f1f1f1]" />
-        </div>
-        <div className="min-h-0 flex-1">
-          <Screenshot {...second} className="object-center" />
-        </div>
-      </div>
-    )}
+/** A step's screenshot in one window spanning the media area, fading out at the bottom. */
+const StepMedia = (shot: Shot) => (
+  <div className={cn(card, fade, "aspect-4/3 md:aspect-2/1")}>
+    <Screenshot {...shot} className="object-top-left" />
   </div>
 );
 
