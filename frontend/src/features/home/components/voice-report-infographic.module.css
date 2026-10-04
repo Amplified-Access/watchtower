@@ -1,0 +1,585 @@
+/*
+ * The How it works step 1 illustration: a voice report filling in the report
+ * form. Everything runs on one 12-second cycle (--cycle), so every element's
+ * keyframes are percentages of the same loop and it repeats seamlessly.
+ * 1s = 8.33%. Timeline:
+ *
+ *   0.8s   the mic is pressed; listening (rings, live waveform)
+ *   1.2s   the transcript bubble appears; its three lines are written out
+ *   2.2s   category fills      3.4s location fills
+ *   4.4s   the description is typed out
+ *   6.4s   listening stops     6.8s submit becomes active, pressed at 7.4s
+ *   7.6s   "Report submitted"  10.1s it clears, and the form resets
+ *
+ * Sizes are in cqw (percent of the illustration's width), so it scales as a
+ * whole, like the videos it sits beside. The base styles are the finished,
+ * filled-in form: that is what readers who ask for reduced motion see.
+ */
+
+.root {
+  --cycle: 12s;
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+  /* The brand's colours only (globals.css): primary blue, black, white and
+     the site's greys. */
+  --blue: #0042e7;
+  --line: #e2e2e2;
+  --muted: rgb(0 0 0 / 0.55);
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 1080 / 850;
+  width: 100%;
+  overflow: hidden;
+  background: var(--blue);
+  font-family: var(--font-title);
+  color: #000;
+  user-select: none;
+}
+
+.root * {
+  animation-duration: var(--cycle);
+  animation-timing-function: var(--ease);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+/* Off screen, the loop holds its place rather than running unseen. */
+.root[data-paused="true"] * {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root * {
+    animation: none !important;
+  }
+}
+
+.dots {
+  position: absolute;
+  left: -18%;
+  bottom: -6%;
+  width: 80%;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ── The form ──────────────────────────────────────────────────────────── */
+
+.form {
+  position: absolute;
+  top: 7cqw;
+  left: 40cqw;
+  width: 55cqw;
+  padding: 3.6cqw 4.2cqw 4.2cqw;
+  border-radius: 2cqw;
+  background: #fff;
+  box-shadow: 0 2cqw 5cqw rgb(0 0 0 / 0.16);
+}
+
+.windowDots {
+  position: absolute;
+  top: 1.8cqw;
+  left: 2cqw;
+  display: flex;
+  gap: 0.7cqw;
+}
+
+.windowDots span {
+  width: 1cqw;
+  height: 1cqw;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.title {
+  margin-top: 1.4cqw;
+  text-align: center;
+  font-size: 3.4cqw;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+  margin-top: 2.6cqw;
+}
+
+.label {
+  margin-bottom: 0.8cqw;
+  font-size: 1.65cqw;
+  font-weight: 500;
+}
+
+.box {
+  position: relative;
+  display: flex;
+  height: 5.2cqw;
+  align-items: center;
+  padding: 0 1.6cqw;
+  border: 0.12cqw solid var(--line);
+  border-radius: 1cqw;
+  font-size: 1.75cqw;
+}
+
+.boxTall {
+  height: 10.4cqw;
+  align-items: flex-start;
+  padding-top: 1.4cqw;
+}
+
+/* The field being filled is outlined in blue for a moment. */
+.focus {
+  position: absolute;
+  inset: -0.12cqw;
+  border: 0.18cqw solid var(--blue);
+  border-radius: 1cqw;
+  box-shadow: 0 0 0 0.6cqw rgb(0 66 231 / 0.1);
+  opacity: 0;
+}
+
+.focusCategory { animation-name: focus-category; }
+.focusLocation { animation-name: focus-location; }
+.focusDescription { animation-name: focus-description; }
+
+@keyframes focus-category {
+  0%, 17% { opacity: 0; }
+  18.5%, 24% { opacity: 1; }
+  26%, 100% { opacity: 0; }
+}
+
+@keyframes focus-location {
+  0%, 27% { opacity: 0; }
+  28.5%, 34% { opacity: 1; }
+  36%, 100% { opacity: 0; }
+}
+
+@keyframes focus-description {
+  0%, 35.5% { opacity: 0; }
+  37%, 52% { opacity: 1; }
+  54%, 100% { opacity: 0; }
+}
+
+.placeholder,
+.value {
+  position: absolute;
+  left: 1.6cqw;
+  right: 1.6cqw;
+  display: flex;
+  align-items: center;
+  gap: 1cqw;
+  white-space: nowrap;
+}
+
+.boxTall .placeholder,
+.boxTall .value {
+  top: 1.4cqw;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6cqw;
+}
+
+.placeholder {
+  color: var(--muted);
+  opacity: 0;
+}
+
+.placeholderCategory { animation-name: placeholder-category; }
+.placeholderLocation { animation-name: placeholder-location; }
+.placeholderDescription { animation-name: placeholder-description; }
+
+@keyframes placeholder-category {
+  0%, 17.5% { opacity: 1; }
+  19%, 90% { opacity: 0; }
+  93%, 100% { opacity: 1; }
+}
+
+@keyframes placeholder-location {
+  0%, 27.5% { opacity: 1; }
+  29%, 90% { opacity: 0; }
+  93%, 100% { opacity: 1; }
+}
+
+@keyframes placeholder-description {
+  0%, 36% { opacity: 1; }
+  37%, 90% { opacity: 0; }
+  93%, 100% { opacity: 1; }
+}
+
+.valueCategory { animation-name: value-category; }
+.valueLocation { animation-name: value-location; }
+
+@keyframes value-category {
+  0%, 18.3% { opacity: 0; transform: translateX(-1cqw); }
+  21.7%, 88% { opacity: 1; transform: none; }
+  90.5%, 100% { opacity: 0; transform: none; }
+}
+
+@keyframes value-location {
+  0%, 28.3% { opacity: 0; transform: translateX(-1cqw); }
+  31.7%, 88% { opacity: 1; transform: none; }
+  90.5%, 100% { opacity: 0; transform: none; }
+}
+
+.dot {
+  width: 1.2cqw;
+  height: 1.2cqw;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.pin {
+  width: 1.9cqw;
+  height: 1.9cqw;
+  color: var(--blue);
+}
+
+.chevron {
+  position: absolute;
+  right: 1.6cqw;
+  width: 1.8cqw;
+  height: 1.8cqw;
+  color: var(--muted);
+}
+
+/* Written out left to right, as if typed. */
+.typed {
+  display: block;
+  clip-path: inset(0 0 0 0);
+}
+
+.descLine1 { animation-name: desc-line-1; animation-timing-function: linear; }
+.descLine2 { animation-name: desc-line-2; animation-timing-function: linear; }
+
+@keyframes desc-line-1 {
+  0%, 36.7% { clip-path: inset(0 100% 0 0); opacity: 1; }
+  45%, 88% { clip-path: inset(0 0 0 0); opacity: 1; }
+  90.5% { clip-path: inset(0 0 0 0); opacity: 0; }
+  91%, 100% { clip-path: inset(0 100% 0 0); opacity: 0; }
+}
+
+@keyframes desc-line-2 {
+  0%, 45% { clip-path: inset(0 100% 0 0); opacity: 1; }
+  52%, 88% { clip-path: inset(0 0 0 0); opacity: 1; }
+  90.5% { clip-path: inset(0 0 0 0); opacity: 0; }
+  91%, 100% { clip-path: inset(0 100% 0 0); opacity: 0; }
+}
+
+.submit {
+  display: flex;
+  height: 5.2cqw;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8cqw;
+  margin-top: 2.6cqw;
+  border-radius: 1cqw;
+  background: var(--blue);
+  color: #fff;
+  font-size: 1.8cqw;
+  font-weight: 600;
+  animation-name: submit;
+}
+
+.submit svg {
+  width: 1.8cqw;
+  height: 1.8cqw;
+}
+
+@keyframes submit {
+  0%, 53.3% { background: rgb(0 66 231 / 0.32); transform: scale(1); }
+  56.7% { background: var(--blue); transform: scale(1); }
+  61% { background: var(--blue); transform: scale(1); }
+  62% { background: var(--blue); transform: scale(0.96); }
+  63.5%, 88% { background: var(--blue); transform: scale(1); }
+  92%, 100% { background: rgb(0 66 231 / 0.32); transform: scale(1); }
+}
+
+/* "Report submitted", over the form. Hidden in the still. */
+.success {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4cqw;
+  border-radius: 2cqw;
+  background: rgb(255 255 255 / 0.94);
+  opacity: 0;
+  animation-name: success;
+}
+
+@keyframes success {
+  0%, 63.3% { opacity: 0; }
+  66.7%, 83% { opacity: 1; }
+  87%, 100% { opacity: 0; }
+}
+
+.check {
+  width: 9cqw;
+  height: 9cqw;
+  animation-name: check-pop;
+}
+
+@keyframes check-pop {
+  0%, 63.3% { transform: scale(0.6); }
+  68% { transform: scale(1.06); }
+  70.5%, 100% { transform: scale(1); }
+}
+
+.checkMark {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 0;
+  animation-name: check-draw;
+}
+
+@keyframes check-draw {
+  0%, 66% { stroke-dashoffset: 30; }
+  71%, 100% { stroke-dashoffset: 0; }
+}
+
+.successTitle {
+  font-size: 2.8cqw;
+  font-weight: 600;
+}
+
+.successText {
+  font-size: 1.7cqw;
+  color: var(--muted);
+}
+
+/* ── The voice recorder ────────────────────────────────────────────────── */
+
+.bubble {
+  position: absolute;
+  left: 4cqw;
+  bottom: 22.5cqw;
+  width: 37cqw;
+  padding: 2.2cqw 2.4cqw 2.4cqw;
+  border-radius: 2cqw 2cqw 2cqw 0.6cqw;
+  background: #fff;
+  box-shadow: 0 1.6cqw 4cqw rgb(0 0 0 / 0.14);
+  animation-name: bubble;
+}
+
+@keyframes bubble {
+  0%, 8.3% { opacity: 0; transform: translateY(1.2cqw) scale(0.98); }
+  11%, 86.7% { opacity: 1; transform: none; }
+  90%, 100% { opacity: 0; transform: translateY(1.2cqw) scale(0.98); }
+}
+
+.language {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.6cqw;
+  margin-bottom: 1.3cqw;
+  padding: 0.5cqw 1.2cqw;
+  border-radius: 99cqw;
+  background: #f3f3f3;
+  color: #000;
+  font-size: 1.4cqw;
+  font-weight: 600;
+}
+
+.language svg {
+  width: 1.5cqw;
+  height: 1.5cqw;
+}
+
+.transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5cqw;
+  font-size: 2.05cqw;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.speech1 { animation-name: speech-1; animation-timing-function: linear; }
+.speech2 { animation-name: speech-2; animation-timing-function: linear; }
+.speech3 { animation-name: speech-3; animation-timing-function: linear; }
+
+@keyframes speech-1 {
+  0%, 10.8% { clip-path: inset(0 100% 0 0); }
+  21.7%, 100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes speech-2 {
+  0%, 21.7% { clip-path: inset(0 100% 0 0); }
+  32.5%, 100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes speech-3 {
+  0%, 32.5% { clip-path: inset(0 100% 0 0); }
+  43.3%, 100% { clip-path: inset(0 0 0 0); }
+}
+
+.recorder {
+  position: absolute;
+  left: 4cqw;
+  bottom: 7cqw;
+  z-index: 1;
+  display: flex;
+  width: 40cqw;
+  align-items: center;
+  gap: 2.4cqw;
+  padding: 2.2cqw 2.6cqw;
+  border-radius: 2.4cqw;
+  background: #fff;
+  box-shadow: 0 2cqw 5cqw rgb(0 0 0 / 0.16);
+}
+
+.mic {
+  position: relative;
+  flex-shrink: 0;
+  width: 7.4cqw;
+  height: 7.4cqw;
+}
+
+.micButton {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  animation-name: mic-press;
+}
+
+@keyframes mic-press {
+  0%, 6.7% { transform: scale(1); }
+  8% { transform: scale(0.88); }
+  10%, 52% { transform: scale(1); }
+  53.3% { transform: scale(0.92); }
+  55%, 100% { transform: scale(1); }
+}
+
+.micButton svg {
+  position: absolute;
+  width: 3.2cqw;
+  height: 3.2cqw;
+}
+
+.iconMic { animation-name: idle; }
+.iconStop { width: 2.4cqw !important; height: 2.4cqw !important; opacity: 0; animation-name: listening; }
+
+/* While listening: the stop icon, the rings, the "Listening" label. */
+@keyframes listening {
+  0%, 6.7% { opacity: 0; }
+  9.2%, 51.7% { opacity: 1; }
+  54.2%, 100% { opacity: 0; }
+}
+
+@keyframes idle {
+  0%, 6.7% { opacity: 1; }
+  9.2%, 51.7% { opacity: 0; }
+  54.2%, 100% { opacity: 1; }
+}
+
+.rings {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation-name: listening;
+}
+
+.rings span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: ring 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.rings span:nth-child(2) {
+  animation-delay: 0.9s;
+}
+
+/* Kept inside the recorder card's padding. */
+@keyframes ring {
+  from { opacity: 0.3; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.32); }
+}
+
+.meta {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 1cqw;
+}
+
+.status {
+  position: relative;
+  height: 2cqw;
+  font-size: 1.6cqw;
+  font-weight: 600;
+}
+
+.status span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.7cqw;
+  white-space: nowrap;
+}
+
+.statusIdle { color: var(--muted); opacity: 0; animation-name: status-idle; }
+.statusListening { color: var(--blue); opacity: 0; animation-name: listening; }
+.statusDone { color: #000; animation-name: status-done; }
+
+@keyframes status-idle {
+  0%, 6.7% { opacity: 1; }
+  9.2%, 89% { opacity: 0; }
+  93%, 100% { opacity: 1; }
+}
+
+@keyframes status-done {
+  0%, 51.7% { opacity: 0; }
+  54.2%, 86.7% { opacity: 1; }
+  90%, 100% { opacity: 0; }
+}
+
+.recDot {
+  width: 1cqw;
+  height: 1cqw;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.25; }
+}
+
+/* The waveform: flat when idle, alive while listening. */
+.wave {
+  display: flex;
+  height: 5cqw;
+  align-items: center;
+  gap: 0.5cqw;
+  animation-name: wave-amp;
+}
+
+@keyframes wave-amp {
+  0%, 6.7% { transform: scaleY(0.14); }
+  9.2%, 51.7% { transform: scaleY(1); }
+  54.2%, 100% { transform: scaleY(0.14); }
+}
+
+.wave span {
+  flex: 1;
+  height: var(--h);
+  border-radius: 99cqw;
+  background: var(--blue);
+  animation: bar var(--d) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+
+@keyframes bar {
+  from { transform: scaleY(0.35); }
+  to { transform: scaleY(1); }
+}

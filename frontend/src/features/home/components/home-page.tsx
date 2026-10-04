@@ -23,6 +23,7 @@ import LanguageMarquee from "@/components/common/language-marquee";
 import StepConnector from "@/components/common/step-connector";
 // import ScrollFadeText from "@/components/common/scroll-fade-text";
 import LivePreviewSection from "@/features/home/components/live-preview-section";
+import VoiceReportInfographic from "@/features/home/components/voice-report-infographic";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
 import { Gavel } from "@/components/animate-ui/icons/gavel";
@@ -203,7 +204,12 @@ const HomePage = ({ content }: { content: HomePageContent }) => {
                   />
                 )}
                 <div className={cn(index % 2 === 1 && "md:order-2")}>
-                  {STEP_VIDEOS[index] ? (
+                  {index === 0 ? (
+                    // Experiment: an animated illustration instead of the clip.
+                    <div className="overflow-hidden rounded-xl">
+                      <VoiceReportInfographic />
+                    </div>
+                  ) : STEP_VIDEOS[index] ? (
                     // Rounded like the placeholder card it replaces. The wrapper
                     // does the clipping: browsers don't reliably round a video itself.
                     <div className="overflow-hidden rounded-xl">
