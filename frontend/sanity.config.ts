@@ -2,7 +2,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { internationalizedArray } from "sanity-plugin-internationalized-array";
-import { BookOpen, FileText, House, Info, Scale, Search, ShieldCheck, Tag, Users } from "lucide-react";
+import { BookOpen, FileText, House, Info, PanelBottom, Scale, Search, ShieldCheck, Tag, Users } from "lucide-react";
 import { dataset, projectId } from "./src/sanity/env";
 import { BASE_LANGUAGE, LANGUAGES } from "./src/sanity/languages";
 import { schemaTypes } from "./src/sanity/schemaTypes";
@@ -20,9 +20,13 @@ const SINGLETONS = [
   { id: "security", type: "legalPage", title: "Security", icon: ShieldCheck },
   { id: "codeOfConduct", type: "legalPage", title: "Code of conduct", icon: Users },
 ];
-// Not a page: how the site appears in search and link previews.
-const SEO_SETTINGS = { id: "seoSettings", type: "seoSettings", title: "Search and sharing", icon: Search };
-const SINGLETON_TYPES = new Set([...SINGLETONS, SEO_SETTINGS].map((s) => s.type));
+// Not pages: the footer every page shares, and how the site appears in
+// search and link previews.
+const SITE_WIDE = [
+  { id: "footer", type: "footer", title: "Footer", icon: PanelBottom },
+  { id: "seoSettings", type: "seoSettings", title: "Search and sharing", icon: Search },
+];
+const SINGLETON_TYPES = new Set([...SINGLETONS, ...SITE_WIDE].map((s) => s.type));
 
 export default defineConfig({
   name: "default",
@@ -54,11 +58,13 @@ export default defineConfig({
                     ),
                   ),
               ),
-            S.listItem()
-              .title(SEO_SETTINGS.title)
-              .id(SEO_SETTINGS.id)
-              .icon(SEO_SETTINGS.icon)
-              .child(S.document().schemaType(SEO_SETTINGS.type).documentId(SEO_SETTINGS.id).title(SEO_SETTINGS.title)),
+            ...SITE_WIDE.map(({ id, type, title, icon }) =>
+              S.listItem()
+                .title(title)
+                .id(id)
+                .icon(icon)
+                .child(S.document().schemaType(type).documentId(id).title(title)),
+            ),
             S.divider(),
             S.documentTypeListItem("caseStudy").title("Case studies").icon(BookOpen),
             S.documentTypeListItem("caseStudyCategory").title("Case study categories").icon(Tag),
@@ -77,7 +83,7 @@ export default defineConfig({
       buttonLocations: ["field", "document"],
       languageDisplay: "titleAndCode",
       languageFilter: {
-        documentTypes: ["homePage", "aboutPage", "caseStudy", "caseStudyCategory", "legalPage", "seoSettings"],
+        documentTypes: ["homePage", "aboutPage", "caseStudy", "caseStudyCategory", "legalPage", "footer", "seoSettings"],
         defaultLanguages: [BASE_LANGUAGE],
       },
     }),

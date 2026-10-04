@@ -6,7 +6,6 @@ import Footer from "@/components/layout/footer/page";
 import PolicySections from "@/features/legal/components/policy-sections";
 import PolicyToc from "@/features/legal/components/policy-toc";
 import { getLegalPage } from "@/lib/sanity/content";
-import { SanityLive } from "@/lib/sanity/live";
 import { DEFAULT_PRIVACY_SEO } from "@/lib/seo/defaults";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { legalPageSeo, pageJsonLd } from "@/lib/seo/page";
@@ -101,7 +100,6 @@ const Page = async () => {
 
       <Footer />
       {/* Refreshes the policy for open readers when it is published. */}
-      <SanityLive />
     </>
   );
 };

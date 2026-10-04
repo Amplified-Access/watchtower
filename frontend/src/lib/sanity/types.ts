@@ -2,6 +2,7 @@
 // (src/sanity/schemaTypes/) is the source of truth; these follow its projections.
 import type { PortableTextBlock } from "@portabletext/react";
 import type { SeoPageKey } from "@/lib/seo/defaults";
+import type { SocialPlatform } from "./social-platforms";
 
 export interface SanityImage {
   /** Null when the image has no uploaded file. */
@@ -153,6 +154,25 @@ export interface AboutPageContent {
   seo: Seo;
   /** From the home page document: the figures and the bottom banner. */
   home: SharedHomeSections;
+}
+
+export interface FooterLink {
+  _key: string;
+  label: string;
+  /** A site path, a web address or a mailto: link. */
+  href: string;
+}
+
+/** The `footer` document. Links and profiles without an address are left out. */
+export interface FooterContent {
+  /** May contain {organisation}, the linked organisation name. */
+  attribution: string;
+  organisation: { name: string; url: string };
+  columns: { _key: string; heading: string; links: FooterLink[] }[];
+  social: { _key: string; platform: SocialPlatform; url: string }[];
+  /** May contain {year}. */
+  copyright: string;
+  legalLinks: FooterLink[];
 }
 
 /** The `seoSettings` document: the site's description and share image, and each code-built page's search text. */

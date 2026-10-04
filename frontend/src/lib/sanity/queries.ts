@@ -181,6 +181,20 @@ export const LEGAL_PAGE_QUERY = `*[_type == "legalPage" && _id == $id][0] {
   }
 }`;
 
+// ── Footer ───────────────────────────────────────────────────────────────────
+
+// Links without an address and profiles without one are left out.
+const footerLinks = (field: string) =>
+  `coalesce(${field}[defined(href)]{ _key, ${texts({ label: "label" })}, href }, [])`;
+
+export const FOOTER_QUERY = `*[_id == "footer"][0] {
+  ${texts({ attribution: "attribution", copyright: "copyright" })},
+  "organisation": { "name": coalesce(organisation.name, ""), "url": coalesce(organisation.url, "") },
+  "columns": coalesce(columns[]{ _key, ${texts({ heading: "heading" })}, "links": ${footerLinks("links")} }, []),
+  "social": coalesce(social[defined(platform) && defined(url)]{ _key, platform, url }, []),
+  "legalLinks": ${footerLinks("legalLinks")}
+}`;
+
 // ── Search and sharing ───────────────────────────────────────────────────────
 
 // The site's description and share image, and the search text of the pages

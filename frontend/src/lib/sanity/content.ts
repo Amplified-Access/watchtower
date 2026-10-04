@@ -8,6 +8,7 @@ import {
   CASE_STUDIES_QUERY,
   CASE_STUDY_CATEGORIES_QUERY,
   CASE_STUDY_QUERY,
+  FOOTER_QUERY,
   HOME_PAGE_QUERY,
   LEGAL_PAGE_QUERY,
   LLMS_QUERY,
@@ -19,6 +20,7 @@ import type {
   CaseStudy,
   CaseStudyCategory,
   CaseStudySummary,
+  FooterContent,
   HomePageContent,
   LegalPage,
   LlmsContent,
@@ -102,6 +104,13 @@ const orNull = <T>(fetch: Promise<T | null>, what: string) =>
     console.warn(`[sanity] ${what} unavailable, using the defaults:`, error);
     return null;
   });
+
+// The footer, read by the (main) layout for every page. Null when Sanity is
+// unavailable or has no footer, so pages that don't otherwise need Sanity
+// (the maps, the report form) never fail because of it.
+export const getFooter = cache((locale: string) =>
+  orNull(sanityFetch<FooterContent>(FOOTER_QUERY, { locale }), "Footer"),
+);
 
 // The site's description and share image and the code-built pages' search
 // text, with every page present so callers can fall back field by field to

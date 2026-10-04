@@ -28,6 +28,7 @@ export const PUBLISHER = {
   sameAs: [
     "https://x.com/AmpAccessOrg",
     "https://www.linkedin.com/company/amplifiedaccess",
+    "https://www.youtube.com/@amplifiedaccess",
     "https://github.com/Amplified-Access",
   ],
 } as const;

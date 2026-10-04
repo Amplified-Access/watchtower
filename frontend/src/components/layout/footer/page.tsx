@@ -9,59 +9,49 @@ import {
   FaInstagram,
   FaYoutube,
   FaWhatsapp,
+  FaXTwitter,
+  FaTiktok,
+  FaGithub,
 } from "react-icons/fa6";
+import type { IconType } from "react-icons";
 import { useTranslations } from "next-intl";
+import { SOCIAL_PLATFORMS, type SocialPlatform } from "@/lib/sanity/social-platforms";
+import { useFooterContent } from "./footer-content";
 
+const SOCIAL_ICONS: Record<SocialPlatform, IconType> = {
+  linkedin: FaLinkedinIn,
+  facebook: FaFacebookF,
+  instagram: FaInstagram,
+  youtube: FaYoutube,
+  whatsapp: FaWhatsapp,
+  x: FaXTwitter,
+  tiktok: FaTiktok,
+  github: FaGithub,
+};
+
+// "{organisation}" in the attribution becomes the linked organisation name,
+// wherever the language puts it.
+const withOrganisation = (text: string, organisation: { name: string; url: string }) =>
+  text.split("{organisation}").flatMap((part, i) => [
+    ...(i > 0
+      ? [
+          <a
+            key={`org${i}`}
+            href={organisation.url || undefined}
+            className="whitespace-nowrap text-white/80 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+          >
+            {organisation.name}
+          </a>,
+        ]
+      : []),
+    part,
+  ]);
+
+// The footer's words, links and social profiles are the `footer` document in
+// Sanity (see footer-content.tsx); only the watermark is UI copy.
 const Footer = () => {
   const t = useTranslations("Footer");
-
-  const columns = [
-    {
-      heading: t("explore"),
-      links: [
-        { label: t("maps"), href: "/maps" },
-        { label: t("reports"), href: "/reports" },
-        { label: t("insights"), href: "/insights" },
-        { label: t("askWatchtower"), href: "/chat" },
-        { label: t("alerts"), href: "/alerts" },
-      ],
-    },
-    {
-      heading: t("watchtower"),
-      links: [
-        { label: t("about"), href: "/about" },
-        { label: t("howItWorks"), href: "/about" },
-        { label: t("storiesAndInsights"), href: "/insights" },
-        { label: t("faqs"), href: "/faqs" },
-        { label: t("alert"), href: "/alerts" },
-      ],
-    },
-    {
-      heading: t("forOrganisations"),
-      links: [
-        { label: t("deployments"), href: "/organizations" },
-        { label: t("organisationSignIn"), href: "/sign-in" },
-        { label: t("createADeployment"), href: "/register-organization" },
-      ],
-    },
-    {
-      heading: t("support"),
-      links: [
-        { label: t("helpCentre"), href: "/help-centre" },
-        { label: t("contact"), href: "mailto:hello@amplifiedaccess.org" },
-        { label: t("privacyPolicy"), href: "/privacy-policy" },
-        { label: t("termsOfUse"), href: "/terms-of-service" },
-      ],
-    },
-  ];
-
-  const socialLinks = [
-    { label: "LinkedIn", href: "#", icon: FaLinkedinIn },
-    { label: "Facebook", href: "#", icon: FaFacebookF },
-    { label: "Instagram", href: "#", icon: FaInstagram },
-    { label: "YouTube", href: "#", icon: FaYoutube },
-    { label: "WhatsApp", href: "#", icon: FaWhatsapp },
-  ];
+  const { attribution, organisation, columns, social, copyright, legalLinks } = useFooterContent();
 
   return (
     <footer className="relative bg-white py-16 [zoom:var(--viewport-scale)]">
@@ -77,17 +67,22 @@ const Footer = () => {
           {/* Mobile: logo on its own row, then the four columns as a 2x2 grid,
               instead of wrapping and leaving a gap beside the logo. */}
           <div className="grid w-full grid-cols-2 gap-x-6 gap-y-10 py-8 md:flex md:flex-wrap md:justify-between md:gap-x-12">
-            <div className="col-span-2 self-start">
+            <div className="col-span-2 flex max-w-xs flex-col gap-5 self-start">
               <Logo color="primary" className="w-40 shrink-0" />
+              {attribution && (
+                <p className="text-sm leading-relaxed text-white/60">
+                  {withOrganisation(attribution, organisation)}
+                </p>
+              )}
             </div>
             {columns.map((column) => (
-              <div key={column.heading} className="flex flex-col gap-4">
+              <div key={column._key} className="flex flex-col gap-4">
                 <h3 className="font-title text-sm font-semibold text-white">
                   {column.heading}
                 </h3>
                 <ul className="flex flex-col gap-2.5">
                   {column.links.map((link) => (
-                    <li key={link.label}>
+                    <li key={link._key}>
                       <Link
                         href={link.href}
                         className="text-sm text-white/70 transition-colors hover:text-white"
@@ -102,16 +97,20 @@ const Footer = () => {
           </div>
 
           <div className="mb-5 flex justify-start gap-2 lg:justify-end">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                aria-label={social.label}
-                className="flex size-8 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-              >
-                <social.icon className="size-3.5" />
-              </a>
-            ))}
+            {social.map(({ _key, platform, url }) => {
+              const Icon = SOCIAL_ICONS[platform];
+              if (!Icon) return null;
+              return (
+                <a
+                  key={_key}
+                  href={url}
+                  aria-label={SOCIAL_PLATFORMS.find((p) => p.value === platform)?.title}
+                  className="flex size-8 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+                >
+                  <Icon className="size-3.5" />
+                </a>
+              );
+            })}
           </div>
         </div>
 
@@ -151,26 +150,17 @@ const Footer = () => {
 
           <div className="relative px-4 py-5">
             <div className="flex flex-col items-center justify-between gap-3 text-sm text-white/60 sm:flex-row">
-              <span>{t("copyright", { year: new Date().getFullYear() })}</span>
+              <span>{copyright.replace("{year}", String(new Date().getFullYear()))}</span>
               <div className="flex items-center gap-4">
-                <Link
-                  href="/privacy-policy"
-                  className="transition-colors hover:text-white"
-                >
-                  {t("privacyPolicy")}
-                </Link>
-                <Link
-                  href="/terms-of-service"
-                  className="transition-colors hover:text-white"
-                >
-                  {t("termsOfUse")}
-                </Link>
-                <Link
-                  href="/accessibility"
-                  className="transition-colors hover:text-white"
-                >
-                  {t("accessibility")}
-                </Link>
+                {legalLinks.map((link) => (
+                  <Link
+                    key={link._key}
+                    href={link.href}
+                    className="transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

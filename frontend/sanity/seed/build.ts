@@ -12,7 +12,7 @@
 // language, before Sanity existed.
 //
 // The pages (Home, About, and the Security, Code of Conduct and Privacy
-// Policy headers and text) are built by seed/pages.ts from seed/pages/<lang>.json:
+// Policy headers and text) and the footer are built by seed/pages.ts from seed/pages/<lang>.json:
 // their text in every language, as it was in messages/*.json. Their search
 // text and the "Search and sharing" document come from seed/seo.ts.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -299,6 +299,7 @@ if (process.argv.includes("--strings")) {
     { ...pages.home, seo: seo.home },
     { ...pages.about, seo: seo.about },
     seo.settings,
+    pages.footer,
     ...categoryDocs,
     ...caseStudyDocs,
     privacyPolicyDoc,

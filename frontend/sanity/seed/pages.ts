@@ -1,10 +1,11 @@
 // Seed documents for the site's pages: Home, About, and the header and text of
-// the Security, Code of Conduct and Privacy Policy pages. Their text, in all
+// the Security, Code of Conduct and Privacy Policy pages, and the footer. Their text, in all
 // 13 languages, is in seed/pages/<lang>.json, keyed as it was in the
 // frontend's messages/*.json before it moved to Sanity ("Home.heroTitleLine1").
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { LANGUAGES } from "../../src/sanity/languages";
+import { PUBLISHER } from "../../src/lib/seo/site";
 
 type Strings = Record<string, string>;
 type Language = string;
@@ -357,9 +358,47 @@ export const buildPageDocs = (pages: Record<Language, Strings>) => {
     ],
   };
 
+  // The footer's links were in its code, its text in messages (Footer.*).
+  // The social profiles are the ones amplifiedaccess.org links to. The old
+  // footer's Facebook, Instagram and WhatsApp icons linked to "#": they are
+  // kept without an address (so not shown) for editors to fill in.
+  const link = (label: string, href: string, i: number) =>
+    item("footerLink", i, { label: string(`Footer.${label}`), href });
+  const column = (heading: string, links: [string, string][], i: number) =>
+    item("footerColumn", i, { heading: string(`Footer.${heading}`), links: links.map(([label, href], j) => link(label, href, j)) });
+  const footer = {
+    _id: "footer",
+    _type: "footer",
+    attribution: string("Footer.attribution"),
+    organisation: { name: PUBLISHER.name, url: PUBLISHER.url },
+    columns: [
+      column("explore", [["maps", "/maps"], ["reports", "/reports"], ["insights", "/insights"], ["askWatchtower", "/chat"], ["alerts", "/alerts"]], 0),
+      column("watchtower", [["about", "/about"], ["howItWorks", "/about"], ["storiesAndInsights", "/insights"], ["faqs", "/faqs"], ["alert", "/alerts"]], 1),
+      column("forOrganisations", [["deployments", "/organizations"], ["organisationSignIn", "/sign-in"], ["createADeployment", "/register-organization"]], 2),
+      column("support", [["helpCentre", "/help-centre"], ["contact", `mailto:${PUBLISHER.email}`], ["privacyPolicy", "/privacy-policy"], ["termsOfUse", "/terms-of-service"]], 3),
+    ],
+    social: (
+      [
+        ["linkedin", "linkedin.com"],
+        ["x", "x.com"],
+        ["youtube", "youtube.com"],
+        ["facebook"],
+        ["instagram"],
+        ["whatsapp"],
+      ] as const
+    ).map(([platform, host], i) => {
+      const url = host && PUBLISHER.sameAs.find((profile) => new URL(profile).hostname.endsWith(host));
+      return item("socialLink", i, { platform, ...(url ? { url } : {}) });
+    }),
+    copyright: string("Footer.copyright"),
+    legalLinks: [["privacyPolicy", "/privacy-policy"], ["termsOfUse", "/terms-of-service"], ["accessibility", "/accessibility"]].map(
+      ([label, href], i) => link(label, href, i),
+    ),
+  };
+
   const privacyHero = {
     title: string("PrivacyPolicyPage.heading"),
   };
 
-  return { home, about, security, codeOfConduct, privacyHero };
+  return { home, about, security, codeOfConduct, privacyHero, footer };
 };
