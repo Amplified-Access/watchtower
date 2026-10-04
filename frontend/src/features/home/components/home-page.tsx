@@ -23,6 +23,7 @@ import LanguageMarquee from "@/components/common/language-marquee";
 import StepConnector from "@/components/common/step-connector";
 // import ScrollFadeText from "@/components/common/scroll-fade-text";
 import LivePreviewSection from "@/features/home/components/live-preview-section";
+import ActionInfographic from "@/features/home/components/action-infographic";
 import TrendsInfographic from "@/features/home/components/trends-infographic";
 import VoiceReportInfographic from "@/features/home/components/voice-report-infographic";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
@@ -52,6 +53,7 @@ const STEP_VIDEOS = ["home-report", "home-maps", "home-case-studies"].map((name)
 const STEP_INFOGRAPHICS: Record<number, React.ReactNode> = {
   0: <VoiceReportInfographic />,
   1: <TrendsInfographic />,
+  2: <ActionInfographic />,
 };
 
 // The home page. Its text comes from the `homePage` document in Sanity (see
