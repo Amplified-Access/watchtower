@@ -361,14 +361,16 @@ const ThematicMap = ({ theme, color }: ThematicMapProps) => {
               className="h-6 w-auto md:h-8"
             />
           </Link>
+          {/* Text sized like the site's other inputs (components/ui/input.tsx):
+              16px on phones, so iOS doesn't zoom in, and 14px from md up. */}
           <label className="mx-auto flex h-11 w-full max-w-xl items-center gap-3 rounded-full bg-dark/5 px-5">
-            <Search className="size-5 shrink-0 text-dark" />
+            <Search className="size-4 shrink-0 text-dark" />
             <input
               value={searchInput}
               onChange={(e) => handleSearchInput(e.target.value)}
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
-              className="w-full bg-transparent font-title text-dark placeholder:text-dark/80 focus:outline-none md:text-lg"
+              className="w-full bg-transparent text-base text-dark placeholder:text-muted-foreground/75 focus:outline-none md:text-sm"
             />
           </label>
           <span aria-hidden className="hidden w-32 shrink-0 md:block" />
