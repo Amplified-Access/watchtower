@@ -34,7 +34,8 @@ const STYLES = {
   dark: {
     root: "gap-6 p-5 lg:w-72",
     heading: "px-2 text-[11px] font-semibold uppercase tracking-widest text-white/40",
-    item: "gap-3 rounded-lg px-2 py-2 hover:bg-white/5",
+    item: "gap-3 rounded-lg px-2 py-2",
+    itemHover: "hover:bg-white/5",
     itemActive: "bg-white/10",
     icon: "size-8 rounded-full bg-white/10 text-white",
     iconSvg: "size-4",
@@ -55,7 +56,8 @@ const STYLES = {
   light: {
     root: "gap-5 px-6 py-6",
     heading: "font-title text-xs font-medium uppercase tracking-wide text-dark",
-    item: "gap-4 rounded-md px-1 py-3 hover:bg-dark/3",
+    item: "gap-4 rounded-md px-1 py-3",
+    itemHover: "hover:bg-dark/3",
     itemActive: "",
     icon: "size-8 text-dark",
     iconSvg: "size-6 stroke-[1.5]",
@@ -74,6 +76,11 @@ const STYLES = {
     learnMore: "mt-4 block text-sm text-primary hover:underline",
   },
 } as const;
+
+// The Explore rows don't link anywhere for now (they will lead to filtered
+// views of the map): they show as they are, but aren't links and don't
+// highlight on hover. Set to true to make them links to their `href` again.
+const NAV_LINKS_ENABLED = false;
 
 const ExploreSidebar = ({ stats, variant = "dark", headerAction }: ExploreSidebarProps) => {
   const t = useTranslations("HomeLivePreview");
@@ -145,29 +152,38 @@ const ExploreSidebar = ({ stats, variant = "dark", headerAction }: ExploreSideba
           {headerAction}
         </div>
         <nav className={cn("flex flex-col", isLight ? "mt-4 gap-1" : "gap-0.5")}>
-          {navItems.map((item) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              className={cn(
-                "flex items-center text-left transition-colors",
-                s.item,
-                item.active && s.itemActive,
-              )}
-            >
-              <span className={cn("flex shrink-0 items-center justify-center", s.icon)}>
-                <item.icon className={s.iconSvg} />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className={cn("block truncate", s.title)}>{item.title}</span>
-                <span className={cn("block truncate", s.subtitle)}>{item.subtitle}</span>
-              </span>
-              {item.badge && !(isLight && item.chevron) && (
-                <span className={cn("shrink-0", s.badge)}>{item.badge}</span>
-              )}
-              {item.chevron && <ChevronRight className={cn("shrink-0", s.chevron)} />}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const className = cn(
+              "flex items-center text-left transition-colors",
+              s.item,
+              NAV_LINKS_ENABLED && s.itemHover,
+              item.active && s.itemActive,
+            );
+            const row = (
+              <>
+                <span className={cn("flex shrink-0 items-center justify-center", s.icon)}>
+                  <item.icon className={s.iconSvg} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className={cn("block truncate", s.title)}>{item.title}</span>
+                  <span className={cn("block truncate", s.subtitle)}>{item.subtitle}</span>
+                </span>
+                {item.badge && !(isLight && item.chevron) && (
+                  <span className={cn("shrink-0", s.badge)}>{item.badge}</span>
+                )}
+                {item.chevron && <ChevronRight className={cn("shrink-0", s.chevron)} />}
+              </>
+            );
+            return NAV_LINKS_ENABLED ? (
+              <Link key={item.title} href={item.href} className={className}>
+                {row}
+              </Link>
+            ) : (
+              <div key={item.title} className={className}>
+                {row}
+              </div>
+            );
+          })}
         </nav>
       </div>
 
