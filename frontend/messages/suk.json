@@ -519,5 +519,15 @@
     "closePopup": "Kugala",
     "scrollZoomHint": "Gutumika {key} + scrol kuganja malambi",
     "touchPanHint": "Gutumika mbili gubukuliya malambi"
+  },
+  "Infographics": {
+    "listening": "Listening…",
+    "transcriptLanguage": "Kiingereza",
+    "transcript1": "No water in Kibera for three days now.",
+    "transcript2": "Many families are affected.",
+    "description1": "No water in Kibera for three days now.",
+    "description2": "Many families are affected.",
+    "submitted": "Report submitted",
+    "thanks": "Thank you for reporting."
   }
 }

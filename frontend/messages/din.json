@@ -519,5 +519,15 @@
     "closePopup": "Cum",
     "scrollZoomHint": "Tew {key} ku scrawl bë map ɣëëk",
     "touchPanHint": "Yïk tëŋ thïïr äriëk bë map jɔt piny"
+  },
+  "Infographics": {
+    "listening": "Listening…",
+    "transcriptLanguage": "Ingiliþ",
+    "transcript1": "No water in Kibera for three days now.",
+    "transcript2": "Many families are affected.",
+    "description1": "No water in Kibera for three days now.",
+    "description2": "Many families are affected.",
+    "submitted": "Report submitted",
+    "thanks": "Thank you for reporting."
   }
 }

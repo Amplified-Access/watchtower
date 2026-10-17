@@ -519,5 +519,15 @@
     "closePopup": "Funga",
     "scrollZoomHint": "Koresha {key} + kuzunguruka kugira ngo wegereze ikarita",
     "touchPanHint": "Koresha intoki ebyiri kugira ngo wimure ikarita"
+  },
+  "Infographics": {
+    "listening": "Ndimo kumva…",
+    "transcriptLanguage": "Ikinyarwanda",
+    "transcript1": "Nta mazi ari i Kibera iminsi itatu.",
+    "transcript2": "Imiryango myinshi yagizweho ingaruka.",
+    "description1": "Nta mazi ari i Kibera iminsi itatu.",
+    "description2": "Imiryango myinshi yagizweho ingaruka.",
+    "submitted": "Raporo yoherejwe",
+    "thanks": "Murakoze gutanga raporo."
   }
 }

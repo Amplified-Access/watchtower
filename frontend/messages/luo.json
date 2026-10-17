@@ -519,5 +519,15 @@
     "closePopup": "Lor",
     "scrollZoomHint": "Ti {key} gi scroll mondo dongo ramaki",
     "touchPanHint": "Ti gi lwedo ariyo to wungo ramaki"
+  },
+  "Infographics": {
+    "listening": "Listening…",
+    "transcriptLanguage": "Ingriz",
+    "transcript1": "No water in Kibera for three days now.",
+    "transcript2": "Many families are affected.",
+    "description1": "No water in Kibera for three days now.",
+    "description2": "Many families are affected.",
+    "submitted": "Report submitted",
+    "thanks": "Thank you for reporting."
   }
 }

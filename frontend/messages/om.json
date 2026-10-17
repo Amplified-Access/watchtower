@@ -519,5 +519,15 @@
     "closePopup": "Cufi",
     "scrollZoomHint": "{key} fi karkaaruu kaartaa guddifachi",
     "touchPanHint": "Qubaa lama fayyadamii kaartaa sochoosi"
+  },
+  "Infographics": {
+    "listening": "Listening…",
+    "transcriptLanguage": "Ingiliffa",
+    "transcript1": "No water in Kibera for three days now.",
+    "transcript2": "Many families are affected.",
+    "description1": "No water in Kibera for three days now.",
+    "description2": "Many families are affected.",
+    "submitted": "Report submitted",
+    "thanks": "Thank you for reporting."
   }
 }

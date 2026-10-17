@@ -519,5 +519,15 @@
     "closePopup": "Fermer",
     "scrollZoomHint": "Utilisez {key} + molette pour zoomer sur la carte",
     "touchPanHint": "Utilisez deux doigts pour déplacer la carte"
+  },
+  "Infographics": {
+    "listening": "J'écoute…",
+    "transcriptLanguage": "Français",
+    "transcript1": "Pas d'eau à Kibera depuis trois jours.",
+    "transcript2": "Beaucoup de familles sont touchées.",
+    "description1": "Pas d'eau à Kibera depuis trois jours.",
+    "description2": "Beaucoup de familles sont touchées.",
+    "submitted": "Rapport soumis",
+    "thanks": "Merci pour votre signalement."
   }
 }

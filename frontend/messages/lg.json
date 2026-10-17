@@ -519,5 +519,15 @@
     "closePopup": "Ggalawo",
     "scrollZoomHint": "Kozesa {key} + okusiba okugaziya maapu",
     "touchPanHint": "Kozesa engalo bbiri okutambuza maapu"
+  },
+  "Infographics": {
+    "listening": "Mpuliriza…",
+    "transcriptLanguage": "Luganda",
+    "transcript1": "Mu Kibera tewali mazzi ennaku ssatu.",
+    "transcript2": "Amaka mangi gakoseddwa.",
+    "description1": "Mu Kibera tewali mazzi ennaku ssatu.",
+    "description2": "Amaka mangi gakoseddwa.",
+    "submitted": "Lipoota etwaliddwa",
+    "thanks": "Webale okuloopa."
   }
 }

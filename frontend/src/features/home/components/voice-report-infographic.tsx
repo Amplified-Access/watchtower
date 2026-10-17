@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import InfographicBackdrop from "./infographic-backdrop";
 import styles from "./voice-report-infographic.module.css";
@@ -9,11 +10,14 @@ import styles from "./voice-report-infographic.module.css";
 // and then into the report form, which fills itself in and is submitted,
 // before shrinking back to the pill. HTML and CSS keyframes (the timeline is
 // in the stylesheet); decorative, since the step's text says what it shows.
-// It's in Swahili throughout, recorder and form included (the site's own
-// Swahili strings, messages/sw.json): the translation happens behind the scenes. The
-// words are part of the picture, so they don't follow the reader's language.
-// The category is one of the maps' incident types, and like the address it
-// stays as the API and Google return it, as on the real Swahili form.
+// It's in the reader's language, like the rest of the page: the recorder and
+// form use the real report form's strings (IncidentReporting), and the
+// report itself (what's said, typed into the form) is in Infographics. The
+// category is one of the maps' incident types, and like the address it
+// stays as the API and Google return it, as on the real form.
+
+// Written right to left, so the transcript is typed out from the right.
+const RTL_LOCALES = new Set(["ur"]);
 
 // Waveform bars: height, oscillation period and offset, varied so the bars
 // don't move in step.
@@ -37,6 +41,9 @@ const MicIcon = ({ className }: { className?: string }) => (
 );
 
 const VoiceReportInfographic = () => {
+  const t = useTranslations("Infographics");
+  const form = useTranslations("IncidentReporting");
+  const rtl = RTL_LOCALES.has(useLocale());
   const ref = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(true);
 
@@ -50,7 +57,7 @@ const VoiceReportInfographic = () => {
   }, []);
 
   return (
-    <div ref={ref} className={styles.root} data-paused={paused} aria-hidden="true">
+    <div ref={ref} className={styles.root} data-paused={paused} dir={rtl ? "rtl" : undefined} aria-hidden="true">
       <InfographicBackdrop />
 
       <div className={`${styles.centre} ${styles.halo}`}>
@@ -70,10 +77,10 @@ const VoiceReportInfographic = () => {
             </div>
             <div className={styles.meta}>
               <div className={styles.status}>
-                <span className={styles.statusIdle}>Rekodi ripoti ya sauti</span>
+                <span className={styles.statusIdle}>{form("recordVoiceReport")}</span>
                 <span className={styles.statusListening}>
                   <span className={styles.recDot} />
-                  Ninasikiliza…
+                  {t("listening")}
                 </span>
               </div>
               <div className={styles.wave}>
@@ -90,12 +97,12 @@ const VoiceReportInfographic = () => {
           <div className={styles.transcript}>
             <span className={styles.language}>
               <MicIcon />
-              Kiswahili
+              {t("transcriptLanguage")}
             </span>
             <div className={styles.lines}>
               {/* Broken to fill the bubble's width (each line under 96% of it). */}
-              <span className={`${styles.typed} ${styles.speech1}`}>Hakuna maji katika Kibera kwa siku tatu</span>
-              <span className={`${styles.typed} ${styles.speech2}`}>sasa. Familia nyingi zimeathirika.</span>
+              <span className={`${styles.typed} ${styles.speech1}`}>{t("transcript1")}</span>
+              <span className={`${styles.typed} ${styles.speech2}`}>{t("transcript2")}</span>
             </div>
           </div>
         </div>
@@ -103,13 +110,13 @@ const VoiceReportInfographic = () => {
         {/* 3. The form */}
         <div className={`${styles.stage} ${styles.stageForm}`}>
           <div className={styles.form}>
-            <p className={styles.title}>Ripoti tukio</p>
+            <p className={styles.title}>{form("title")}</p>
             <div className={styles.fields}>
               <div>
-                <p className={styles.label}>Aina ya Tukio</p>
+                <p className={styles.label}>{form("categoryLabel")}</p>
                 <div className={styles.box}>
                   <span className={`${styles.focus} ${styles.focusCategory}`} />
-                  <span className={`${styles.placeholder} ${styles.placeholderCategory}`}>Chagua aina ya tukio…</span>
+                  <span className={`${styles.placeholder} ${styles.placeholderCategory}`}>{form("selectIncidentTypeCombo")}</span>
                   <span className={`${styles.value} ${styles.valueCategory}`}>
                     <span className={styles.dot} />
                     Community petitions
@@ -118,10 +125,10 @@ const VoiceReportInfographic = () => {
                 </div>
               </div>
               <div>
-                <p className={styles.label}>Mahali pa Tukio</p>
+                <p className={styles.label}>{form("locationLabel")}</p>
                 <div className={styles.box}>
                   <span className={`${styles.focus} ${styles.focusLocation}`} />
-                  <span className={`${styles.placeholder} ${styles.placeholderLocation}`}>Mahali</span>
+                  <span className={`${styles.placeholder} ${styles.placeholderLocation}`}>{form("locationPickerPlaceholder")}</span>
                   <span className={`${styles.value} ${styles.valueLocation}`}>
                     <svg className={styles.pin} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
@@ -133,21 +140,21 @@ const VoiceReportInfographic = () => {
                 </div>
               </div>
               <div>
-                <p className={styles.label}>Maelezo ya Tukio</p>
+                <p className={styles.label}>{form("descriptionLabel")}</p>
                 <div className={`${styles.box} ${styles.boxTall}`}>
                   <span className={`${styles.focus} ${styles.focusDescription}`} />
                   <span className={`${styles.placeholder} ${styles.placeholderDescription}`}>
-                    Eleza kilichotokea kwa maneno yako mwenyewe…
+                    {form("descriptionPrompt")}
                   </span>
                   <span className={styles.value}>
-                    <span className={`${styles.typed} ${styles.desc1}`}>Hakuna maji katika Kibera kwa siku tatu sasa.</span>
-                    <span className={`${styles.typed} ${styles.desc2}`}>Familia nyingi zimeathirika.</span>
+                    <span className={`${styles.typed} ${styles.desc1}`}>{t("description1")}</span>
+                    <span className={`${styles.typed} ${styles.desc2}`}>{t("description2")}</span>
                   </span>
                 </div>
               </div>
             </div>
             <div className={styles.submit}>
-              Wasilisha ripoti
+              {form("submitReport")}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
@@ -158,8 +165,8 @@ const VoiceReportInfographic = () => {
               <circle cx="24" cy="24" r="24" fill="#0042e7" />
               <path className={styles.checkMark} d="m14 24.5 7 7 13-14" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <p className={styles.successTitle}>Ripoti imewasilishwa</p>
-            <p className={styles.successText}>Asante kwa kuripoti.</p>
+            <p className={styles.successTitle}>{t("submitted")}</p>
+            <p className={styles.successText}>{t("thanks")}</p>
           </div>
         </div>
       </div>

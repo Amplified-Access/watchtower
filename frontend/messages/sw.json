@@ -519,5 +519,15 @@
     "closePopup": "Funga",
     "scrollZoomHint": "Tumia {key} + kusogeza ili kukuza ramani",
     "touchPanHint": "Tumia vidole viwili kusogeza ramani"
+  },
+  "Infographics": {
+    "listening": "Ninasikiliza…",
+    "transcriptLanguage": "Kiswahili",
+    "transcript1": "Hakuna maji katika Kibera kwa siku tatu",
+    "transcript2": "sasa. Familia nyingi zimeathirika.",
+    "description1": "Hakuna maji katika Kibera kwa siku tatu sasa.",
+    "description2": "Familia nyingi zimeathirika.",
+    "submitted": "Ripoti imewasilishwa",
+    "thanks": "Asante kwa kuripoti."
   }
 }

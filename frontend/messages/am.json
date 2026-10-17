@@ -519,5 +519,15 @@
     "closePopup": "ዝጋ",
     "scrollZoomHint": "ካርታውን ለማጉላት {key} + ማሸብለል ይጠቀሙ",
     "touchPanHint": "ካርታውን ለማንቀሳቀስ ሁለት ጣቶችን ይጠቀሙ"
+  },
+  "Infographics": {
+    "listening": "እያዳመጥኩ ነው…",
+    "transcriptLanguage": "አማርኛ",
+    "transcript1": "በኪቤራ ለሦስት ቀናት ውሃ የለም።",
+    "transcript2": "ብዙ ቤተሰቦች ተጎድተዋል።",
+    "description1": "በኪቤራ ለሦስት ቀናት ውሃ የለም።",
+    "description2": "ብዙ ቤተሰቦች ተጎድተዋል።",
+    "submitted": "ሪፖርቱ ገብቷል",
+    "thanks": "ስለ ሪፖርትዎ እናመሰግናለን።"
   }
 }
