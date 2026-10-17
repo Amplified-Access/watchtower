@@ -84,7 +84,7 @@ const LivePreviewSection = () => {
               map instead. */}
           <div className="px-4 pb-6 md:px-8 lg:hidden [zoom:var(--viewport-scale)]">
             <Link
-              href="/maps"
+              href="/maps/live-incident-map"
               className="flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 font-title font-medium text-white transition-colors hover:bg-primary/90"
             >
               {t("viewReportsCta", { count: stats.totalReports })}

@@ -266,7 +266,7 @@ const FilterPanel = ({
         </button>
       ) : (
         <Link
-          href="/maps"
+          href="/maps/live-incident-map"
           className={cn(
             "mt-auto flex items-center justify-center bg-primary px-4 text-white transition-colors hover:bg-primary/90",
             s.cta,
