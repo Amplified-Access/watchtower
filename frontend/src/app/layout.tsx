@@ -44,6 +44,11 @@ export async function generateMetadata(): Promise<Metadata> {
       images,
     },
     twitter: { card: "summary_large_image", title: SITE.title, description, images: images.map((i) => i.url) },
+    // The site is translated by us (the language selector): stop Chrome
+    // offering to machine-translate it (and Google Search offering a
+    // translated copy). translate="no" on <html> does the same for other
+    // browsers' and extensions' translators.
+    other: { google: "notranslate" },
   };
 }
 
@@ -60,7 +65,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} translate="no">
       <body className="antialiased font-body text-dark bg-background">
         <NextIntlClientProvider messages={messages}>
           <Providers>
