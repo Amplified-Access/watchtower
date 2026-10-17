@@ -13,8 +13,10 @@ import styles from "./voice-report-infographic.module.css";
 // It's in the reader's language, like the rest of the page: the recorder and
 // form use the real report form's strings (IncidentReporting), and the
 // report itself (what's said, typed into the form) is in Infographics. The
-// category is one of the maps' incident types, and like the address it
-// stays as the API and Google return it, as on the real form.
+// report is the Uganda elections accessibility story (a polling station
+// with no ramp), as in step 3 and on the About page. Its category is the
+// story's, not one of the maps' incident types, so it's translated with it;
+// the address stays as Google returns it, as on the real form.
 
 // Written right to left, so the transcript is typed out from the right.
 const RTL_LOCALES = new Set(["ur"]);
@@ -119,7 +121,7 @@ const VoiceReportInfographic = () => {
                   <span className={`${styles.placeholder} ${styles.placeholderCategory}`}>{form("selectIncidentTypeCombo")}</span>
                   <span className={`${styles.value} ${styles.valueCategory}`}>
                     <span className={styles.dot} />
-                    Community petitions
+                    {t("category")}
                   </span>
                   <Chevron />
                 </div>
@@ -134,7 +136,7 @@ const VoiceReportInfographic = () => {
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
-                    Kibera, Nairobi, Kenya
+                    Gulu, Uganda
                   </span>
                   <Chevron />
                 </div>

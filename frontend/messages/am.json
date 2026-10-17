@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "እያዳመጥኩ ነው…",
     "transcriptLanguage": "አማርኛ",
-    "transcript1": "በኪቤራ ለሦስት ቀናት ውሃ የለም።",
-    "transcript2": "ብዙ ቤተሰቦች ተጎድተዋል።",
-    "description1": "በኪቤራ ለሦስት ቀናት ውሃ የለም።",
-    "description2": "ብዙ ቤተሰቦች ተጎድተዋል።",
+    "category": "አካታች ምርጫ",
+    "transcript1": "በጉሉ ያለው የምርጫ ጣቢያችን መወጣጫ የለውም።",
+    "transcript2": "በዊልቸር የሚንቀሳቀሱ ሰዎች መምረጥ አይችሉም።",
+    "description1": "በጉሉ ያለው የምርጫ ጣቢያችን መወጣጫ የለውም።",
+    "description2": "በዊልቸር የሚንቀሳቀሱ ሰዎች መምረጥ አይችሉም።",
     "submitted": "ሪፖርቱ ገብቷል",
     "thanks": "ስለ ሪፖርትዎ እናመሰግናለን።",
-    "outcomeShared": "ለወረዳ ምክር ቤቱ ተልኳል",
-    "outcomeTeamSent": "የምላሽ ቡድን ወደ ኪቤራ ተልኳል",
-    "outcomeWaterRestored": "የውሃ አቅርቦት ተመልሷል",
-    "outcomeResidentsNotified": "ነዋሪዎች ተነግሯቸዋል",
-    "outcomeFollowUp": "የክትትል ሪፖርት ታትሟል",
-    "outcomeCouncilResponse": "ምክር ቤቱ ይፋዊ ምላሽ ሰጥቷል"
+    "outcomeEvidenceShared": "ማስረጃ ለአካባቢው Centre for Inclusion ተጋርቷል",
+    "outcomeBarriersIdentified": "ዋና ዋና የተደራሽነት እንቅፋቶች ተለይተዋል",
+    "outcomeAuthoritiesEngaged": "የምርጫ ባለሥልጣናት በመፍትሄዎች ላይ ተሳትፈዋል",
+    "outcomeRampsInstalled": "በምርጫ ጣቢያዎች ጊዜያዊ መወጣጫዎች ተገንብተዋል",
+    "outcomeAccessibleVoting": "ለሁሉም የበለጠ ተደራሽ ምርጫ"
   }
 }

@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "Mpuliriza…",
     "transcriptLanguage": "Luganda",
-    "transcript1": "Mu Kibera tewali mazzi ennaku ssatu.",
-    "transcript2": "Amaka mangi gakoseddwa.",
-    "description1": "Mu Kibera tewali mazzi ennaku ssatu.",
-    "description2": "Amaka mangi gakoseddwa.",
+    "category": "Okulonda okw'abantu bonna",
+    "transcript1": "Ekifo w'okulondera e Gulu tekiyingirika.",
+    "transcript2": "Abali mu bigaali tebasobola kulonda.",
+    "description1": "Ekifo w'okulondera e Gulu tekiyingirika.",
+    "description2": "Abali mu bigaali tebasobola kulonda.",
     "submitted": "Lipoota etwaliddwa",
     "thanks": "Webale okuloopa.",
-    "outcomeShared": "Kitwaliddwa ku disitulikiti",
-    "outcomeTeamSent": "Ttiimu etumiddwa e Kibera",
-    "outcomeWaterRestored": "Amazzi gazziddwawo",
-    "outcomeResidentsNotified": "Abatuuze bategeezeddwa",
-    "outcomeFollowUp": "Lipoota ey'okulondoola efulumye",
-    "outcomeCouncilResponse": "Olukiiko luzzeemu mu lwatu"
+    "outcomeEvidenceShared": "Obujulizi buweereddwa Centre for Inclusion",
+    "outcomeBarriersIdentified": "Ebiziyiza ebikulu mu kutuukirika bizuuliddwa",
+    "outcomeAuthoritiesEngaged": "Ab'ebyokulonda batuukiriddwa",
+    "outcomeRampsInstalled": "Amakubo ag'ekiseera mu bifo by'okulondera",
+    "outcomeAccessibleVoting": "Okulonda okutuukirika eri buli muntu"
   }
 }

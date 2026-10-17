@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "سن رہا ہوں…",
     "transcriptLanguage": "اردو",
-    "transcript1": "کیبیرا میں تین دن سے پانی نہیں ہے۔",
-    "transcript2": "بہت سے خاندان متاثر ہوئے ہیں۔",
-    "description1": "کیبیرا میں تین دن سے پانی نہیں ہے۔",
-    "description2": "بہت سے خاندان متاثر ہوئے ہیں۔",
+    "category": "جامع انتخابات",
+    "transcript1": "گولو میں ہمارے پولنگ اسٹیشن پر ریمپ نہیں ہے۔",
+    "transcript2": "وہیل چیئر والے لوگ ووٹ نہیں ڈال سکتے۔",
+    "description1": "گولو میں ہمارے پولنگ اسٹیشن پر ریمپ نہیں ہے۔",
+    "description2": "وہیل چیئر والے لوگ ووٹ نہیں ڈال سکتے۔",
     "submitted": "رپورٹ جمع ہو گئی",
     "thanks": "رپورٹ کرنے کا شکریہ۔",
-    "outcomeShared": "ضلعی کونسل کو بھیجا گیا",
-    "outcomeTeamSent": "امدادی ٹیم کیبیرا بھیجی گئی",
-    "outcomeWaterRestored": "پانی کی فراہمی بحال",
-    "outcomeResidentsNotified": "رہائشیوں کو مطلع کیا گیا",
-    "outcomeFollowUp": "فالو اپ رپورٹ شائع",
-    "outcomeCouncilResponse": "کونسل نے عوامی جواب دیا"
+    "outcomeEvidenceShared": "شواہد مقامی Centre for Inclusion کو بھیجے گئے",
+    "outcomeBarriersIdentified": "رسائی کی بڑی رکاوٹوں کی نشاندہی",
+    "outcomeAuthoritiesEngaged": "انتخابی حکام سے حل پر بات چیت",
+    "outcomeRampsInstalled": "پولنگ اسٹیشنوں پر عارضی ریمپ نصب",
+    "outcomeAccessibleVoting": "سب کے لیے زیادہ قابلِ رسائی ووٹنگ"
   }
 }

@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "J'écoute…",
     "transcriptLanguage": "Français",
-    "transcript1": "Pas d'eau à Kibera depuis trois jours.",
-    "transcript2": "Beaucoup de familles sont touchées.",
-    "description1": "Pas d'eau à Kibera depuis trois jours.",
-    "description2": "Beaucoup de familles sont touchées.",
+    "category": "Élections inclusives",
+    "transcript1": "Pas de rampe au bureau de vote de Gulu.",
+    "transcript2": "Impossible de voter en fauteuil roulant.",
+    "description1": "Pas de rampe au bureau de vote de Gulu.",
+    "description2": "Impossible de voter en fauteuil roulant.",
     "submitted": "Rapport soumis",
     "thanks": "Merci pour votre signalement.",
-    "outcomeShared": "Transmis au conseil de district",
-    "outcomeTeamSent": "Équipe envoyée à Kibera",
-    "outcomeWaterRestored": "Eau rétablie",
-    "outcomeResidentsNotified": "Habitants informés",
-    "outcomeFollowUp": "Rapport de suivi publié",
-    "outcomeCouncilResponse": "Réponse publique du conseil"
+    "outcomeEvidenceShared": "Preuves transmises au Centre for Inclusion local",
+    "outcomeBarriersIdentified": "Principaux obstacles à l'accessibilité identifiés",
+    "outcomeAuthoritiesEngaged": "Autorités électorales associées aux solutions",
+    "outcomeRampsInstalled": "Rampes temporaires dans les bureaux de vote",
+    "outcomeAccessibleVoting": "Un vote plus accessible pour tous"
   }
 }

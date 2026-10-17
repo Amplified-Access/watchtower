@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "Ninasikiliza…",
     "transcriptLanguage": "Kiswahili",
-    "transcript1": "Hakuna maji katika Kibera kwa siku tatu",
-    "transcript2": "sasa. Familia nyingi zimeathirika.",
-    "description1": "Hakuna maji katika Kibera kwa siku tatu sasa.",
-    "description2": "Familia nyingi zimeathirika.",
+    "category": "Uchaguzi jumuishi",
+    "transcript1": "Kituo cha kura Gulu hakina njia panda.",
+    "transcript2": "Wenye viti mwendo hawawezi kupiga kura.",
+    "description1": "Kituo cha kura Gulu hakina njia panda.",
+    "description2": "Wenye viti mwendo hawawezi kupiga kura.",
     "submitted": "Ripoti imewasilishwa",
     "thanks": "Asante kwa kuripoti.",
-    "outcomeShared": "Imetumwa kwa baraza la wilaya",
-    "outcomeTeamSent": "Timu imetumwa Kibera",
-    "outcomeWaterRestored": "Huduma ya maji imerejeshwa",
-    "outcomeResidentsNotified": "Wakazi wamejulishwa",
-    "outcomeFollowUp": "Ripoti ya ufuatiliaji imetolewa",
-    "outcomeCouncilResponse": "Baraza limetoa jibu la umma"
+    "outcomeEvidenceShared": "Ushahidi umetumwa kwa Centre for Inclusion",
+    "outcomeBarriersIdentified": "Vikwazo vikuu vya ufikivu vimebainishwa",
+    "outcomeAuthoritiesEngaged": "Suluhisho zimejadiliwa na mamlaka za uchaguzi",
+    "outcomeRampsInstalled": "Njia panda za muda zimewekwa vituoni",
+    "outcomeAccessibleVoting": "Upigaji kura unaofikika zaidi kwa wote"
   }
 }

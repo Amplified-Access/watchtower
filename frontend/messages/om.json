@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "Listening…",
     "transcriptLanguage": "Ingiliffa",
-    "transcript1": "No water in Kibera for three days now.",
-    "transcript2": "Many families are affected.",
-    "description1": "No water in Kibera for three days now.",
-    "description2": "Many families are affected.",
+    "category": "Inclusive Elections",
+    "transcript1": "There's no ramp at our polling station",
+    "transcript2": "in Gulu. Wheelchair users can't vote.",
+    "description1": "There's no ramp at our polling station in Gulu.",
+    "description2": "Wheelchair users can't vote.",
     "submitted": "Report submitted",
     "thanks": "Thank you for reporting.",
-    "outcomeShared": "Shared with the district council",
-    "outcomeTeamSent": "Response team sent to Kibera",
-    "outcomeWaterRestored": "Water supply restored",
-    "outcomeResidentsNotified": "Residents notified",
-    "outcomeFollowUp": "Follow-up report published",
-    "outcomeCouncilResponse": "Council issued a public response"
+    "outcomeEvidenceShared": "Evidence shared with the local Centre for Inclusion",
+    "outcomeBarriersIdentified": "Priority accessibility barriers identified",
+    "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
+    "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
+    "outcomeAccessibleVoting": "More accessible voting for everyone"
   }
 }

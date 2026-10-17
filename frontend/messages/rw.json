@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "Ndimo kumva…",
     "transcriptLanguage": "Ikinyarwanda",
-    "transcript1": "Nta mazi ari i Kibera iminsi itatu.",
-    "transcript2": "Imiryango myinshi yagizweho ingaruka.",
-    "description1": "Nta mazi ari i Kibera iminsi itatu.",
-    "description2": "Imiryango myinshi yagizweho ingaruka.",
+    "category": "Amatora adaheza",
+    "transcript1": "Ibiro by'itora i Gulu ntibigerwaho.",
+    "transcript2": "Abari mu tugare ntibashobora gutora.",
+    "description1": "Ibiro by'itora i Gulu ntibigerwaho.",
+    "description2": "Abari mu tugare ntibashobora gutora.",
     "submitted": "Raporo yoherejwe",
     "thanks": "Murakoze gutanga raporo.",
-    "outcomeShared": "Byagejejwe ku karere",
-    "outcomeTeamSent": "Itsinda ryoherejwe i Kibera",
-    "outcomeWaterRestored": "Amazi yagaruwe",
-    "outcomeResidentsNotified": "Abaturage bamenyeshejwe",
-    "outcomeFollowUp": "Raporo ikurikira yasohotse",
-    "outcomeCouncilResponse": "Njyanama yasubije abaturage"
+    "outcomeEvidenceShared": "Ibimenyetso byagejejwe kuri Centre for Inclusion",
+    "outcomeBarriersIdentified": "Inzitizi z'ingenzi mu kugerwaho zagaragajwe",
+    "outcomeAuthoritiesEngaged": "Inzego z'amatora zaganirijwe ku bisubizo",
+    "outcomeRampsInstalled": "Inzira z'agateganyo zashyizwe ku biro by'itora",
+    "outcomeAccessibleVoting": "Itora rigerwaho na bose"
   }
 }

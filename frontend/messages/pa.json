@@ -523,17 +523,17 @@
   "Infographics": {
     "listening": "ਸੁਣ ਰਿਹਾ ਹਾਂ…",
     "transcriptLanguage": "ਪੰਜਾਬੀ",
-    "transcript1": "ਕਿਬੇਰਾ ਵਿੱਚ ਤਿੰਨ ਦਿਨਾਂ ਤੋਂ ਪਾਣੀ ਨਹੀਂ ਹੈ।",
-    "transcript2": "ਬਹੁਤ ਸਾਰੇ ਪਰਿਵਾਰ ਪ੍ਰਭਾਵਿਤ ਹਨ।",
-    "description1": "ਕਿਬੇਰਾ ਵਿੱਚ ਤਿੰਨ ਦਿਨਾਂ ਤੋਂ ਪਾਣੀ ਨਹੀਂ ਹੈ।",
-    "description2": "ਬਹੁਤ ਸਾਰੇ ਪਰਿਵਾਰ ਪ੍ਰਭਾਵਿਤ ਹਨ।",
+    "category": "ਸਮਾਵੇਸ਼ੀ ਚੋਣਾਂ",
+    "transcript1": "ਗੁਲੂ ਵਿੱਚ ਸਾਡੇ ਪੋਲਿੰਗ ਸਟੇਸ਼ਨ 'ਤੇ ਰੈਂਪ ਨਹੀਂ ਹੈ।",
+    "transcript2": "ਵ੍ਹੀਲਚੇਅਰ ਵਾਲੇ ਲੋਕ ਵੋਟ ਨਹੀਂ ਪਾ ਸਕਦੇ।",
+    "description1": "ਗੁਲੂ ਵਿੱਚ ਸਾਡੇ ਪੋਲਿੰਗ ਸਟੇਸ਼ਨ 'ਤੇ ਰੈਂਪ ਨਹੀਂ ਹੈ।",
+    "description2": "ਵ੍ਹੀਲਚੇਅਰ ਵਾਲੇ ਲੋਕ ਵੋਟ ਨਹੀਂ ਪਾ ਸਕਦੇ।",
     "submitted": "ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਹੋ ਗਈ",
     "thanks": "ਰਿਪੋਰਟ ਕਰਨ ਲਈ ਧੰਨਵਾਦ।",
-    "outcomeShared": "ਜ਼ਿਲ੍ਹਾ ਕੌਂਸਲ ਨਾਲ ਸਾਂਝਾ ਕੀਤਾ",
-    "outcomeTeamSent": "ਰਿਸਪਾਂਸ ਟੀਮ ਕਿਬੇਰਾ ਭੇਜੀ ਗਈ",
-    "outcomeWaterRestored": "ਪਾਣੀ ਦੀ ਸਪਲਾਈ ਬਹਾਲ ਹੋਈ",
-    "outcomeResidentsNotified": "ਵਸਨੀਕਾਂ ਨੂੰ ਸੂਚਿਤ ਕੀਤਾ",
-    "outcomeFollowUp": "ਫਾਲੋ-ਅੱਪ ਰਿਪੋਰਟ ਪ੍ਰਕਾਸ਼ਿਤ",
-    "outcomeCouncilResponse": "ਕੌਂਸਲ ਨੇ ਜਨਤਕ ਜਵਾਬ ਦਿੱਤਾ"
+    "outcomeEvidenceShared": "ਸਬੂਤ ਸਥਾਨਕ Centre for Inclusion ਨਾਲ ਸਾਂਝੇ ਕੀਤੇ",
+    "outcomeBarriersIdentified": "ਮੁੱਖ ਪਹੁੰਚਯੋਗਤਾ ਰੁਕਾਵਟਾਂ ਦੀ ਪਛਾਣ ਕੀਤੀ",
+    "outcomeAuthoritiesEngaged": "ਚੋਣ ਅਧਿਕਾਰੀਆਂ ਨਾਲ ਹੱਲਾਂ 'ਤੇ ਗੱਲਬਾਤ",
+    "outcomeRampsInstalled": "ਪੋਲਿੰਗ ਸਟੇਸ਼ਨਾਂ 'ਤੇ ਅਸਥਾਈ ਰੈਂਪ ਲਗਾਏ ਗਏ",
+    "outcomeAccessibleVoting": "ਸਾਰਿਆਂ ਲਈ ਵਧੇਰੇ ਪਹੁੰਚਯੋਗ ਵੋਟਿੰਗ"
   }
 }
