@@ -24,7 +24,7 @@ import StepConnector from "@/components/common/step-connector";
 // import ScrollFadeText from "@/components/common/scroll-fade-text";
 import LivePreviewSection from "@/features/home/components/live-preview-section";
 import ActionInfographic from "@/features/home/components/action-infographic";
-import TrendsInfographic from "@/features/home/components/trends-infographic";
+import LiveMapInfographic from "@/features/home/components/live-map-infographic";
 import VoiceReportInfographic from "@/features/home/components/voice-report-infographic";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
@@ -52,7 +52,7 @@ const STEP_VIDEOS = ["home-report", "home-maps", "home-case-studies"].map((name)
 // Experiment: steps whose clip is replaced by an animated illustration.
 const STEP_INFOGRAPHICS: Record<number, React.ReactNode> = {
   0: <VoiceReportInfographic />,
-  1: <TrendsInfographic />,
+  1: <LiveMapInfographic />,
   2: <ActionInfographic />,
 };
 

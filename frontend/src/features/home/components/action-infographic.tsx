@@ -6,7 +6,7 @@ import InfographicBackdrop from "./infographic-backdrop";
 import styles from "./action-infographic.module.css";
 
 // How it works, step 3: what acting on reports achieves, each outcome its
-// own card on a picker wheel like the iPhone's. The outcomes of the Kibera story (steps 1 and 2) roll
+// own card on a picker wheel like the iPhone's. The outcomes of the Kibera story (step 1's report) roll
 // up one at a time; each is checked as it reaches the centre, so the rows
 // below are still to do and the rows above are done. HTML and CSS keyframes
 // (the timeline is in the stylesheet); decorative, since the step's text

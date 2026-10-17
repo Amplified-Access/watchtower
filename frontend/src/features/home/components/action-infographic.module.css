@@ -12,7 +12,7 @@
  * a negative delay, so the loop is seamless and each row reaches the
  * centre 2s after the one before. A row is 22deg round a 23cqw wheel.
  *
- * Sizes are in cqw, so it scales as one picture like steps 1 and 2. Under
+ * Sizes are in cqw, so it scales as one picture like step 1. Under
  * reduced motion it holds still, as at the start.
  */
 

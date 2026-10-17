@@ -1,0 +1,21 @@
+/* The How it works step 2 frame: the size and shape of steps 1 and 3. */
+
+.root {
+  position: relative;
+  aspect-ratio: 1080 / 850;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  background: #fff;
+  user-select: none;
+}
+
+/* The live incident map, filling the frame. The zoom cancels the How it
+   works section's [zoom:var(--viewport-scale)]: Mapbox sizes its canvas
+   from getBoundingClientRect, so inside a zoomed ancestor the canvas comes
+   out the wrong size (as on the About page: step-graphics.module.css). */
+.map {
+  position: absolute;
+  inset: 0;
+  zoom: calc(1 / var(--viewport-scale));
+}
