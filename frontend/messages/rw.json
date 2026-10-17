@@ -519,5 +519,21 @@
     "closePopup": "Funga",
     "scrollZoomHint": "Koresha {key} + kuzunguruka kugira ngo wegereze ikarita",
     "touchPanHint": "Koresha intoki ebyiri kugira ngo wimure ikarita"
+  },
+  "Infographics": {
+    "listening": "Ndimo kumva…",
+    "transcriptLanguage": "Ikinyarwanda",
+    "category": "Amatora adaheza",
+    "transcript1": "Ibiro by'itora i Gulu ntibigerwaho.",
+    "transcript2": "Abari mu tugare ntibashobora gutora.",
+    "description1": "Ibiro by'itora i Gulu ntibigerwaho.",
+    "description2": "Abari mu tugare ntibashobora gutora.",
+    "submitted": "Raporo yoherejwe",
+    "thanks": "Murakoze gutanga raporo.",
+    "outcomeEvidenceShared": "Ibimenyetso byagejejwe kuri Centre for Inclusion",
+    "outcomeBarriersIdentified": "Inzitizi z'ingenzi mu kugerwaho zagaragajwe",
+    "outcomeAuthoritiesEngaged": "Inzego z'amatora zaganirijwe ku bisubizo",
+    "outcomeRampsInstalled": "Inzira z'agateganyo zashyizwe ku biro by'itora",
+    "outcomeAccessibleVoting": "Itora rigerwaho na bose"
   }
 }

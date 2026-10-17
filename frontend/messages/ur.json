@@ -519,5 +519,21 @@
     "closePopup": "بند کریں",
     "scrollZoomHint": "نقشہ زوم کرنے کے لیے {key} + اسکرول استعمال کریں",
     "touchPanHint": "نقشہ ہلانے کے لیے دو انگلیاں استعمال کریں"
+  },
+  "Infographics": {
+    "listening": "سن رہا ہوں…",
+    "transcriptLanguage": "اردو",
+    "category": "جامع انتخابات",
+    "transcript1": "گولو میں ہمارے پولنگ اسٹیشن پر ریمپ نہیں ہے۔",
+    "transcript2": "وہیل چیئر والے لوگ ووٹ نہیں ڈال سکتے۔",
+    "description1": "گولو میں ہمارے پولنگ اسٹیشن پر ریمپ نہیں ہے۔",
+    "description2": "وہیل چیئر والے لوگ ووٹ نہیں ڈال سکتے۔",
+    "submitted": "رپورٹ جمع ہو گئی",
+    "thanks": "رپورٹ کرنے کا شکریہ۔",
+    "outcomeEvidenceShared": "شواہد مقامی Centre for Inclusion کو بھیجے گئے",
+    "outcomeBarriersIdentified": "رسائی کی بڑی رکاوٹوں کی نشاندہی",
+    "outcomeAuthoritiesEngaged": "انتخابی حکام سے حل پر بات چیت",
+    "outcomeRampsInstalled": "پولنگ اسٹیشنوں پر عارضی ریمپ نصب",
+    "outcomeAccessibleVoting": "سب کے لیے زیادہ قابلِ رسائی ووٹنگ"
   }
 }

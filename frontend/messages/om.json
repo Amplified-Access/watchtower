@@ -519,5 +519,21 @@
     "closePopup": "Cufi",
     "scrollZoomHint": "{key} fi karkaaruu kaartaa guddifachi",
     "touchPanHint": "Qubaa lama fayyadamii kaartaa sochoosi"
+  },
+  "Infographics": {
+    "listening": "Listening…",
+    "transcriptLanguage": "Ingiliffa",
+    "category": "Inclusive Elections",
+    "transcript1": "There's no ramp at our polling station",
+    "transcript2": "in Gulu. Wheelchair users can't vote.",
+    "description1": "There's no ramp at our polling station in Gulu.",
+    "description2": "Wheelchair users can't vote.",
+    "submitted": "Report submitted",
+    "thanks": "Thank you for reporting.",
+    "outcomeEvidenceShared": "Evidence shared with the local Centre for Inclusion",
+    "outcomeBarriersIdentified": "Priority accessibility barriers identified",
+    "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
+    "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
+    "outcomeAccessibleVoting": "More accessible voting for everyone"
   }
 }

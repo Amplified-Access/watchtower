@@ -23,14 +23,18 @@ const FILTERS = {
 const noop = () => {};
 
 // The margin kept clear around the data: a share of the frame's shorter
-// side, so a phone's small frame doesn't zoom out to the whole world. The
-// bottom keeps the data in the top 70% of the frame, where its fade (from
-// 55% down) has barely begun, so no cluster fades out; clearing the whole
-// fade would zoom out to most of the world.
+// side, so a phone's small frame doesn't zoom out to the whole world. In a
+// frame that fades out at the bottom (the About page's, from 55% down),
+// `bottom` (a share of its height) keeps the data in the top 70%, where the
+// fade has barely begun, so no cluster fades out; clearing the whole fade
+// would zoom out to most of the world. Left out, the bottom margin is the
+// same as the others.
 const MARGIN = 0.15;
-const BOTTOM = 0.3;
 
-const LiveMapPreview = () => {
+// Used by the home page's How it works (step 2) and the About page's steps.
+// With `sphere`, the globe view instead, as a ball filling the (square)
+// frame and turned to face the data (GlobeMap's `sphere`): no margin.
+const LiveMapPreview = ({ bottom, sphere = false }: { bottom?: number; sphere?: boolean }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [padding, setPadding] = useState<{ top: number; bottom: number; left: number; right: number } | null>(null);
   const { points } = useLivePreviewData(FILTERS);
@@ -41,8 +45,8 @@ const LiveMapPreview = () => {
     if (!el) return;
     const { width, height } = el.getBoundingClientRect();
     const margin = Math.round(Math.min(width, height) * MARGIN);
-    setPadding({ top: margin, left: margin, right: margin, bottom: Math.round(height * BOTTOM) });
-  }, []);
+    setPadding({ top: margin, left: margin, right: margin, bottom: bottom === undefined ? margin : Math.round(height * bottom) });
+  }, [bottom]);
 
   return (
     <div ref={ref} className="h-full w-full">
@@ -50,12 +54,13 @@ const LiveMapPreview = () => {
         <GlobeMap
           points={points}
           layers={LAYERS}
-          viewMode="map"
+          viewMode={sphere ? "globe" : "map"}
           onViewModeChange={noop}
           docked
           overlayControls={false}
           interactive={false}
-          padding={padding}
+          padding={sphere ? undefined : padding}
+          sphere={sphere}
         />
       )}
     </div>

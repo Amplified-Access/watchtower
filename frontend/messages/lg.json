@@ -519,5 +519,21 @@
     "closePopup": "Ggalawo",
     "scrollZoomHint": "Kozesa {key} + okusiba okugaziya maapu",
     "touchPanHint": "Kozesa engalo bbiri okutambuza maapu"
+  },
+  "Infographics": {
+    "listening": "Mpuliriza…",
+    "transcriptLanguage": "Luganda",
+    "category": "Okulonda okw'abantu bonna",
+    "transcript1": "Ekifo w'okulondera e Gulu tekiyingirika.",
+    "transcript2": "Abali mu bigaali tebasobola kulonda.",
+    "description1": "Ekifo w'okulondera e Gulu tekiyingirika.",
+    "description2": "Abali mu bigaali tebasobola kulonda.",
+    "submitted": "Lipoota etwaliddwa",
+    "thanks": "Webale okuloopa.",
+    "outcomeEvidenceShared": "Obujulizi buweereddwa Centre for Inclusion",
+    "outcomeBarriersIdentified": "Ebiziyiza ebikulu mu kutuukirika bizuuliddwa",
+    "outcomeAuthoritiesEngaged": "Ab'ebyokulonda batuukiriddwa",
+    "outcomeRampsInstalled": "Amakubo ag'ekiseera mu bifo by'okulondera",
+    "outcomeAccessibleVoting": "Okulonda okutuukirika eri buli muntu"
   }
 }

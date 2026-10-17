@@ -519,5 +519,21 @@
     "closePopup": "Funga",
     "scrollZoomHint": "Tumia {key} + kusogeza ili kukuza ramani",
     "touchPanHint": "Tumia vidole viwili kusogeza ramani"
+  },
+  "Infographics": {
+    "listening": "Ninasikiliza…",
+    "transcriptLanguage": "Kiswahili",
+    "category": "Uchaguzi jumuishi",
+    "transcript1": "Kituo cha kura Gulu hakina njia panda.",
+    "transcript2": "Wenye viti mwendo hawawezi kupiga kura.",
+    "description1": "Kituo cha kura Gulu hakina njia panda.",
+    "description2": "Wenye viti mwendo hawawezi kupiga kura.",
+    "submitted": "Ripoti imewasilishwa",
+    "thanks": "Asante kwa kuripoti.",
+    "outcomeEvidenceShared": "Ushahidi umetumwa kwa Centre for Inclusion",
+    "outcomeBarriersIdentified": "Vikwazo vikuu vya ufikivu vimebainishwa",
+    "outcomeAuthoritiesEngaged": "Suluhisho zimejadiliwa na mamlaka za uchaguzi",
+    "outcomeRampsInstalled": "Njia panda za muda zimewekwa vituoni",
+    "outcomeAccessibleVoting": "Upigaji kura unaofikika zaidi kwa wote"
   }
 }

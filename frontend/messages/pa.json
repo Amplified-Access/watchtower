@@ -519,5 +519,21 @@
     "closePopup": "ਬੰਦ ਕਰੋ",
     "scrollZoomHint": "ਨਕਸ਼ੇ ਨੂੰ ਜ਼ੂਮ ਕਰਨ ਲਈ {key} + ਸਕ੍ਰੋਲ ਵਰਤੋ",
     "touchPanHint": "ਨਕਸ਼ੇ ਨੂੰ ਹਿਲਾਉਣ ਲਈ ਦੋ ਉਂਗਲਾਂ ਵਰਤੋ"
+  },
+  "Infographics": {
+    "listening": "ਸੁਣ ਰਿਹਾ ਹਾਂ…",
+    "transcriptLanguage": "ਪੰਜਾਬੀ",
+    "category": "ਸਮਾਵੇਸ਼ੀ ਚੋਣਾਂ",
+    "transcript1": "ਗੁਲੂ ਵਿੱਚ ਸਾਡੇ ਪੋਲਿੰਗ ਸਟੇਸ਼ਨ 'ਤੇ ਰੈਂਪ ਨਹੀਂ ਹੈ।",
+    "transcript2": "ਵ੍ਹੀਲਚੇਅਰ ਵਾਲੇ ਲੋਕ ਵੋਟ ਨਹੀਂ ਪਾ ਸਕਦੇ।",
+    "description1": "ਗੁਲੂ ਵਿੱਚ ਸਾਡੇ ਪੋਲਿੰਗ ਸਟੇਸ਼ਨ 'ਤੇ ਰੈਂਪ ਨਹੀਂ ਹੈ।",
+    "description2": "ਵ੍ਹੀਲਚੇਅਰ ਵਾਲੇ ਲੋਕ ਵੋਟ ਨਹੀਂ ਪਾ ਸਕਦੇ।",
+    "submitted": "ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਹੋ ਗਈ",
+    "thanks": "ਰਿਪੋਰਟ ਕਰਨ ਲਈ ਧੰਨਵਾਦ।",
+    "outcomeEvidenceShared": "ਸਬੂਤ ਸਥਾਨਕ Centre for Inclusion ਨਾਲ ਸਾਂਝੇ ਕੀਤੇ",
+    "outcomeBarriersIdentified": "ਮੁੱਖ ਪਹੁੰਚਯੋਗਤਾ ਰੁਕਾਵਟਾਂ ਦੀ ਪਛਾਣ ਕੀਤੀ",
+    "outcomeAuthoritiesEngaged": "ਚੋਣ ਅਧਿਕਾਰੀਆਂ ਨਾਲ ਹੱਲਾਂ 'ਤੇ ਗੱਲਬਾਤ",
+    "outcomeRampsInstalled": "ਪੋਲਿੰਗ ਸਟੇਸ਼ਨਾਂ 'ਤੇ ਅਸਥਾਈ ਰੈਂਪ ਲਗਾਏ ਗਏ",
+    "outcomeAccessibleVoting": "ਸਾਰਿਆਂ ਲਈ ਵਧੇਰੇ ਪਹੁੰਚਯੋਗ ਵੋਟਿੰਗ"
   }
 }

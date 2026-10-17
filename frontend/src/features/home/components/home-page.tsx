@@ -16,6 +16,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useRef } from "react";
 import { trpc } from "@/_trpc/client";
 
 import Footer from "@/components/layout/footer/page";
@@ -24,7 +25,7 @@ import StepConnector from "@/components/common/step-connector";
 // import ScrollFadeText from "@/components/common/scroll-fade-text";
 import LivePreviewSection from "@/features/home/components/live-preview-section";
 import ActionInfographic from "@/features/home/components/action-infographic";
-import TrendsInfographic from "@/features/home/components/trends-infographic";
+import LiveMapInfographic from "@/features/home/components/live-map-infographic";
 import VoiceReportInfographic from "@/features/home/components/voice-report-infographic";
 import { Disc3 } from "@/components/animate-ui/icons/disc-3";
 import { MessageSquareWarning } from "@/components/animate-ui/icons/message-square-warning";
@@ -49,18 +50,22 @@ const STEP_VIDEOS = ["home-report", "home-maps", "home-case-studies"].map((name)
   height: 850,
 }));
 
-// Experiment: steps whose clip is replaced by an animated illustration.
-const STEP_INFOGRAPHICS: Record<number, React.ReactNode> = {
-  0: <VoiceReportInfographic />,
-  1: <TrendsInfographic />,
-  2: <ActionInfographic />,
-};
-
 // The home page. Its text comes from the `homePage` document in Sanity (see
 // app/(main)/page.tsx); only the "Step {number}" label is UI copy.
 const HomePage = ({ content }: { content: HomePageContent }) => {
   const { hero, explore, stats, howItWorks, speakNaturally, insights: insightsText, partners, faqs, banner } = content;
   const t = useTranslations("Home");
+
+  // Experiment: steps whose clip is replaced by an animated illustration.
+  // Step 3's timeline is lower in its frame, so the line from step 2 carries
+  // on down to it (StepConnector's landOn), the pulse with it.
+  const actionLandingRef = useRef<HTMLDivElement>(null);
+  const STEP_INFOGRAPHICS: Record<number, React.ReactNode> = {
+    0: <VoiceReportInfographic />,
+    1: <LiveMapInfographic />,
+    2: <ActionInfographic landingRef={actionLandingRef} />,
+  };
+  const STEP_LANDINGS: Record<number, React.RefObject<HTMLDivElement | null>> = { 2: actionLandingRef };
   const { data: insightsData } = trpc.getPublicInsights.useQuery({ limit: 3 });
 
   // Falls back to static sample posts when there's no real data yet (empty
@@ -211,6 +216,7 @@ const HomePage = ({ content }: { content: HomePageContent }) => {
                     from={index % 2 === 0 ? "left" : "right"}
                     order={index}
                     count={howItWorks.steps.length - 1}
+                    landOn={STEP_LANDINGS[index + 1]}
                     className="top-full hidden h-40 lg:block"
                   />
                 )}

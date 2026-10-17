@@ -1,7 +1,8 @@
 /*
  * The About page's step illustrations: still pictures in the same language
  * as the home page's animated ones (white cards on the About hero's
- * gradient, brand colours only), not screenshots. Every size is a multiple
+ * gradient, brand colours only), not screenshots; steps 2 and 3 show the
+ * home page's live map and outcomes timeline themselves. Every size is a multiple
  * of --u (1% of the picture's width), so each scales as one picture,
  * centred in its frame (2:1 from md up, 4:3 on phones). In a narrow frame
  * each keeps only its main element, at about twice the size, so its text
@@ -193,55 +194,15 @@
 
 /* ── 3. Drive action ───────────────────────────────────────────────────── */
 
-/* A still of the home page's picker wheel: the centre outcome done and
-   largest, done ones above, still to do below, tilting away. */
-.wheel {
-  position: relative;
-  width: calc(52 * var(--u));
-  height: calc(40 * var(--u));
-  perspective: calc(80 * var(--u));
-}
-
-.outcome {
+/* The home page's timeline (its frame is 1080:850, the current outcome's
+   node at its centre), its node a third of the way down, so the current
+   outcome's label clears most of the fade at the bottom. */
+.timeline {
   position: absolute;
-  top: 50%;
+  top: 34%;
   left: 50%;
-  display: flex;
-  width: calc(46 * var(--u));
-  height: calc(6.2 * var(--u));
-  margin: calc(-3.1 * var(--u)) 0 0 calc(-23 * var(--u));
-  align-items: center;
-  gap: calc(1.6 * var(--u));
-  padding: 0 calc(2.2 * var(--u));
-  border-radius: calc(1.5 * var(--u));
-  background: #fff;
-  box-shadow: 0 calc(1 * var(--u)) calc(2.6 * var(--u)) rgb(0 0 0 / 0.14);
-  transform: translateZ(calc(-20 * var(--u))) rotateX(var(--a)) translateZ(calc(20 * var(--u))) scale(var(--s));
-}
-
-.outcome > * {
-  opacity: var(--o);
-}
-
-.circle {
-  flex-shrink: 0;
-  width: calc(3.4 * var(--u));
-  height: calc(3.4 * var(--u));
-  border: calc(0.2 * var(--u)) solid #c4c4c4;
-  border-radius: 50%;
-}
-
-.check {
-  flex-shrink: 0;
-  width: calc(3.4 * var(--u));
-  height: calc(3.4 * var(--u));
-}
-
-.outcomeText {
-  font-size: calc(2.1 * var(--u));
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
+  width: 60%;
+  transform: translate(-50%, -50%);
 }
 
 /* ── Narrow frames (phones) ────────────────────────────────────────────── */
@@ -251,7 +212,6 @@
     --u: 1.9cqw;
   }
 
-  .wheel,
   .form {
     --u: 1.75cqw;
   }
@@ -259,5 +219,11 @@
   .recorder,
   .flow {
     display: none;
+  }
+
+  /* Zoomed in further, so the current outcome reads; the ones either side
+     still fit inside the frame. */
+  .timeline {
+    width: 115%;
   }
 }

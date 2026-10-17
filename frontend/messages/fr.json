@@ -519,5 +519,21 @@
     "closePopup": "Fermer",
     "scrollZoomHint": "Utilisez {key} + molette pour zoomer sur la carte",
     "touchPanHint": "Utilisez deux doigts pour déplacer la carte"
+  },
+  "Infographics": {
+    "listening": "J'écoute…",
+    "transcriptLanguage": "Français",
+    "category": "Élections inclusives",
+    "transcript1": "Pas de rampe au bureau de vote de Gulu.",
+    "transcript2": "Impossible de voter en fauteuil roulant.",
+    "description1": "Pas de rampe au bureau de vote de Gulu.",
+    "description2": "Impossible de voter en fauteuil roulant.",
+    "submitted": "Rapport soumis",
+    "thanks": "Merci pour votre signalement.",
+    "outcomeEvidenceShared": "Preuves transmises au Centre for Inclusion local",
+    "outcomeBarriersIdentified": "Principaux obstacles à l'accessibilité identifiés",
+    "outcomeAuthoritiesEngaged": "Autorités électorales associées aux solutions",
+    "outcomeRampsInstalled": "Rampes temporaires dans les bureaux de vote",
+    "outcomeAccessibleVoting": "Un vote plus accessible pour tous"
   }
 }

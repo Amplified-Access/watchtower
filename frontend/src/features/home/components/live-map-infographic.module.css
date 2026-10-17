@@ -1,0 +1,33 @@
+/* The How it works step 2 frame: the size and shape of steps 1 and 3, on
+   the page's white. */
+
+.root {
+  position: relative;
+  aspect-ratio: 1080 / 850;
+  width: 100%;
+  user-select: none;
+}
+
+/* The globe's circle: the frame's full height, centred, so its top and
+   bottom are where the step connectors land. The clip only tidies the
+   globe's antialiased edge, which Mapbox draws to this size. */
+.ball {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+/* The live incident map, filling the circle. The zoom cancels the How it
+   works section's [zoom:var(--viewport-scale)]: Mapbox sizes its canvas
+   from getBoundingClientRect, so inside a zoomed ancestor the canvas comes
+   out the wrong size (as on the About page: step-graphics.module.css). */
+.map {
+  position: absolute;
+  inset: 0;
+  zoom: calc(1 / var(--viewport-scale));
+}

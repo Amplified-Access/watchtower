@@ -42,7 +42,6 @@ const STYLES = {
     title: "text-sm font-medium text-white",
     subtitle: "text-xs text-white/40",
     badge: "rounded-full bg-white/10 px-2 py-0.5 text-xs font-semibold text-white",
-    chevron: "size-3.5 text-white/30",
     footer: "border-white/10 pt-4",
     liveLabel: "text-white/40",
     updated: "normal-case tracking-normal text-white/30",
@@ -171,7 +170,8 @@ const ExploreSidebar = ({ stats, variant = "dark", headerAction }: ExploreSideba
                 {item.badge && !(isLight && item.chevron) && (
                   <span className={cn("shrink-0", s.badge)}>{item.badge}</span>
                 )}
-                {item.chevron && <ChevronRight className={cn("shrink-0", s.chevron)} />}
+                {/* Only the live map's panel: the homepage preview's rows carry no chevrons. */}
+                {isLight && item.chevron && <ChevronRight className={cn("shrink-0", STYLES.light.chevron)} />}
               </>
             );
             return NAV_LINKS_ENABLED ? (

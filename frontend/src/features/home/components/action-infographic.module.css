@@ -1,183 +1,163 @@
 /*
- * How it works, step 3: the outcomes of acting on reports, each its own
- * card, on a wheel like the iPhone's date picker, turning continuously. The
- * card in the centre is the largest and sharpest, and its check is
- * introduced there; rows below are still to do, rows above are done. Cards
- * stay solid white and tilt away towards the edges, as on a cylinder; their
- * text and check dim with distance from the centre.
+ * How it works, step 3: the outcomes of acting on reports, as a timeline
+ * on the page's white that slides along one outcome at a time (the timing
+ * is in action-infographic.tsx). The current outcome is always in the
+ * centre, filled blue and zoomed in (the others zoomed out); the line is
+ * blue to its left (done) and grey to its right (to come), and fades out
+ * at both edges with the outcomes either side, so three show at a time.
  *
- * The wheel holds for 1.4s, then rolls up one row in 0.6s: one row every
- * 2s, one full turn of the six rows every 12s (--cycle). Every row runs
- * the same journey (travel, check, tick), started at a different point by
- * a negative delay, so the loop is seamless and each row reaches the
- * centre 2s after the one before. A row is 22deg round a 23cqw wheel.
+ * The frame is the size and shape of steps 1 and 2, and the timeline sits
+ * across its middle: the current outcome's node is centred in it. The line
+ * from step 2 carries on down from the top centre to the current outcome's
+ * number (to .landing), its pulse with it.
  *
- * Sizes are in cqw, so it scales as one picture like steps 1 and 2. Under
- * reduced motion it holds still, as at the start.
+ * Sizes are in cqw, so it scales as one picture like steps 1 and 2: the
+ * frame is 78.7cqw tall (1080 / 850), each outcome 100 / 3 cqw wide.
  */
 
 .root {
-  --cycle: 12s;
-  --ease: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   /* The brand's colours only (globals.css). */
   --blue: #0042e7;
   --line: #e2e2e2;
+  --muted: #8a8a8a;
+  /* The number, its gap and the node, top to bottom: the node's centre is
+     --top + 9.7cqw, the frame's centre. */
+  --top: 29.65cqw;
   position: relative;
   container-type: inline-size;
-  display: grid;
   aspect-ratio: 1080 / 850;
   width: 100%;
-  place-items: center;
   overflow: hidden;
-  isolation: isolate;
-  /* The About hero's gradient, grain and pattern: infographic-backdrop.tsx. */
   background: #fff;
   font-family: var(--font-title);
   color: #000;
   user-select: none;
 }
 
-.root * {
-  animation-duration: var(--cycle);
-  animation-timing-function: var(--ease);
-  animation-iteration-count: infinite;
-  animation-fill-mode: both;
+/* Where the line from step 2 ends (its bottom edge): just above the current
+   number, whose top the zoom (1.6 about the node's centre, 9.7cqw below it)
+   lifts 5.8cqw. Drawn by the connector, so nothing shows here. */
+.landing {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: calc(var(--top) - 7.3cqw);
 }
 
-.root[data-paused="true"] * {
-  animation-play-state: paused;
-}
-
-
-/* The wheel's frame: just space on the blue; each outcome is its own card. */
-.picker {
-  position: relative;
-  width: 70cqw;
-  height: 62cqw;
-}
-
-.wheel {
+/* The whole frame, with the timeline --top down: the fade's mask clips to
+   this box, and the current outcome's zoom reaches outside its row. */
+.timeline {
   position: absolute;
   inset: 0;
-  perspective: 90cqw;
-  transform-style: preserve-3d;
+  padding-top: var(--top);
+  mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
 }
 
-/* Each outcome is a white card on the wheel. Rows are 8.6cqw apart at the
-   centre (23cqw x sin 22deg), so a 7.2cqw card leaves a gap. */
-.row {
+/* Through the nodes' centres: blue up to the current outcome, grey after. */
+.line {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  width: 56cqw;
-  height: 7.2cqw;
-  margin: -3.6cqw 0 0 -28cqw;
-  align-items: center;
-  gap: 2cqw;
-  padding: 0 2.6cqw;
-  border-radius: 1.8cqw;
-  background: #fff;
-  box-shadow: 0 1.2cqw 3cqw rgb(0 0 0 / 0.14);
-  backface-visibility: hidden;
-  animation-name: travel;
-}
-
-/* An empty circle, filled with the blue check once done. */
-.box {
-  position: relative;
-  flex-shrink: 0;
-  width: 4.4cqw;
-  height: 4.4cqw;
-  border: 0.22cqw solid #c4c4c4;
-  border-radius: 50%;
-}
-
-.fill {
-  position: absolute;
-  inset: -0.22cqw;
-  animation-name: check;
-}
-
-.fill svg {
-  display: block;
+  top: calc(var(--top) + 9.7cqw);
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 1px;
+  background: linear-gradient(to right, var(--blue) 50%, var(--line) 50%);
 }
 
-.tick {
-  stroke-dasharray: 30;
-  stroke-dashoffset: 0;
-  animation-name: tick;
+/* The current outcome (--pos, counted from the first copy's first) in the
+   centre: the steps to its left move off to the left. */
+.track {
+  position: relative;
+  display: flex;
+  transform: translateX(calc((1 - var(--pos)) * 100cqw / 3));
 }
 
-.text {
-  font-size: 2.8cqw;
+.sliding {
+  transition: transform 700ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* The jump back to the first copy is unseen: nothing animates. */
+.track:not(.sliding) * {
+  transition: none !important;
+}
+
+/* Zoomed about the node's centre, so the line still runs through it. The
+   labels' max-width keeps the current one (29cqw x 1.6) clear of its
+   neighbours' (x 0.7) a step (33.3cqw) either side: 29 x (0.8 + 0.35) is
+   33.35. */
+.step {
+  display: flex;
+  flex: 0 0 calc(100cqw / 3);
+  flex-direction: column;
+  align-items: center;
+  transform: scale(0.7);
+  transform-origin: 50% 9.7cqw;
+  transition: transform 700ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.step[data-active="true"] {
+  transform: scale(1.6);
+}
+
+.number {
+  height: 3.2cqw;
+  margin-bottom: 2cqw;
+  font-size: 2.6cqw;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
+  line-height: 3.2cqw;
+  color: var(--muted);
+  transition: color 400ms ease;
 }
 
-/* ── The journey ───────────────────────────────────────────────────────── */
-
-@keyframes travel {
-  0%, 11.67% { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
-  16.67%, 28.33% { transform: translateZ(-23cqw) rotateX(-22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
-  33.33%, 45% { transform: translateZ(-23cqw) rotateX(0deg) translateZ(23cqw) scale(1); opacity: 1; }
-  50%, 61.67% { transform: translateZ(-23cqw) rotateX(22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
-  66.67%, 78.33% { transform: translateZ(-23cqw) rotateX(44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
-  83.33%, 89.17% { transform: translateZ(-23cqw) rotateX(66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
-  89.58%, 95% { transform: translateZ(-23cqw) rotateX(-66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
-  100% { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
+.node {
+  position: relative;
+  display: grid;
+  width: 9cqw;
+  height: 9cqw;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--muted);
+  transition:
+    background-color 400ms ease,
+    border-color 400ms ease,
+    color 400ms ease,
+    box-shadow 400ms ease;
 }
 
-/* The text and check: sharp in the centre, dimmer with distance. */
-@keyframes content {
-  0%, 11.67% { opacity: 0.28; }
-  16.67%, 28.33% { opacity: 0.45; }
-  33.33%, 45% { opacity: 1; }
-  50%, 61.67% { opacity: 0.45; }
-  66.67%, 78.33% { opacity: 0.28; }
-  83.33%, 95% { opacity: 0.28; }
-  100% { opacity: 0.28; }
+.node svg {
+  width: 3.8cqw;
+  height: 3.8cqw;
 }
 
-.box,
-.text {
-  animation-name: content;
+.label {
+  /* Wide and small enough that every outcome, in every language, takes at
+     most two lines. */
+  max-width: 29cqw;
+  margin-top: 2.4cqw;
+  font-size: 2.1cqw;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
+  color: #000;
+  transition: color 400ms ease;
 }
 
-@keyframes check {
-  0%, 35% { opacity: 0; transform: scale(0.4); animation-timing-function: var(--ease-out); }
-  37.92% { opacity: 1; transform: scale(1.12); }
-  39.58%, 85% { opacity: 1; transform: scale(1); }
-  86.67%, 100% { opacity: 0; transform: scale(0.4); }
-}
-@keyframes tick {
-  0%, 36.25% { stroke-dashoffset: 30; }
-  40%, 85% { stroke-dashoffset: 0; }
-  86.67%, 100% { stroke-dashoffset: 30; }
+.step[data-done="true"] .node {
+  border-color: rgb(0 66 231 / 0.35);
+  color: var(--blue);
 }
 
-.row:nth-child(1), .row:nth-child(1) :is(.box, .text, .fill, .tick) { animation-delay: -4s; }
-.row:nth-child(2), .row:nth-child(2) :is(.box, .text, .fill, .tick) { animation-delay: -2s; }
-.row:nth-child(3), .row:nth-child(3) :is(.box, .text, .fill, .tick) { animation-delay: 0s; }
-.row:nth-child(4), .row:nth-child(4) :is(.box, .text, .fill, .tick) { animation-delay: -10s; }
-.row:nth-child(5), .row:nth-child(5) :is(.box, .text, .fill, .tick) { animation-delay: -8s; }
-.row:nth-child(6), .row:nth-child(6) :is(.box, .text, .fill, .tick) { animation-delay: -6s; }
+.step[data-active="true"] .number,
+.step[data-active="true"] .label {
+  color: var(--blue);
+}
 
-@media (prefers-reduced-motion: reduce) {
-  .root * {
-    animation: none !important;
-  }
-
-  .row:nth-child(1) { transform: translateZ(-23cqw) rotateX(0deg) translateZ(23cqw) scale(1); opacity: 1; }
-  .row:nth-child(2) { transform: translateZ(-23cqw) rotateX(-22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
-  .row:nth-child(2) .fill { opacity: 0; }
-  .row:nth-child(3) { transform: translateZ(-23cqw) rotateX(-44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
-  .row:nth-child(3) .fill { opacity: 0; }
-  .row:nth-child(4) { transform: translateZ(-23cqw) rotateX(66deg) translateZ(23cqw) scale(0.8); opacity: 0; }
-  .row:nth-child(5) { transform: translateZ(-23cqw) rotateX(44deg) translateZ(23cqw) scale(0.84); opacity: 1; }
-  .row:nth-child(6) { transform: translateZ(-23cqw) rotateX(22deg) translateZ(23cqw) scale(0.92); opacity: 1; }
+.step[data-active="true"] .node {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 0 0 1.2cqw rgb(0 66 231 / 0.12);
 }

@@ -3,7 +3,7 @@
  * through the three stages of a voice report, one at a time:
  *
  *   0.0s   recording: a pill with the mic; pressed at 0.6s, listening until 3s
- *   3.1s   the pill grows into the transcript bubble; the Swahili is written out
+ *   3.1s   the pill grows into the transcript bubble; the report is written out
  *   5.9s   the bubble grows into the report form, which fills itself in,
  *          is submitted (9.45s) and says "Report submitted"
  *   11.0s  the form shrinks back into the recording pill, and it loops
@@ -236,11 +236,24 @@
   white-space: nowrap;
 }
 
-/* Written out left to right, as if typed. */
+/* Written out as if typed: from the left, or from the right in a right to
+   left language. The keyframes animate how much is still hidden. The clip
+   reaches past the line above and below, for tall scripts (Urdu's
+   Nastaliq). */
+@property --hidden {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
 .typed {
   display: block;
-  clip-path: inset(0 0 0 0);
+  clip-path: inset(-50% var(--hidden) -50% 0);
   animation-timing-function: linear;
+}
+
+[dir="rtl"] .typed {
+  clip-path: inset(-50% 0 -50% var(--hidden));
 }
 
 /* ── Stage 3: the form ─────────────────────────────────────────────────── */
@@ -454,17 +467,17 @@
 }
 
 @keyframes speech-1 {
-  0%, 32.08% { clip-path: inset(0 100% 0 0); }
-  39.58%, 50% { clip-path: inset(0 0 0 0); }
-  50.42%, 100% { clip-path: inset(0 100% 0 0); }
+  0%, 32.08% { --hidden: 100%; }
+  39.58%, 50% { --hidden: 0%; }
+  50.42%, 100% { --hidden: 100%; }
 }
 
 .speech1 { animation-name: speech-1; }
 
 @keyframes speech-2 {
-  0%, 39.58% { clip-path: inset(0 100% 0 0); }
-  46.67%, 50% { clip-path: inset(0 0 0 0); }
-  50.42%, 100% { clip-path: inset(0 100% 0 0); }
+  0%, 39.58% { --hidden: 100%; }
+  46.67%, 50% { --hidden: 0%; }
+  50.42%, 100% { --hidden: 100%; }
 }
 
 .speech2 { animation-name: speech-2; }
@@ -532,17 +545,17 @@
 .valueLocation { animation-name: value-location; }
 
 @keyframes desc-1 {
-  0%, 66.67% { clip-path: inset(0 100% 0 0); }
-  71.67%, 93.33% { clip-path: inset(0 0 0 0); }
-  93.75%, 100% { clip-path: inset(0 100% 0 0); }
+  0%, 66.67% { --hidden: 100%; }
+  71.67%, 93.33% { --hidden: 0%; }
+  93.75%, 100% { --hidden: 100%; }
 }
 
 .desc1 { animation-name: desc-1; }
 
 @keyframes desc-2 {
-  0%, 71.67% { clip-path: inset(0 100% 0 0); }
-  75%, 93.33% { clip-path: inset(0 0 0 0); }
-  93.75%, 100% { clip-path: inset(0 100% 0 0); }
+  0%, 71.67% { --hidden: 100%; }
+  75%, 93.33% { --hidden: 0%; }
+  93.75%, 100% { --hidden: 100%; }
 }
 
 .desc2 { animation-name: desc-2; }
