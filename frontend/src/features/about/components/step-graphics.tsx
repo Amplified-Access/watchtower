@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
 import InfographicBackdrop from "@/features/home/components/infographic-backdrop";
 import { OUTCOMES } from "@/features/home/components/action-infographic";
+import LiveMapPreview from "@/features/home/components/live-map-preview";
 import { cn } from "@/lib/utils";
-import LiveMapPreview from "./live-map-preview";
 import styles from "./step-graphics.module.css";
 
 // The About page's step illustrations, in order: reporting, seeing the
@@ -87,7 +87,8 @@ const ReportGraphic = ({ className }: GraphicProps) => {
 const MapGraphic = ({ className }: GraphicProps) => (
   <Frame className={className} pattern={false}>
     <div className={styles.map}>
-      <LiveMapPreview />
+      {/* Clear of the frame's fade at the bottom. */}
+      <LiveMapPreview bottom={0.3} />
     </div>
   </Frame>
 );
