@@ -528,6 +528,15 @@
     "description1": "ਕਿਬੇਰਾ ਵਿੱਚ ਤਿੰਨ ਦਿਨਾਂ ਤੋਂ ਪਾਣੀ ਨਹੀਂ ਹੈ।",
     "description2": "ਬਹੁਤ ਸਾਰੇ ਪਰਿਵਾਰ ਪ੍ਰਭਾਵਿਤ ਹਨ।",
     "submitted": "ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਹੋ ਗਈ",
-    "thanks": "ਰਿਪੋਰਟ ਕਰਨ ਲਈ ਧੰਨਵਾਦ।"
+    "thanks": "ਰਿਪੋਰਟ ਕਰਨ ਲਈ ਧੰਨਵਾਦ।",
+    "trendsTitle": "ਰਿਪੋਰਟਾਂ, ਪਿਛਲੇ 12 ਹਫ਼ਤੇ",
+    "trendsChange": "ਪਿਛਲੇ 12 ਹਫ਼ਤਿਆਂ ਨਾਲੋਂ 32% ਵੱਧ",
+    "trendsThisWeek": "ਇਸ ਹਫ਼ਤੇ {count}",
+    "byIncidentType": "ਘਟਨਾ ਦੀ ਕਿਸਮ ਅਨੁਸਾਰ",
+    "emergingPattern": "ਉੱਭਰਦਾ ਰੁਝਾਨ",
+    "patternText": "ਨੈਰੋਬੀ ਵਿੱਚ {type} 38% ਵਧੇ",
+    "monthJul": "ਜੁਲਾ",
+    "monthAug": "ਅਗ",
+    "monthSep": "ਸਤੰ"
   }
 }

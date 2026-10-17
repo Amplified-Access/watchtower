@@ -528,6 +528,15 @@
     "description1": "በኪቤራ ለሦስት ቀናት ውሃ የለም።",
     "description2": "ብዙ ቤተሰቦች ተጎድተዋል።",
     "submitted": "ሪፖርቱ ገብቷል",
-    "thanks": "ስለ ሪፖርትዎ እናመሰግናለን።"
+    "thanks": "ስለ ሪፖርትዎ እናመሰግናለን።",
+    "trendsTitle": "ሪፖርቶች፣ ያለፉት 12 ሳምንታት",
+    "trendsChange": "ከቀደሙት 12 ሳምንታት 32% ብልጫ",
+    "trendsThisWeek": "በዚህ ሳምንት {count}",
+    "byIncidentType": "በክስተት ዓይነት",
+    "emergingPattern": "እየታየ ያለ አዝማሚያ",
+    "patternText": "{type} በናይሮቢ በ38% ጨምረዋል",
+    "monthJul": "ጁላይ",
+    "monthAug": "ኦገስ",
+    "monthSep": "ሴፕቴ"
   }
 }

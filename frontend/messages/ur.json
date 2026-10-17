@@ -528,6 +528,15 @@
     "description1": "کیبیرا میں تین دن سے پانی نہیں ہے۔",
     "description2": "بہت سے خاندان متاثر ہوئے ہیں۔",
     "submitted": "رپورٹ جمع ہو گئی",
-    "thanks": "رپورٹ کرنے کا شکریہ۔"
+    "thanks": "رپورٹ کرنے کا شکریہ۔",
+    "trendsTitle": "رپورٹس، پچھلے 12 ہفتے",
+    "trendsChange": "پچھلے 12 ہفتوں سے 32% زیادہ",
+    "trendsThisWeek": "اس ہفتے {count}",
+    "byIncidentType": "واقعے کی قسم کے لحاظ سے",
+    "emergingPattern": "ابھرتا ہوا رجحان",
+    "patternText": "نیروبی میں {type} میں 38% اضافہ",
+    "monthJul": "جولائی",
+    "monthAug": "اگست",
+    "monthSep": "ستمبر"
   }
 }

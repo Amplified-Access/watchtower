@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import InfographicBackdrop from "./infographic-backdrop";
 import styles from "./trends-infographic.module.css";
@@ -10,10 +11,19 @@ import styles from "./trends-infographic.module.css";
 // is in the stylesheet); decorative, since the step's text says what it
 // shows. The figures are illustrative but internally consistent: the weeks
 // and the incident types both add up to the total. The types are the ones
-// the maps use (the API's active incident types), in sentence case.
+// the maps use (the API's active incident types), in sentence case, and
+// like the maps they stay as the API returns them; the labels and months
+// are in the reader's language. The months and percentages are written out
+// in the messages rather than formatted with Intl, whose locale data differs
+// between Node and browsers (Punjabi months, Kinyarwanda's thousands), which
+// would change the picture on hydration. The charts stay left to right;
+// their text takes its direction from its language (dir="auto"), so Urdu
+// reads right to left around an English incident type.
 
 const WEEKLY = [68, 74, 71, 86, 92, 89, 105, 117, 113, 132, 143, 158];
 const TOTAL = WEEKLY.reduce((sum, n) => sum + n, 0); // 1,248
+// The months the 12 weeks span.
+const MONTHS = ["monthJul", "monthAug", "monthSep"] as const;
 
 const CATEGORIES = [
   { label: "Public demonstrations", value: 352 },
@@ -49,6 +59,7 @@ const AREA = `${LINE} L${W},${BASE} L0,${BASE} Z`;
 const [END_X, END_Y] = points[points.length - 1];
 
 const TrendsInfographic = () => {
+  const t = useTranslations("Infographics");
   const ref = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(true);
 
@@ -73,14 +84,14 @@ const TrendsInfographic = () => {
           <span />
           <span />
         </div>
-        <p className={styles.cardLabel}>Reports, last 12 weeks</p>
+        <p className={styles.cardLabel} dir="auto">{t("trendsTitle")}</p>
         <div className={styles.headline}>
           <span className={styles.total}>{TOTAL.toLocaleString("en")}</span>
-          <span className={styles.change}>
+          <span className={styles.change} dir="auto">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M7 17 17 7M8 7h9v9" />
             </svg>
-            32% on the previous 12 weeks
+            {t("trendsChange")}
           </span>
         </div>
 
@@ -92,18 +103,18 @@ const TrendsInfographic = () => {
           <path className={styles.lineMark} d={LINE} pathLength={1} />
           <circle className={styles.endDot} cx={END_X} cy={END_Y} r="7.5" />
           <text className={styles.endLabel} x={END_X - 12} y={END_Y - 14} textAnchor="end">
-            {WEEKLY[WEEKLY.length - 1]} this week
+            {t("trendsThisWeek", { count: WEEKLY[WEEKLY.length - 1] })}
           </text>
         </svg>
         <div className={styles.months}>
-          <span>Jul</span>
-          <span>Aug</span>
-          <span>Sep</span>
+          {MONTHS.map((month) => (
+            <span key={month}>{t(month)}</span>
+          ))}
         </div>
       </div>
 
       <div className={`${styles.card} ${styles.categories}`}>
-        <p className={styles.cardLabel}>By incident type</p>
+        <p className={styles.cardLabel} dir="auto">{t("byIncidentType")}</p>
         <div className={styles.rows}>
           {CATEGORIES.map(({ label, value }, i) => (
             <div key={label} className={`${styles.row} ${i > 0 ? styles.rowDimmed : ""}`}>
@@ -120,8 +131,10 @@ const TrendsInfographic = () => {
       <div className={`${styles.card} ${styles.callout}`}>
         <span className={styles.pulse} />
         <div>
-          <p className={styles.calloutLabel}>Emerging pattern</p>
-          <p className={styles.calloutText}>Public demonstrations up 38% in Nairobi</p>
+          <p className={styles.calloutLabel} dir="auto">{t("emergingPattern")}</p>
+          <p className={styles.calloutText} dir="auto">
+            {t("patternText", { type: CATEGORIES[0].label })}
+          </p>
         </div>
       </div>
     </div>

@@ -528,6 +528,15 @@
     "description1": "No water in Kibera for three days now.",
     "description2": "Many families are affected.",
     "submitted": "Report submitted",
-    "thanks": "Thank you for reporting."
+    "thanks": "Thank you for reporting.",
+    "trendsTitle": "Reports, last 12 weeks",
+    "trendsChange": "32% on the previous 12 weeks",
+    "trendsThisWeek": "{count} this week",
+    "byIncidentType": "By incident type",
+    "emergingPattern": "Emerging pattern",
+    "patternText": "{type} up 38% in Nairobi",
+    "monthJul": "Jul",
+    "monthAug": "Aug",
+    "monthSep": "Sep"
   }
 }

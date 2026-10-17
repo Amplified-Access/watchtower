@@ -528,6 +528,15 @@
     "description1": "Hakuna maji katika Kibera kwa siku tatu sasa.",
     "description2": "Familia nyingi zimeathirika.",
     "submitted": "Ripoti imewasilishwa",
-    "thanks": "Asante kwa kuripoti."
+    "thanks": "Asante kwa kuripoti.",
+    "trendsTitle": "Ripoti, wiki 12 zilizopita",
+    "trendsChange": "32% zaidi ya wiki 12 zilizotangulia",
+    "trendsThisWeek": "{count} wiki hii",
+    "byIncidentType": "Kwa aina ya tukio",
+    "emergingPattern": "Mwelekeo unaoibuka",
+    "patternText": "{type} zimeongezeka kwa 38% Nairobi",
+    "monthJul": "Jul",
+    "monthAug": "Ago",
+    "monthSep": "Sep"
   }
 }
