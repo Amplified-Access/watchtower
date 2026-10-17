@@ -20,6 +20,11 @@ import SearchAndChips from "./search-and-chips";
 import GlobeMap, { type GlobeMapHandle } from "./globe-map";
 import FilterPanel from "./filter-panel";
 
+// The home page's sidebar is a preview: while there are no recent reports,
+// its Recent Reports badge shows this sample count rather than a 0, which
+// reads as a dead product. The live map's sidebar shows the real count.
+const SAMPLE_RECENT_REPORTS = 24;
+
 const LivePreviewSection = () => {
   const t = useTranslations("HomeLivePreview");
   const mapHandleRef = useRef<GlobeMapHandle>(null);
@@ -92,7 +97,7 @@ const LivePreviewSection = () => {
           </div>
 
           <div className="relative z-10 hidden overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 lg:block lg:w-72 lg:shrink-0 lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
-            <ExploreSidebar stats={stats} />
+            <ExploreSidebar stats={{ ...stats, recentReports: stats.recentReports || SAMPLE_RECENT_REPORTS }} />
           </div>
 
           <div className="relative z-10 hidden min-w-0 lg:flex lg:flex-1 lg:flex-col lg:self-stretch lg:pointer-events-none">
