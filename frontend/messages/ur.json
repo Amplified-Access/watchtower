@@ -537,6 +537,12 @@
     "patternText": "نیروبی میں {type} میں 38% اضافہ",
     "monthJul": "جولائی",
     "monthAug": "اگست",
-    "monthSep": "ستمبر"
+    "monthSep": "ستمبر",
+    "outcomeShared": "ضلعی کونسل کو بھیجا گیا",
+    "outcomeTeamSent": "امدادی ٹیم کیبیرا بھیجی گئی",
+    "outcomeWaterRestored": "پانی کی فراہمی بحال",
+    "outcomeResidentsNotified": "رہائشیوں کو مطلع کیا گیا",
+    "outcomeFollowUp": "فالو اپ رپورٹ شائع",
+    "outcomeCouncilResponse": "کونسل نے عوامی جواب دیا"
   }
 }

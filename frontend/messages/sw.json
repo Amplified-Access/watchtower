@@ -537,6 +537,12 @@
     "patternText": "{type} zimeongezeka kwa 38% Nairobi",
     "monthJul": "Jul",
     "monthAug": "Ago",
-    "monthSep": "Sep"
+    "monthSep": "Sep",
+    "outcomeShared": "Imetumwa kwa baraza la wilaya",
+    "outcomeTeamSent": "Timu imetumwa Kibera",
+    "outcomeWaterRestored": "Huduma ya maji imerejeshwa",
+    "outcomeResidentsNotified": "Wakazi wamejulishwa",
+    "outcomeFollowUp": "Ripoti ya ufuatiliaji imetolewa",
+    "outcomeCouncilResponse": "Baraza limetoa jibu la umma"
   }
 }

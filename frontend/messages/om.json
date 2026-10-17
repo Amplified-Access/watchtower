@@ -537,6 +537,12 @@
     "patternText": "{type} up 38% in Nairobi",
     "monthJul": "Jul",
     "monthAug": "Aug",
-    "monthSep": "Sep"
+    "monthSep": "Sep",
+    "outcomeShared": "Shared with the district council",
+    "outcomeTeamSent": "Response team sent to Kibera",
+    "outcomeWaterRestored": "Water supply restored",
+    "outcomeResidentsNotified": "Residents notified",
+    "outcomeFollowUp": "Follow-up report published",
+    "outcomeCouncilResponse": "Council issued a public response"
   }
 }

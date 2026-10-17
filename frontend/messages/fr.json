@@ -537,6 +537,12 @@
     "patternText": "{type} en hausse de 38 % à Nairobi",
     "monthJul": "juil.",
     "monthAug": "août",
-    "monthSep": "sept."
+    "monthSep": "sept.",
+    "outcomeShared": "Transmis au conseil de district",
+    "outcomeTeamSent": "Équipe envoyée à Kibera",
+    "outcomeWaterRestored": "Eau rétablie",
+    "outcomeResidentsNotified": "Habitants informés",
+    "outcomeFollowUp": "Rapport de suivi publié",
+    "outcomeCouncilResponse": "Réponse publique du conseil"
   }
 }

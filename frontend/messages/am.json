@@ -537,6 +537,12 @@
     "patternText": "{type} በናይሮቢ በ38% ጨምረዋል",
     "monthJul": "ጁላይ",
     "monthAug": "ኦገስ",
-    "monthSep": "ሴፕቴ"
+    "monthSep": "ሴፕቴ",
+    "outcomeShared": "ለወረዳ ምክር ቤቱ ተልኳል",
+    "outcomeTeamSent": "የምላሽ ቡድን ወደ ኪቤራ ተልኳል",
+    "outcomeWaterRestored": "የውሃ አቅርቦት ተመልሷል",
+    "outcomeResidentsNotified": "ነዋሪዎች ተነግሯቸዋል",
+    "outcomeFollowUp": "የክትትል ሪፖርት ታትሟል",
+    "outcomeCouncilResponse": "ምክር ቤቱ ይፋዊ ምላሽ ሰጥቷል"
   }
 }

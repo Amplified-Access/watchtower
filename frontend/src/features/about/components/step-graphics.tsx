@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import InfographicBackdrop from "@/features/home/components/infographic-backdrop";
 import { OUTCOMES } from "@/features/home/components/action-infographic";
 import { cn } from "@/lib/utils";
@@ -96,25 +97,28 @@ const WHEEL = [
   { slot: 2, a: "-44deg", s: 0.84, o: 0.28 },
 ];
 
-const ActionGraphic = ({ className }: GraphicProps) => (
-  <Frame className={className}>
-    <div className={styles.wheel}>
-      {WHEEL.map(({ slot, a, s, o }, i) => (
-        <div key={slot} className={styles.outcome} style={{ "--a": a, "--s": s, "--o": o } as React.CSSProperties}>
-          {slot <= 0 ? (
-            <svg className={styles.check} viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="24" fill="#0042e7" />
-              <path d="m14 24.5 7 7 13-14" stroke="#fff" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          ) : (
-            <span className={styles.circle} />
-          )}
-          <span className={styles.outcomeText}>{OUTCOMES[i]}</span>
-        </div>
-      ))}
-    </div>
-  </Frame>
-);
+const ActionGraphic = ({ className }: GraphicProps) => {
+  const t = useTranslations("Infographics");
+  return (
+    <Frame className={className}>
+      <div className={styles.wheel}>
+        {WHEEL.map(({ slot, a, s, o }, i) => (
+          <div key={slot} className={styles.outcome} dir="auto" style={{ "--a": a, "--s": s, "--o": o } as React.CSSProperties}>
+            {slot <= 0 ? (
+              <svg className={styles.check} viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="#0042e7" />
+                <path d="m14 24.5 7 7 13-14" stroke="#fff" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ) : (
+              <span className={styles.circle} />
+            )}
+            <span className={styles.outcomeText}>{t(OUTCOMES[i])}</span>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+};
 
 /** One per About step, in order. A step added in Sanity beyond these shows none. */
 export const STEP_GRAPHICS = [ReportGraphic, MapGraphic, ActionGraphic];

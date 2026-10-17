@@ -537,6 +537,12 @@
     "patternText": "{type} byiyongereyeho 38% i Nairobi",
     "monthJul": "Nya.",
     "monthAug": "Kan.",
-    "monthSep": "Nze."
+    "monthSep": "Nze.",
+    "outcomeShared": "Byagejejwe ku karere",
+    "outcomeTeamSent": "Itsinda ryoherejwe i Kibera",
+    "outcomeWaterRestored": "Amazi yagaruwe",
+    "outcomeResidentsNotified": "Abaturage bamenyeshejwe",
+    "outcomeFollowUp": "Raporo ikurikira yasohotse",
+    "outcomeCouncilResponse": "Njyanama yasubije abaturage"
   }
 }

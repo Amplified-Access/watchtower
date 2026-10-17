@@ -537,6 +537,12 @@
     "patternText": "ਨੈਰੋਬੀ ਵਿੱਚ {type} 38% ਵਧੇ",
     "monthJul": "ਜੁਲਾ",
     "monthAug": "ਅਗ",
-    "monthSep": "ਸਤੰ"
+    "monthSep": "ਸਤੰ",
+    "outcomeShared": "ਜ਼ਿਲ੍ਹਾ ਕੌਂਸਲ ਨਾਲ ਸਾਂਝਾ ਕੀਤਾ",
+    "outcomeTeamSent": "ਰਿਸਪਾਂਸ ਟੀਮ ਕਿਬੇਰਾ ਭੇਜੀ ਗਈ",
+    "outcomeWaterRestored": "ਪਾਣੀ ਦੀ ਸਪਲਾਈ ਬਹਾਲ ਹੋਈ",
+    "outcomeResidentsNotified": "ਵਸਨੀਕਾਂ ਨੂੰ ਸੂਚਿਤ ਕੀਤਾ",
+    "outcomeFollowUp": "ਫਾਲੋ-ਅੱਪ ਰਿਪੋਰਟ ਪ੍ਰਕਾਸ਼ਿਤ",
+    "outcomeCouncilResponse": "ਕੌਂਸਲ ਨੇ ਜਨਤਕ ਜਵਾਬ ਦਿੱਤਾ"
   }
 }

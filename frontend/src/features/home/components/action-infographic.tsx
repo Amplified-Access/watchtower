@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import InfographicBackdrop from "./infographic-backdrop";
 import styles from "./action-infographic.module.css";
@@ -10,18 +11,22 @@ import styles from "./action-infographic.module.css";
 // below are still to do and the rows above are done. HTML and CSS keyframes
 // (the timeline is in the stylesheet); decorative, since the step's text
 // says what it shows. Six rows, so the wheel never shows one twice; they
-// reach the centre in this order.
+// reach the centre in this order. The outcomes are in the reader's
+// language: their keys under Infographics (also used by the About page's
+// still of the wheel). Each row takes its direction from its language, so
+// in Urdu the check sits on the right.
 
 export const OUTCOMES = [
-  "Shared with the district council",
-  "Response team sent to Kibera",
-  "Water supply restored",
-  "Residents notified",
-  "Follow-up report published",
-  "Council issued a public response",
-];
+  "outcomeShared",
+  "outcomeTeamSent",
+  "outcomeWaterRestored",
+  "outcomeResidentsNotified",
+  "outcomeFollowUp",
+  "outcomeCouncilResponse",
+] as const;
 
 const ActionInfographic = () => {
+  const t = useTranslations("Infographics");
   const ref = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(true);
 
@@ -40,7 +45,7 @@ const ActionInfographic = () => {
       <div className={styles.picker}>
         <div className={styles.wheel}>
           {OUTCOMES.map((outcome) => (
-            <div key={outcome} className={styles.row}>
+            <div key={outcome} className={styles.row} dir="auto">
               <span className={styles.box}>
                 <span className={styles.fill}>
                   <svg viewBox="0 0 48 48" fill="none">
@@ -49,7 +54,7 @@ const ActionInfographic = () => {
                   </svg>
                 </span>
               </span>
-              <span className={styles.text}>{outcome}</span>
+              <span className={styles.text}>{t(outcome)}</span>
             </div>
           ))}
         </div>

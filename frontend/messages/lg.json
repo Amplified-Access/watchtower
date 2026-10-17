@@ -537,6 +537,12 @@
     "patternText": "{type} ziyongedde 38% mu Nairobi",
     "monthJul": "Jul",
     "monthAug": "Agu",
-    "monthSep": "Seb"
+    "monthSep": "Seb",
+    "outcomeShared": "Kitwaliddwa ku disitulikiti",
+    "outcomeTeamSent": "Ttiimu etumiddwa e Kibera",
+    "outcomeWaterRestored": "Amazzi gazziddwawo",
+    "outcomeResidentsNotified": "Abatuuze bategeezeddwa",
+    "outcomeFollowUp": "Lipoota ey'okulondoola efulumye",
+    "outcomeCouncilResponse": "Olukiiko luzzeemu mu lwatu"
   }
 }
