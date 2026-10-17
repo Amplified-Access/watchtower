@@ -34,6 +34,35 @@ const DESKTOP_PADDING = { top: 120, bottom: 16, left: 320, right: 320 };
 const MOBILE_PADDING = { top: 16, bottom: 16, left: 16, right: 16 };
 const NO_PADDING = { top: 0, bottom: 0, left: 0, right: 0 };
 
+// A `sphere` globe has no atmosphere, stars or space: everything round it is
+// transparent, so it sits on the page as a ball.
+const CLEAR = "rgba(255,255,255,0)";
+const SPHERE_FOG = {
+  color: CLEAR,
+  "high-color": CLEAR,
+  "space-color": CLEAR,
+  "horizon-blend": 0,
+  "star-intensity": 0,
+};
+
+// A `sphere` globe sways east and west of the data, this far each way, once
+// there and back in this time.
+const SWAY_DEGREES = 25;
+const SWAY_PERIOD_MS = 16000;
+
+// The zoom at which a `sphere` globe's outline is exactly as tall as the
+// map. Mapbox draws the globe with a radius of worldSize / 2π, scaled by
+// 1 / cos 45° (its globe matches Mercator's scale at 45°), seen by a camera
+// 1.5 × the map's height from the centre of its face (a 36.87° field of
+// view). Seen from that close, the outline is smaller than the radius: it
+// is the height H exactly when the radius is (3 + √90) / 18 × H, the root
+// of 9r² − 3r − 2.25 = 0.
+const sphereZoom = (height: number) => {
+  const radius = ((3 + Math.sqrt(90)) / 18) * height;
+  const worldSize = (2 * Math.PI * radius) * Math.SQRT1_2;
+  return Math.log2(worldSize / 512);
+};
+
 // Docked panels sit beside the map rather than over it, so no bias is needed.
 const getMapPadding = (docked: boolean) =>
   !docked && window.matchMedia("(min-width: 1024px)").matches ? DESKTOP_PADDING : MOBILE_PADDING;
@@ -105,6 +134,15 @@ interface GlobeMapProps {
   interactive?: boolean;
   /** Space kept clear around the data when framing it, in px: one value for every side, or per side (overrides the default). */
   padding?: number | { top: number; bottom: number; left: number; right: number };
+  /**
+   * The globe as a ball exactly as tall as the map (for a square map, filling
+   * it), with nothing round it: no atmosphere or stars, and transparent, so
+   * the page shows through. It turns to face the data, at that size, rather
+   * than zooming in to frame it, and sways gently east and west of it
+   * (still for prefers-reduced-motion, and paused off screen). Needs
+   * viewMode "globe".
+   */
+  sphere?: boolean;
 }
 
 const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
@@ -120,6 +158,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       overlayControls = true,
       interactive = true,
       padding,
+      sphere = false,
     },
     ref,
   ) => {
@@ -132,6 +171,10 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const boundaryLayerIdRef = useRef<string | null>(null);
+  // Measured as Mapbox measures its canvas.
+  // The point a `sphere` globe sways about: the data's centre, once known.
+  const [swayCenter, setSwayCenter] = useState<mapboxgl.LngLat | null>(null);
+  const fitSphereZoom = () => sphereZoom(container?.getBoundingClientRect().height ?? 0);
 
   useEffect(() => {
     if (!container || !process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN) return;
@@ -142,7 +185,7 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
       container,
       style: "mapbox://styles/mapbox/outdoors-v12",
       center: DEFAULT_CENTER,
-      zoom: DEFAULT_ZOOM,
+      zoom: sphere ? fitSphereZoom() : DEFAULT_ZOOM,
       projection: { name: "globe" },
       attributionControl: false,
       logoPosition: "bottom-right",
@@ -159,11 +202,14 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     const handleResize = () => map.setPadding(framePadding());
     window.addEventListener("resize", handleResize);
     // Docked panels opening and closing resize the container, not the window.
-    const resizeObserver = new ResizeObserver(() => map.resize());
+    const resizeObserver = new ResizeObserver(() => {
+      map.resize();
+      if (sphere) map.setZoom(fitSphereZoom());
+    });
     resizeObserver.observe(container);
 
     map.on("load", () => {
-      map.setFog({});
+      map.setFog(sphere ? SPHERE_FOG : {});
 
       const boundaryLayer = map
         .getStyle()
@@ -407,6 +453,12 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     const bounds = getDataBounds(points);
     if (!bounds) return false;
 
+    if (sphere) {
+      map.easeTo({ center: bounds.getCenter(), zoom: fitSphereZoom(), duration });
+      map.once("moveend", () => setSwayCenter(bounds.getCenter()));
+      return true;
+    }
+
     // With `padding`, as the thematic map fits: the camera that fits the
     // data inside that margin, flown to with no padding of its own, so the
     // margin isn't counted twice and no point is cropped.
@@ -437,6 +489,40 @@ const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     if (fitToData(INITIAL_FIT_DURATION)) hasFitToDataRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, points]);
+
+  // The `sphere` globe's sway: a sine either side of the data's centre, one
+  // frame at a time while it is on screen. The time it has run is kept
+  // across pauses, so it carries on from where it was rather than jumping.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!sphere || !map || !swayCenter || !container) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let elapsed = 0;
+    let last = 0;
+    const tick = (now: number) => {
+      if (last) elapsed += now - last;
+      last = now;
+      const swing = SWAY_DEGREES * Math.sin((elapsed / SWAY_PERIOD_MS) * 2 * Math.PI);
+      map.jumpTo({ center: [swayCenter.lng + swing, swayCenter.lat] });
+      frame = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      last = 0;
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !frame) frame = requestAnimationFrame(tick);
+      else if (!entry.isIntersecting) stop();
+    });
+    observer.observe(container);
+    return () => {
+      observer.disconnect();
+      stop();
+    };
+  }, [sphere, swayCenter, container]);
 
   const recenter = () => {
     // Falls back to the whole-globe view only when there is no data to frame.

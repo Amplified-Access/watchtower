@@ -32,7 +32,9 @@ const noop = () => {};
 const MARGIN = 0.15;
 
 // Used by the home page's How it works (step 2) and the About page's steps.
-const LiveMapPreview = ({ bottom }: { bottom?: number }) => {
+// With `sphere`, the globe view instead, as a ball filling the (square)
+// frame and turned to face the data (GlobeMap's `sphere`): no margin.
+const LiveMapPreview = ({ bottom, sphere = false }: { bottom?: number; sphere?: boolean }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [padding, setPadding] = useState<{ top: number; bottom: number; left: number; right: number } | null>(null);
   const { points } = useLivePreviewData(FILTERS);
@@ -52,12 +54,13 @@ const LiveMapPreview = ({ bottom }: { bottom?: number }) => {
         <GlobeMap
           points={points}
           layers={LAYERS}
-          viewMode="map"
+          viewMode={sphere ? "globe" : "map"}
           onViewModeChange={noop}
           docked
           overlayControls={false}
           interactive={false}
-          padding={padding}
+          padding={sphere ? undefined : padding}
+          sphere={sphere}
         />
       )}
     </div>
