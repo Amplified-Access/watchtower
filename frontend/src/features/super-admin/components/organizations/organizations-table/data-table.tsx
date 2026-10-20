@@ -32,6 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -90,7 +91,9 @@ export function DataTable<
   console.log(data);
 
   return (
-    <div className="overflow-hidden rounded-md border">
+    // A Card, so it takes the dashboards' card style (filled with the muted
+    // grey, no outline), flush to the table: no padding or gap.
+    <Card className="gap-0 overflow-hidden py-0 shadow-none">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -205,6 +208,6 @@ export function DataTable<
           )}
         </TableBody>
       </Table>
-    </div>
+    </Card>
   );
 }
