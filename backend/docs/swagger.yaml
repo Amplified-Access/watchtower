@@ -1641,6 +1641,10 @@ paths:
         in: query
         name: country
         type: string
+      - description: Only reports sent through this deployment's reporting link
+        in: query
+        name: deploymentId
+        type: string
       - description: 'Relative window: 24h, 7d, 30d, week, month or year'
         in: query
         name: period
@@ -2179,6 +2183,10 @@ paths:
         in: query
         name: country
         type: string
+      - description: Only reports sent through this deployment's reporting link
+        in: query
+        name: deploymentId
+        type: string
       - description: 'Relative window: 24h, 7d, 30d, week, month or year'
         in: query
         name: period
@@ -2267,6 +2275,10 @@ paths:
       - description: Country name
         in: query
         name: country
+        type: string
+      - description: Only reports sent through this deployment's reporting link
+        in: query
+        name: deploymentId
         type: string
       - description: 'Relative window: 24h, 7d, 30d, week, month or year'
         in: query

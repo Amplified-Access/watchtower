@@ -62,6 +62,8 @@ func (h *IncidentHandler) SubmitAnonymousReport(c *gin.Context) {
 		Fatalities     int             `json:"fatalities"`
 		EvidenceFileKey *string        `json:"evidenceFileKey"`
 		AudioFileKey   *string         `json:"audioFileKey"`
+		// Set by a deployment's reporting link.
+		DeploymentID   *string         `json:"deploymentId"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		presenter.BadRequest(c, err.Error())
@@ -76,6 +78,7 @@ func (h *IncidentHandler) SubmitAnonymousReport(c *gin.Context) {
 		Fatalities:      input.Fatalities,
 		EvidenceFileKey: input.EvidenceFileKey,
 		AudioFileKey:    input.AudioFileKey,
+		DeploymentID:    input.DeploymentID,
 	}
 	if err := h.uc.SubmitAnonymousReport(c.Request.Context(), report); err != nil {
 		presenter.Error(c, err)

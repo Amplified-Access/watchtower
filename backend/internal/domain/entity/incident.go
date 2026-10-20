@@ -64,6 +64,8 @@ type Incident struct {
 
 type AnonymousIncidentReport struct {
 	ID              string        `json:"id"`
+	// The deployment whose reporting link the report came through, if any.
+	DeploymentID    *string       `json:"deploymentId,omitempty"`
 	IncidentTypeID  string        `json:"incidentTypeId"`
 	IncidentType    *IncidentType `json:"incidentType,omitempty"`
 	Location        Location      `json:"location"`

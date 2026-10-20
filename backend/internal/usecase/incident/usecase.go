@@ -15,6 +15,7 @@ type UseCase struct {
 	typeRepo        repository.IncidentTypeRepository
 	anonRepo        repository.AnonymousIncidentReportRepository
 	orgReportRepo   repository.OrganizationIncidentReportRepository
+	deploymentRepo  repository.DeploymentRepository
 }
 
 func New(
@@ -22,12 +23,14 @@ func New(
 	typeRepo repository.IncidentTypeRepository,
 	anonRepo repository.AnonymousIncidentReportRepository,
 	orgReportRepo repository.OrganizationIncidentReportRepository,
+	deploymentRepo repository.DeploymentRepository,
 ) *UseCase {
 	return &UseCase{
-		incidentRepo:  incidentRepo,
-		typeRepo:      typeRepo,
-		anonRepo:      anonRepo,
-		orgReportRepo: orgReportRepo,
+		incidentRepo:   incidentRepo,
+		typeRepo:       typeRepo,
+		anonRepo:       anonRepo,
+		orgReportRepo:  orgReportRepo,
+		deploymentRepo: deploymentRepo,
 	}
 }
 
@@ -110,7 +113,34 @@ func (uc *UseCase) SubmitAnonymousReport(ctx context.Context, report *entity.Ano
 	if report.Description == "" && !hasAudio {
 		return domainerrors.NewBadRequest("a description or a voice note is required")
 	}
+	if report.DeploymentID != nil {
+		if err := uc.checkDeployment(ctx, report); err != nil {
+			return err
+		}
+	}
 	return uc.anonRepo.Create(ctx, report)
+}
+
+// checkDeployment lets a report through a deployment's reporting link only
+// while the deployment takes reports, and only of an incident type it
+// tracks.
+func (uc *UseCase) checkDeployment(ctx context.Context, report *entity.AnonymousIncidentReport) error {
+	d, err := uc.deploymentRepo.FindByID(ctx, *report.DeploymentID)
+	if err != nil {
+		return err
+	}
+	if d == nil {
+		return domainerrors.NewBadRequest("unknown deployment")
+	}
+	if !d.AcceptsReports(time.Now()) {
+		return domainerrors.NewBadRequest("this deployment isn't taking reports")
+	}
+	for _, t := range d.IncidentTypes {
+		if t.ID == report.IncidentTypeID {
+			return nil
+		}
+	}
+	return domainerrors.NewBadRequest("this deployment doesn't track that incident type")
 }
 
 func (uc *UseCase) GetAnonymousReports(ctx context.Context, country, category *string, since *time.Time) ([]*entity.AnonymousIncidentReport, error) {

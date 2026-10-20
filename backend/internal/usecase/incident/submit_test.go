@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"backend/internal/domain/entity"
 	domainerrors "backend/internal/domain/errors"
+	"backend/internal/domain/repository"
 )
 
 type mockCreateRepo struct {
@@ -35,7 +37,7 @@ func TestSubmitAnonymousReport_NeedsADescriptionOrAVoiceNote(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			repo := &mockCreateRepo{}
-			err := New(nil, nil, repo, nil).SubmitAnonymousReport(context.Background(),
+			err := New(nil, nil, repo, nil, nil).SubmitAnonymousReport(context.Background(),
 				&entity.AnonymousIncidentReport{Description: tc.description, AudioFileKey: tc.audio})
 			if tc.wantErr {
 				if !errors.Is(err, domainerrors.ErrBadRequest) {
@@ -55,9 +57,63 @@ func TestSubmitAnonymousReport_NeedsADescriptionOrAVoiceNote(t *testing.T) {
 
 func TestSubmitAnonymousReport_TrimsTheDescription(t *testing.T) {
 	repo := &mockCreateRepo{}
-	_ = New(nil, nil, repo, nil).SubmitAnonymousReport(context.Background(),
+	_ = New(nil, nil, repo, nil, nil).SubmitAnonymousReport(context.Background(),
 		&entity.AnonymousIncidentReport{Description: "  Road blocked \n"})
 	if repo.created.Description != "Road blocked" {
 		t.Fatalf("got %q", repo.created.Description)
+	}
+}
+
+// mockDeploymentRepo returns one deployment for FindByID; the rest of the
+// interface isn't used by SubmitAnonymousReport.
+type mockDeploymentRepo struct {
+	repository.DeploymentRepository
+	d *entity.Deployment
+}
+
+func (m *mockDeploymentRepo) FindByID(_ context.Context, _ string) (*entity.Deployment, error) {
+	return m.d, nil
+}
+
+func TestSubmitAnonymousReport_ThroughADeployment(t *testing.T) {
+	yesterday := time.Now().AddDate(0, 0, -2)
+	live := func() *entity.Deployment {
+		return &entity.Deployment{
+			Status:        entity.DeploymentLive,
+			IncidentTypes: []entity.IncidentType{{ID: "flooding"}},
+		}
+	}
+	cases := []struct {
+		name       string
+		deployment *entity.Deployment
+		typeID     string
+		wantSaved  bool
+	}{
+		{"live, tracked type", live(), "flooding", true},
+		{"unknown deployment", nil, "flooding", false},
+		{"draft", func() *entity.Deployment { d := live(); d.Status = entity.DeploymentDraft; return d }(), "flooding", false},
+		{"closed", func() *entity.Deployment { d := live(); d.Status = entity.DeploymentClosed; return d }(), "flooding", false},
+		{"past its end date", func() *entity.Deployment { d := live(); d.EndsAt = &yesterday; return d }(), "flooding", false},
+		{"type it doesn't track", live(), "drought", false},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			repo := &mockCreateRepo{}
+			uc := New(nil, nil, repo, nil, &mockDeploymentRepo{d: tc.deployment})
+			err := uc.SubmitAnonymousReport(context.Background(), &entity.AnonymousIncidentReport{
+				Description:    "Bridge washed away",
+				IncidentTypeID: tc.typeID,
+				DeploymentID:   strPtr("d1"),
+			})
+			if tc.wantSaved {
+				if err != nil || repo.created == nil {
+					t.Fatalf("want saved, got %v", err)
+				}
+				return
+			}
+			if !errors.Is(err, domainerrors.ErrBadRequest) || repo.created != nil {
+				t.Fatalf("want a bad request and nothing saved, got %v (saved: %v)", err, repo.created != nil)
+			}
+		})
 	}
 }

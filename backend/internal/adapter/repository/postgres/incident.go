@@ -442,10 +442,10 @@ func (r *AnonymousIncidentReportRepository) Create(ctx context.Context, report *
 	now := time.Now()
 	_, err = r.db.ExecContext(ctx,
 		`INSERT INTO anonymous_incident_reports
-		(id, incident_type_id, location, description, entities, injuries, fatalities, evidence_file_key, audio_file_key, created_at, updated_at)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+		(id, incident_type_id, location, description, entities, injuries, fatalities, evidence_file_key, audio_file_key, deployment_id, created_at, updated_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
 		report.ID, report.IncidentTypeID, locJSON, report.Description, textArray(report.Entities),
-		report.Injuries, report.Fatalities, report.EvidenceFileKey, report.AudioFileKey, now, now)
+		report.Injuries, report.Fatalities, report.EvidenceFileKey, report.AudioFileKey, report.DeploymentID, now, now)
 	return err
 }
 
@@ -551,6 +551,9 @@ func mapFilterSQL(f entity.MapFilter, args *[]interface{}) string {
 	}
 	if f.Country != "" {
 		q += " AND r.location->>'country' = " + arg(f.Country)
+	}
+	if f.DeploymentID != "" {
+		q += " AND r.deployment_id = " + arg(f.DeploymentID)
 	}
 	if interval := f.Period.Interval(); interval != "" {
 		q += " AND r.created_at >= now() - " + arg(interval) + "::interval"

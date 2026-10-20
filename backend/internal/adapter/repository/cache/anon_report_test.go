@@ -35,3 +35,14 @@ func TestMapRowsKey(t *testing.T) {
 		t.Error("different filters must not share a key")
 	}
 }
+
+func TestMapRowsKey_SeparatesDeployments(t *testing.T) {
+	a := entity.MapFilter{DeploymentID: "d1"}
+	b := entity.MapFilter{DeploymentID: "d2"}
+	if mapRowsKey("1", a) == mapRowsKey("1", b) {
+		t.Error("two deployments' maps share a cache key")
+	}
+	if mapRowsKey("1", a) == mapRowsKey("1", entity.MapFilter{}) {
+		t.Error("a deployment's map shares a key with the global map")
+	}
+}

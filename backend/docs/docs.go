@@ -2130,6 +2130,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Only reports sent through this deployment's reporting link",
+                        "name": "deploymentId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Relative window: 24h, 7d, 30d, week, month or year",
                         "name": "period",
                         "in": "query"
@@ -2947,6 +2953,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Only reports sent through this deployment's reporting link",
+                        "name": "deploymentId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Relative window: 24h, 7d, 30d, week, month or year",
                         "name": "period",
                         "in": "query"
@@ -3084,6 +3096,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Country name",
                         "name": "country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Only reports sent through this deployment's reporting link",
+                        "name": "deploymentId",
                         "in": "query"
                     },
                     {

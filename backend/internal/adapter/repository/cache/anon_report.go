@@ -79,8 +79,8 @@ func mapRowsKey(version string, f entity.MapFilter) string {
 		}
 		return t.UTC().Format(time.DateOnly)
 	}
-	canonical := fmt.Sprintf("c=%s|x=%s|n=%s|p=%s|f=%s|t=%s|q=%s",
-		f.Category, strings.Join(excluded, ","), f.Country, f.Period,
+	canonical := fmt.Sprintf("c=%s|x=%s|n=%s|d=%s|p=%s|f=%s|t=%s|q=%s",
+		f.Category, strings.Join(excluded, ","), f.Country, f.DeploymentID, f.Period,
 		day(f.From), day(f.To), strings.ToLower(f.Query))
 	sum := sha1.Sum([]byte(canonical))
 	if version == "" {
