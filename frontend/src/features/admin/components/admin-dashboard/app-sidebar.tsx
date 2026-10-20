@@ -1,7 +1,6 @@
 "use client";
 
 import { BsIncognito } from "react-icons/bs";
-import { FaExternalLinkSquareAlt } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { MdCategory, MdMap, MdSpaceDashboard } from "react-icons/md";
 import { TiWarning } from "react-icons/ti";
@@ -22,11 +21,6 @@ const items: DashboardNavItem[] = [
     icon: <MdCategory />,
   },
   { title: "Incidents", url: "/admin/incidents", icon: <TiWarning /> },
-  {
-    title: "Reporting Link",
-    url: "/admin/reporting-link",
-    icon: <FaExternalLinkSquareAlt />,
-  },
 ];
 
 export function AppSidebar() {

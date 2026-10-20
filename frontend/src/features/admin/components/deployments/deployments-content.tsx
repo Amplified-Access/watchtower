@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Search } from "lucide-react";
+import { toast } from "sonner";
 
 import { trpc } from "@/_trpc/client";
 import Container from "@/components/common/container";
@@ -17,6 +18,19 @@ const DeploymentsContent = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const { data, isLoading, error, refetch } =
     trpc.getOrganizationDeployments.useQuery();
+  const updateStatus = trpc.updateDeploymentStatus.useMutation({
+    onSuccess: (deployment) => {
+      toast.success(
+        deployment?.status === "live"
+          ? `${deployment.name} is live`
+          : deployment?.status === "closed"
+            ? `${deployment.name} is closed`
+            : "Moved back to draft"
+      );
+      refetch();
+    },
+    onError: (e) => toast.error(e.message || "Couldn't change the status"),
+  });
 
   if (isLoading) return <PageLoader />;
 
@@ -60,6 +74,7 @@ const DeploymentsContent = () => {
 
       <DeploymentsTable
         deployments={deployments}
+        onStatusChange={(id, status) => updateStatus.mutate({ id, status })}
         emptyMessage={
           all.length === 0 ? (
             <div className="space-y-1">
