@@ -93,6 +93,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 		pub.GET("/insights/:slug", s.insightHandler.GetPublicInsightBySlug)
 
 		// Public reports
+		// A deployment's public page and reporting link (live or closed).
+		pub.GET("/deployments/:slug", s.deploymentHandler.GetPublicDeployment)
+
 		pub.GET("/reports", s.reportHandler.GetPublicReports)
 		pub.GET("/reports/:id", s.reportHandler.GetPublicReportByID)
 
@@ -146,6 +149,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			admin.GET("/deployments", s.deploymentHandler.GetOrganizationDeployments)
 			admin.POST("/deployments", s.deploymentHandler.CreateDeployment)
 			admin.GET("/deployments/counts", s.deploymentHandler.GetOrganizationDeploymentCounts)
+			admin.PATCH("/deployments/:id/status", s.deploymentHandler.UpdateDeploymentStatus)
 
 			admin.GET("/incident-types", s.incidentHandler.GetTypesByOrganization)
 			admin.GET("/incident-types/available", s.incidentHandler.GetAvailableTypes)

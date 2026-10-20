@@ -11,6 +11,8 @@ import (
 )
 
 type mockRepo struct {
+	found      *entity.Deployment
+	updated    entity.DeploymentStatus
 	taken      map[string]bool
 	created    *entity.Deployment
 	createdIDs []string
@@ -23,6 +25,16 @@ func (m *mockRepo) FindAll(_ context.Context, orgID *string) ([]*entity.Deployme
 }
 func (m *mockRepo) CountByStatus(_ context.Context, _ *string) (entity.DeploymentCounts, error) {
 	return entity.DeploymentCounts{}, nil
+}
+func (m *mockRepo) FindBySlug(_ context.Context, _ string) (*entity.Deployment, error) {
+	return m.found, nil
+}
+func (m *mockRepo) FindByID(_ context.Context, _ string) (*entity.Deployment, error) {
+	return m.found, nil
+}
+func (m *mockRepo) UpdateStatus(_ context.Context, _ string, s entity.DeploymentStatus) error {
+	m.updated = s
+	return nil
 }
 func (m *mockRepo) SlugExists(_ context.Context, slug string) (bool, error) {
 	return m.taken[slug], nil
@@ -112,5 +124,67 @@ func TestListForOrganization_Scopes(t *testing.T) {
 	_, _ = New(repo).ListForOrganization(context.Background(), "org-1")
 	if repo.listedOrg == nil || *repo.listedOrg != "org-1" {
 		t.Errorf("an admin's list must be scoped to their organization, got %v", repo.listedOrg)
+	}
+}
+
+func isNotFound(err error) bool { return errors.Is(err, domainerrors.ErrNotFound) }
+
+func TestGetPublic_HidesDrafts(t *testing.T) {
+	for status, wantFound := range map[entity.DeploymentStatus]bool{
+		entity.DeploymentDraft:  false,
+		entity.DeploymentLive:   true,
+		entity.DeploymentClosed: true,
+	} {
+		repo := &mockRepo{found: &entity.Deployment{Status: status}}
+		_, err := New(repo).GetPublic(context.Background(), "x")
+		if wantFound && err != nil {
+			t.Errorf("%s: want found, got %v", status, err)
+		}
+		if !wantFound && !isNotFound(err) {
+			t.Errorf("%s: want not found, got %v", status, err)
+		}
+	}
+}
+
+func TestUpdateStatus_OnlyOwnOrganization(t *testing.T) {
+	repo := &mockRepo{found: &entity.Deployment{OrganizationID: "org-2", Status: entity.DeploymentDraft}}
+	if _, err := New(repo).UpdateStatus(context.Background(), "org-1", "d1", entity.DeploymentLive); !isNotFound(err) {
+		t.Errorf("another organization's deployment: want not found, got %v", err)
+	}
+	if repo.updated != "" {
+		t.Error("nothing should be updated")
+	}
+
+	repo.found.OrganizationID = "org-1"
+	d, err := New(repo).UpdateStatus(context.Background(), "org-1", "d1", entity.DeploymentLive)
+	if err != nil || d.Status != entity.DeploymentLive || repo.updated != entity.DeploymentLive {
+		t.Errorf("own deployment: got %v, %v", d, err)
+	}
+	if _, err := New(repo).UpdateStatus(context.Background(), "org-1", "d1", "archived"); !isBadRequest(err) {
+		t.Errorf("bad status: want bad request, got %v", err)
+	}
+}
+
+func TestAcceptsReports(t *testing.T) {
+	day := func(d int) *time.Time { t := time.Date(2026, 10, d, 0, 0, 0, 0, time.UTC); return &t }
+	noon := func(d int) time.Time { return time.Date(2026, 10, d, 12, 0, 0, 0, time.UTC) }
+	cases := []struct {
+		name string
+		d    entity.Deployment
+		at   time.Time
+		want bool
+	}{
+		{"draft", entity.Deployment{Status: entity.DeploymentDraft}, noon(10), false},
+		{"closed", entity.Deployment{Status: entity.DeploymentClosed}, noon(10), false},
+		{"live, no dates", entity.Deployment{Status: entity.DeploymentLive}, noon(10), true},
+		{"before start", entity.Deployment{Status: entity.DeploymentLive, StartsAt: day(11)}, noon(10), false},
+		{"on start day", entity.Deployment{Status: entity.DeploymentLive, StartsAt: day(10)}, noon(10), true},
+		{"on end day", entity.Deployment{Status: entity.DeploymentLive, EndsAt: day(10)}, noon(10), true},
+		{"after end day", entity.Deployment{Status: entity.DeploymentLive, EndsAt: day(10)}, noon(11), false},
+	}
+	for _, c := range cases {
+		if got := c.d.AcceptsReports(c.at); got != c.want {
+			t.Errorf("%s: AcceptsReports = %v, want %v", c.name, got, c.want)
+		}
 	}
 }

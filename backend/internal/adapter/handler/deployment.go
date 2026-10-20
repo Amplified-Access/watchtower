@@ -92,6 +92,60 @@ func (h *DeploymentHandler) CreateDeployment(c *gin.Context) {
 	presenter.Created(c, deployment)
 }
 
+// GetPublicDeployment godoc
+//
+//	@Summary		Get a deployment
+//	@Description	Returns a live or closed deployment by its slug, with its organization's name and incident types, for its public page and reporting link. Drafts are not found.
+//	@Tags			Deployments
+//	@Produce		json
+//	@Param			slug	path		string	true	"Deployment slug"
+//	@Success		200		{object}	presenter.Response
+//	@Failure		404		{object}	presenter.Response
+//	@Failure		500		{object}	presenter.Response
+//	@Router			/deployments/{slug} [get]
+func (h *DeploymentHandler) GetPublicDeployment(c *gin.Context) {
+	deployment, err := h.uc.GetPublic(c.Request.Context(), c.Param("slug"))
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, deployment)
+}
+
+// UpdateDeploymentStatus godoc
+//
+//	@Summary		Change a deployment's status
+//	@Description	Takes one of the admin's organization's deployments live, back to draft, or closes it
+//	@Tags			Admin – Deployments
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path		string						true	"Deployment ID"
+//	@Param			body	body		object{status=string}		true	"draft, live or closed"
+//	@Success		200		{object}	presenter.Response
+//	@Failure		400		{object}	presenter.Response
+//	@Failure		401		{object}	presenter.Response
+//	@Failure		403		{object}	presenter.Response
+//	@Failure		404		{object}	presenter.Response
+//	@Failure		500		{object}	presenter.Response
+//	@Router			/admin/deployments/{id}/status [patch]
+func (h *DeploymentHandler) UpdateDeploymentStatus(c *gin.Context) {
+	user := middleware.CurrentUser(c)
+	var input struct {
+		Status entity.DeploymentStatus `json:"status" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		presenter.BadRequest(c, err.Error())
+		return
+	}
+	deployment, err := h.uc.UpdateStatus(c.Request.Context(), *user.OrganizationID, c.Param("id"), input.Status)
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, deployment)
+}
+
 // GetAllDeployments godoc
 //
 //	@Summary		List all deployments

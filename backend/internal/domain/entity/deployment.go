@@ -37,6 +37,22 @@ type Deployment struct {
 	UpdatedAt        time.Time        `json:"updatedAt"`
 }
 
+// AcceptsReports says whether the deployment's reporting link takes
+// reports at a given time: it is live, and inside its dates if it has them.
+func (d *Deployment) AcceptsReports(now time.Time) bool {
+	if d.Status != DeploymentLive {
+		return false
+	}
+	if d.StartsAt != nil && now.Before(*d.StartsAt) {
+		return false
+	}
+	// An end date is the deployment's last day: it takes reports through it.
+	if d.EndsAt != nil && !now.Before(d.EndsAt.AddDate(0, 0, 1)) {
+		return false
+	}
+	return true
+}
+
 // DeploymentCounts is how many deployments there are, by status.
 type DeploymentCounts struct {
 	Total  int `json:"total"`

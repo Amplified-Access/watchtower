@@ -41,6 +41,39 @@ func (uc *UseCase) ListAll(ctx context.Context, organizationID *string) ([]*enti
 	return uc.repo.FindAll(ctx, organizationID)
 }
 
+// GetPublic is a deployment as anyone may see it, by its slug: live or
+// closed. A draft is its organization's business, so it isn't found.
+func (uc *UseCase) GetPublic(ctx context.Context, slug string) (*entity.Deployment, error) {
+	d, err := uc.repo.FindBySlug(ctx, slug)
+	if err != nil {
+		return nil, err
+	}
+	if d == nil || d.Status == entity.DeploymentDraft {
+		return nil, domainerrors.NewNotFound("deployment not found")
+	}
+	return d, nil
+}
+
+// UpdateStatus takes one of the organization's deployments live, back to
+// draft, or closes it. Another organization's deployment isn't found.
+func (uc *UseCase) UpdateStatus(ctx context.Context, organizationID, id string, status entity.DeploymentStatus) (*entity.Deployment, error) {
+	if !status.Valid() {
+		return nil, domainerrors.NewBadRequest("status must be draft, live or closed")
+	}
+	d, err := uc.repo.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if d == nil || d.OrganizationID != organizationID {
+		return nil, domainerrors.NewNotFound("deployment not found")
+	}
+	if err := uc.repo.UpdateStatus(ctx, id, status); err != nil {
+		return nil, err
+	}
+	d.Status = status
+	return d, nil
+}
+
 // Create checks a new deployment and saves it under the organization, with
 // a slug made from its name.
 func (uc *UseCase) Create(ctx context.Context, organizationID string, in entity.NewDeployment) (*entity.Deployment, error) {

@@ -480,6 +480,59 @@ paths:
       summary: Create a deployment
       tags:
       - Admin – Deployments
+  /admin/deployments/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: Takes one of the admin's organization's deployments live, back
+        to draft, or closes it
+      parameters:
+      - description: Deployment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: draft, live or closed
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            status:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Change a deployment's status
+      tags:
+      - Admin – Deployments
   /admin/deployments/counts:
     get:
       description: Returns how many deployments the authenticated admin's organization
@@ -1696,6 +1749,35 @@ paths:
       summary: Search the assistant's knowledge base
       tags:
       - Assistant
+  /deployments/{slug}:
+    get:
+      description: Returns a live or closed deployment by its slug, with its organization's
+        name and incident types, for its public page and reporting link. Drafts are
+        not found.
+      parameters:
+      - description: Deployment slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      summary: Get a deployment
+      tags:
+      - Deployments
   /email/send:
     post:
       consumes:

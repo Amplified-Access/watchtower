@@ -24,15 +24,41 @@ func NewDeploymentRepository(db *sql.DB) *DeploymentRepository {
 }
 
 func (r *DeploymentRepository) FindAll(ctx context.Context, organizationID *string) ([]*entity.Deployment, error) {
+	if organizationID != nil {
+		return r.find(ctx, "WHERE d.organization_id = $1", *organizationID)
+	}
+	return r.find(ctx, "")
+}
+
+func (r *DeploymentRepository) FindBySlug(ctx context.Context, slug string) (*entity.Deployment, error) {
+	return r.findOne(ctx, "WHERE d.slug = $1", slug)
+}
+
+func (r *DeploymentRepository) FindByID(ctx context.Context, id string) (*entity.Deployment, error) {
+	return r.findOne(ctx, "WHERE d.id = $1", id)
+}
+
+func (r *DeploymentRepository) UpdateStatus(ctx context.Context, id string, status entity.DeploymentStatus) error {
+	_, err := r.db.ExecContext(ctx,
+		`UPDATE deployments SET status = $1, updated_at = $2 WHERE id = $3`, string(status), time.Now(), id)
+	return err
+}
+
+func (r *DeploymentRepository) findOne(ctx context.Context, where string, args ...interface{}) (*entity.Deployment, error) {
+	found, err := r.find(ctx, where, args...)
+	if err != nil || len(found) == 0 {
+		return nil, err
+	}
+	return found[0], nil
+}
+
+// find reads deployments, newest first, with their organization's name and
+// their incident types; where (with args) narrows them.
+func (r *DeploymentRepository) find(ctx context.Context, where string, args ...interface{}) ([]*entity.Deployment, error) {
 	q := `SELECT d.id, d.organization_id, o.name, d.name, d.slug, d.description, d.country, d.region,
 			d.status, d.starts_at, d.ends_at, d.created_at, d.updated_at
-		FROM deployments d JOIN organizations o ON o.id = d.organization_id`
-	args := []interface{}{}
-	if organizationID != nil {
-		q += " WHERE d.organization_id = $1"
-		args = append(args, *organizationID)
-	}
-	q += " ORDER BY d.created_at DESC"
+		FROM deployments d JOIN organizations o ON o.id = d.organization_id
+		` + where + ` ORDER BY d.created_at DESC`
 
 	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
