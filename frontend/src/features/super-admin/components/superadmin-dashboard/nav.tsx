@@ -4,6 +4,7 @@ import { IoDocumentText } from "react-icons/io5";
 import {
   MdAdminPanelSettings,
   MdCategory,
+  MdMap,
   MdSpaceDashboard,
 } from "react-icons/md";
 import { RiBuilding2Fill } from "react-icons/ri";
@@ -30,6 +31,7 @@ export const superAdminNav: DashboardNavItem[] = [
     url: "/superadmin/organizations",
     icon: <RiBuilding2Fill />,
   },
+  { title: "Deployments", url: "/superadmin/deployments", icon: <MdMap /> },
   {
     title: "Admins",
     url: "/superadmin/admins",
