@@ -1,48 +1,33 @@
 "use client";
 
-import * as React from "react";
-import {
-  AudioWaveform,
-  Blocks,
-  Calendar,
-  Command,
-  Home,
-  Inbox,
-  MessageCircleQuestion,
-  Search,
-  Settings2,
-  Sparkles,
-  Trash2,
-  FileUser,
-  Eye,
-  Building2,
-  Glasses,
-} from "lucide-react";
+import { BsIncognito } from "react-icons/bs";
+import { FaExternalLinkSquareAlt } from "react-icons/fa";
+import { IoDocumentText } from "react-icons/io5";
+import { MdCategory, MdSpaceDashboard } from "react-icons/md";
+import { TiWarning } from "react-icons/ti";
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-import { NavMain } from "./nav-main";
-import Logo from "@/components/logo";
+  DashboardSidebar,
+  type DashboardNavItem,
+} from "@/components/dashboard/dashboard-sidebar";
 
-// This is sample data.
+const items: DashboardNavItem[] = [
+  { title: "Home", url: "/admin", icon: <MdSpaceDashboard />, exact: true },
+  { title: "Watchers", url: "/admin/watchers", icon: <BsIncognito /> },
+  { title: "Reports", url: "/admin/reports", icon: <IoDocumentText /> },
+  {
+    title: "Incident Types",
+    url: "/admin/incident-types",
+    icon: <MdCategory />,
+  },
+  { title: "Incidents", url: "/admin/incidents", icon: <TiWarning /> },
+  {
+    title: "Reporting Link",
+    url: "/admin/reporting-link",
+    icon: <FaExternalLinkSquareAlt />,
+  },
+];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar className="border-r-0" {...props}>
-      <SidebarHeader>
-        {/* <TeamSwitcher teams={data.teams} /> */}
-        <Logo
-          className="w-full object-contain mb-2 mx-4 object-left"
-          color="white"
-        />
-        <div className="px-4">
-          <NavMain />
-        </div>
-      </SidebarHeader>
-    </Sidebar>
-  );
+export function AppSidebar() {
+  return <DashboardSidebar items={items} />;
 }

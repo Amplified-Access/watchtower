@@ -1,48 +1,55 @@
 "use client";
 
-import * as React from "react";
+import { BsIncognito } from "react-icons/bs";
+import { HiDatabase } from "react-icons/hi";
+import { IoIosDocument } from "react-icons/io";
+import { IoDocumentText } from "react-icons/io5";
 import {
-  AudioWaveform,
-  Blocks,
-  Calendar,
-  Command,
-  Home,
-  Inbox,
-  MessageCircleQuestion,
-  Search,
-  Settings2,
-  Sparkles,
-  Trash2,
-  FileUser,
-  Eye,
-  Building2,
-  Glasses,
-} from "lucide-react";
+  MdAdminPanelSettings,
+  MdCategory,
+  MdSpaceDashboard,
+} from "react-icons/md";
+import { RiBuilding2Fill } from "react-icons/ri";
+import { TiWarning } from "react-icons/ti";
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-import { NavMain } from "./nav-main";
-import Logo from "@/components/logo";
+  DashboardSidebar,
+  type DashboardNavItem,
+} from "@/components/dashboard/dashboard-sidebar";
 
-// This is sample data.
+const items: DashboardNavItem[] = [
+  {
+    title: "Home",
+    url: "/superadmin",
+    icon: <MdSpaceDashboard />,
+    exact: true,
+  },
+  {
+    title: "Applications",
+    url: "/superadmin/applications",
+    icon: <IoIosDocument />,
+  },
+  {
+    title: "Organizations",
+    url: "/superadmin/organizations",
+    icon: <RiBuilding2Fill />,
+  },
+  {
+    title: "Admins",
+    url: "/superadmin/admins",
+    icon: <MdAdminPanelSettings />,
+  },
+  { title: "Watchers", url: "/superadmin/watchers", icon: <BsIncognito /> },
+  { title: "Reports", url: "/superadmin/reports", icon: <IoDocumentText /> },
+  { title: "Incidents", url: "/superadmin/incidents", icon: <TiWarning /> },
+  {
+    title: "Incident Types",
+    url: "/superadmin/incident-types",
+    icon: <MdCategory />,
+  },
+  { title: "Datasets", url: "/superadmin/datasets", icon: <HiDatabase /> },
+];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar className="border-r-0" {...props}>
-      <SidebarHeader>
-        {/* <TeamSwitcher teams={data.teams} /> */}
-        <Logo
-          className="w-full object-contain mb-2 mt-1 object-left mx-4"
-          color="white"
-        />
-        <div className="px-4">
-          <NavMain />
-        </div>
-      </SidebarHeader>
-    </Sidebar>
-  );
+export function AppSidebar() {
+  return <DashboardSidebar items={items} />;
 }
