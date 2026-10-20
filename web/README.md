@@ -24,7 +24,7 @@ Next.js 15 application for the Watchtower incident monitoring platform. Uses the
 ## Project Structure
 
 ```
-frontend/
+web/
 ├── src/
 │   ├── app/                        # Next.js App Router
 │   │   ├── (auth)/                 # Sign in, sign up, password reset

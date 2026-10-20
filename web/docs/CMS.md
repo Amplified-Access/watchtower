@@ -5,7 +5,7 @@ Editorial content for the Watchtower site: the **Home** and **About** pages, **c
 **What is in Sanity, and what is UI copy.** The words on a page that an editor would rewrite (headings, paragraphs, questions and answers, figures, button labels on those pages) are in Sanity. Text that belongs to the interface stays in `messages/*.json`: navigation, the sign-in pages' small footer, the footer's "WatchTower" watermark, the announcement banner, forms, the live map widget, labels built around a value ("Step {number}", "Last updated: {date}"), and the names of the site's languages and their regions on the About page, which go with the locale list. Page layout (images, links, the order of sections) is code, except the partner logos on the Home page and the footer's links, which editors add and reorder.
 
 ```
-frontend/
+web/
 ├── sanity.config.ts            Studio: sidebar, plugins, singletons (also read by the Sanity CLI)
 ├── sanity.cli.ts               CLI: project and dataset for `pnpm exec sanity …`
 ├── src/pages/studio/[[...tool]].tsx  The /studio route (the app's only Pages Router page)
@@ -18,7 +18,7 @@ frontend/
 ## Getting started
 
 ```bash
-cd frontend
+cd web
 pnpm sanity:setup   # log in to the Sanity CLI, create/pick the project, import the seed, add the env vars
 pnpm dev            # the Studio is at http://localhost:3000/studio
 ```
@@ -139,7 +139,7 @@ After the first import, **the Studio is the source of truth**. `pnpm sanity:setu
 
 Files under `src/sanity/` and `sanity.config.ts` are also loaded by the Sanity CLI, which doesn't know the `@/` alias: import between them with relative paths.
 
-## Commands (from `frontend/`)
+## Commands (from `web/`)
 
 | Command | |
 |---|---|

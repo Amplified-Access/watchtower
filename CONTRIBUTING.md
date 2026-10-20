@@ -62,7 +62,7 @@ make test
 ### Frontend (Next.js)
 
 ```bash
-cd frontend
+cd web
 cp .env.example .env.local   # fill in your local values
 pnpm install
 pnpm dev
@@ -170,7 +170,7 @@ watchtower/
 │       ├── BOOTSTRAP.md        # Startup sequence and DI wiring
 │       ├── PACKAGES.md         # pkg/ service wrappers
 │       └── SCRIPTS.md          # All make commands
-└── frontend/
+└── web/
     ├── README.md               # Frontend overview, project structure, stack
     └── docs/
         ├── README.md           # Docs index
@@ -186,10 +186,10 @@ watchtower/
 |-----------------------|---------------|
 | Project-wide concept, decision, or integration | Root `README.md` |
 | Backend architecture decision or service detail | `backend/docs/` |
-| Frontend pattern, feature guide, or component reference | `frontend/docs/` |
+| Frontend pattern, feature guide, or component reference | `web/docs/` |
 | AI agent context update (new pattern, layer change) | `AGENTS.md` |
 
-**Do not** create READMEs inside `src/features/` or component folders. If a component needs documentation, write it in `frontend/docs/` and link to it from `frontend/docs/README.md`.
+**Do not** create READMEs inside `src/features/` or component folders. If a component needs documentation, write it in `web/docs/` and link to it from `web/docs/README.md`.
 
 ### When to write documentation
 
@@ -207,7 +207,7 @@ If you are using an AI coding tool: **instruct it to update `AGENTS.md` as part 
 
 ## Translations
 
-Watchtower supports 10 languages. Locale files live in `frontend/messages/`. To add or improve a translation:
+Watchtower supports 10 languages. Locale files live in `web/messages/`. To add or improve a translation:
 
 1. Copy the English base file (`en.json`) as a reference.
 2. Translate the values (not the keys) in the target locale file.
@@ -270,8 +270,8 @@ The project ships a `.claude/settings.json` with the team's preferred configurat
     "deny": [
       "Edit(.env*)",
       "Write(.env*)",
-      "Edit(frontend/.env*)",
-      "Write(frontend/.env*)",
+      "Edit(web/.env*)",
+      "Write(web/.env*)",
       "Edit(backend/.env*)",
       "Write(backend/.env*)"
     ]

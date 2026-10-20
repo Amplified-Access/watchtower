@@ -37,7 +37,7 @@ PIDS+=("$!")
 
 # ── Frontend (Next.js) ────────────────────────────────────────────────────────
 echo -e "${YELLOW}[frontend]  Starting Next.js dev server on :3000...${RESET}"
-(cd "$SCRIPT_DIR/frontend" && pnpm dev) &
+(cd "$SCRIPT_DIR/web" && pnpm dev) &
 PIDS+=("$!")
 
 # Exit as soon as any one service dies, instead of hanging on `wait` with only

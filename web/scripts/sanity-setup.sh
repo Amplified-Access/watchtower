@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time Sanity setup for Watchtower (see docs/CMS.md). Run from frontend/
+# One-time Sanity setup for Watchtower (see docs/CMS.md). Run from web/
 # with `pnpm sanity:setup`. It:
 #   1. logs you in to the Sanity CLI (opens a browser),
 #   2. creates a "Watchtower" project, or uses the one in .env.local,
