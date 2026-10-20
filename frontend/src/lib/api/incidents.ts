@@ -95,6 +95,11 @@ export const incidentsApi = {
   createType: (data: { name: string; description?: string; color: string }) =>
     api.post("/admin/incident-types", data),
 
+  // The same platform-wide create, for a super admin: /admin requires an
+  // organization, which a super admin has none of.
+  createTypeAsSuperAdmin: (data: { name: string; description?: string; color: string }) =>
+    api.post("/superadmin/incident-types", data),
+
   enableType: (orgId: string, typeId: string) =>
     api.post(`/admin/incident-types/${typeId}/enable?organizationId=${orgId}`),
 

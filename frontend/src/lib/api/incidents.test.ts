@@ -35,6 +35,20 @@ describe("incidentsApi.getTypesByOrganization", () => {
   });
 });
 
+describe("incidentsApi.createType / createTypeAsSuperAdmin", () => {
+  const body = { name: "Flooding", color: "#ef4444" };
+
+  it("posts an admin's type to the admin endpoint", () => {
+    incidentsApi.createType(body);
+    expect(mockApi.post).toHaveBeenCalledWith("/admin/incident-types", body);
+  });
+
+  it("posts a super admin's type to the super admin endpoint", () => {
+    incidentsApi.createTypeAsSuperAdmin(body);
+    expect(mockApi.post).toHaveBeenCalledWith("/superadmin/incident-types", body);
+  });
+});
+
 describe("incidentsApi.enableType / disableType", () => {
   it("posts to enable endpoint with orgId query param", () => {
     incidentsApi.enableType("org-1", "type-5");

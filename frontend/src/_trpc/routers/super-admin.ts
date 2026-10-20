@@ -8,6 +8,38 @@ import { incidentsApi } from "@/lib/api/incidents";
 import { reportsApi } from "@/lib/api/reports";
 
 export const superAdminRouter = router({
+  // Every incident type on the platform, active or not: the super admin's
+  // incident types page, which isn't about any one organization's set.
+  getAllIncidentTypesForSuperAdmin: superAdminProcedure.query(async () => {
+    const res = await incidentsApi.getAllTypes(false);
+    if (!res.success) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: res.error ?? "Failed to fetch incident types",
+      });
+    }
+    return res.data ?? [];
+  }),
+
+  createIncidentTypeAsSuperAdmin: superAdminProcedure
+    .input(
+      z.object({
+        name: z.string().min(1, "Name is required").max(100, "Name too long"),
+        description: z.string().optional(),
+        color: z.string().regex(/^#[0-9A-F]{6}$/i, "Invalid hex color").default("#ef4444"),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const res = await incidentsApi.createTypeAsSuperAdmin(input);
+      if (!res.success) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: res.error ?? "Failed to create incident type",
+        });
+      }
+      return { success: true, data: res.data };
+    }),
+
   getAllOrganizatonApplications: superAdminProcedure.query(async () => {
     try {
       const res = await organizationsApi.getApplications();
