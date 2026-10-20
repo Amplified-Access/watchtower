@@ -1,12 +1,20 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import {
+  findActiveNavItem,
+  type DashboardNavItem,
+} from "@/components/dashboard/dashboard-sidebar";
+import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
   SidebarInset,
@@ -69,6 +77,47 @@ export function DashboardShell({
         </div>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+// "Super Admin › Organizations": the dashboard, then the section we're in,
+// named from the same nav items the sidebar shows. The root links back to
+// the dashboard's home; a page with no nav item shows the root alone.
+export function DashboardBreadcrumb({
+  root,
+  items,
+}: {
+  root: string;
+  items: DashboardNavItem[];
+}) {
+  const pathname = usePathname();
+  const current = findActiveNavItem(pathname, items);
+  const home = items.find((item) => item.exact) ?? items[0];
+
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          {current ? (
+            <BreadcrumbLink asChild>
+              <Link href={home.url}>{root}</Link>
+            </BreadcrumbLink>
+          ) : (
+            <BreadcrumbPage>{root}</BreadcrumbPage>
+          )}
+        </BreadcrumbItem>
+        {current && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="line-clamp-1">
+                {current.title}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </>
+        )}
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 }
 

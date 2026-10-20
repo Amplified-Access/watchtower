@@ -30,6 +30,14 @@ function isActive(pathname: string | null, { url, exact }: DashboardNavItem) {
   return pathname === url || (!exact && pathname.startsWith(`${url}/`));
 }
 
+// The nav item for the page we're on (or a page under it), if it has one.
+export function findActiveNavItem(
+  pathname: string | null,
+  items: DashboardNavItem[]
+) {
+  return items.find((item) => isActive(pathname, item));
+}
+
 // The sidebar shared by the admin, watcher and super admin dashboards. It
 // sits on DashboardShell's grey frame (the panel is transparent) and
 // collapses to an icon rail (collapsible="icon"), where each item shows its
