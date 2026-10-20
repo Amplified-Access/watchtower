@@ -177,6 +177,8 @@ export const incidentsApi = {
     fatalities?: number;
     evidenceFileKey?: string;
     audioFileKey?: string;
+    /** Set by a deployment's reporting link. */
+    deploymentId?: string;
   }) => api.post("/incidents/anonymous", data),
 
   getAnonymousReports: (params?: { country?: string; category?: string; timeframe?: string }) => {

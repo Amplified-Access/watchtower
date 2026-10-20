@@ -26,6 +26,16 @@ describe("deploymentsApi", () => {
     expect(mockApi.post).toHaveBeenCalledWith("/admin/deployments", body);
   });
 
+  it("changes a deployment's status", () => {
+    deploymentsApi.updateStatus("d 1", "live");
+    expect(mockApi.patch).toHaveBeenCalledWith("/admin/deployments/d%201/status", { status: "live" });
+  });
+
+  it("reads a public deployment by its slug", () => {
+    deploymentsApi.getPublic("uganda-2026");
+    expect(mockApi.get).toHaveBeenCalledWith("/deployments/uganda-2026");
+  });
+
   it("lists every deployment for the super admin", () => {
     deploymentsApi.getAll();
     expect(mockApi.get).toHaveBeenCalledWith("/superadmin/deployments");

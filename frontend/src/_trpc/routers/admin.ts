@@ -119,6 +119,21 @@ export const adminRouter = router({
     return res.data;
   }),
 
+  // Take one of the organization's deployments live, back to draft, or
+  // close it.
+  updateDeploymentStatus: organizationProcedure
+    .input(z.object({ id: z.string(), status: z.enum(["draft", "live", "closed"]) }))
+    .mutation(async ({ input }) => {
+      const res = await deploymentsApi.updateStatus(input.id, input.status);
+      if (!res.success) {
+        throw new TRPCError({
+          code: res.status === 404 ? "NOT_FOUND" : res.status === 400 ? "BAD_REQUEST" : "INTERNAL_SERVER_ERROR",
+          message: res.error ?? "Failed to update the deployment",
+        });
+      }
+      return res.data;
+    }),
+
   createDeployment: organizationProcedure
     .input(
       z.object({

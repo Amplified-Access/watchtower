@@ -51,6 +51,12 @@ export const deploymentsApi = {
 
   create: (data: NewDeployment) => api.post<Deployment>("/admin/deployments", data),
 
+  updateStatus: (id: string, status: DeploymentStatus) =>
+    api.patch<Deployment>(`/admin/deployments/${encodeURIComponent(id)}/status`, { status }),
+
+  // Public: a live or closed deployment, for its page and reporting link.
+  getPublic: (slug: string) => api.get<Deployment>(`/deployments/${encodeURIComponent(slug)}`),
+
   // Super admin: every deployment, or one organization's.
   getAll: (organizationId?: string) =>
     api.get<Deployment[]>(
