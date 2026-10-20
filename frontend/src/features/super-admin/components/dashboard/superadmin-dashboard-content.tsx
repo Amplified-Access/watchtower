@@ -52,9 +52,8 @@ export default function SuperAdminDashboardContent() {
                 className="shadow-none py-0 @lg:aspect-[3/2]"
               >
                 <CardContent className="flex h-full flex-col justify-between p-5">
-                  <div className="flex items-center justify-between space-y-0 pb-2">
+                  <div className="pb-2">
                     <div className="h-4 w-24 bg-muted rounded-md animate-pulse" />
-                    <div className="h-4 w-4 bg-muted rounded animate-pulse" />
                   </div>
                   <div className="space-y-2">
                     <div className="h-8 w-16 bg-muted rounded-md animate-pulse" />

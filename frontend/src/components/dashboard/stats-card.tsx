@@ -35,17 +35,25 @@ export function StatsCard({
   return (
     <Card
       className={cn(
-        "@container/stat shadow-none gap-4 py-5 @lg:aspect-[3/2] transition-all duration-300 hover:shadow-md hover:border-primary/30 cursor-pointer group",
+        "@container/stat relative overflow-hidden shadow-none gap-4 py-5 @lg:aspect-[3/2] transition-all duration-300 hover:shadow-md hover:border-primary/30 cursor-pointer group",
         className
       )}
     >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 px-5 pb-2">
+      {/* The icon is a watermark: large and faint, in the card's empty
+          right-hand middle and bleeding off its edge, under the text. It
+          grows with the figure (card 20rem wide) and tints with the title on
+          hover. A thinner stroke, since Lucide's scales with the icon. */}
+      <Icon
+        aria-hidden
+        strokeWidth={1.5}
+        className="pointer-events-none absolute top-1/2 -right-5 size-24 -translate-y-1/2 text-foreground/[0.07] transition-colors group-hover:text-primary/15 @xs/stat:size-32"
+      />
+      <CardHeader className="relative flex flex-row items-center space-y-0 px-5 pb-2">
         <CardTitle className="text-lg font-title group-hover:text-primary transition-colors">
           {title}
         </CardTitle>
-        <Icon className="size-5 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
       </CardHeader>
-      <CardContent className="mt-auto px-5">
+      <CardContent className="relative mt-auto px-5">
         {/* The figure is the card's point: 36px, and 48px once the card is
             20rem wide (its own width, so it follows the sidebar). leading-none
             keeps it inside the 3:2 shape on the narrowest cards. */}
