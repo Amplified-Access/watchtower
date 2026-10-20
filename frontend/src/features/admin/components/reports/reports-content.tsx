@@ -28,13 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,9 +86,13 @@ const statusColors: Record<"draft" | "published", string> = {
   published: "bg-green-100 text-green-800 border-green-200",
 };
 
+// The top row's controls: filled with the muted grey, no outline.
+const filledControl = "bg-muted border-transparent shadow-none";
+
 const ReportsContent = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [search, setSearch] = useState("");
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadTitle, setUploadTitle] = useState("");
@@ -252,132 +250,126 @@ const ReportsContent = () => {
 
   const reports = reportsData?.reports || [];
   const totalCount = reportsData?.totalCount || 0;
+  const query = search.trim().toLowerCase();
+  const shown = query
+    ? reports.filter((r) => r.title.toLowerCase().includes(query))
+    : reports;
 
   return (
-    <Container className="space-y-6" size="lg">
-      {/* Header */}
-      <div className="flex items-center justify-between pt-4">
-        <div>
-          <h1 className="text-2xl font-bold font-title">Reports</h1>
-          <p className="text-muted-foreground">
-            {totalCount} total report{totalCount !== 1 ? "s" : ""} in your
-            organization
-          </p>
+    <Container className="space-y-6 pb-6" size="lg">
+      {/* Search, status, refresh and upload in one row, straight on the page;
+          the search takes the room the rest leave. Filled with the muted
+          grey, like the dashboards' other top rows. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative sm:flex-1">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search reports..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={`pl-9 ${filledControl}`}
+          />
         </div>
-        <div className="flex items-center gap-2">
-          <Button onClick={() => refetch()} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
-          </Button>
-          <Dialog
-            open={isUploadDialogOpen}
-            onOpenChange={setIsUploadDialogOpen}
-          >
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Upload Report
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Upload New Report</DialogTitle>
-                <DialogDescription>
-                  Upload a PDF report to your organization's library.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div>
-                  <label className="text-sm font-medium">Title</label>
-                  <Input
-                    value={uploadTitle}
-                    onChange={(e) => setUploadTitle(e.target.value)}
-                    placeholder="Enter report title"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Status</label>
-                  <Select
-                    value={uploadStatus}
-                    onValueChange={(value: "draft" | "published") =>
-                      setUploadStatus(value)
-                    }
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">PDF File</label>
-                  <Input
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileSelect}
-                    className="mt-1"
-                  />
-                  {selectedFile && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Selected: {selectedFile.name}
-                    </p>
-                  )}
-                </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className={`w-full sm:w-40 ${filledControl}`}>
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          onClick={() => refetch()}
+          variant="secondary"
+          className="bg-muted shadow-none hover:bg-muted/70"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Refresh
+        </Button>
+        <Dialog
+          open={isUploadDialogOpen}
+          onOpenChange={setIsUploadDialogOpen}
+        >
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Upload Report
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Upload New Report</DialogTitle>
+              <DialogDescription>
+                Upload a PDF report to your organization's library.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-medium">Title</label>
+                <Input
+                  value={uploadTitle}
+                  onChange={(e) => setUploadTitle(e.target.value)}
+                  placeholder="Enter report title"
+                  className="mt-1"
+                />
               </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsUploadDialogOpen(false)}
-                  disabled={isUploading}
+              <div>
+                <label className="text-sm font-medium">Status</label>
+                <Select
+                  value={uploadStatus}
+                  onValueChange={(value: "draft" | "published") =>
+                    setUploadStatus(value)
+                  }
                 >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleUpload}
-                  disabled={isUploading || !selectedFile}
-                >
-                  {isUploading ? "Uploading..." : "Upload Report"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium">PDF File</label>
+                <Input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileSelect}
+                  className="mt-1"
+                />
+                {selectedFile && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Selected: {selectedFile.name}
+                  </p>
+                )}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsUploadDialogOpen(false)}
+                disabled={isUploading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpload}
+                disabled={isUploading || !selectedFile}
+              >
+                {isUploading ? "Uploading..." : "Upload Report"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Filters */}
-      <Card className="shadow-none">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="published">Published</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Showing {reports.length} of {totalCount} reports
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Reports Table */}
-      <Card className="shadow-none">
-        <CardContent className="">
-          {reports.length === 0 ? (
+      {/* Reports Table: a flush card, in the dashboards' card style */}
+      <Card className="gap-0 overflow-hidden py-0 shadow-none">
+        <CardContent className="p-0">
+          {shown.length === 0 ? (
             <div className="text-center py-12">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium text-muted-foreground mb-2">
@@ -386,7 +378,7 @@ const ReportsContent = () => {
               <p className="text-muted-foreground mb-4">
                 {totalCount === 0
                   ? "Upload your first report to get started"
-                  : "Try adjusting your filters"}
+                  : "Try adjusting your search or filters"}
               </p>
               {totalCount === 0 && (
                 <Button onClick={() => setIsUploadDialogOpen(true)}>
@@ -408,7 +400,7 @@ const ReportsContent = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reports.map((report) => (
+                {shown.map((report) => (
                   <TableRow key={report.id}>
                     <TableCell>
                       <div>
