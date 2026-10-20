@@ -1,5 +1,4 @@
 import { BsIncognito } from "react-icons/bs";
-import { HiDatabase } from "react-icons/hi";
 import { IoIosDocument } from "react-icons/io";
 import { IoDocumentText } from "react-icons/io5";
 import {
@@ -44,5 +43,4 @@ export const superAdminNav: DashboardNavItem[] = [
     url: "/superadmin/incident-types",
     icon: <MdCategory />,
   },
-  { title: "Datasets", url: "/superadmin/datasets", icon: <HiDatabase /> },
 ];

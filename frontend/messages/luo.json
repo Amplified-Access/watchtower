@@ -22,7 +22,6 @@
   "Navigation": {
     "home": "Dala",
     "about": "Wigi",
-    "datasets": "Fweny mag ngeny",
     "maps": "Ramaki",
     "caseStudies": "Ngerana",
     "reports": "Ripodhi",
@@ -303,28 +302,6 @@
     "registerOrganization": "Register Organisation",
     "signInFailed": "Sign in failed",
     "signInFailedRetry": "Sign in failed. Please try again."
-  },
-  "Datasets": {
-    "browseDescription": "Yud fweny mopongʼ chuth - moyudore nono e ohala ne nono, nono, kod tiyo gi oganda.",
-    "searchPlaceholder": "Many fweny...",
-    "allCategories": "Kit Duto",
-    "allFormats": "Kit Ndiko Duto",
-    "clearFilters": "Gol Yiero",
-    "emptyTitle": "Onge fweny moyudi",
-    "emptyDescription": "Tem loko weche mimanyogo kata yiero.",
-    "unknownFormat": "Ok Ongʼere",
-    "datasetInfoLabel": "Fweny mag Dataset",
-    "sizeLabel": "Duongʼ: {size}",
-    "downloadsCount": "{count} osegol",
-    "sourceLabel": "Sokoni:",
-    "downloadButton": "Gol",
-    "downloadSuccess": "Osegol {fileName}",
-    "downloadError": "Golo ok otimore. Tem kendo.",
-    "ctaTitle": "Med nono",
-    "ctaDescription": "Nono matut kit gik motimore gi ramaki mawa kata nono ripodhi mopongʼ e alworni gi weche mopogore.",
-    "methodology": "Yo mar Tiyo",
-    "coverage": "Kar Oimo",
-    "license": "Yweyo"
   },
   "Organizations": {
     "errorTitle": "Rachruok",

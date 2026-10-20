@@ -9,7 +9,7 @@ Watchtower is an incident monitoring and reporting platform built for civil soci
 - Interactive incident maps with heatmap visualization
 - Role-based dashboards (Watcher, Admin, Super Admin)
 - Anonymous and organization-based reporting
-- AI-powered insights and dataset analysis
+- AI-powered insights and analysis
 - Multilingual support (10 languages: English, French, Swahili, Kinyarwanda, Amharic, Luganda, Urdu, and more)
 
 ## Tech Stack

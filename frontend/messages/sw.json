@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "Nyumbani",
-    "datasets": "Seti za Data",
     "maps": "Ramani",
     "caseStudies": "Mifano halisi",
     "reports": "Ripoti",
@@ -303,28 +302,6 @@
     "registerOrganization": "Sajili Shirika",
     "signInFailed": "Imeshindwa kuingia",
     "signInFailedRetry": "Imeshindwa kuingia. Tafadhali jaribu tena."
-  },
-  "Datasets": {
-    "browseDescription": "Gundua seti kamili za data - zinazopatikana bila malipo kwa utafiti, uchambuzi na matumizi ya jamii.",
-    "searchPlaceholder": "Tafuta seti za data...",
-    "allCategories": "Aina Zote",
-    "allFormats": "Miundo Yote",
-    "clearFilters": "Futa Vichujio",
-    "emptyTitle": "Hakuna seti za data zilizopatikana",
-    "emptyDescription": "Jaribu kurekebisha maneno yako ya utafutaji au vichujio.",
-    "unknownFormat": "Haijulikani",
-    "datasetInfoLabel": "Taarifa za seti ya data",
-    "sizeLabel": "Ukubwa: {size}",
-    "downloadsCount": "vipakuzi {count}",
-    "sourceLabel": "Chanzo:",
-    "downloadButton": "Pakua",
-    "downloadSuccess": "{fileName} imepakuliwa",
-    "downloadError": "Upakuaji umeshindwa. Tafadhali jaribu tena.",
-    "ctaTitle": "Endelea kuchunguza",
-    "ctaDescription": "Chunguza kwa kina mifumo ya matukio kwa kutumia ramani zetu za kuingiliana au vinjari ripoti kamili katika mikoa na mada tofauti.",
-    "methodology": "Mbinu",
-    "coverage": "Ufikiaji",
-    "license": "Leseni"
   },
   "Organizations": {
     "errorTitle": "Hitilafu",

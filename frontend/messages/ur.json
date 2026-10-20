@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "ہوم",
-    "datasets": "ڈیٹا سیٹس",
     "maps": "نقشے",
     "caseStudies": "کیس اسٹڈیز",
     "reports": "رپورٹیں",
@@ -303,28 +302,6 @@
     "registerOrganization": "تنظیم رجسٹر کریں",
     "signInFailed": "سائن ان ناکام ہو گیا",
     "signInFailedRetry": "سائن ان ناکام ہو گیا۔ براہِ کرم دوبارہ کوشش کریں۔"
-  },
-  "Datasets": {
-    "browseDescription": "تحقیق، تجزیہ اور کمیونٹی استعمال کے لیے آزادانہ طور پر دستیاب جامع ڈیٹا سیٹس دریافت کریں۔",
-    "searchPlaceholder": "ڈیٹا سیٹس تلاش کریں...",
-    "allCategories": "تمام زمرے",
-    "allFormats": "تمام فارمیٹس",
-    "clearFilters": "فلٹرز صاف کریں",
-    "emptyTitle": "کوئی ڈیٹا سیٹ نہیں ملا",
-    "emptyDescription": "اپنے تلاش کے الفاظ یا فلٹرز کو ایڈجسٹ کرنے کی کوشش کریں۔",
-    "unknownFormat": "نامعلوم",
-    "datasetInfoLabel": "ڈیٹا سیٹ کی معلومات",
-    "sizeLabel": "سائز: {size}",
-    "downloadsCount": "{count} ڈاؤن لوڈز",
-    "sourceLabel": "ماخذ:",
-    "downloadButton": "ڈاؤن لوڈ کریں",
-    "downloadSuccess": "{fileName} ڈاؤن لوڈ ہو گیا",
-    "downloadError": "ڈاؤن لوڈ ناکام۔ براہ کرم دوبارہ کوشش کریں۔",
-    "ctaTitle": "دریافت جاری رکھیں",
-    "ctaDescription": "ہمارے انٹرایکٹو نقشوں کے ساتھ واقعے کے نمونوں کو گہرائی سے دریافت کریں یا مختلف خطوں اور موضوعات میں جامع رپورٹس براؤز کریں۔",
-    "methodology": "طریقہ کار",
-    "coverage": "احاطہ",
-    "license": "لائسنس"
   },
   "Organizations": {
     "errorTitle": "خرابی",

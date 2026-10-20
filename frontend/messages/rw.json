@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "Ahabanza",
-    "datasets": "Inyandiko",
     "maps": "Amakarita",
     "caseStudies": "Ingero z'ubushakashatsi",
     "reports": "Raporo",
@@ -303,28 +302,6 @@
     "registerOrganization": "Andikisha Umuryango",
     "signInFailed": "Kwinjira byanze",
     "signInFailedRetry": "Kwinjira byanze. Ongera ugerageze."
-  },
-  "Datasets": {
-    "browseDescription": "Menya amakuru yuzuye - aboneka ku buntu ku bushakashatsi, isesengura n'ikoreshwa n'umuryango.",
-    "searchPlaceholder": "Shakisha amakuru...",
-    "allCategories": "Ibyiciro Byose",
-    "allFormats": "Imiterere Yose",
-    "clearFilters": "Siba Ibisenga",
-    "emptyTitle": "Nta makuru yabonetse",
-    "emptyDescription": "Gerageza guhindura amagambo washakishije cyangwa ibisenga.",
-    "unknownFormat": "Ntabizwi",
-    "datasetInfoLabel": "Amakuru y'umukungugu",
-    "sizeLabel": "Ingano: {size}",
-    "downloadsCount": "kuramo {count}",
-    "sourceLabel": "Inkomoko:",
-    "downloadButton": "Kuramo",
-    "downloadSuccess": "{fileName} yakuwe",
-    "downloadError": "Gukurura byanze. Nyamuneka ongera ugerageze.",
-    "ctaTitle": "Komeza Gushakisha",
-    "ctaDescription": "Sesengura cyane uko ibintu bimeze ukoresheje amakarita yacu akorana n'abakoresha cyangwa reba raporo zuzuye mu turere n'insanganyamatsiko zitandukanye.",
-    "methodology": "Uburyo",
-    "coverage": "Ubugero",
-    "license": "Uruhushya"
   },
   "Organizations": {
     "errorTitle": "Ikosa",

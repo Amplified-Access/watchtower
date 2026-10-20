@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "Kaya",
-    "datasets": "Mabumbi ga habali",
     "maps": "Malambo",
     "caseStudies": "Masomo",
     "reports": "Malipoti",
@@ -303,28 +302,6 @@
     "registerOrganization": "Register Organisation",
     "signInFailed": "Sign in failed",
     "signInFailedRetry": "Sign in failed. Please try again."
-  },
-  "Datasets": {
-    "browseDescription": "Menya seti ja habali jikamilifu - jikupatikana bila malipo koro utafiti, uchambuzi na matumizi ga makundi.",
-    "searchPlaceholder": "Londa seti ja habali...",
-    "allCategories": "Aina Joshi",
-    "allFormats": "Miundo Yoshi",
-    "clearFilters": "Ondosha Vichujio",
-    "emptyTitle": "Kutali seti ja habali jipatikine",
-    "emptyDescription": "Geria kubadilisha maneno gowalonda nago naho vichujio.",
-    "unknownFormat": "Gatamanyikana",
-    "datasetInfoLabel": "Habali ja Seti",
-    "sizeLabel": "Ukubwa: {size}",
-    "downloadsCount": "kupakua {count}",
-    "sourceLabel": "Chanzo:",
-    "downloadButton": "Pakua",
-    "downloadSuccess": "{fileName} jipakuliwe",
-    "downloadError": "Kupakua kwashindikana. Tafadhali geria kabili.",
-    "ctaTitle": "Endelea Kulonda",
-    "ctaDescription": "Chunguza kina mienendo ja shindu kwa malambo gitu ga kukolana naho lola ilipoti jikamilifu mu maeneo na mada tofauti.",
-    "methodology": "Njila",
-    "coverage": "Ufunikizi",
-    "license": "Leseni"
   },
   "Organizations": {
     "errorTitle": "Hitilafu",

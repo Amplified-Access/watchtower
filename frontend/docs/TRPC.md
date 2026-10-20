@@ -19,7 +19,6 @@ src/_trpc/
     ├── organizations.ts
     ├── reports.ts
     ├── insights.ts
-    ├── datasets.ts
     ├── anonymous-reporting.ts
     ├── organization-reporting.ts
     ├── alert-subscriptions.ts

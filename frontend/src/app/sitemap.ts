@@ -12,8 +12,8 @@ import { abs, SITE } from "@/lib/seo/site";
  * one per active incident type in the Go API.
  *
  * Left out: the Studio, the API, dashboards, password reset and chat threads
- * (see robots.ts), and the older Insights, Reports, Datasets and
- * Organisations pages. Those load their content in the browser, which most
+ * (see robots.ts), and the older Insights, Reports and Organisations
+ * pages. Those load their content in the browser, which most
  * AI crawlers don't run; they still have their own titles (their layouts)
  * and are reachable from the footer.
  */

@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "ਘਰ",
-    "datasets": "ਡੇਟਾਸੈੱਟ",
     "maps": "ਨਕਸ਼ੇ",
     "caseStudies": "ਕੇਸ ਸਟੱਡੀਜ਼",
     "reports": "ਰਿਪੋਰਟਾਂ",
@@ -303,28 +302,6 @@
     "registerOrganization": "ਸੰਸਥਾ ਰਜਿਸਟਰ ਕਰੋ",
     "signInFailed": "ਸਾਈਨ ਇਨ ਅਸਫਲ ਰਿਹਾ",
     "signInFailedRetry": "ਸਾਈਨ ਇਨ ਅਸਫਲ ਰਿਹਾ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
-  },
-  "Datasets": {
-    "browseDescription": "ਖੋਜ, ਵਿਸ਼ਲੇਸ਼ਣ ਅਤੇ ਭਾਈਚਾਰਕ ਵਰਤੋਂ ਲਈ ਸੁਤੰਤਰ ਰੂਪ ਵਿੱਚ ਉਪਲਬਧ ਵਿਆਪਕ ਡਾਟਾਸੈੱਟਾਂ ਦੀ ਖੋਜ ਕਰੋ।",
-    "searchPlaceholder": "ਡਾਟਾਸੈੱਟ ਖੋਜੋ...",
-    "allCategories": "ਸਾਰੀਆਂ ਸ਼੍ਰੇਣੀਆਂ",
-    "allFormats": "ਸਾਰੇ ਫਾਰਮੈਟ",
-    "clearFilters": "ਫਿਲਟਰ ਸਾਫ਼ ਕਰੋ",
-    "emptyTitle": "ਕੋਈ ਡਾਟਾਸੈੱਟ ਨਹੀਂ ਮਿਲਿਆ",
-    "emptyDescription": "ਆਪਣੇ ਖੋਜ ਸ਼ਬਦਾਂ ਜਾਂ ਫਿਲਟਰਾਂ ਨੂੰ ਵਿਵਸਥਿਤ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
-    "unknownFormat": "ਅਣਜਾਣ",
-    "datasetInfoLabel": "ਡਾਟਾਸੈੱਟ ਜਾਣਕਾਰੀ",
-    "sizeLabel": "ਆਕਾਰ: {size}",
-    "downloadsCount": "{count} ਡਾਊਨਲੋਡ",
-    "sourceLabel": "ਸਰੋਤ:",
-    "downloadButton": "ਡਾਊਨਲੋਡ ਕਰੋ",
-    "downloadSuccess": "{fileName} ਡਾਊਨਲੋਡ ਹੋ ਗਿਆ",
-    "downloadError": "ਡਾਊਨਲੋਡ ਅਸਫਲ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
-    "ctaTitle": "ਖੋਜਣਾ ਜਾਰੀ ਰੱਖੋ",
-    "ctaDescription": "ਸਾਡੇ ਇੰਟਰਐਕਟਿਵ ਨਕਸ਼ਿਆਂ ਨਾਲ ਘਟਨਾ ਦੇ ਪੈਟਰਨਾਂ ਨੂੰ ਡੂੰਘਾਈ ਨਾਲ ਖੋਜੋ ਜਾਂ ਵੱਖ-ਵੱਖ ਖੇਤਰਾਂ ਅਤੇ ਵਿਸ਼ਿਆਂ ਵਿੱਚ ਵਿਆਪਕ ਰਿਪੋਰਟਾਂ ਬ੍ਰਾਊਜ਼ ਕਰੋ।",
-    "methodology": "ਵਿਧੀ",
-    "coverage": "ਕਵਰੇਜ",
-    "license": "ਲਾਇਸੰਸ"
   },
   "Organizations": {
     "errorTitle": "ਗਲਤੀ",
