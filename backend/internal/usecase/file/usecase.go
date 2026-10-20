@@ -18,7 +18,9 @@ import (
 )
 
 // MaxUploadBytes caps a single upload. Forms set lower limits of their own
-// (10 MB for evidence and registration certificates); datasets need more.
+// (10 MB for evidence and registration certificates). It was sized for
+// datasets, since removed; it now bounds uploads that set no lower limit,
+// such as reports.
 const MaxUploadBytes = 50 << 20
 
 const maxKeyLen = 1024

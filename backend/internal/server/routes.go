@@ -96,12 +96,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 		pub.GET("/reports", s.reportHandler.GetPublicReports)
 		pub.GET("/reports/:id", s.reportHandler.GetPublicReportByID)
 
-		// Public datasets
-		pub.GET("/datasets", s.datasetHandler.GetPublicDatasets)
-		pub.GET("/datasets/categories", s.datasetHandler.GetCategories)
-		pub.GET("/datasets/:id", s.datasetHandler.GetDatasetByID)
-		pub.POST("/datasets/:id/download", s.datasetHandler.IncrementDownload)
-
 		// Alert subscriptions
 		pub.POST("/alerts", strictLimiter, s.alertHandler.Create)
 		pub.GET("/alerts", s.alertHandler.GetByEmail)
@@ -200,10 +194,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 			// platform-wide type. Here because /admin requires an
 			// organization, which a super admin has none of.
 			superAdmin.POST("/incident-types", s.incidentHandler.CreateIncidentType)
-
-			superAdmin.GET("/datasets", s.datasetHandler.GetAllDatasets)
-			superAdmin.POST("/datasets", s.datasetHandler.CreateDataset)
-			superAdmin.DELETE("/datasets/:id", s.datasetHandler.DeleteDataset)
 
 			superAdmin.GET("/alerts/active", s.alertHandler.GetAllActive)
 			superAdmin.GET("/alerts/stats", s.alertHandler.GetStats)
