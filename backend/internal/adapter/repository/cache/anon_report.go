@@ -79,8 +79,8 @@ func mapRowsKey(version string, f entity.MapFilter) string {
 		}
 		return t.UTC().Format(time.DateOnly)
 	}
-	canonical := fmt.Sprintf("c=%s|x=%s|n=%s|p=%s|f=%s|t=%s|q=%s",
-		f.Category, strings.Join(excluded, ","), f.Country, f.Period,
+	canonical := fmt.Sprintf("c=%s|x=%s|n=%s|d=%s|p=%s|f=%s|t=%s|q=%s",
+		f.Category, strings.Join(excluded, ","), f.Country, f.DeploymentID, f.Period,
 		day(f.From), day(f.To), strings.ToLower(f.Query))
 	sum := sha1.Sum([]byte(canonical))
 	if version == "" {
@@ -133,6 +133,12 @@ func (r *CachedAnonymousReportRepository) GetHeatmapData(ctx context.Context) ([
 	}
 	cacheSet(ctx, r.rdb, keyAnonHeatmap, result, heatmapTTL)
 	return result, nil
+}
+
+// CountCreatedSince isn't cached: only the super admin's dashboard reads
+// it, and every new report would make a cached count stale.
+func (r *CachedAnonymousReportRepository) CountCreatedSince(ctx context.Context, since time.Time) (int, error) {
+	return r.repo.CountCreatedSince(ctx, since)
 }
 
 func (r *CachedAnonymousReportRepository) GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error) {

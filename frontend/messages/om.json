@@ -22,7 +22,6 @@
   "Navigation": {
     "home": "Mana",
     "about": "Waa'ee",
-    "datasets": "Daataa",
     "maps": "Kaartaawwan",
     "caseStudies": "Xinxalota",
     "reports": "Gabaasota",
@@ -304,28 +303,6 @@
     "signInFailed": "Sign in failed",
     "signInFailedRetry": "Sign in failed. Please try again."
   },
-  "Datasets": {
-    "browseDescription": "Daataa bal'aa - qorannoo, xiinxala, fi fayyadama hawaasaaf tola argamu argadhu.",
-    "searchPlaceholder": "Daataa barbaadi...",
-    "allCategories": "Ramaddii Hunda",
-    "allFormats": "Bifa Hunda",
-    "clearFilters": "Filannoo Haqi",
-    "emptyTitle": "Daataan hin argamne",
-    "emptyDescription": "Jecha barbaacha ykn filannoo keessan sirreessuu yaalaa.",
-    "unknownFormat": "Kan Hin Beekamne",
-    "datasetInfoLabel": "Odeeffannoo Daataa",
-    "sizeLabel": "Guddina: {size}",
-    "downloadsCount": "yeroo {count} buufame",
-    "sourceLabel": "Madda:",
-    "downloadButton": "Buufi",
-    "downloadSuccess": "{fileName} buufameera",
-    "downloadError": "Buufamuun hin milkoofne. Irra deebi'ii yaali.",
-    "ctaTitle": "Sakatta'uu Itti Fufi",
-    "ctaDescription": "Kaartaawwan wal qunnamsiisan keenya waliin bifa dhimmootaa keessa fageenyaan seeni ykn gabaasota naannolee fi mata duree adda addaa ilaali.",
-    "methodology": "Tooftaa",
-    "coverage": "Bal'ina",
-    "license": "Hayyama"
-  },
   "Organizations": {
     "errorTitle": "Dogoggora",
     "errorLoading": "Dhaabbilee fe'uun hin milkoofne. Irra deebi'ii yaali.",
@@ -535,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
     "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
     "outcomeAccessibleVoting": "More accessible voting for everyone"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Kan {organization}",
+    "notTakingReports": "Hojiirrin kun amma gabaasa hin fudhatu.",
+    "viewMap": "Kaartaa ilaali"
   }
 }

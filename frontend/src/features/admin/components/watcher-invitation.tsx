@@ -48,29 +48,30 @@ const WatcherInvitation = () => {
     }
   }
 
+  // Name, email and Invite in one row, filled with the muted grey like the
+  // dashboards' other top rows; each field's message shows beneath it.
   return (
-    <div className=" mt-2  ">
-      <h2 className="font-semibold text-xl pb-4 font-title">
-        Invite a watcher
-      </h2>
-      <div className="p-8 bg-white rounded-md border">
+    <div>
+      <div>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex items-end gap-2"
+            className="flex flex-col gap-3 sm:flex-row sm:items-start"
           >
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="w-full max-w-96">
-                  <div className="flex justify-between">
-                    <FormLabel>Name</FormLabel>
-                    <FormMessage />
-                  </div>
+                <FormItem className="gap-1 sm:flex-1">
+                  <FormLabel className="sr-only">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="johndoe" {...field} />
+                    <Input
+                      placeholder="Watcher's name"
+                      className="bg-muted border-transparent shadow-none"
+                      {...field}
+                    />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -78,17 +79,17 @@ const WatcherInvitation = () => {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="w-full max-w-96">
-                  <div className="flex justify-between">
-                    <FormLabel>Email</FormLabel>
-                    <FormMessage />
-                  </div>
+                <FormItem className="gap-1 sm:flex-1">
+                  <FormLabel className="sr-only">Email</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="johndoe@amplifiedaccess.org"
+                      type="email"
+                      placeholder="Their email address"
+                      className="bg-muted border-transparent shadow-none"
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -97,7 +98,7 @@ const WatcherInvitation = () => {
               disabled={isInviting || hasInvited}
               className="hover:cursor-pointer"
             >
-              {isInviting ? <Loader /> : hasInvited ? <Check /> : "Invite"}
+              {isInviting ? <Loader /> : hasInvited ? <Check /> : "Invite watcher"}
             </Button>
           </form>
         </Form>

@@ -22,7 +22,6 @@
   "Navigation": {
     "home": "Paan",
     "about": "Kek ë ",
-    "datasets": "Athör",
     "maps": "Mapthiin",
     "caseStudies": "Tuɔ̈ɔ̈c ë Kek",
     "reports": "Baŋ Athör",
@@ -304,28 +303,6 @@
     "signInFailed": "Sign in failed",
     "signInFailedRetry": "Sign in failed. Please try again."
   },
-  "Datasets": {
-    "browseDescription": "Nyin athör adit - acïn wël bï yïn bɛ̈i tënë luɔɔi wɛ̈t, nyin, ku luɔɔi panyda.",
-    "searchPlaceholder": "Wɛ̈t athör...",
-    "allCategories": "Kuɔɔth Kedhiɛ",
-    "allFormats": "Kaŋ Kedhiɛ",
-    "clearFilters": "Cieec Alɔc",
-    "emptyTitle": "Athör aacï yök",
-    "emptyDescription": "Tɔ̈ŋ puk wël wɛ̈t walä alɔc.",
-    "unknownFormat": "Acïn Nyic",
-    "datasetInfoLabel": "Athör Nyin",
-    "sizeLabel": "Dit: {size}",
-    "downloadsCount": "{count} cï bɛ̈i",
-    "sourceLabel": "Gɔl bei:",
-    "downloadButton": "Bɛ̈i",
-    "downloadSuccess": "{fileName} acï bɛ̈i",
-    "downloadError": "Bɛ̈i acïn pial. Tɔ̈ŋ akölɛ.",
-    "ctaTitle": "Nyin Akölɛ",
-    "ctaDescription": "Nyin adit kuɔɔth baŋ kek mapthiin da walä nyin baŋ athör panydit kek kuɔɔth aleu.",
-    "methodology": "Kaam Ë Luɔɔi",
-    "coverage": "Bäk",
-    "license": "Löŋ"
-  },
   "Organizations": {
     "errorTitle": "Juër",
     "errorLoading": "Bɛ̈i mat acïn pial. Tɔ̈ŋ akölɛ.",
@@ -535,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
     "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
     "outcomeAccessibleVoting": "More accessible voting for everyone"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Ë {organization}",
+    "notTakingReports": "Luɔi kënë acie athör ye noŋ ëmën.",
+    "viewMap": "Tïŋ Mapthiin"
   }
 }

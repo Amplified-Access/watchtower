@@ -39,12 +39,17 @@ interface CreateIncidentTypeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  // Who is creating it: an organization's admin (the default) or a super
+  // admin, who has no organization and goes through the super admin route.
+  // Either way the type is platform-wide.
+  scope?: "organization" | "platform";
 }
 
 export const CreateIncidentTypeDialog = ({
   open,
   onOpenChange,
   onSuccess,
+  scope = "organization",
 }: CreateIncidentTypeDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -57,18 +62,25 @@ export const CreateIncidentTypeDialog = ({
     },
   });
 
+  const mutationCallbacks = {
+    onSuccess: () => {
+      toast.success("Incident type created successfully");
+      form.reset();
+      onSuccess();
+    },
+    onError: (error: { message: string }) => {
+      toast.error(error.message || "Failed to create incident type");
+      setIsSubmitting(false);
+    },
+  };
+  // Both hooks are called on every render (hooks can't be conditional);
+  // scope picks which one submits.
+  const organizationMutation =
+    trpc.createIncidentTypeForOrganization.useMutation(mutationCallbacks);
+  const platformMutation =
+    trpc.createIncidentTypeAsSuperAdmin.useMutation(mutationCallbacks);
   const createIncidentTypeMutation =
-    trpc.createIncidentTypeForOrganization.useMutation({
-      onSuccess: () => {
-        toast.success("Incident type created successfully");
-        form.reset();
-        onSuccess();
-      },
-      onError: (error) => {
-        toast.error(error.message || "Failed to create incident type");
-        setIsSubmitting(false);
-      },
-    });
+    scope === "platform" ? platformMutation : organizationMutation;
 
   const onSubmit = async (data: CreateIncidentTypeFormData) => {
     setIsSubmitting(true);

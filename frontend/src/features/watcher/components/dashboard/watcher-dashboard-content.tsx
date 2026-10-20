@@ -5,6 +5,7 @@ import { useExtendedSession } from "@/hooks/use-extended-session";
 import PageLoader from "@/components/common/page-loader";
 import Container from "@/components/common/container";
 import { StatsCard } from "@/components/dashboard/stats-card";
+import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { QuickOverview } from "@/components/dashboard/quick-overview";
 import { RechartsLineChart } from "@/components/dashboard/recharts-line-chart";
@@ -12,12 +13,15 @@ import {
   AlertTriangle,
   FileText,
   FormInput,
-  TrendingUp,
   Activity,
-  CheckCircle,
-  Clock,
   Building2,
 } from "lucide-react";
+import {
+  CheckmarkCircle02Icon,
+  Clock01Icon,
+  File02Icon,
+  Task01Icon,
+} from "@hugeicons/core-free-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -96,18 +100,10 @@ export default function WatcherDashboardContent() {
   }));
 
   return (
-    <div className="flex-1 space-y-6 py-4 md:p-6">
+    <div className="flex-1 pb-6">
       <Container size="lg" className="space-y-6">
-        {/* Welcome Section */}
-        <div className="flex md:items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-title pb-2">
-              Welcome back, {user?.name}
-            </h1>
-            <p className="text-muted-foreground">
-              Manage incidents for your organization.
-            </p>
-          </div>
+        {/* The organization and the watcher's main action */}
+        <div className="flex justify-end">
           <div className="flex flex-col items-end gap-2 justify-between">
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Organization</p>
@@ -126,17 +122,17 @@ export default function WatcherDashboardContent() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatsGrid>
           <StatsCard
             title="Available Forms"
             value={totalForms}
-            icon={FormInput}
+            icon={Task01Icon}
             description="Forms ready for reporting"
           />
           <StatsCard
             title="My Reports Today"
             value={dashboardStats?.incidents?.open || 0}
-            icon={FileText}
+            icon={File02Icon}
             change={{
               value: "Open incidents",
               type: "neutral",
@@ -148,7 +144,7 @@ export default function WatcherDashboardContent() {
             value={
               myIncidents.filter((i) => i.status === "reported").length
             }
-            icon={Clock}
+            icon={Clock01Icon}
             change={{
               value: "Awaiting review",
               type: "neutral",
@@ -160,17 +156,17 @@ export default function WatcherDashboardContent() {
             value={`${
               myIncidents.filter((i) => i.status === "resolved").length
             }/${myIncidents.length || 1}`}
-            icon={CheckCircle}
+            icon={CheckmarkCircle02Icon}
             change={{
               value: "This week",
               type: "neutral",
             }}
             description="Task completion rate"
           />
-        </div>
+        </StatsGrid>
 
         {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Recent Activity - spans 2 columns */}
           <div className="lg:col-span-2">
             <RecentActivity
@@ -185,7 +181,7 @@ export default function WatcherDashboardContent() {
           </div>
 
           {/* Quick Actions */}
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title text-lg">
                 Quick Actions
@@ -238,7 +234,7 @@ export default function WatcherDashboardContent() {
         </div>
 
         {/* Quick Overview Grid */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <QuickOverview
             title="My Recent Incidents"
             items={myIncidents}

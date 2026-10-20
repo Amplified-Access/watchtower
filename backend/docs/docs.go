@@ -226,6 +226,240 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/deployments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the deployments of the authenticated admin's organization, newest first, each with its incident types",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Deployments"
+                ],
+                "summary": "List the organization's deployments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a deployment for the authenticated admin's organization. It needs a name and at least one incident type; its slug is made from the name. Status defaults to draft. Dates are RFC 3339.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Deployments"
+                ],
+                "summary": "Create a deployment",
+                "parameters": [
+                    {
+                        "description": "Deployment",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_domain_entity.NewDeployment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/deployments/stats": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "For the admin's dashboard: the organization's deployments by status, and the reports that came through them (ever, this month against last, by incident type, and per week over the last seven weeks)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Deployments"
+                ],
+                "summary": "The organization's deployment numbers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/deployments/{id}/status": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Takes one of the admin's organization's deployments live, back to draft, or closes it",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Deployments"
+                ],
+                "summary": "Change a deployment's status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Deployment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "draft, live or closed",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/forms": {
             "get": {
                 "security": [
@@ -585,7 +819,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Creates a new platform-wide incident type (admin only)",
+                "description": "Creates a new platform-wide incident type (admin or super admin)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1896,6 +2130,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Only reports sent through this deployment's reporting link",
+                        "name": "deploymentId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Relative window: 24h, 7d, 30d, week, month or year",
                         "name": "period",
                         "in": "query"
@@ -2063,152 +2303,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/datasets": {
+        "/deployments/{slug}": {
             "get": {
-                "description": "Returns a paginated list of publicly available datasets, optionally filtered by category",
+                "description": "Returns a live or closed deployment by its slug, with its organization's name and incident types, for its public page and reporting link. Drafts are not found.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Datasets"
+                    "Deployments"
                 ],
-                "summary": "List public datasets",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Page size (default 20, max 100)",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Pagination offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Search term",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field (default: created_at)",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort direction: asc or desc",
-                        "name": "sortOrder",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Filter by category",
-                        "name": "category",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/datasets/categories": {
-            "get": {
-                "description": "Returns all distinct dataset categories",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Datasets"
-                ],
-                "summary": "List dataset categories",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/datasets/{id}": {
-            "get": {
-                "description": "Returns a single public dataset by its UUID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Datasets"
-                ],
-                "summary": "Get dataset by ID",
+                "summary": "Get a deployment",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Dataset UUID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/datasets/{id}/download": {
-            "post": {
-                "description": "Increments the download counter for a dataset",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Datasets"
-                ],
-                "summary": "Record dataset download",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Dataset UUID",
-                        "name": "id",
+                        "description": "Deployment slug",
+                        "name": "slug",
                         "in": "path",
                         "required": true
                     }
@@ -2844,6 +2953,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Only reports sent through this deployment's reporting link",
+                        "name": "deploymentId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Relative window: 24h, 7d, 30d, week, month or year",
                         "name": "period",
                         "in": "query"
@@ -2981,6 +3096,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Country name",
                         "name": "country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Only reports sent through this deployment's reporting link",
+                        "name": "deploymentId",
                         "in": "query"
                     },
                     {
@@ -3814,57 +3935,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/superadmin/dashboard/activity": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Returns the most recent activity events across the platform (super admin only)",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Super Admin – Dashboard"
-                ],
-                "summary": "Get recent platform activity",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Number of events to return (default: 10)",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/superadmin/dashboard/stats": {
             "get": {
                 "security": [
@@ -3915,7 +3985,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns weekly incident counts over the past 7 weeks (super admin only)",
+                "description": "Returns weekly counts of public reports over the past 7 weeks (super admin only)",
                 "produces": [
                     "application/json"
                 ],
@@ -3951,50 +4021,26 @@ const docTemplate = `{
                 }
             }
         },
-        "/superadmin/datasets": {
+        "/superadmin/deployments": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns a paginated list of all datasets regardless of visibility (super admin only)",
+                "description": "Returns every deployment on the platform, newest first, with its organization's name and its incident types",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Super Admin – Datasets"
+                    "Super Admin – Deployments"
                 ],
-                "summary": "List all datasets",
+                "summary": "List all deployments",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Page size (default 20, max 100)",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Pagination offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
-                        "description": "Search term",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort direction: asc or desc",
-                        "name": "sortOrder",
+                        "description": "Only this organization's deployments",
+                        "name": "organizationId",
                         "in": "query"
                     }
                 ],
@@ -4013,175 +4059,6 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Creates a new dataset record (super admin only)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Super Admin – Datasets"
-                ],
-                "summary": "Create dataset",
-                "parameters": [
-                    {
-                        "description": "Dataset payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "category": {
-                                    "type": "string"
-                                },
-                                "coverage": {
-                                    "type": "string"
-                                },
-                                "description": {
-                                    "type": "string"
-                                },
-                                "fileKey": {
-                                    "type": "string"
-                                },
-                                "fileName": {
-                                    "type": "string"
-                                },
-                                "fileSize": {
-                                    "type": "integer"
-                                },
-                                "fileType": {
-                                    "type": "string"
-                                },
-                                "format": {
-                                    "type": "string"
-                                },
-                                "isPublic": {
-                                    "type": "boolean"
-                                },
-                                "keywords": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                },
-                                "license": {
-                                    "type": "string"
-                                },
-                                "methodology": {
-                                    "type": "string"
-                                },
-                                "source": {
-                                    "type": "string"
-                                },
-                                "tags": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                },
-                                "title": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/superadmin/datasets/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Permanently removes a dataset (super admin only)",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Super Admin – Datasets"
-                ],
-                "summary": "Delete dataset",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Dataset UUID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
                         }
@@ -4245,6 +4122,80 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/superadmin/incident-types": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new platform-wide incident type (admin or super admin)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Incident Types"
+                ],
+                "summary": "Create incident type",
+                "parameters": [
+                    {
+                        "description": "Incident type payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "color": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
                         }
@@ -4387,6 +4338,49 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/superadmin/organizations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns every organization, newest first, with how many deployments each has made",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Super Admin – Organizations"
+                ],
+                "summary": "List organizations with deployment counts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
                         }
@@ -4691,6 +4685,19 @@ const docTemplate = `{
                 }
             }
         },
+        "backend_internal_domain_entity.DeploymentStatus": {
+            "type": "string",
+            "enum": [
+                "draft",
+                "live",
+                "closed"
+            ],
+            "x-enum-varnames": [
+                "DeploymentDraft",
+                "DeploymentLive",
+                "DeploymentClosed"
+            ]
+        },
         "backend_internal_domain_entity.KnowledgeMatch": {
             "type": "object",
             "properties": {
@@ -4844,6 +4851,38 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "backend_internal_domain_entity.NewDeployment": {
+            "type": "object",
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "endsAt": {
+                    "type": "string"
+                },
+                "incidentTypeIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "startsAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/backend_internal_domain_entity.DeploymentStatus"
                 }
             }
         },

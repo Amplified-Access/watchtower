@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "Mũciĩ",
-    "datasets": "Nyũmba cia ũhoro",
     "maps": "Mepe",
     "caseStudies": "Ngeretha",
     "reports": "Marũpoti",
@@ -304,28 +303,6 @@
     "signInFailed": "Sign in failed",
     "signInFailedRetry": "Sign in failed. Please try again."
   },
-  "Datasets": {
-    "browseDescription": "Menya ũhoro wa mĩbango ũrĩa mũingĩ - ũrĩa wonekaga tũhũ nĩ ũndũ wa ũthuthuria, gũthuthuria, na kũhũthĩrwo nĩ mũcemanio.",
-    "searchPlaceholder": "Caria ũhoro wa mĩbango...",
-    "allCategories": "Mĩthemba Yothe",
-    "allFormats": "Mĩthemba Yothe ya Ũthondeku",
-    "clearFilters": "Eheria Mathuuro",
-    "emptyTitle": "Gũtirĩ ũhoro wa mĩbango wonekete",
-    "emptyDescription": "Geria kũgarũra ciugo iria ũracaria nacio kana mathuuro.",
-    "unknownFormat": "Ũtooĩkaine",
-    "datasetInfoLabel": "Ũhoro wa Mĩbango",
-    "sizeLabel": "Ũnene: {size}",
-    "downloadsCount": "kũambũrũrwo {count}",
-    "sourceLabel": "Kuuma:",
-    "downloadButton": "Ambũrũra",
-    "downloadSuccess": "{fileName} nĩyambũrũirwo",
-    "downloadError": "Kwambũrũra kũagire. Tafadhali geria rĩngĩ.",
-    "ctaTitle": "Thiĩ na Mbere Gũcaria",
-    "ctaDescription": "Thuthuria makĩria mĩthiĩre ya mahitũko na mepe citũ cia mũthenya wothe kana wone marũpoti ma ũingĩ thĩinĩ wa mabũrũri na ndũmĩrĩri itangĩiganana.",
-    "methodology": "Njĩra",
-    "coverage": "Ũingĩ",
-    "license": "Rũtha"
-  },
   "Organizations": {
     "errorTitle": "Ihĩtia",
     "errorLoading": "Kũrehe thiritũ kũagire. Tafadhali geria rĩngĩ thutha.",
@@ -535,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
     "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
     "outcomeAccessibleVoting": "More accessible voting for everyone"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Nĩ {organization}",
+    "notTakingReports": "Wĩra ũyũ ndũrĩ kwamũkĩra rũpoti rĩu.",
+    "viewMap": "Rora mepe"
   }
 }

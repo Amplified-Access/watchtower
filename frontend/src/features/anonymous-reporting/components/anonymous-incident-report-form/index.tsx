@@ -36,7 +36,13 @@ import ReportReviewDialog from "./report-review-dialog";
 import { reportFieldClassName, reportLabelClassName } from "./field-styles";
 import { uploadFile as uploadFileToStorage } from "@/utils/file-upload";
 
-const AnonymousIncidentReportForm = () => {
+/** A deployment's reporting link: only its incident types, and the report is sent to it. */
+export interface ReportFormDeployment {
+  id: string;
+  incidentTypes: { id: string; name: string }[];
+}
+
+const AnonymousIncidentReportForm = ({ deployment }: { deployment?: ReportFormDeployment }) => {
   const t = useTranslations("IncidentReporting");
 
   const recorder = useVoiceRecorder({
@@ -79,7 +85,10 @@ const AnonymousIncidentReportForm = () => {
   const [evidenceUploadKey, setEvidenceUploadKey] = useState(0);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
 
-  const { data: categoriesData } = trpc.anonymousReports.getAllIncidentTypes.useQuery();
+  const { data: categoriesData } = trpc.anonymousReports.getAllIncidentTypes.useQuery(undefined, {
+    enabled: !deployment,
+  });
+  const categories = deployment?.incidentTypes ?? categoriesData?.data ?? [];
   const submitMutation = trpc.anonymousReports.submitAmonymousIncidentReport.useMutation();
 
   const uploadFile = async (file: File, failedMessage: string, errorMessage: string) => {
@@ -125,6 +134,7 @@ const AnonymousIncidentReportForm = () => {
         fatalities: toCount(values.fatalities),
         evidenceFileKey,
         audioFileKey,
+        deploymentId: deployment?.id,
       });
     } catch {
       toast.error(t("submitError"));
@@ -152,7 +162,7 @@ const AnonymousIncidentReportForm = () => {
   };
 
   const watched = useWatch({ control: form.control });
-  const categoryName = categoriesData?.data?.find((c) => c.id === watched.category)?.name;
+  const categoryName = categories.find((c) => c.id === watched.category)?.name;
 
   return (
     <Form {...form}>
@@ -165,7 +175,7 @@ const AnonymousIncidentReportForm = () => {
           />
         </div>
 
-        <IncidentTypeCombobox form={form} />
+        <IncidentTypeCombobox form={form} types={deployment?.incidentTypes} />
         <IncidentLocationCombobox form={form} />
 
         <FormField

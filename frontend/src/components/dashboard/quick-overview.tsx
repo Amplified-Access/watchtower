@@ -109,6 +109,7 @@ export function QuickOverview({
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "resolved":
+      case "live":
       case "published":
       case "active":
       case "done":
@@ -129,7 +130,7 @@ export function QuickOverview({
   };
 
   return (
-    <Card className={cn("rounded-md shadow-none", className)}>
+    <Card className={cn("shadow-none", className)}>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-title">{title}</CardTitle>
         {viewAllHref && (
@@ -149,7 +150,9 @@ export function QuickOverview({
             <p className="text-muted-foreground">{emptyMessage}</p>
           </div>
         ) : (
-          <div className="border rounded-sm">
+          // A step smaller than the card (rounded-xl), and clipped so the
+          // rows' hover background follows the corners.
+          <div className="border rounded-lg overflow-hidden">
             <Table className="">
               <TableHeader>
                 <TableRow className="">

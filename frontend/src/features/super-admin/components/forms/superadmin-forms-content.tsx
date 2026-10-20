@@ -205,7 +205,7 @@ const SuperAdminFormsContent = () => {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="flex justify-between">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-title text-nowrap">
@@ -302,7 +302,7 @@ const SuperAdminFormsContent = () => {
       </Card>
 
       {/* Forms Table */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="p-0">
           {forms.length === 0 ? (
             <div className="text-center py-12">
@@ -357,19 +357,9 @@ const SuperAdminFormsContent = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          {form.incidentCount}
-                        </span>
-                        {(form.incidentCount ?? 0) > 0 && (
-                          <Link
-                            href={`/superadmin/incidents?formId=${form.id}`}
-                            className="text-blue-600 hover:text-blue-800 text-xs"
-                          >
-                            View
-                          </Link>
-                        )}
-                      </div>
+                      <span className="font-medium">
+                        {form.incidentCount}
+                      </span>
                     </TableCell>
                     <TableCell>
                       {new Date(form.createdAt).toLocaleDateString()}

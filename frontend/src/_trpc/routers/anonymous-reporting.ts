@@ -41,6 +41,8 @@ export const anonymousReportingRouter = router({
         fatalities: z.number().optional(),
         evidenceFileKey: z.string().optional(),
         audioFileKey: z.string().optional(),
+        // Set by a deployment's reporting link.
+        deploymentId: z.string().optional(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -54,6 +56,7 @@ export const anonymousReportingRouter = router({
           fatalities: input.fatalities,
           evidenceFileKey: input.evidenceFileKey,
           audioFileKey: input.audioFileKey,
+          deploymentId: input.deploymentId,
         });
         if (!res.success) throw new Error(res.error ?? "Failed to submit incident");
         return { success: true };

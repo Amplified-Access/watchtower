@@ -7,6 +7,7 @@ import {
   protectedProcedure,
 } from "../middleware";
 import { adminApi } from "@/lib/api/admin";
+import { deploymentsApi } from "@/lib/api/deployments";
 import { incidentsApi } from "@/lib/api/incidents";
 import { organizationsApi } from "@/lib/api/organizations";
 import { reportsApi } from "@/lib/api/reports";
@@ -91,6 +92,78 @@ export const adminRouter = router({
           message: "Failed to send password reset email",
         });
       }
+    }),
+
+  // The admin's organization's deployments (Go reads the organization from
+  // the session).
+  getOrganizationDeployments: organizationProcedure.query(async () => {
+    const res = await deploymentsApi.getOrganizationDeployments();
+    if (!res.success) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: res.error ?? "Failed to fetch deployments",
+      });
+    }
+    return res.data ?? [];
+  }),
+
+  // The admin's dashboard: their deployments by status and the reports that
+  // came through them, as Go counts them.
+  getOrganizationDeploymentStats: organizationProcedure.query(async () => {
+    const res = await deploymentsApi.getOrganizationStats();
+    if (!res.success || !res.data) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: res.error ?? "Failed to load deployment numbers",
+      });
+    }
+    return res.data;
+  }),
+
+  // Take one of the organization's deployments live, back to draft, or
+  // close it.
+  updateDeploymentStatus: organizationProcedure
+    .input(z.object({ id: z.string(), status: z.enum(["draft", "live", "closed"]) }))
+    .mutation(async ({ input }) => {
+      const res = await deploymentsApi.updateStatus(input.id, input.status);
+      if (!res.success) {
+        throw new TRPCError({
+          code: res.status === 404 ? "NOT_FOUND" : res.status === 400 ? "BAD_REQUEST" : "INTERNAL_SERVER_ERROR",
+          message: res.error ?? "Failed to update the deployment",
+        });
+      }
+      return res.data;
+    }),
+
+  createDeployment: organizationProcedure
+    .input(
+      z.object({
+        name: z.string().trim().min(1, "Name is required").max(120, "Name is too long"),
+        description: z.string().optional(),
+        country: z.string().optional(),
+        region: z.string().optional(),
+        status: z.enum(["draft", "live", "closed"]).optional(),
+        startsAt: z.string().datetime().optional(),
+        endsAt: z.string().datetime().optional(),
+        incidentTypeIds: z.array(z.string()).min(1, "Choose at least one incident type"),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const res = await deploymentsApi.create(input);
+      if (!res.success) {
+        // Go's 400s and 409s say what to fix ("choose at least one incident
+        // type", a name too common); pass them through.
+        throw new TRPCError({
+          code:
+            res.status === 400
+              ? "BAD_REQUEST"
+              : res.status === 409
+                ? "CONFLICT"
+                : "INTERNAL_SERVER_ERROR",
+          message: res.error ?? "Failed to create deployment",
+        });
+      }
+      return res.data;
     }),
 
   getOrganizationIncidentTypes: organizationProcedure.query(async ({ ctx }) => {

@@ -95,6 +95,11 @@ export const incidentsApi = {
   createType: (data: { name: string; description?: string; color: string }) =>
     api.post("/admin/incident-types", data),
 
+  // The same platform-wide create, for a super admin: /admin requires an
+  // organization, which a super admin has none of.
+  createTypeAsSuperAdmin: (data: { name: string; description?: string; color: string }) =>
+    api.post("/superadmin/incident-types", data),
+
   enableType: (orgId: string, typeId: string) =>
     api.post(`/admin/incident-types/${typeId}/enable?organizationId=${orgId}`),
 
@@ -162,21 +167,6 @@ export const incidentsApi = {
     api.get<{ name: string; value: number }[]>(`/admin/analytics/types?organizationId=${orgId}`),
 
   // Super admin
-  getAllIncidents: (params?: ListParams) => {
-    const query = new URLSearchParams();
-    if (params?.limit) query.set("limit", String(params.limit));
-    if (params?.offset) query.set("offset", String(params.offset));
-    if (params?.search) query.set("search", params.search);
-    if (params?.status) query.set("status", params.status);
-    if (params?.organizationId) query.set("organizationId", params.organizationId);
-    if (params?.sort) query.set("sort", params.sort);
-    if (params?.sortOrder) query.set("sortOrder", params.sortOrder);
-    const qs = query.toString();
-    return api.get<Incident[]>(`/superadmin/incidents${qs ? `?${qs}` : ""}`);
-  },
-
-  deleteIncident: (id: string) => api.delete(`/superadmin/incidents/${id}`),
-
   // Anonymous reporting
   submitAnonymousReport: (data: {
     incidentTypeId: string;
@@ -187,6 +177,8 @@ export const incidentsApi = {
     fatalities?: number;
     evidenceFileKey?: string;
     audioFileKey?: string;
+    /** Set by a deployment's reporting link. */
+    deploymentId?: string;
   }) => api.post("/incidents/anonymous", data),
 
   getAnonymousReports: (params?: { country?: string; category?: string; timeframe?: string }) => {

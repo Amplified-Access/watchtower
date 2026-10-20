@@ -28,6 +28,7 @@ func NewAnalyticsHandler(uc *analyticsusecase.UseCase) *AnalyticsHandler {
 //	@Param			groupBy		query		string	false	"Split by: country, type, day, week or month. Omit for totals only"
 //	@Param			category	query		string	false	"Incident type name"
 //	@Param			country		query		string	false	"Country name"
+//	@Param			deploymentId		query		string	false	"Only reports sent through this deployment's reporting link"
 //	@Param			period		query		string	false	"Relative window: 24h, 7d, 30d, week, month or year"
 //	@Param			from		query		string	false	"Start date (YYYY-MM-DD), instead of period"
 //	@Param			to			query		string	false	"End date, inclusive (YYYY-MM-DD), instead of period"

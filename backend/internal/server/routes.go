@@ -93,14 +93,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 		pub.GET("/insights/:slug", s.insightHandler.GetPublicInsightBySlug)
 
 		// Public reports
+		// A deployment's public page and reporting link (live or closed).
+		pub.GET("/deployments/:slug", s.deploymentHandler.GetPublicDeployment)
+
 		pub.GET("/reports", s.reportHandler.GetPublicReports)
 		pub.GET("/reports/:id", s.reportHandler.GetPublicReportByID)
-
-		// Public datasets
-		pub.GET("/datasets", s.datasetHandler.GetPublicDatasets)
-		pub.GET("/datasets/categories", s.datasetHandler.GetCategories)
-		pub.GET("/datasets/:id", s.datasetHandler.GetDatasetByID)
-		pub.POST("/datasets/:id/download", s.datasetHandler.IncrementDownload)
 
 		// Alert subscriptions
 		pub.POST("/alerts", strictLimiter, s.alertHandler.Create)
@@ -149,6 +146,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 			admin.GET("/watchers", s.userHandler.GetAllWatchers)
 			admin.POST("/watchers", strictLimiter, s.authHandler.InviteUser)
 
+			admin.GET("/deployments", s.deploymentHandler.GetOrganizationDeployments)
+			admin.POST("/deployments", s.deploymentHandler.CreateDeployment)
+			admin.GET("/deployments/stats", s.deploymentHandler.GetOrganizationDeploymentStats)
+			admin.PATCH("/deployments/:id/status", s.deploymentHandler.UpdateDeploymentStatus)
+
 			admin.GET("/incident-types", s.incidentHandler.GetTypesByOrganization)
 			admin.GET("/incident-types/available", s.incidentHandler.GetAvailableTypes)
 			admin.POST("/incident-types", s.incidentHandler.CreateIncidentType)
@@ -196,15 +198,18 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 			superAdmin.GET("/reports", s.reportHandler.GetAllReports)
 
-			superAdmin.GET("/datasets", s.datasetHandler.GetAllDatasets)
-			superAdmin.POST("/datasets", s.datasetHandler.CreateDataset)
-			superAdmin.DELETE("/datasets/:id", s.datasetHandler.DeleteDataset)
+			superAdmin.GET("/deployments", s.deploymentHandler.GetAllDeployments)
+			superAdmin.GET("/organizations", s.orgHandler.GetAllWithDeploymentCounts)
+
+			// The same handler as /admin/incident-types: it creates a
+			// platform-wide type. Here because /admin requires an
+			// organization, which a super admin has none of.
+			superAdmin.POST("/incident-types", s.incidentHandler.CreateIncidentType)
 
 			superAdmin.GET("/alerts/active", s.alertHandler.GetAllActive)
 			superAdmin.GET("/alerts/stats", s.alertHandler.GetStats)
 
 			superAdmin.GET("/dashboard/stats", s.adminHandler.GetPlatformStats)
-			superAdmin.GET("/dashboard/activity", s.adminHandler.GetRecentActivity)
 			superAdmin.GET("/dashboard/trend", s.adminHandler.GetPlatformActivityTrend)
 			superAdmin.GET("/dashboard/report-types", s.adminHandler.GetPlatformReportsByType)
 		}

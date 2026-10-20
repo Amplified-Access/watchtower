@@ -69,7 +69,7 @@ export function InteractiveData({
   }));
 
   return (
-    <Card className={cn("shadow-none rounded-md",className)}>
+    <Card className={cn("shadow-none ",className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-lg font-title">{title}</CardTitle>
         <Select value={selectedTimeframe} onValueChange={handleTimeframeChange}>

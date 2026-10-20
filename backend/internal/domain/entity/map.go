@@ -40,7 +40,10 @@ type MapFilter struct {
 	// ExcludeTypeIDs are incident types switched off in the live map's panel.
 	ExcludeTypeIDs []string
 	Country        string
-	Period         MapPeriod
+	// DeploymentID narrows the map to the reports sent through one
+	// deployment's reporting link.
+	DeploymentID string
+	Period       MapPeriod
 	// From and To bound a custom date range; To is exclusive.
 	From  *time.Time
 	To    *time.Time

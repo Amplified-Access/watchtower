@@ -103,7 +103,7 @@ export function RechartsPieChart({
 
   if (data.length === 0) {
     return (
-      <Card className={cn("rounded-md shadow-none", className)}>
+      <Card className={cn("shadow-none", className)}>
         <CardHeader>
           <CardTitle className="text-lg font-title">{title}</CardTitle>
         </CardHeader>
@@ -121,7 +121,7 @@ export function RechartsPieChart({
   return (
     <Card
       data-chart={id}
-      className={cn("flex flex-col rounded-md shadow-none", className)}
+      className={cn("flex flex-col shadow-none", className)}
     >
       <ChartStyle id={id} config={chartConfig} />
       <CardHeader className="flex-row items-start space-y-0 pb-0">

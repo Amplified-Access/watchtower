@@ -109,7 +109,7 @@ const Page = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title text-lg">
                 <FileText className="h-5 w-5" />
@@ -194,7 +194,7 @@ const Page = () => {
           </Card>
 
           {/* Organization Info */}
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title text-lg">
                 <AlertCircle className="h-5 w-5" />

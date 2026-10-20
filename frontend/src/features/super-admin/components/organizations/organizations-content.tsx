@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import PageLoader from "@/components/common/page-loader";
 
 const OrganizationsContent = () => {
-  const { data, isLoading, error } = trpc.getAllOrganizatons.useQuery();
-  console.log("Organization data:", data);
+  // With each organization's deployment count, from the super admin route.
+  const { data, isLoading, error } =
+    trpc.getOrganizationsWithDeploymentCounts.useQuery();
 
   if (error) {
     toast.error("An error occured while fetching applications");
@@ -26,20 +27,12 @@ const OrganizationsContent = () => {
           <div>
             <DataTable
               columns={columns}
-              data={
-                data?.data && Array.isArray(data.data)
-                  ? data.data.map((item: any) => ({
-                      id: parseInt(item.id),
-                      organizationName: item.name,
-                      date:
-                        "date" in item
-                          ? item.date
-                          : item.createdAt
-                          ? new Date(item.createdAt).toLocaleDateString()
-                          : "",
-                    }))
-                  : []
-              }
+              data={(data ?? []).map((org) => ({
+                id: org.id,
+                organizationName: org.name,
+                deploymentCount: org.deploymentCount,
+                date: new Date(org.createdAt).toLocaleDateString(),
+              }))}
             />
           </div>
         )}

@@ -4,14 +4,10 @@ import OrganizationWatchersContent from "@/features/admin/components/watchers/or
 
 const Page = () => {
   return (
-    <section>
-      <Container size="sm">
-        <div className="space-y-8 pt-4">
-          <WatcherInvitation />
-          <OrganizationWatchersContent />
-        </div>
-      </Container>
-    </section>
+    <Container size="lg" className="space-y-6 pb-6">
+      <WatcherInvitation />
+      <OrganizationWatchersContent />
+    </Container>
   );
 };
 

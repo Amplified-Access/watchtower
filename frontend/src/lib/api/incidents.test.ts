@@ -35,6 +35,20 @@ describe("incidentsApi.getTypesByOrganization", () => {
   });
 });
 
+describe("incidentsApi.createType / createTypeAsSuperAdmin", () => {
+  const body = { name: "Flooding", color: "#ef4444" };
+
+  it("posts an admin's type to the admin endpoint", () => {
+    incidentsApi.createType(body);
+    expect(mockApi.post).toHaveBeenCalledWith("/admin/incident-types", body);
+  });
+
+  it("posts a super admin's type to the super admin endpoint", () => {
+    incidentsApi.createTypeAsSuperAdmin(body);
+    expect(mockApi.post).toHaveBeenCalledWith("/superadmin/incident-types", body);
+  });
+});
+
 describe("incidentsApi.enableType / disableType", () => {
   it("posts to enable endpoint with orgId query param", () => {
     incidentsApi.enableType("org-1", "type-5");
@@ -141,29 +155,6 @@ describe("incidentsApi.getHeatmapData", () => {
 });
 
 // ─── Super admin ─────────────────────────────────────────────────────────────
-
-describe("incidentsApi.getAllIncidents (super admin)", () => {
-  it("fetches all without query when no params", () => {
-    incidentsApi.getAllIncidents();
-    expect(mockApi.get).toHaveBeenCalledWith("/superadmin/incidents");
-  });
-
-  it("appends query string when params provided", () => {
-    incidentsApi.getAllIncidents({ limit: 5, offset: 10, search: "assault" });
-    const url: string = mockApi.get.mock.calls[0][0];
-    expect(url).toContain("/superadmin/incidents?");
-    expect(url).toContain("limit=5");
-    expect(url).toContain("offset=10");
-    expect(url).toContain("search=assault");
-  });
-});
-
-describe("incidentsApi.deleteIncident", () => {
-  it("calls delete on superadmin endpoint", () => {
-    incidentsApi.deleteIncident("inc-99");
-    expect(mockApi.delete).toHaveBeenCalledWith("/superadmin/incidents/inc-99");
-  });
-});
 
 // ─── Anonymous reports ───────────────────────────────────────────────────────
 

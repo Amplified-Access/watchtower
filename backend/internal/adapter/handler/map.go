@@ -17,6 +17,8 @@ func parseMapFilter(c *gin.Context) (entity.MapFilter, bool) {
 	f := entity.MapFilter{
 		Category: strings.TrimSpace(c.Query("category")),
 		Country:  strings.TrimSpace(c.Query("country")),
+		// A deployment's map: only reports sent through its reporting link.
+		DeploymentID: strings.TrimSpace(c.Query("deploymentId")),
 		Period:   entity.MapPeriod(strings.TrimSpace(c.Query("period"))),
 		Query:    c.Query("q"),
 	}
@@ -54,6 +56,7 @@ func parseMapFilter(c *gin.Context) (entity.MapFilter, bool) {
 //	@Param			category		query		string	false	"Incident type name"
 //	@Param			excludeTypes	query		string	false	"Comma-separated incident type IDs to leave out"
 //	@Param			country			query		string	false	"Country name"
+//	@Param			deploymentId			query		string	false	"Only reports sent through this deployment's reporting link"
 //	@Param			period			query		string	false	"Relative window: 24h, 7d, 30d, week, month or year"
 //	@Param			from			query		string	false	"Start date (YYYY-MM-DD), instead of period"
 //	@Param			to				query		string	false	"End date, inclusive (YYYY-MM-DD), instead of period"
@@ -84,6 +87,7 @@ func (h *IncidentHandler) GetMapPoints(c *gin.Context) {
 //	@Param			category		query		string	false	"Incident type name"
 //	@Param			excludeTypes	query		string	false	"Comma-separated incident type IDs to leave out"
 //	@Param			country			query		string	false	"Country name"
+//	@Param			deploymentId			query		string	false	"Only reports sent through this deployment's reporting link"
 //	@Param			period			query		string	false	"Relative window: 24h, 7d, 30d, week, month or year"
 //	@Param			from			query		string	false	"Start date (YYYY-MM-DD), instead of period"
 //	@Param			to				query		string	false	"End date, inclusive (YYYY-MM-DD), instead of period"

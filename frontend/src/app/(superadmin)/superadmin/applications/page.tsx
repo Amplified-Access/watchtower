@@ -5,7 +5,7 @@ const Page = () => {
   return (
     <section>
       <Container size="lg">
-        <div className="flex flex-col gap-2 pt-6">
+        <div className="flex flex-col gap-2 pb-6">
           <ApplicationsContent />
         </div>
       </Container>

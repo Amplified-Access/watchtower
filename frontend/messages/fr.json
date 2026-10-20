@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "Accueil",
-    "datasets": "Ensembles de données",
     "maps": "Cartes",
     "caseStudies": "Études de cas",
     "reports": "Rapports",
@@ -304,28 +303,6 @@
     "signInFailed": "Échec de la connexion",
     "signInFailedRetry": "Échec de la connexion. Veuillez réessayer."
   },
-  "Datasets": {
-    "browseDescription": "Découvrez des ensembles de données complets, librement disponibles pour la recherche, l'analyse et l'usage communautaire.",
-    "searchPlaceholder": "Rechercher des ensembles de données...",
-    "allCategories": "Toutes les catégories",
-    "allFormats": "Tous les formats",
-    "clearFilters": "Effacer les filtres",
-    "emptyTitle": "Aucun ensemble de données trouvé",
-    "emptyDescription": "Essayez d'ajuster vos termes de recherche ou vos filtres.",
-    "unknownFormat": "Inconnu",
-    "datasetInfoLabel": "Informations sur l'ensemble de données",
-    "sizeLabel": "Taille : {size}",
-    "downloadsCount": "{count} téléchargements",
-    "sourceLabel": "Source :",
-    "downloadButton": "Télécharger",
-    "downloadSuccess": "{fileName} téléchargé",
-    "downloadError": "Échec du téléchargement. Veuillez réessayer.",
-    "ctaTitle": "Continuer à explorer",
-    "ctaDescription": "Approfondissez les schémas d'incidents avec nos cartes interactives ou parcourez des rapports complets à travers différentes régions et thématiques.",
-    "methodology": "Méthodologie",
-    "coverage": "Couverture",
-    "license": "Licence"
-  },
   "Organizations": {
     "errorTitle": "Erreur",
     "errorLoading": "Échec du chargement des organisations. Veuillez réessayer plus tard.",
@@ -535,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Autorités électorales associées aux solutions",
     "outcomeRampsInstalled": "Rampes temporaires dans les bureaux de vote",
     "outcomeAccessibleVoting": "Un vote plus accessible pour tous"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Par {organization}",
+    "notTakingReports": "Ce déploiement ne reçoit pas de signalements pour le moment.",
+    "viewMap": "Voir la carte"
   }
 }

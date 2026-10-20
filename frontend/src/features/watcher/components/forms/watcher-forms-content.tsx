@@ -117,7 +117,7 @@ const WatcherFormsContent = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {forms.map((form) => (
-            <Card key={form.id} className="shadow-none rounded-md">
+            <Card key={form.id} className="shadow-none">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -170,7 +170,7 @@ const WatcherFormsContent = () => {
       )}
 
       {/* Instructions */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardHeader>
           <CardTitle className="text-blue-900">How to Submit Reports</CardTitle>
         </CardHeader>

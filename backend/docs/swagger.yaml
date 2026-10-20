@@ -90,6 +90,16 @@ definitions:
           $ref: '#/definitions/backend_internal_domain_entity.AnalyticsBucket'
         type: array
     type: object
+  backend_internal_domain_entity.DeploymentStatus:
+    enum:
+    - draft
+    - live
+    - closed
+    type: string
+    x-enum-varnames:
+    - DeploymentDraft
+    - DeploymentLive
+    - DeploymentClosed
   backend_internal_domain_entity.KnowledgeMatch:
     properties:
       content:
@@ -190,6 +200,27 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  backend_internal_domain_entity.NewDeployment:
+    properties:
+      country:
+        type: string
+      description:
+        type: string
+      endsAt:
+        type: string
+      incidentTypeIds:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      region:
+        type: string
+      startsAt:
+        type: string
+      status:
+        $ref: '#/definitions/backend_internal_domain_entity.DeploymentStatus'
     type: object
   backend_internal_domain_entity.UploadedFile:
     properties:
@@ -376,6 +407,161 @@ paths:
       summary: Get admin dashboard statistics
       tags:
       - Admin – Dashboard
+  /admin/deployments:
+    get:
+      description: Returns the deployments of the authenticated admin's organization,
+        newest first, each with its incident types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: List the organization's deployments
+      tags:
+      - Admin – Deployments
+    post:
+      consumes:
+      - application/json
+      description: Creates a deployment for the authenticated admin's organization.
+        It needs a name and at least one incident type; its slug is made from the
+        name. Status defaults to draft. Dates are RFC 3339.
+      parameters:
+      - description: Deployment
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_domain_entity.NewDeployment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Create a deployment
+      tags:
+      - Admin – Deployments
+  /admin/deployments/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: Takes one of the admin's organization's deployments live, back
+        to draft, or closes it
+      parameters:
+      - description: Deployment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: draft, live or closed
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            status:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Change a deployment's status
+      tags:
+      - Admin – Deployments
+  /admin/deployments/stats:
+    get:
+      description: 'For the admin''s dashboard: the organization''s deployments by
+        status, and the reports that came through them (ever, this month against last,
+        by incident type, and per week over the last seven weeks)'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: The organization's deployment numbers
+      tags:
+      - Admin – Deployments
   /admin/forms:
     get:
       description: Returns all forms belonging to the admin's organization
@@ -607,7 +793,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Creates a new platform-wide incident type (admin only)
+      description: Creates a new platform-wide incident type (admin or super admin)
       parameters:
       - description: Incident type payload
         in: body
@@ -1456,6 +1642,10 @@ paths:
         in: query
         name: country
         type: string
+      - description: Only reports sent through this deployment's reporting link
+        in: query
+        name: deploymentId
+        type: string
       - description: 'Relative window: 24h, 7d, 30d, week, month or year'
         in: query
         name: period
@@ -1564,56 +1754,15 @@ paths:
       summary: Search the assistant's knowledge base
       tags:
       - Assistant
-  /datasets:
+  /deployments/{slug}:
     get:
-      description: Returns a paginated list of publicly available datasets, optionally
-        filtered by category
+      description: Returns a live or closed deployment by its slug, with its organization's
+        name and incident types, for its public page and reporting link. Drafts are
+        not found.
       parameters:
-      - description: Page size (default 20, max 100)
-        in: query
-        name: limit
-        type: integer
-      - description: Pagination offset
-        in: query
-        name: offset
-        type: integer
-      - description: Search term
-        in: query
-        name: search
-        type: string
-      - description: 'Sort field (default: created_at)'
-        in: query
-        name: sort
-        type: string
-      - description: 'Sort direction: asc or desc'
-        in: query
-        name: sortOrder
-        type: string
-      - description: Filter by category
-        in: query
-        name: category
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      summary: List public datasets
-      tags:
-      - Datasets
-  /datasets/{id}:
-    get:
-      description: Returns a single public dataset by its UUID
-      parameters:
-      - description: Dataset UUID
+      - description: Deployment slug
         in: path
-        name: id
+        name: slug
         required: true
         type: string
       produces:
@@ -1631,53 +1780,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      summary: Get dataset by ID
+      summary: Get a deployment
       tags:
-      - Datasets
-  /datasets/{id}/download:
-    post:
-      description: Increments the download counter for a dataset
-      parameters:
-      - description: Dataset UUID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      summary: Record dataset download
-      tags:
-      - Datasets
-  /datasets/categories:
-    get:
-      description: Returns all distinct dataset categories
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      summary: List dataset categories
-      tags:
-      - Datasets
+      - Deployments
   /email/send:
     post:
       consumes:
@@ -2079,6 +2184,10 @@ paths:
         in: query
         name: country
         type: string
+      - description: Only reports sent through this deployment's reporting link
+        in: query
+        name: deploymentId
+        type: string
       - description: 'Relative window: 24h, 7d, 30d, week, month or year'
         in: query
         name: period
@@ -2167,6 +2276,10 @@ paths:
       - description: Country name
         in: query
         name: country
+        type: string
+      - description: Only reports sent through this deployment's reporting link
+        in: query
+        name: deploymentId
         type: string
       - description: 'Relative window: 24h, 7d, 30d, week, month or year'
         in: query
@@ -2708,39 +2821,6 @@ paths:
       summary: Decline organization application
       tags:
       - Super Admin – Organizations
-  /superadmin/dashboard/activity:
-    get:
-      description: Returns the most recent activity events across the platform (super
-        admin only)
-      parameters:
-      - description: 'Number of events to return (default: 10)'
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      security:
-      - BearerAuth: []
-      summary: Get recent platform activity
-      tags:
-      - Super Admin – Dashboard
   /superadmin/dashboard/stats:
     get:
       description: Returns aggregate statistics across the entire platform (super
@@ -2771,8 +2851,8 @@ paths:
       - Super Admin – Dashboard
   /superadmin/dashboard/trend:
     get:
-      description: Returns weekly incident counts over the past 7 weeks (super admin
-        only)
+      description: Returns weekly counts of public reports over the past 7 weeks (super
+        admin only)
       produces:
       - application/json
       responses:
@@ -2797,30 +2877,14 @@ paths:
       summary: Get platform activity trend
       tags:
       - Super Admin – Dashboard
-  /superadmin/datasets:
+  /superadmin/deployments:
     get:
-      description: Returns a paginated list of all datasets regardless of visibility
-        (super admin only)
+      description: Returns every deployment on the platform, newest first, with its
+        organization's name and its incident types
       parameters:
-      - description: Page size (default 20, max 100)
+      - description: Only this organization's deployments
         in: query
-        name: limit
-        type: integer
-      - description: Pagination offset
-        in: query
-        name: offset
-        type: integer
-      - description: Search term
-        in: query
-        name: search
-        type: string
-      - description: Sort field
-        in: query
-        name: sort
-        type: string
-      - description: 'Sort direction: asc or desc'
-        in: query
-        name: sortOrder
+        name: organizationId
         type: string
       produces:
       - application/json
@@ -2843,118 +2907,9 @@ paths:
             $ref: '#/definitions/backend_internal_adapter_presenter.Response'
       security:
       - BearerAuth: []
-      summary: List all datasets
+      summary: List all deployments
       tags:
-      - Super Admin – Datasets
-    post:
-      consumes:
-      - application/json
-      description: Creates a new dataset record (super admin only)
-      parameters:
-      - description: Dataset payload
-        in: body
-        name: body
-        required: true
-        schema:
-          properties:
-            category:
-              type: string
-            coverage:
-              type: string
-            description:
-              type: string
-            fileKey:
-              type: string
-            fileName:
-              type: string
-            fileSize:
-              type: integer
-            fileType:
-              type: string
-            format:
-              type: string
-            isPublic:
-              type: boolean
-            keywords:
-              items:
-                type: string
-              type: array
-            license:
-              type: string
-            methodology:
-              type: string
-            source:
-              type: string
-            tags:
-              items:
-                type: string
-              type: array
-            title:
-              type: string
-          type: object
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      security:
-      - BearerAuth: []
-      summary: Create dataset
-      tags:
-      - Super Admin – Datasets
-  /superadmin/datasets/{id}:
-    delete:
-      description: Permanently removes a dataset (super admin only)
-      parameters:
-      - description: Dataset UUID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      security:
-      - BearerAuth: []
-      summary: Delete dataset
-      tags:
-      - Super Admin – Datasets
+      - Super Admin – Deployments
   /superadmin/forms:
     get:
       description: Returns a paginated list of all forms across the platform (super
@@ -3004,6 +2959,53 @@ paths:
       summary: List all forms
       tags:
       - Super Admin – Forms
+  /superadmin/incident-types:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new platform-wide incident type (admin or super admin)
+      parameters:
+      - description: Incident type payload
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            color:
+              type: string
+            description:
+              type: string
+            name:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Create incident type
+      tags:
+      - Admin – Incident Types
   /superadmin/incidents:
     get:
       description: Returns a paginated list of all incidents across the platform (super
@@ -3089,6 +3091,34 @@ paths:
       summary: Delete incident
       tags:
       - Super Admin – Incidents
+  /superadmin/organizations:
+    get:
+      description: Returns every organization, newest first, with how many deployments
+        each has made
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: List organizations with deployment counts
+      tags:
+      - Super Admin – Organizations
   /superadmin/reports:
     get:
       description: Returns a paginated list of all reports across the platform (super

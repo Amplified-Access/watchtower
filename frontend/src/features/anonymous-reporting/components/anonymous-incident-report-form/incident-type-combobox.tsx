@@ -31,13 +31,18 @@ import { reportFieldClassName, reportLabelClassName } from "./field-styles";
 
 const IncidentTypeCombobox = ({
   form,
+  types,
 }: {
   form: UseFormReturn<ReportFormValues>;
+  /** Limits the choice, e.g. to a deployment's incident types. */
+  types?: { id: string; name: string }[];
 }) => {
   const [open, setOpen] = useState(false);
   const t = useTranslations("IncidentReporting");
-  const incidentCategories = trpc.anonymousReports.getAllIncidentTypes.useQuery();
-  const categories = incidentCategories.data?.data || [];
+  const incidentCategories = trpc.anonymousReports.getAllIncidentTypes.useQuery(undefined, {
+    enabled: !types,
+  });
+  const categories = types ?? incidentCategories.data?.data ?? [];
 
   return (
     <FormField

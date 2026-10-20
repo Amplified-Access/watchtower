@@ -22,7 +22,6 @@
   "Navigation": {
     "home": "Home",
     "about": "About",
-    "datasets": "Datasets",
     "maps": "Maps",
     "caseStudies": "Case studies",
     "reports": "Reports",
@@ -304,28 +303,6 @@
     "signInFailed": "Sign in failed",
     "signInFailedRetry": "Sign in failed. Please try again."
   },
-  "Datasets": {
-    "browseDescription": "Discover comprehensive datasets - freely available for research, analysis and community use.",
-    "searchPlaceholder": "Search datasets...",
-    "allCategories": "All Categories",
-    "allFormats": "All Formats",
-    "clearFilters": "Clear Filters",
-    "emptyTitle": "No datasets found",
-    "emptyDescription": "Try adjusting your search terms or filters.",
-    "unknownFormat": "Unknown",
-    "datasetInfoLabel": "Dataset info",
-    "sizeLabel": "Size: {size}",
-    "downloadsCount": "{count} downloads",
-    "sourceLabel": "Source:",
-    "downloadButton": "Download",
-    "downloadSuccess": "Downloaded {fileName}",
-    "downloadError": "Download failed. Please try again.",
-    "ctaTitle": "Keep exploring",
-    "ctaDescription": "Dive deeper into incident patterns with our interactive maps or browse comprehensive reports across different regions and themes.",
-    "methodology": "Methodology",
-    "coverage": "Coverage",
-    "license": "License"
-  },
   "Organizations": {
     "errorTitle": "Error",
     "errorLoading": "Failed to load organizations. Please try again later.",
@@ -535,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
     "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
     "outcomeAccessibleVoting": "More accessible voting for everyone"
+  },
+  "DeploymentPage": {
+    "byOrganization": "By {organization}",
+    "notTakingReports": "This deployment isn't taking reports right now.",
+    "viewMap": "View the map"
   }
 }

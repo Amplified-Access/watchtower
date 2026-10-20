@@ -5,7 +5,7 @@ const Page = () => {
   return (
     <section>
       <Container>
-        <div className="pt-2">
+        <div className="pb-6">
           <OrganizationsContent />
         </div>
       </Container>

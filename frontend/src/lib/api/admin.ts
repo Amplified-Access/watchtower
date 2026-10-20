@@ -1,6 +1,5 @@
 import { api } from "./client";
 import type { Incident, IncidentStats, WeeklyTrendPoint } from "./incidents";
-import type { Report } from "./reports";
 import type { Form } from "./forms";
 
 export interface DashboardStats {
@@ -28,12 +27,31 @@ export interface WatcherUser {
   updatedAt: string;
 }
 
-export interface ActivityItem {
-  id: string;
-  type: string;
-  description: string;
-  timestamp: string;
-  userName: string;
+interface GrowthMetric {
+  current: number;
+  previous: number;
+  percentage: number;
+}
+
+/** The super admin's dashboard, as entity.PlatformStats serialises it. */
+export interface PlatformStats {
+  totalOrganizations: number;
+  pendingApplications: number;
+  deployments: { total: number; draft: number; live: number; closed: number };
+  /** Public reports: this month (current) against last month (previous). */
+  reports: GrowthMetric;
+  growth: { organizations: GrowthMetric };
+  /** The deployments with the most reports this month, busiest first. */
+  mostActiveDeployments: {
+    id: string;
+    name: string;
+    slug: string;
+    organizationId: string;
+    organizationName: string;
+    status: "draft" | "live" | "closed";
+    reportsThisMonth: number;
+    totalReports: number;
+  }[];
 }
 
 export interface OrganizationTypeDistribution {
@@ -81,8 +99,6 @@ export const adminApi = {
   // Super admin
   getAllAdmins: () => api.get<WatcherUser[]>("/superadmin/users/admins"),
 
-  getAllWatchers: () => api.get<WatcherUser[]>("/superadmin/users/watchers"),
-
   getAllForms: (params?: { limit?: number; offset?: number; search?: string }) => {
     const query = new URLSearchParams();
     if (params?.limit) query.set("limit", String(params.limit));
@@ -92,22 +108,11 @@ export const adminApi = {
     return api.get<Form[]>(`/superadmin/forms${qs ? `?${qs}` : ""}`);
   },
 
-  getAllReports: (params?: { limit?: number; offset?: number; search?: string }) => {
-    const query = new URLSearchParams();
-    if (params?.limit) query.set("limit", String(params.limit));
-    if (params?.offset) query.set("offset", String(params.offset));
-    if (params?.search) query.set("search", params.search);
-    const qs = query.toString();
-    return api.get<Report[]>(`/superadmin/reports${qs ? `?${qs}` : ""}`);
-  },
-
   getPendingApplications: () =>
     api.get<unknown[]>("/superadmin/applications"),
 
-  getPlatformStats: () => api.get<any>("/superadmin/dashboard/stats"),
+  getPlatformStats: () => api.get<PlatformStats>("/superadmin/dashboard/stats"),
 
-  getRecentActivity: (limit?: number) =>
-    api.get<ActivityItem[]>(`/superadmin/dashboard/activity${limit ? `?limit=${limit}` : ""}`),
 
   getPlatformActivityTrend: () =>
     api.get<{ week: string; count: number }[]>("/superadmin/dashboard/trend"),

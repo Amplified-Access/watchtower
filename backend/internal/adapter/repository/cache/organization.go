@@ -58,6 +58,12 @@ func (r *CachedOrganizationRepository) CountCreatedSince(ctx context.Context, si
 	return r.repo.CountCreatedSince(ctx, since)
 }
 
+// FindAllWithDeploymentCounts isn't cached: the counts change whenever an
+// admin creates a deployment, and only the super admin reads them.
+func (r *CachedOrganizationRepository) FindAllWithDeploymentCounts(ctx context.Context) ([]*entity.OrganizationWithDeployments, error) {
+	return r.repo.FindAllWithDeploymentCounts(ctx)
+}
+
 func (r *CachedOrganizationRepository) Create(ctx context.Context, org *entity.Organization) error {
 	return r.repo.Create(ctx, org)
 }

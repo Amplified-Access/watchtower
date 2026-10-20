@@ -42,6 +42,27 @@ func (h *OrganizationHandler) GetAll(c *gin.Context) {
 	presenter.OKList(c, orgs, total)
 }
 
+// GetAllWithDeploymentCounts godoc
+//
+//	@Summary		List organizations with deployment counts
+//	@Description	Returns every organization, newest first, with how many deployments each has made
+//	@Tags			Super Admin – Organizations
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	presenter.Response
+//	@Failure		401	{object}	presenter.Response
+//	@Failure		403	{object}	presenter.Response
+//	@Failure		500	{object}	presenter.Response
+//	@Router			/superadmin/organizations [get]
+func (h *OrganizationHandler) GetAllWithDeploymentCounts(c *gin.Context) {
+	orgs, err := h.uc.GetAllWithDeploymentCounts(c.Request.Context())
+	if err != nil {
+		presenter.Error(c, err)
+		return
+	}
+	presenter.OK(c, orgs)
+}
+
 // GetBySlug godoc
 //
 //	@Summary		Get organization by slug

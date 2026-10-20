@@ -15,6 +15,7 @@ const mapFilter = z
     category: z.string().optional(),
     excludeTypes: z.array(z.string()).optional(),
     country: z.string().optional(),
+    deploymentId: z.string().optional(),
     period: z.enum(["24h", "7d", "30d", "week", "month", "year"]).optional(),
     from: date.optional(),
     to: date.optional(),

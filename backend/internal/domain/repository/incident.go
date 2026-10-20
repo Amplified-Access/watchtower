@@ -28,7 +28,6 @@ type IncidentRepository interface {
 	GetWeeklyTrend(ctx context.Context, orgID string) ([]*entity.WeeklyTrendPoint, error)
 	GetRecent(ctx context.Context, orgID string, limit int) ([]*entity.Incident, error)
 	GetPending(ctx context.Context, orgID string) ([]*entity.Incident, error)
-	CountAllSince(ctx context.Context, since time.Time) (int, error)
 	GetPlatformWeeklyTrend(ctx context.Context) ([]*entity.WeeklyTrendPoint, error)
 }
 
@@ -38,6 +37,7 @@ type AnonymousIncidentReportRepository interface {
 	Create(ctx context.Context, report *entity.AnonymousIncidentReport) error
 	GetHeatmapData(ctx context.Context) ([]*entity.HeatmapPoint, error)
 	GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error)
+	CountCreatedSince(ctx context.Context, since time.Time) (int, error)
 	// FindForMap returns the rows behind the public maps, newest first.
 	FindForMap(ctx context.Context, filter entity.MapFilter) ([]*entity.MapReportRow, error)
 	// Aggregate counts reports and casualties for a filter, optionally
@@ -54,5 +54,4 @@ type OrganizationIncidentReportRepository interface {
 	FindByID(ctx context.Context, id string) (*entity.OrganizationIncidentReport, error)
 	Create(ctx context.Context, report *entity.OrganizationIncidentReport) error
 	GetStats(ctx context.Context, orgID string) (*entity.IncidentStats, error)
-	CountCritical(ctx context.Context) (int, error)
 }

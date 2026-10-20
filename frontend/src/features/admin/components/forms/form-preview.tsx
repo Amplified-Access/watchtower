@@ -64,9 +64,9 @@ const FormPreview = ({
   useOnClickOutside(formTitleRef, () => setIsEditingTitle(false));
 
   return (
-    <div className="flex-1  bg-muted/20 border-b">
-      <div className="border-b relative bg-sidebar">
-        <h3 className="font-semibold  p-2 px-4 text-center">Preview</h3>
+    <div className="flex-1">
+      <div className="relative">
+        <h3 className="px-4 pt-4 font-title text-lg font-semibold">Preview</h3>
         {/* {formId && (
           <Link
             href={`/admin/forms/${formId}/preview`}
@@ -83,7 +83,7 @@ const FormPreview = ({
           onSubmit={(e) => {
             e.preventDefault();
           }}
-          className="bg-white space-y-6 border p-4 rounded-md max-w-2xl my-8 mx-auto"
+          className="mx-auto my-4 max-w-2xl space-y-6 rounded-xl bg-muted p-6"
         >
           <div className="">
             {isEditingTitle ? (

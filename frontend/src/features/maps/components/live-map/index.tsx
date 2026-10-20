@@ -13,6 +13,8 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import type { Deployment } from "@/lib/api/deployments";
 import ExploreSidebar from "@/features/home/components/explore-sidebar";
 import FilterPanel from "@/features/home/components/filter-panel";
 import GlobeMap, { type GlobeMapHandle } from "@/features/home/components/globe-map";
@@ -38,8 +40,13 @@ const floatingButtonClassName =
 // panel on the left, the map with its floating controls, and optional filters
 // on the right. Panels dock beside the map on large screens and slide over it
 // on small ones.
-const LiveMap = () => {
+// Given a deployment, the map is that deployment's: only the reports sent
+// through its reporting link and its incident types, with a bar naming it
+// and, while it takes reports, a way to report.
+const LiveMap = ({ deployment }: { deployment?: Deployment }) => {
   const t = useTranslations("HomeLivePreview");
+  const tDeployment = useTranslations("DeploymentPage");
+  const tReport = useTranslations("AnonymousReporting");
   const mapHandleRef = useRef<GlobeMapHandle>(null);
 
   const [isExploreOpen, setIsExploreOpen] = useState(false);
@@ -54,13 +61,16 @@ const LiveMap = () => {
   const layers = DEFAULT_LAYERS;
 
   const { incidentTypes, categoryIds, countries, points, pointsAreCurrent, stats, topChips } =
-    useLivePreviewData({
-      timePeriod,
-      customRange,
-      hiddenCategoryIds,
-      search,
-      country,
-    });
+    useLivePreviewData(
+      {
+        timePeriod,
+        customRange,
+        hiddenCategoryIds,
+        search,
+        country,
+      },
+      deployment,
+    );
 
   // Choosing a country, from the filters panel or a top chip, flies the camera
   // to its reports; clearing it flies back out to all of them. The new points
@@ -124,6 +134,28 @@ const LiveMap = () => {
           </label>
           <span aria-hidden className="hidden w-32 shrink-0 md:block" />
         </div>
+        {deployment && (
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border px-4 py-3 md:px-8 lg:pl-12">
+            <div className="min-w-0">
+              <h1 className="truncate font-title text-lg font-semibold text-dark">{deployment.name}</h1>
+              <p className="truncate text-sm text-muted-foreground">
+                {[
+                  tDeployment("byOrganization", { organization: deployment.organizationName ?? "" }),
+                  [deployment.region, deployment.country].filter(Boolean).join(", "),
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </div>
+            {deployment.acceptingReports ? (
+              <Button asChild className="rounded-full">
+                <Link href={`/d/${deployment.slug}/report`}>{tReport("pageTitle")}</Link>
+              </Button>
+            ) : (
+              <p className="text-sm text-muted-foreground">{tDeployment("notTakingReports")}</p>
+            )}
+          </div>
+        )}
       </header>
 
       <div className="relative flex min-h-0 flex-1">

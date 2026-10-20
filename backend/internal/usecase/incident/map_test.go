@@ -44,7 +44,7 @@ func (m *mockTypeRepo) FindAll(_ context.Context, _ bool) ([]*entity.IncidentTyp
 func strPtr(s string) *string { return &s }
 
 func newMapUseCase(anon *mockAnonRepo, types []*entity.IncidentType) *UseCase {
-	return New(nil, &mockTypeRepo{types: types}, anon, nil)
+	return New(nil, &mockTypeRepo{types: types}, anon, nil, nil)
 }
 
 const reportID = "9beeb74f-68a5-462d-b687-55fb4748bcfa"

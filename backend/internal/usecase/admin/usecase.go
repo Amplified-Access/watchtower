@@ -2,8 +2,6 @@ package adminusecase
 
 import (
 	"context"
-	"fmt"
-	"math"
 	"time"
 
 	"backend/internal/domain/entity"
@@ -18,6 +16,7 @@ type UseCase struct {
 	appRepo       repository.OrganizationApplicationRepository
 	orgReportRepo repository.OrganizationIncidentReportRepository
 	anonRepo      repository.AnonymousIncidentReportRepository
+	deploymentRepo repository.DeploymentRepository
 }
 
 func New(
@@ -28,6 +27,7 @@ func New(
 	appRepo repository.OrganizationApplicationRepository,
 	orgReportRepo repository.OrganizationIncidentReportRepository,
 	anonRepo repository.AnonymousIncidentReportRepository,
+	deploymentRepo repository.DeploymentRepository,
 ) *UseCase {
 	return &UseCase{
 		userRepo:      userRepo,
@@ -37,6 +37,7 @@ func New(
 		appRepo:       appRepo,
 		orgReportRepo: orgReportRepo,
 		anonRepo:      anonRepo,
+		deploymentRepo: deploymentRepo,
 	}
 }
 
@@ -86,38 +87,19 @@ func (uc *UseCase) GetAllFormsForSuperAdmin(ctx context.Context, params entity.L
 	return uc.formRepo.FindAllForSuperAdmin(ctx, params)
 }
 
-func growthMetric(current, previous int) entity.GrowthMetric {
-	var pct float64
-	if previous > 0 {
-		pct = math.Round(float64(current-previous)/float64(previous)*100*10) / 10
-	} else if current > 0 {
-		pct = 100
-	}
-	return entity.GrowthMetric{Current: current, Previous: previous, Percentage: pct}
-}
+// mostActiveLimit is how many deployments the super admin's dashboard lists
+// as most active.
+const mostActiveLimit = 5
 
+// GetPlatformStats is the super admin's dashboard on the deployments model:
+// organizations and their growth, pending applications, deployments by
+// status, and public reports this month against last month.
 func (uc *UseCase) GetPlatformStats(ctx context.Context) (*entity.PlatformStats, error) {
 	now := time.Now()
 	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
 	startOfLastMonth := startOfMonth.AddDate(0, -1, 0)
 
 	_, orgTotal, err := uc.orgRepo.FindAll(ctx, entity.ListParams{Limit: 1})
-	if err != nil {
-		return nil, err
-	}
-
-	roleAdmin := entity.RoleAdmin
-	admins, err := uc.userRepo.FindAll(ctx, &roleAdmin)
-	if err != nil {
-		return nil, err
-	}
-	roleSuperAdmin := entity.RoleSuperAdmin
-	superAdmins, err := uc.userRepo.FindAll(ctx, &roleSuperAdmin)
-	if err != nil {
-		return nil, err
-	}
-	roleWatcher := entity.RoleWatcher
-	watchers, err := uc.userRepo.FindAll(ctx, &roleWatcher)
 	if err != nil {
 		return nil, err
 	}
@@ -133,150 +115,44 @@ func (uc *UseCase) GetPlatformStats(ctx context.Context) (*entity.PlatformStats,
 		}
 	}
 
-	forms, _, err := uc.formRepo.FindAllForSuperAdmin(ctx, entity.ListParams{Limit: 1000})
+	deployments, err := uc.deploymentRepo.CountByStatus(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
-	activeForms := 0
-	for _, f := range forms {
-		if f.IsActive {
-			activeForms++
-		}
-	}
 
-	// Growth metrics
+	// Counts since a month's start include everything after it, so last
+	// month alone is "since last month" minus "since this month".
 	newOrgsThisMonth, err := uc.orgRepo.CountCreatedSince(ctx, startOfMonth)
 	if err != nil {
 		return nil, err
 	}
-	newOrgsLastMonth, err := uc.orgRepo.CountCreatedSince(ctx, startOfLastMonth)
+	newOrgsSinceLastMonth, err := uc.orgRepo.CountCreatedSince(ctx, startOfLastMonth)
 	if err != nil {
 		return nil, err
 	}
-	newOrgsLastMonthOnly := newOrgsLastMonth - newOrgsThisMonth
-
-	newAdminsThisMonth, err := uc.userRepo.CountByRoleSince(ctx, entity.RoleAdmin, startOfMonth)
+	reportsThisMonth, err := uc.anonRepo.CountCreatedSince(ctx, startOfMonth)
 	if err != nil {
 		return nil, err
 	}
-	newAdminsLastMonth, err := uc.userRepo.CountByRoleSince(ctx, entity.RoleAdmin, startOfLastMonth)
-	if err != nil {
-		return nil, err
-	}
-	newAdminsLastMonthOnly := newAdminsLastMonth - newAdminsThisMonth
-
-	newWatchersThisMonth, err := uc.userRepo.CountByRoleSince(ctx, entity.RoleWatcher, startOfMonth)
-	if err != nil {
-		return nil, err
-	}
-	newWatchersLastMonth, err := uc.userRepo.CountByRoleSince(ctx, entity.RoleWatcher, startOfLastMonth)
-	if err != nil {
-		return nil, err
-	}
-	newWatchersLastMonthOnly := newWatchersLastMonth - newWatchersThisMonth
-
-	reportsThisMonth, err := uc.incidentRepo.CountAllSince(ctx, startOfMonth)
+	reportsSinceLastMonth, err := uc.anonRepo.CountCreatedSince(ctx, startOfLastMonth)
 	if err != nil {
 		return nil, err
 	}
 
-	criticalIncidents, err := uc.orgReportRepo.CountCritical(ctx)
+	mostActive, err := uc.deploymentRepo.MostActive(ctx, startOfMonth, mostActiveLimit)
 	if err != nil {
 		return nil, err
 	}
 
-	totalAdmins := len(admins) + len(superAdmins)
-	totalWatchers := len(watchers)
-
-	var avgReportsPerOrg float64
-	if orgTotal > 0 {
-		avgReportsPerOrg = math.Round(float64(reportsThisMonth)/float64(orgTotal)*10) / 10
-	}
-
-	return &entity.PlatformStats{
+	stats := &entity.PlatformStats{
+		MostActiveDeployments: mostActive,
 		TotalOrganizations:  orgTotal,
-		TotalAdmins:         totalAdmins,
-		TotalWatchers:       totalWatchers,
 		PendingApplications: pending,
-		ReportsThisMonth:    reportsThisMonth,
-		ActiveForms:         activeForms,
-		CriticalIncidents:   criticalIncidents,
-		UptimePercentage:    99.9,
-		Growth: struct {
-			Organizations entity.GrowthMetric `json:"organizations"`
-			Admins        entity.GrowthMetric `json:"admins"`
-			Watchers      entity.GrowthMetric `json:"watchers"`
-		}{
-			Organizations: growthMetric(newOrgsThisMonth, newOrgsLastMonthOnly),
-			Admins:        growthMetric(newAdminsThisMonth, newAdminsLastMonthOnly),
-			Watchers:      growthMetric(newWatchersThisMonth, newWatchersLastMonthOnly),
-		},
-		Metrics: struct {
-			NewOrganizationsThisMonth int     `json:"newOrganizationsThisMonth"`
-			NewAdminsThisMonth        int     `json:"newAdminsThisMonth"`
-			NewWatchersThisMonth      int     `json:"newWatchersThisMonth"`
-			AverageReportsPerOrg      float64 `json:"averageReportsPerOrg"`
-		}{
-			NewOrganizationsThisMonth: newOrgsThisMonth,
-			NewAdminsThisMonth:        newAdminsThisMonth,
-			NewWatchersThisMonth:      newWatchersThisMonth,
-			AverageReportsPerOrg:      avgReportsPerOrg,
-		},
-	}, nil
-}
-
-func (uc *UseCase) GetRecentActivity(ctx context.Context, limit int) ([]*entity.ActivityItem, error) {
-	if limit <= 0 {
-		limit = 10
+		Deployments:         deployments,
+		Reports:             entity.NewGrowthMetric(reportsThisMonth, reportsSinceLastMonth-reportsThisMonth),
 	}
-	incidents, _, err := uc.incidentRepo.FindAllForSuperAdmin(ctx, entity.ListParams{Limit: limit})
-	if err != nil {
-		return nil, err
-	}
-
-	apps, err := uc.appRepo.FindAll(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	var items []*entity.ActivityItem
-
-	for _, i := range incidents {
-		items = append(items, &entity.ActivityItem{
-			ID:          i.ID,
-			Type:        "incident",
-			Description: fmt.Sprintf("New incident submitted (status: %s)", i.Status),
-			Timestamp:   i.CreatedAt,
-		})
-	}
-
-	appLimit := limit - len(items)
-	if appLimit > len(apps) {
-		appLimit = len(apps)
-	}
-	for _, a := range apps[:appLimit] {
-		desc := fmt.Sprintf("Organization application from %s (%s)", a.OrganizationName, a.Status)
-		items = append(items, &entity.ActivityItem{
-			ID:          fmt.Sprintf("app-%d", a.ID),
-			Type:        "application",
-			Description: desc,
-			Timestamp:   a.CreatedAt,
-		})
-	}
-
-	// Sort by timestamp descending
-	for i := 0; i < len(items); i++ {
-		for j := i + 1; j < len(items); j++ {
-			if items[j].Timestamp.After(items[i].Timestamp) {
-				items[i], items[j] = items[j], items[i]
-			}
-		}
-	}
-	if len(items) > limit {
-		items = items[:limit]
-	}
-
-	return items, nil
+	stats.Growth.Organizations = entity.NewGrowthMetric(newOrgsThisMonth, newOrgsSinceLastMonth-newOrgsThisMonth)
+	return stats, nil
 }
 
 func (uc *UseCase) GetPlatformActivityTrend(ctx context.Context) ([]*entity.WeeklyTrendPoint, error) {

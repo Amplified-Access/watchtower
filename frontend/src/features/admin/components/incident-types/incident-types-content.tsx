@@ -4,13 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Trash2, Check, X } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -179,245 +173,227 @@ const IncidentTypesContent = () => {
   );
 
   return (
-    <Container size="lg" className="py-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight font-title pb-2">
-            Incident Types
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your the incidents your organization reports on.
-          </p>
-        </div>
-        <Button onClick={() => setCreateDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create New Type
-        </Button>
-      </div>
-      {/* Search */}
-      <div className="flex items-center space-x-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+    <Container size="lg" className="space-y-6 pb-6">
+      {/* Search and create in one row: the search takes the room the button
+          leaves, filled with the muted grey. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative sm:flex-1">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by name or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-white shadow-none "
+            className="pl-9 bg-muted border-transparent shadow-none"
           />
         </div>
+        <Button onClick={() => setCreateDialogOpen(true)}>
+          <Plus className="h-4 w-4" />
+          New incident type
+        </Button>
       </div>
       {/* Enabled Incident Types */}
-      <Card className="shadow-none rounded-md">
-        <CardHeader>
-          <CardTitle className="font-title">
-            Your Organization's enabled incident types
-          </CardTitle>
-          <CardDescription>
-            Incident types currently enabled for your organization. These will
-            appear on forms and maps.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="overflow-auto">
-          {filteredOrgTypes.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No incident types enabled yet. Enable existing types or create new
-              ones below.
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead></TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
-                  {/* <TableHead>Enabled Date</TableHead> */}
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrgTypes.map((incidentType) => (
-                  <TableRow key={incidentType.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <div
-                          className="w-4 h-4 rounded-full border border-gray-300"
-                          style={{ backgroundColor: incidentType.color }}
-                        />
-                        {/* <span className="text-sm text-muted-foreground">
-                          {incidentType.color}
-                        </span> */}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {incidentType.name}
-                    </TableCell>
-                    <TableCell>
-                      {incidentType.description &&
-                      incidentType.description.length > 50 ? (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <span className="line-clamp-2 block max-w-xs text-ellipsis overflow-hidden cursor-pointer hover:text-blue-600">
-                              {incidentType.description}
-                            </span>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-80">
-                            <p className="text-sm">
-                              {incidentType.description}
-                            </p>
-                          </PopoverContent>
-                        </Popover>
-                      ) : (
-                        <span className="line-clamp-2 block max-w-xs">
-                          {incidentType.description || "No description"}
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          incidentType.isActive ? "default" : "secondary"
-                        }
-                      >
-                        {incidentType.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-                    {/* <TableCell>
-                      {new Date(
-                        incidentType.organizationEnabledAt
-                      ).toLocaleDateString()}
-                    </TableCell> */}
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={disableIncidentTypeMutation.isPending}
-                          >
-                            <X className="h-4 w-4 mr-1" />
-                            Disable
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Disable Incident Type
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to disable "
-                              {incidentType.name}" for your organization? This
-                              will remove it from forms and may affect map
-                              visibility.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                handleDisableIncidentType(incidentType.id)
-                              }
+      <section className="space-y-3">
+        <h2 className="font-title text-lg font-semibold">
+          Enabled for your organization
+        </h2>
+        <Card className="gap-0 overflow-hidden py-0 shadow-none">
+          <CardContent className="overflow-auto p-0">
+            {filteredOrgTypes.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No incident types enabled yet. Enable one below, or create a
+                new one.
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead></TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Status</TableHead>
+                    {/* <TableHead>Enabled Date</TableHead> */}
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredOrgTypes.map((incidentType) => (
+                    <TableRow key={incidentType.id}>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <div
+                            className="w-4 h-4 rounded-full border border-gray-300"
+                            style={{ backgroundColor: incidentType.color }}
+                          />
+                          {/* <span className="text-sm text-muted-foreground">
+                            {incidentType.color}
+                          </span> */}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {incidentType.name}
+                      </TableCell>
+                      <TableCell>
+                        {incidentType.description &&
+                        incidentType.description.length > 50 ? (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <span className="line-clamp-2 block max-w-xs text-ellipsis overflow-hidden cursor-pointer hover:text-blue-600">
+                                {incidentType.description}
+                              </span>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <p className="text-sm">
+                                {incidentType.description}
+                              </p>
+                            </PopoverContent>
+                          </Popover>
+                        ) : (
+                          <span className="line-clamp-2 block max-w-xs">
+                            {incidentType.description || "No description"}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            incidentType.isActive ? "default" : "secondary"
+                          }
+                        >
+                          {incidentType.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                      {/* <TableCell>
+                        {new Date(
+                          incidentType.organizationEnabledAt
+                        ).toLocaleDateString()}
+                      </TableCell> */}
+                      <TableCell>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={disableIncidentTypeMutation.isPending}
                             >
+                              <X className="h-4 w-4 mr-1" />
                               Disable
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Disable Incident Type
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to disable "
+                                {incidentType.name}" for your organization? This
+                                will remove it from forms and may affect map
+                                visibility.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleDisableIncidentType(incidentType.id)
+                                }
+                              >
+                                Disable
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </section>
       {/* Available Incident Types */}
-      <Card className="shadow-none rounded-md w-full overflow-auto">
-        <CardHeader>
-          <CardTitle className="font-title">Available Incident Types</CardTitle>
-          <CardDescription>
-            Existing incident types created by other organizations that you can
-            enable for your organization.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {filteredAvailableTypes.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No additional incident types available to enable.
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead></TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  {/* <TableHead>Created Date</TableHead> */}
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAvailableTypes.map((incidentType) => (
-                  <TableRow key={incidentType.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <div
-                          className="w-4 h-4 rounded-full border border-gray-300"
-                          style={{ backgroundColor: incidentType.color }}
-                        />
-                        {/* <span className="text-sm text-muted-foreground">
-                          {incidentType.color}
-                        </span> */}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {incidentType.name}
-                    </TableCell>
-                    <TableCell>
-                      {incidentType.description &&
-                      incidentType.description.length > 50 ? (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <span className="line-clamp-1 block max-w-96 text-ellipsis overflow-hidden cursor-pointer hover:text-blue-600">
-                              {incidentType.description}
-                            </span>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-80">
-                            <p className="text-sm">
-                              {incidentType.description}
-                            </p>
-                          </PopoverContent>
-                        </Popover>
-                      ) : (
-                        <span className="line-clamp-1 block max-w-96">
-                          {incidentType.description || "No description"}
-                        </span>
-                      )}
-                    </TableCell>
-                    {/* <TableCell>
-                      {new Date(incidentType.createdAt).toLocaleDateString()}
-                    </TableCell> */}
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          handleEnableIncidentType(incidentType.id)
-                        }
-                        disabled={enableIncidentTypeMutation.isPending}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Enable
-                      </Button>
-                    </TableCell>
+      <section className="space-y-3">
+        <h2 className="font-title text-lg font-semibold">Available to enable</h2>
+        <Card className="gap-0 overflow-hidden py-0 shadow-none">
+          <CardContent className="overflow-auto p-0">
+            {filteredAvailableTypes.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No additional incident types available to enable.
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead></TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Description</TableHead>
+                    {/* <TableHead>Created Date</TableHead> */}
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {filteredAvailableTypes.map((incidentType) => (
+                    <TableRow key={incidentType.id}>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <div
+                            className="w-4 h-4 rounded-full border border-gray-300"
+                            style={{ backgroundColor: incidentType.color }}
+                          />
+                          {/* <span className="text-sm text-muted-foreground">
+                            {incidentType.color}
+                          </span> */}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {incidentType.name}
+                      </TableCell>
+                      <TableCell>
+                        {incidentType.description &&
+                        incidentType.description.length > 50 ? (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <span className="line-clamp-1 block max-w-96 text-ellipsis overflow-hidden cursor-pointer hover:text-blue-600">
+                                {incidentType.description}
+                              </span>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <p className="text-sm">
+                                {incidentType.description}
+                              </p>
+                            </PopoverContent>
+                          </Popover>
+                        ) : (
+                          <span className="line-clamp-1 block max-w-96">
+                            {incidentType.description || "No description"}
+                          </span>
+                        )}
+                      </TableCell>
+                      {/* <TableCell>
+                        {new Date(incidentType.createdAt).toLocaleDateString()}
+                      </TableCell> */}
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleEnableIncidentType(incidentType.id)
+                          }
+                          disabled={enableIncidentTypeMutation.isPending}
+                        >
+                          <Check className="h-4 w-4 mr-1" />
+                          Enable
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </section>
       {/* Create Dialog */}
       <CreateIncidentTypeDialog
         open={createDialogOpen}

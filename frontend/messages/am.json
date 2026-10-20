@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "መነሻ",
-    "datasets": "የውሂብ ስብስቦች",
     "maps": "ካርታዎች",
     "caseStudies": "የጉዳይ ጥናቶች",
     "reports": "ሪፖርቶች",
@@ -304,28 +303,6 @@
     "signInFailed": "መግባት አልተሳካም",
     "signInFailedRetry": "መግባት አልተሳካም። እባክዎ እንደገና ይሞክሩ።"
   },
-  "Datasets": {
-    "browseDescription": "ለምርምር፣ ትንተና እና የማህበረሰብ አጠቃቀም በነጻ የሚገኙ ሁሉን አቀፍ የመረጃ ስብስቦችን ያግኙ።",
-    "searchPlaceholder": "የመረጃ ስብስቦችን ይፈልጉ...",
-    "allCategories": "ሁሉም ምድቦች",
-    "allFormats": "ሁሉም ቅርጸቶች",
-    "clearFilters": "ማጣሪያዎችን አጽዳ",
-    "emptyTitle": "ምንም የመረጃ ስብስቦች አልተገኙም",
-    "emptyDescription": "የፍለጋ ቃላትዎን ወይም ማጣሪያዎችዎን ለማስተካከል ይሞክሩ።",
-    "unknownFormat": "የማይታወቅ",
-    "datasetInfoLabel": "የመረጃ ስብስብ መረጃ",
-    "sizeLabel": "መጠን፦ {size}",
-    "downloadsCount": "{count} አውርዶች",
-    "sourceLabel": "ምንጭ፦",
-    "downloadButton": "አውርድ",
-    "downloadSuccess": "{fileName} ወርዷል",
-    "downloadError": "ማውረድ አልተሳካም። እባክዎ እንደገና ይሞክሩ።",
-    "ctaTitle": "መስስስ ይቀጥሉ",
-    "ctaDescription": "በተግባቢ ካርታዎቻችን የክስተት ቅጦችን በጥልቀት ያስሱ ወይም በተለያዩ ክልሎች እና ርዕሶች ውስጥ ሁሉን አቀፍ ሪፖርቶችን ያስሱ።",
-    "methodology": "ዘዴ",
-    "coverage": "ሽፋን",
-    "license": "ፈቃድ"
-  },
   "Organizations": {
     "errorTitle": "ስህተት",
     "errorLoading": "ድርጅቶችን መጫን አልተሳካም። እባክዎ ቆይተው እንደገና ይሞክሩ።",
@@ -535,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "የምርጫ ባለሥልጣናት በመፍትሄዎች ላይ ተሳትፈዋል",
     "outcomeRampsInstalled": "በምርጫ ጣቢያዎች ጊዜያዊ መወጣጫዎች ተገንብተዋል",
     "outcomeAccessibleVoting": "ለሁሉም የበለጠ ተደራሽ ምርጫ"
+  },
+  "DeploymentPage": {
+    "byOrganization": "በ{organization}",
+    "notTakingReports": "ይህ ስምሪት በአሁኑ ጊዜ ሪፖርቶችን አይቀበልም።",
+    "viewMap": "ካርታውን ይመልከቱ"
   }
 }

@@ -12,6 +12,11 @@ export interface Organization {
   updatedAt: string;
 }
 
+/** An organization and how many deployments it has made (super admin). */
+export interface OrganizationWithDeployments extends Organization {
+  deploymentCount: number;
+}
+
 export interface OrganizationApplication {
   id: number;
   organizationName: string;
@@ -34,6 +39,10 @@ export interface ListParams {
 
 export const organizationsApi = {
   getById: (id: string) => api.get<Organization>(`/admin/organization`),
+
+  // Super admin: every organization with its deployment count.
+  listWithDeploymentCounts: () =>
+    api.get<OrganizationWithDeployments[]>("/superadmin/organizations"),
 
   list: (params?: ListParams) => {
     const query = new URLSearchParams();

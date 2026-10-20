@@ -19,7 +19,6 @@ import {
   Trash2,
   Power,
   PowerOff,
-  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -235,15 +234,6 @@ const SuperAdminFormDetailContent = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link
-                  href={`/superadmin/incidents?formId=${form.id}`}
-                  className="flex items-center"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  View Incidents
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <AlertDialog>
                 <AlertDialogTrigger asChild>

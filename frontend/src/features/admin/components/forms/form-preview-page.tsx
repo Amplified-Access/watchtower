@@ -30,7 +30,7 @@ const FormPreviewPage = ({ formId }: FormPreviewPageProps) => {
 
   if (userLoading || formLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-[400px] items-center justify-center">
         <Loader size="32" />
       </div>
     );
@@ -65,37 +65,28 @@ const FormPreviewPage = ({ formId }: FormPreviewPageProps) => {
   const questions = form.definition || {};
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex items-center justify-between px-6 py-3">
-          <div className="flex items-center space-x-4">
-            <Link href="/admin/forms">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Forms
-              </Button>
-            </Link>
-            <div className="h-6 w-px bg-border" />
-            <div>
-              <h1 className="text-xl font-semibold">{form.name}</h1>
-              <p className="text-sm text-muted-foreground">Form Preview</p>
-            </div>
-          </div>
-          <Link href={`/admin/forms/${formId}`}>
-            <Button size="sm">
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Form
-            </Button>
+    <div className="space-y-6 px-4 pb-6 md:px-6">
+      {/* Back to the forms, and Edit, in one row. */}
+      <div className="flex items-center justify-between gap-3">
+        <Button asChild variant="ghost" size="sm">
+          <Link href="/admin/forms">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Forms
           </Link>
-        </div>
+        </Button>
+        <Button asChild size="sm">
+          <Link href={`/admin/forms/${formId}`}>
+            <Edit className="w-4 h-4" />
+            Edit Form
+          </Link>
+        </Button>
       </div>
 
       {/* Form Preview */}
-      <div className="container mx-auto py-8 px-6 max-w-2xl">
-        <Card>
+      <div className="mx-auto max-w-2xl">
+        <Card className="shadow-none">
           <CardHeader>
-            <CardTitle>{form.name}</CardTitle>
+            <CardTitle className="font-title text-lg">{form.name}</CardTitle>
             <CardDescription>
               {form.isActive ? (
                 <span className="text-green-600">

@@ -115,16 +115,13 @@ const FormsContent = () => {
   }
 
   return (
-    <Container className="space-y-20" size="sm">
-      {/* Header */}
-
-      {/* Forms Grid */}
+    <Container className="space-y-6 pb-6" size="lg">
+      {/* One grid: the dashed "Create New Form" card first, then the forms. */}
       <div>
-        <h1 className="text-2xl pb-6 font-bold font-title">Forms</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* New Form Card */}
           <Link href="/admin/forms/new">
-            <Card className="border-dashed rounded-md border-2 hover:border-primary/50 transition-colors cursor-pointer group shadow-none">
+            <Card className="border-dashed border-2 hover:border-primary/50 transition-colors cursor-pointer group shadow-none">
               <CardContent className="flex flex-col items-center justify-center p-6 min-h-50">
                 <Plus className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors" />
                 <p className="text-muted-foreground group-hover:text-primary transition-colors mt-2">
@@ -133,15 +130,10 @@ const FormsContent = () => {
               </CardContent>
             </Card>
           </Link>
-        </div>
-      </div>
 
-      <div className="mt-10">
-        <h1 className="text-2xl font-bold pb-6 font-title">Existing Forms</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* Existing Forms */}
           {forms?.map((form: Form) => (
-            <Card key={form.id} className="shadow-none relative ">
+            <Card key={form.id} className="shadow-none relative">
               <CardHeader className="pb-3">
                 <div className="flex justify-between">
                   <div className="text-sm">

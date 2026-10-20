@@ -9,6 +9,8 @@ export interface MapFilter {
   /** Incident type IDs to leave out. */
   excludeTypes?: string[];
   country?: string;
+  /** Only the reports sent through this deployment's reporting link. */
+  deploymentId?: string;
   period?: MapPeriod;
   /** Custom range, YYYY-MM-DD; `to` is inclusive. Use instead of `period`. */
   from?: string;
@@ -61,6 +63,7 @@ const toQuery = (filter: MapFilter = {}) => {
   if (filter.category) query.set("category", filter.category);
   if (filter.excludeTypes?.length) query.set("excludeTypes", filter.excludeTypes.join(","));
   if (filter.country) query.set("country", filter.country);
+  if (filter.deploymentId) query.set("deploymentId", filter.deploymentId);
   if (filter.period) query.set("period", filter.period);
   if (filter.from) query.set("from", filter.from);
   if (filter.to) query.set("to", filter.to);

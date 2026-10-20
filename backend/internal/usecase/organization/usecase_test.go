@@ -29,6 +29,9 @@ func (m *mockOrgRepo) FindBySlug(_ context.Context, _ string) (*entity.Organizat
 	return m.org, m.err
 }
 func (m *mockOrgRepo) CountCreatedSince(_ context.Context, _ time.Time) (int, error) { return 0, nil }
+func (m *mockOrgRepo) FindAllWithDeploymentCounts(_ context.Context) ([]*entity.OrganizationWithDeployments, error) {
+	return nil, m.err
+}
 func (m *mockOrgRepo) Create(_ context.Context, _ *entity.Organization) error         { return m.err }
 func (m *mockOrgRepo) Update(_ context.Context, _ *entity.Organization) error         { return m.err }
 

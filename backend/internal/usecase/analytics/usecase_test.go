@@ -39,6 +39,9 @@ func (f *fakeReports) GetHeatmapData(context.Context) ([]*entity.HeatmapPoint, e
 func (f *fakeReports) GetTypeDistribution(context.Context) ([]*entity.TypeCount, error) {
 	return nil, nil
 }
+func (f *fakeReports) CountCreatedSince(context.Context, time.Time) (int, error) {
+	return 0, nil
+}
 func (f *fakeReports) FindForMap(context.Context, entity.MapFilter) ([]*entity.MapReportRow, error) {
 	return nil, nil
 }

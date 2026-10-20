@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 type IncidentStatus string
 
@@ -64,6 +67,8 @@ type Incident struct {
 
 type AnonymousIncidentReport struct {
 	ID              string        `json:"id"`
+	// The deployment whose reporting link the report came through, if any.
+	DeploymentID    *string       `json:"deploymentId,omitempty"`
 	IncidentTypeID  string        `json:"incidentTypeId"`
 	IncidentType    *IncidentType `json:"incidentType,omitempty"`
 	Location        Location      `json:"location"`
@@ -130,32 +135,30 @@ type GrowthMetric struct {
 	Percentage float64 `json:"percentage"`
 }
 
-type PlatformStats struct {
-	TotalOrganizations  int     `json:"totalOrganizations"`
-	TotalAdmins         int     `json:"totalAdmins"`
-	TotalWatchers       int     `json:"totalWatchers"`
-	PendingApplications int     `json:"pendingApplications"`
-	ReportsThisMonth    int     `json:"reportsThisMonth"`
-	ActiveForms         int     `json:"activeForms"`
-	CriticalIncidents   int     `json:"criticalIncidents"`
-	UptimePercentage    float64 `json:"uptimePercentage"`
-	Growth              struct {
-		Organizations GrowthMetric `json:"organizations"`
-		Admins        GrowthMetric `json:"admins"`
-		Watchers      GrowthMetric `json:"watchers"`
-	} `json:"growth"`
-	Metrics struct {
-		NewOrganizationsThisMonth int     `json:"newOrganizationsThisMonth"`
-		NewAdminsThisMonth        int     `json:"newAdminsThisMonth"`
-		NewWatchersThisMonth      int     `json:"newWatchersThisMonth"`
-		AverageReportsPerOrg      float64 `json:"averageReportsPerOrg"`
-	} `json:"metrics"`
+// NewGrowthMetric compares a period's count with the one before, as a
+// percentage to one decimal place (100 when the earlier one was zero).
+func NewGrowthMetric(current, previous int) GrowthMetric {
+	var pct float64
+	if previous > 0 {
+		pct = math.Round(float64(current-previous)/float64(previous)*100*10) / 10
+	} else if current > 0 {
+		pct = 100
+	}
+	return GrowthMetric{Current: current, Previous: previous, Percentage: pct}
 }
 
-type ActivityItem struct {
-	ID          string    `json:"id"`
-	Type        string    `json:"type"`
-	Description string    `json:"description"`
-	Timestamp   time.Time `json:"timestamp"`
-	UserName    string    `json:"userName"`
+// PlatformStats is the super admin's dashboard: what the platform holds
+// now, on the deployments model.
+type PlatformStats struct {
+	TotalOrganizations  int              `json:"totalOrganizations"`
+	PendingApplications int              `json:"pendingApplications"`
+	Deployments         DeploymentCounts `json:"deployments"`
+	// Public reports this month against last month.
+	Reports GrowthMetric `json:"reports"`
+	Growth  struct {
+		// New organizations this month against last month.
+		Organizations GrowthMetric `json:"organizations"`
+	} `json:"growth"`
+	// The deployments that gathered the most reports this month.
+	MostActiveDeployments []*DeploymentActivity `json:"mostActiveDeployments"`
 }

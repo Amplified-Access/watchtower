@@ -17,6 +17,9 @@ const Container = ({
   return (
     <motion.div
       ref={ref}
+      // Lets the dashboard shell restyle its pages' containers (no max width,
+      // less padding) without touching the public site's.
+      data-slot="container"
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}

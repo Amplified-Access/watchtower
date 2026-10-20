@@ -21,7 +21,6 @@
   },
   "Navigation": {
     "home": "Awaka",
-    "datasets": "Ebikoresebwa",
     "maps": "Mmaapu",
     "caseStudies": "Ebyokulabirako",
     "reports": "Alipooti",
@@ -304,28 +303,6 @@
     "signInFailed": "Okuyingira kugaanye",
     "signInFailedRetry": "Okuyingira kugaanye. Gezaako nate."
   },
-  "Datasets": {
-    "browseDescription": "Zuula ebikwata ku data ebijjuvu - ebisangibwa awatali kusasula okukozesebwa mu kunoonyereza, okwekenneenya n'ebibiina.",
-    "searchPlaceholder": "Noonya ebikwata ku data...",
-    "allCategories": "Ebika Byonna",
-    "allFormats": "Engeri Zonna",
-    "clearFilters": "Ggyawo Ebisengejja",
-    "emptyTitle": "Tewali bikwata ku data bizuuliddwa",
-    "emptyDescription": "Gezaako okukyusa ebigambo by'onoonyaamu oba ebisengejja.",
-    "unknownFormat": "Tekimanyiddwa",
-    "datasetInfoLabel": "Ebikwata ku data",
-    "sizeLabel": "Obunene: {size}",
-    "downloadsCount": "okussibwa {count}",
-    "sourceLabel": "Ensibuko:",
-    "downloadButton": "Ssa",
-    "downloadSuccess": "{fileName} yassiddwa",
-    "downloadError": "Okussa kulemye. Ddamu ogezeeko.",
-    "ctaTitle": "Genderera Okunoonyereza",
-    "ctaDescription": "Noonyereza ennyo ku ngeri ebintu gye byekunngaanya nga okozesa emmaapu zaffe ez'okukolagana oba laba alipooti ezijjuvu mu bitundu n'emitwe egy'enjawulo.",
-    "methodology": "Enkola",
-    "coverage": "Obugazi",
-    "license": "Layisinsi"
-  },
   "Organizations": {
     "errorTitle": "Ensobi",
     "errorLoading": "Okuleeta ebibiina kulemye. Ddamu ogezeeko oluvannyuma.",
@@ -535,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Ab'ebyokulonda batuukiriddwa",
     "outcomeRampsInstalled": "Amakubo ag'ekiseera mu bifo by'okulondera",
     "outcomeAccessibleVoting": "Okulonda okutuukirika eri buli muntu"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Kyategekebwa {organization}",
+    "notTakingReports": "Pulojekiti eno tekyakkiriza alipoota kati.",
+    "viewMap": "Laba mmaapu"
   }
 }

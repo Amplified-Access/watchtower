@@ -39,7 +39,7 @@ const WatcherIncidentReportPage = () => {
         </div>
 
         {/* Instructions */}
-        {/* <Card className="shadow-none rounded-md">
+        {/* <Card className="shadow-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-title text-lg">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
