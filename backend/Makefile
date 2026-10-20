@@ -47,6 +47,13 @@ watch:
 	fi
 
 # Seed initial data (one-time, skips if rows exist)
+# Apply schema changes (backend/migrations). `make migrate-status` lists them.
+migrate:
+	@go run cmd/migrate/main.go up
+
+migrate-status:
+	@go run cmd/migrate/main.go status
+
 seed:
 	@echo "Seeding..."
 	@go run cmd/seed/main.go
@@ -61,4 +68,4 @@ swagger:
 	@echo "Generating Swagger docs..."
 	@swag init -g cmd/api/main.go --parseDependency --parseInternal
 
-.PHONY: all build run test clean watch docker-run docker-down itest swagger seed refresh
+.PHONY: all build run test clean watch docker-run docker-down itest swagger seed refresh migrate migrate-status

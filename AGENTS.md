@@ -81,9 +81,13 @@ make test         # unit tests
 make itest        # integration tests (requires Docker for Postgres)
 make watch        # live reload with air
 make swagger      # regenerate Swagger docs after changing annotations
+make migrate      # apply schema changes in backend/migrations (goose)
+make migrate-status  # list applied and pending migrations
 make seed         # one-time DB seed (skips tables that already have rows)
 make refresh      # insert a fresh batch of weekly anonymous reports (safe to re-run)
 ```
+
+**Schema changes are goose migrations** in `backend/migrations/` (`NNNNN_name.sql`, each with a `-- +goose Up` and a `-- +goose Down` section), embedded into `cmd/migrate` and run with `make migrate` against `DATABASE_URL`. goose records what it applied in `goose_db_version`. The schema before `00001` was made by Drizzle from the frontend, whose migrations were deleted, so it exists only in the databases; new tables and columns go through a migration. goose is pinned to v3.27.0 because later releases require Go 1.26 and CI builds with 1.25.
 
 ### Sanity (run from `frontend/`)
 ```
