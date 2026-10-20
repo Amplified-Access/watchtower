@@ -148,7 +148,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 			admin.GET("/deployments", s.deploymentHandler.GetOrganizationDeployments)
 			admin.POST("/deployments", s.deploymentHandler.CreateDeployment)
-			admin.GET("/deployments/counts", s.deploymentHandler.GetOrganizationDeploymentCounts)
+			admin.GET("/deployments/stats", s.deploymentHandler.GetOrganizationDeploymentStats)
 			admin.PATCH("/deployments/:id/status", s.deploymentHandler.UpdateDeploymentStatus)
 
 			admin.GET("/incident-types", s.incidentHandler.GetTypesByOrganization)

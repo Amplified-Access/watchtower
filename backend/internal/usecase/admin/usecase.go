@@ -2,7 +2,6 @@ package adminusecase
 
 import (
 	"context"
-	"math"
 	"time"
 
 	"backend/internal/domain/entity"
@@ -88,15 +87,9 @@ func (uc *UseCase) GetAllFormsForSuperAdmin(ctx context.Context, params entity.L
 	return uc.formRepo.FindAllForSuperAdmin(ctx, params)
 }
 
-func growthMetric(current, previous int) entity.GrowthMetric {
-	var pct float64
-	if previous > 0 {
-		pct = math.Round(float64(current-previous)/float64(previous)*100*10) / 10
-	} else if current > 0 {
-		pct = 100
-	}
-	return entity.GrowthMetric{Current: current, Previous: previous, Percentage: pct}
-}
+// mostActiveLimit is how many deployments the super admin's dashboard lists
+// as most active.
+const mostActiveLimit = 5
 
 // GetPlatformStats is the super admin's dashboard on the deployments model:
 // organizations and their growth, pending applications, deployments by
@@ -146,13 +139,19 @@ func (uc *UseCase) GetPlatformStats(ctx context.Context) (*entity.PlatformStats,
 		return nil, err
 	}
 
+	mostActive, err := uc.deploymentRepo.MostActive(ctx, startOfMonth, mostActiveLimit)
+	if err != nil {
+		return nil, err
+	}
+
 	stats := &entity.PlatformStats{
+		MostActiveDeployments: mostActive,
 		TotalOrganizations:  orgTotal,
 		PendingApplications: pending,
 		Deployments:         deployments,
-		Reports:             growthMetric(reportsThisMonth, reportsSinceLastMonth-reportsThisMonth),
+		Reports:             entity.NewGrowthMetric(reportsThisMonth, reportsSinceLastMonth-reportsThisMonth),
 	}
-	stats.Growth.Organizations = growthMetric(newOrgsThisMonth, newOrgsSinceLastMonth-newOrgsThisMonth)
+	stats.Growth.Organizations = entity.NewGrowthMetric(newOrgsThisMonth, newOrgsSinceLastMonth-newOrgsThisMonth)
 	return stats, nil
 }
 

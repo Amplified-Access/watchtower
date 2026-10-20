@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 type IncidentStatus string
 
@@ -132,6 +135,18 @@ type GrowthMetric struct {
 	Percentage float64 `json:"percentage"`
 }
 
+// NewGrowthMetric compares a period's count with the one before, as a
+// percentage to one decimal place (100 when the earlier one was zero).
+func NewGrowthMetric(current, previous int) GrowthMetric {
+	var pct float64
+	if previous > 0 {
+		pct = math.Round(float64(current-previous)/float64(previous)*100*10) / 10
+	} else if current > 0 {
+		pct = 100
+	}
+	return GrowthMetric{Current: current, Previous: previous, Percentage: pct}
+}
+
 // PlatformStats is the super admin's dashboard: what the platform holds
 // now, on the deployments model.
 type PlatformStats struct {
@@ -144,4 +159,6 @@ type PlatformStats struct {
 		// New organizations this month against last month.
 		Organizations GrowthMetric `json:"organizations"`
 	} `json:"growth"`
+	// The deployments that gathered the most reports this month.
+	MostActiveDeployments []*DeploymentActivity `json:"mostActiveDeployments"`
 }

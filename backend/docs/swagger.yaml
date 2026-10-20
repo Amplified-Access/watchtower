@@ -533,10 +533,11 @@ paths:
       summary: Change a deployment's status
       tags:
       - Admin – Deployments
-  /admin/deployments/counts:
+  /admin/deployments/stats:
     get:
-      description: Returns how many deployments the authenticated admin's organization
-        has, in total and by status
+      description: 'For the admin''s dashboard: the organization''s deployments by
+        status, and the reports that came through them (ever, this month against last,
+        by incident type, and per week over the last seven weeks)'
       produces:
       - application/json
       responses:
@@ -558,7 +559,7 @@ paths:
             $ref: '#/definitions/backend_internal_adapter_presenter.Response'
       security:
       - BearerAuth: []
-      summary: Count the organization's deployments
+      summary: The organization's deployment numbers
       tags:
       - Admin – Deployments
   /admin/forms:

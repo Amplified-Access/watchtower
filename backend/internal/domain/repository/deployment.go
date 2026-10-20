@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"backend/internal/domain/entity"
 )
@@ -18,6 +19,16 @@ type DeploymentRepository interface {
 	// CountByStatus counts deployments by status; organizationID narrows
 	// it to one organization.
 	CountByStatus(ctx context.Context, organizationID *string) (entity.DeploymentCounts, error)
+
+	// The reports that came through an organization's deployments: how many
+	// (since a time, or ever when since is nil), by incident type, and per
+	// week over the last seven weeks.
+	CountReports(ctx context.Context, organizationID string, since *time.Time) (int, error)
+	ReportsByType(ctx context.Context, organizationID string) ([]*entity.TypeCount, error)
+	WeeklyReports(ctx context.Context, organizationID string) ([]*entity.WeeklyTrendPoint, error)
+	// MostActive is the deployments with the most reports since a time,
+	// across the platform, busiest first.
+	MostActive(ctx context.Context, since time.Time, limit int) ([]*entity.DeploymentActivity, error)
 	// Create saves the deployment and its incident types together.
 	Create(ctx context.Context, d *entity.Deployment, incidentTypeIDs []string) error
 }

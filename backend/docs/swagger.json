@@ -330,21 +330,21 @@
                 }
             }
         },
-        "/admin/deployments/counts": {
+        "/admin/deployments/stats": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns how many deployments the authenticated admin's organization has, in total and by status",
+                "description": "For the admin's dashboard: the organization's deployments by status, and the reports that came through them (ever, this month against last, by incident type, and per week over the last seven weeks)",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Admin – Deployments"
                 ],
-                "summary": "Count the organization's deployments",
+                "summary": "The organization's deployment numbers",
                 "responses": {
                     "200": {
                         "description": "OK",

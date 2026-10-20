@@ -39,10 +39,10 @@ func (h *DeploymentHandler) GetOrganizationDeployments(c *gin.Context) {
 	presenter.OK(c, deployments)
 }
 
-// GetOrganizationDeploymentCounts godoc
+// GetOrganizationDeploymentStats godoc
 //
-//	@Summary		Count the organization's deployments
-//	@Description	Returns how many deployments the authenticated admin's organization has, in total and by status
+//	@Summary		The organization's deployment numbers
+//	@Description	For the admin's dashboard: the organization's deployments by status, and the reports that came through them (ever, this month against last, by incident type, and per week over the last seven weeks)
 //	@Tags			Admin – Deployments
 //	@Produce		json
 //	@Security		BearerAuth
@@ -50,15 +50,15 @@ func (h *DeploymentHandler) GetOrganizationDeployments(c *gin.Context) {
 //	@Failure		401	{object}	presenter.Response
 //	@Failure		403	{object}	presenter.Response
 //	@Failure		500	{object}	presenter.Response
-//	@Router			/admin/deployments/counts [get]
-func (h *DeploymentHandler) GetOrganizationDeploymentCounts(c *gin.Context) {
+//	@Router			/admin/deployments/stats [get]
+func (h *DeploymentHandler) GetOrganizationDeploymentStats(c *gin.Context) {
 	user := middleware.CurrentUser(c)
-	counts, err := h.uc.CountsForOrganization(c.Request.Context(), *user.OrganizationID)
+	stats, err := h.uc.StatsForOrganization(c.Request.Context(), *user.OrganizationID)
 	if err != nil {
 		presenter.Error(c, err)
 		return
 	}
-	presenter.OK(c, counts)
+	presenter.OK(c, stats)
 }
 
 // CreateDeployment godoc

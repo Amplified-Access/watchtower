@@ -36,6 +36,24 @@ func (m *mockRepo) UpdateStatus(_ context.Context, _ string, s entity.Deployment
 	m.updated = s
 	return nil
 }
+func (m *mockRepo) CountReports(_ context.Context, _ string, since *time.Time) (int, error) {
+	if since == nil {
+		return 10, nil
+	}
+	if since.Day() == 1 && since.Month() == time.Now().Month() {
+		return 4, nil // this month
+	}
+	return 7, nil // since last month's start
+}
+func (m *mockRepo) ReportsByType(_ context.Context, _ string) ([]*entity.TypeCount, error) {
+	return nil, nil
+}
+func (m *mockRepo) WeeklyReports(_ context.Context, _ string) ([]*entity.WeeklyTrendPoint, error) {
+	return nil, nil
+}
+func (m *mockRepo) MostActive(_ context.Context, _ time.Time, _ int) ([]*entity.DeploymentActivity, error) {
+	return nil, nil
+}
 func (m *mockRepo) SlugExists(_ context.Context, slug string) (bool, error) {
 	return m.taken[slug], nil
 }
@@ -186,5 +204,16 @@ func TestAcceptsReports(t *testing.T) {
 		if got := c.d.AcceptsReports(c.at); got != c.want {
 			t.Errorf("%s: AcceptsReports = %v, want %v", c.name, got, c.want)
 		}
+	}
+}
+
+func TestStatsForOrganization_LastMonthExcludesThisMonth(t *testing.T) {
+	stats, err := New(&mockRepo{}).StatsForOrganization(context.Background(), "org-1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if stats.TotalReports != 10 || stats.Reports.Current != 4 || stats.Reports.Previous != 3 {
+		t.Errorf("got total %d, this month %d, last month %d; want 10, 4, 3",
+			stats.TotalReports, stats.Reports.Current, stats.Reports.Previous)
 	}
 }

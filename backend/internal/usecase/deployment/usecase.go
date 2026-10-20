@@ -39,10 +39,46 @@ func withAccepting(deployments []*entity.Deployment, err error) ([]*entity.Deplo
 	return deployments, err
 }
 
-// CountsForOrganization is how many deployments an organization has, by
-// status, for its admin's dashboard.
-func (uc *UseCase) CountsForOrganization(ctx context.Context, organizationID string) (entity.DeploymentCounts, error) {
-	return uc.repo.CountByStatus(ctx, &organizationID)
+// StatsForOrganization is an admin's dashboard: their deployments by
+// status, and the reports that came through them (ever, this month against
+// last, by incident type and per week).
+func (uc *UseCase) StatsForOrganization(ctx context.Context, organizationID string) (*entity.OrganizationDeploymentStats, error) {
+	now := time.Now()
+	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	startOfLastMonth := startOfMonth.AddDate(0, -1, 0)
+
+	counts, err := uc.repo.CountByStatus(ctx, &organizationID)
+	if err != nil {
+		return nil, err
+	}
+	total, err := uc.repo.CountReports(ctx, organizationID, nil)
+	if err != nil {
+		return nil, err
+	}
+	thisMonth, err := uc.repo.CountReports(ctx, organizationID, &startOfMonth)
+	if err != nil {
+		return nil, err
+	}
+	// Since last month's start includes this month's.
+	sinceLastMonth, err := uc.repo.CountReports(ctx, organizationID, &startOfLastMonth)
+	if err != nil {
+		return nil, err
+	}
+	byType, err := uc.repo.ReportsByType(ctx, organizationID)
+	if err != nil {
+		return nil, err
+	}
+	weekly, err := uc.repo.WeeklyReports(ctx, organizationID)
+	if err != nil {
+		return nil, err
+	}
+	return &entity.OrganizationDeploymentStats{
+		Deployments:  counts,
+		TotalReports: total,
+		Reports:      entity.NewGrowthMetric(thisMonth, sinceLastMonth-thisMonth),
+		ByType:       byType,
+		Weekly:       weekly,
+	}, nil
 }
 
 // ListAll is every deployment on the platform, for the super admin;

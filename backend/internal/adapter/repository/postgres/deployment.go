@@ -56,7 +56,8 @@ func (r *DeploymentRepository) findOne(ctx context.Context, where string, args .
 // their incident types; where (with args) narrows them.
 func (r *DeploymentRepository) find(ctx context.Context, where string, args ...interface{}) ([]*entity.Deployment, error) {
 	q := `SELECT d.id, d.organization_id, o.name, d.name, d.slug, d.description, d.country, d.region,
-			d.status, d.starts_at, d.ends_at, d.created_at, d.updated_at
+			d.status, d.starts_at, d.ends_at, d.created_at, d.updated_at,
+			(SELECT COUNT(*) FROM anonymous_incident_reports r WHERE r.deployment_id = d.id)
 		FROM deployments d JOIN organizations o ON o.id = d.organization_id
 		` + where + ` ORDER BY d.created_at DESC`
 
@@ -73,7 +74,7 @@ func (r *DeploymentRepository) find(ctx context.Context, where string, args ...i
 		d := &entity.Deployment{IncidentTypes: []entity.IncidentType{}}
 		if err := rows.Scan(&d.ID, &d.OrganizationID, &d.OrganizationName, &d.Name, &d.Slug,
 			&d.Description, &d.Country, &d.Region, &d.Status, &d.StartsAt, &d.EndsAt,
-			&d.CreatedAt, &d.UpdatedAt); err != nil {
+			&d.CreatedAt, &d.UpdatedAt, &d.ReportCount); err != nil {
 			return nil, err
 		}
 		deployments = append(deployments, d)
@@ -124,6 +125,92 @@ func (r *DeploymentRepository) CountByStatus(ctx context.Context, organizationID
 	var c entity.DeploymentCounts
 	err := r.db.QueryRowContext(ctx, q, args...).Scan(&c.Total, &c.Draft, &c.Live, &c.Closed)
 	return c, err
+}
+
+// orgReports is the reports that came through an organization's
+// deployments, as r.
+const orgReports = `anonymous_incident_reports r
+	JOIN deployments d ON d.id = r.deployment_id AND d.organization_id = $1`
+
+func (r *DeploymentRepository) CountReports(ctx context.Context, organizationID string, since *time.Time) (int, error) {
+	q := `SELECT COUNT(*) FROM ` + orgReports
+	args := []interface{}{organizationID}
+	if since != nil {
+		q += ` WHERE r.created_at >= $2`
+		args = append(args, *since)
+	}
+	var count int
+	err := r.db.QueryRowContext(ctx, q, args...).Scan(&count)
+	return count, err
+}
+
+func (r *DeploymentRepository) ReportsByType(ctx context.Context, organizationID string) ([]*entity.TypeCount, error) {
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT it.name, COUNT(*) AS count
+		FROM `+orgReports+`
+		JOIN incident_types it ON it.id = r.incident_type_id
+		GROUP BY it.name ORDER BY count DESC, it.name`, organizationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []*entity.TypeCount{}
+	for rows.Next() {
+		tc := &entity.TypeCount{}
+		if err := rows.Scan(&tc.Name, &tc.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, tc)
+	}
+	return items, rows.Err()
+}
+
+func (r *DeploymentRepository) WeeklyReports(ctx context.Context, organizationID string) ([]*entity.WeeklyTrendPoint, error) {
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT TO_CHAR(DATE_TRUNC('week', r.created_at), 'YYYY-MM-DD') AS week, COUNT(*)
+		FROM `+orgReports+`
+		WHERE r.created_at >= NOW() - INTERVAL '7 weeks'
+		GROUP BY week ORDER BY week`, organizationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	points := []*entity.WeeklyTrendPoint{}
+	for rows.Next() {
+		p := &entity.WeeklyTrendPoint{}
+		if err := rows.Scan(&p.Week, &p.Count); err != nil {
+			return nil, err
+		}
+		points = append(points, p)
+	}
+	return points, rows.Err()
+}
+
+func (r *DeploymentRepository) MostActive(ctx context.Context, since time.Time, limit int) ([]*entity.DeploymentActivity, error) {
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT d.id, d.name, d.slug, d.organization_id, o.name, d.status,
+			COUNT(r.id) FILTER (WHERE r.created_at >= $1), COUNT(r.id)
+		FROM deployments d
+		JOIN organizations o ON o.id = d.organization_id
+		LEFT JOIN anonymous_incident_reports r ON r.deployment_id = d.id
+		GROUP BY d.id, o.name
+		HAVING COUNT(r.id) FILTER (WHERE r.created_at >= $1) > 0
+		ORDER BY 7 DESC, 8 DESC, d.created_at DESC
+		LIMIT $2`, since, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []*entity.DeploymentActivity{}
+	for rows.Next() {
+		a := &entity.DeploymentActivity{}
+		if err := rows.Scan(&a.ID, &a.Name, &a.Slug, &a.OrganizationID, &a.OrganizationName, &a.Status,
+			&a.ReportsThisMonth, &a.TotalReports); err != nil {
+			return nil, err
+		}
+		items = append(items, a)
+	}
+	return items, rows.Err()
 }
 
 func (r *DeploymentRepository) SlugExists(ctx context.Context, slug string) (bool, error) {

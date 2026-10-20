@@ -33,6 +33,8 @@ type Deployment struct {
 	StartsAt         *time.Time       `json:"startsAt,omitempty"`
 	EndsAt           *time.Time       `json:"endsAt,omitempty"`
 	IncidentTypes    []IncidentType   `json:"incidentTypes"`
+	// ReportCount is how many reports have come through its reporting link.
+	ReportCount int `json:"reportCount"`
 	// AcceptingReports is AcceptsReports at the time of the request, so
 	// pages can offer the reporting link without repeating the rule.
 	AcceptingReports bool `json:"acceptingReports"`
@@ -62,6 +64,30 @@ type DeploymentCounts struct {
 	Draft  int `json:"draft"`
 	Live   int `json:"live"`
 	Closed int `json:"closed"`
+}
+
+// DeploymentActivity is a deployment and the reports it has gathered, for
+// the super admin's most active deployments.
+type DeploymentActivity struct {
+	ID               string           `json:"id"`
+	Name             string           `json:"name"`
+	Slug             string           `json:"slug"`
+	OrganizationID   string           `json:"organizationId"`
+	OrganizationName string           `json:"organizationName"`
+	Status           DeploymentStatus `json:"status"`
+	ReportsThisMonth int              `json:"reportsThisMonth"`
+	TotalReports     int              `json:"totalReports"`
+}
+
+// OrganizationDeploymentStats is an admin's dashboard: their organization's
+// deployments and the reports that have come through them.
+type OrganizationDeploymentStats struct {
+	Deployments  DeploymentCounts `json:"deployments"`
+	TotalReports int              `json:"totalReports"`
+	// This month against last month.
+	Reports GrowthMetric        `json:"reports"`
+	ByType  []*TypeCount        `json:"byType"`
+	Weekly  []*WeeklyTrendPoint `json:"weekly"`
 }
 
 // NewDeployment is what an admin submits to create a deployment.
