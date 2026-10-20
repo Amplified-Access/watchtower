@@ -71,9 +71,17 @@ export function DashboardShell({
         </header>
         {/* The scroll area. Pages that fill the card (a map, a table with
             its own scroll) can still use flex-1/min-h-0, since its height
-            is now bounded. */}
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          {children}
+            is now bounded. It is also the size container --dashboard-scale
+            measures. */}
+        <div className="@container flex min-h-0 flex-1 flex-col overflow-y-auto">
+          {/* Scaled to the card's width (--dashboard-scale), so the content
+              uses the room the sidebar gives up when it collapses. Pages'
+              <Container>s drop the public site's max width and its 64px
+              viewport-based padding, which inside the card only left empty
+              bands at the sides. */}
+          <div className="flex min-h-0 flex-1 flex-col [zoom:var(--dashboard-scale)] **:data-[slot=container]:max-w-none **:data-[slot=container]:px-4 md:**:data-[slot=container]:px-6">
+            {children}
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

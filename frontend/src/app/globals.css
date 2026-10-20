@@ -145,6 +145,15 @@
      `[zoom:var(--viewport-scale)]` on a section's root element — same
      convention and baseline as the ActionChallenge frontend. */
   --viewport-scale: clamp(1, calc(100vw / 80rem), 1.5);
+
+  /* The dashboards' version of --viewport-scale, scaled to the content
+     card's width instead of the viewport's: 100cqw resolves against the
+     nearest size container, the card's scroll area (see
+     components/dashboard/dashboard-shell.tsx), so the content grows when the
+     sidebar collapses as well as when the window widens. The 64rem baseline
+     is the card at a 1280px viewport with the sidebar open — the same 1280px
+     baseline as --viewport-scale. */
+  --dashboard-scale: clamp(1, calc(100cqw / 64rem), 1.5);
 }
 
 .dark {
