@@ -109,7 +109,10 @@
   --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: #000000;
-  --muted: #6b6b6b;
+  /* A surface (skeletons, avatar fallbacks, muted panels), the same subtle
+     grey as the sidebar's accent; not the text grey, which is
+     --muted-foreground. The rebrand had set both to #6b6b6b. */
+  --muted: oklch(0.97 0 0);
   --muted-foreground: #6b6b6b;
   --accent: oklch(0.97 0 0);
   --accent-foreground: #000000;
