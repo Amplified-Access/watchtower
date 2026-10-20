@@ -69,7 +69,7 @@ export function RecentActivity({
   };
 
   return (
-    <Card className={cn("shadow-none rounded-md h-full", className)}>
+    <Card className={cn("shadow-none h-full", className)}>
       <CardHeader>
         <CardTitle className="text-lg font-title">{title}</CardTitle>
       </CardHeader>

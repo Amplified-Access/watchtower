@@ -208,7 +208,7 @@ const IncidentTypesContent = () => {
         </div>
       </div>
       {/* Enabled Incident Types */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardHeader>
           <CardTitle className="font-title">
             Your Organization's enabled incident types
@@ -333,7 +333,7 @@ const IncidentTypesContent = () => {
         </CardContent>
       </Card>
       {/* Available Incident Types */}
-      <Card className="shadow-none rounded-md w-full overflow-auto">
+      <Card className="shadow-none w-full overflow-auto">
         <CardHeader>
           <CardTitle className="font-title">Available Incident Types</CardTitle>
           <CardDescription>

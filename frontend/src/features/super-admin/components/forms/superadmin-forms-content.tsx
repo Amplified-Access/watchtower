@@ -205,7 +205,7 @@ const SuperAdminFormsContent = () => {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="flex justify-between">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-title text-nowrap">
@@ -302,7 +302,7 @@ const SuperAdminFormsContent = () => {
       </Card>
 
       {/* Forms Table */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="p-0">
           {forms.length === 0 ? (
             <div className="text-center py-12">

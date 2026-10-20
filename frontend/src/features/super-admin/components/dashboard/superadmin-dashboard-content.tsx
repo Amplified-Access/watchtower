@@ -61,7 +61,7 @@ export default function SuperAdminDashboardContent() {
             {Array.from({ length: 4 }).map((_, i) => (
               <Card
                 key={i}
-                className="rounded-md shadow-none py-0 @lg:aspect-[3/2]"
+                className="shadow-none py-0 @lg:aspect-[3/2]"
               >
                 <CardContent className="flex h-full flex-col justify-between p-5">
                   <div className="flex items-center justify-between space-y-0 pb-2">
@@ -82,7 +82,7 @@ export default function SuperAdminDashboardContent() {
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Recent Activity Skeleton - spans 2 columns */}
             <div className="lg:col-span-2">
-              <Card className="rounded-md shadow-none">
+              <Card className="shadow-none">
                 <CardHeader>
                   <div className="h-6 w-48 bg-muted rounded-md animate-pulse" />
                 </CardHeader>
@@ -102,7 +102,7 @@ export default function SuperAdminDashboardContent() {
             </div>
 
             {/* System Overview Skeleton */}
-            <Card className="rounded-md shadow-none">
+            <Card className="shadow-none">
               <CardHeader>
                 <div className="h-6 w-32 bg-muted rounded-md animate-pulse" />
               </CardHeader>
@@ -120,7 +120,7 @@ export default function SuperAdminDashboardContent() {
           {/* Quick Actions Grid Skeleton */}
           <div className="grid gap-6 lg:grid-cols-2">
             {Array.from({ length: 2 }).map((_, i) => (
-              <Card key={i} className="rounded-md shadow-none">
+              <Card key={i} className="shadow-none">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <div className="h-6 w-40 bg-muted rounded-md animate-pulse" />
                   <div className="h-8 w-20 bg-muted rounded-md animate-pulse" />
@@ -144,7 +144,7 @@ export default function SuperAdminDashboardContent() {
           {/* Analytics Section Skeleton */}
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Pie Chart Skeleton */}
-            <Card className="rounded-md shadow-none flex flex-col">
+            <Card className="shadow-none flex flex-col">
               <CardHeader className="flex-row items-start space-y-0 pb-0">
                 <div className="grid gap-1">
                   <div className="h-6 w-40 bg-muted rounded-md animate-pulse" />
@@ -159,7 +159,7 @@ export default function SuperAdminDashboardContent() {
             </Card>
 
             {/* Line Chart Skeleton */}
-            <Card className="rounded-md shadow-none">
+            <Card className="shadow-none">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="h-6 w-44 bg-muted rounded-md animate-pulse" />
                 <div className="h-6 w-12 bg-muted rounded-md animate-pulse" />
@@ -320,7 +320,7 @@ export default function SuperAdminDashboardContent() {
           </div>
 
           {/* System Overview */}
-          <Card className="rounded-md shadow-none">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title">
                 System Overview

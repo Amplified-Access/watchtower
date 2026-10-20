@@ -211,7 +211,7 @@ const SuperAdminReportsContent = () => {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="flex justify-between">
         <CardHeader className="">
           <CardTitle className="text-lg font-title">Filters</CardTitle>
@@ -265,7 +265,7 @@ const SuperAdminReportsContent = () => {
       </Card>
 
       {/* Reports Table */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="p-0">
           {reports.length === 0 ? (
             <div className="text-center py-12">

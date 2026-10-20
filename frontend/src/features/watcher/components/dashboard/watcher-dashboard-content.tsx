@@ -186,7 +186,7 @@ export default function WatcherDashboardContent() {
           </div>
 
           {/* Quick Actions */}
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title text-lg">
                 Quick Actions

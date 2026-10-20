@@ -683,7 +683,7 @@ const SuperAdminDatasetsPage = () => {
       ) : (
         <div className="space-y-4">
           {datasetsData?.data.map((dataset) => (
-            <Card key={dataset.id} className="shadow-none rounded-md">
+            <Card key={dataset.id} className="shadow-none">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

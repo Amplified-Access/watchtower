@@ -136,7 +136,7 @@ const Page = () => {
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">My Reports</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
@@ -149,7 +149,7 @@ const Page = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Published</CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -164,7 +164,7 @@ const Page = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Drafts</CardTitle>
               <Search className="h-4 w-4 text-muted-foreground" />
@@ -179,7 +179,7 @@ const Page = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Organization Reports
@@ -196,7 +196,7 @@ const Page = () => {
         </div>
 
         {/* My Reports Section */}
-        <Card className="shadow-none rounded-md">
+        <Card className="shadow-none">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 font-title text-lg">
@@ -326,7 +326,7 @@ const Page = () => {
         </Card>
 
         {/* Organization Reports Section */}
-        <Card className="shadow-none rounded-md">
+        <Card className="shadow-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-title text-lg">
               <BookOpen className="h-5 w-5" />

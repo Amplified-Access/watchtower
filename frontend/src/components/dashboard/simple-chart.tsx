@@ -35,7 +35,7 @@ export function SimpleChart({
 
   if (type === "bar") {
     return (
-      <Card className={cn("rounded-md shadow-none", className)}>
+      <Card className={cn("shadow-none", className)}>
         <CardHeader>
           <CardTitle className="text-lg font-title">{title}</CardTitle>
         </CardHeader>
@@ -75,7 +75,7 @@ export function SimpleChart({
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
     return (
-      <Card className={cn("rounded-md shadow-none", className)}>
+      <Card className={cn("shadow-none", className)}>
         <CardHeader>
           <CardTitle className="text-lg font-title">{title}</CardTitle>
         </CardHeader>

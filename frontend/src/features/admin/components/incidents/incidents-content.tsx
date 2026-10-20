@@ -183,7 +183,7 @@ const IncidentsContent = () => {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg">Search & Filters</CardTitle>
         </CardHeader>
@@ -278,7 +278,7 @@ const IncidentsContent = () => {
       </Card>
 
       {/* Incidents Table */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="p-0">
           {incidents.length === 0 ? (
             <div className="text-center py-12">

@@ -129,7 +129,7 @@ const Page = () => {
         {/* Incident Overview */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Details */}
-          <Card className="lg:col-span-2 shadow-none rounded-md">
+          <Card className="lg:col-span-2 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title text-lg">
                 <FileText className="h-5 w-5" />
@@ -184,7 +184,7 @@ const Page = () => {
           </Card>
 
           {/* Metadata Sidebar */}
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title text-lg">
                 <Clock className="h-5 w-5" />
@@ -252,7 +252,7 @@ const Page = () => {
         </div>
 
         {/* Status History (placeholder for future implementation) */}
-        <Card className="shadow-none rounded-md">
+        <Card className="shadow-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-title text-lg">
               <AlertTriangle className="h-5 w-5" />

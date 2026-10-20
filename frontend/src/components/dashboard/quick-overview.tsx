@@ -129,7 +129,7 @@ export function QuickOverview({
   };
 
   return (
-    <Card className={cn("rounded-md shadow-none", className)}>
+    <Card className={cn("shadow-none", className)}>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-title">{title}</CardTitle>
         {viewAllHref && (

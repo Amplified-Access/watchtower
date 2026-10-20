@@ -65,7 +65,7 @@ export function RechartsLineChart({
   };
 
   return (
-    <Card className={cn("rounded-md shadow-none ", className)}>
+    <Card className={cn("shadow-none ", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-lg font-title">{title}</CardTitle>
         <div className="flex items-center space-x-2">

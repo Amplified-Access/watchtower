@@ -175,7 +175,7 @@ export default function AdminDashboardContent() {
           </div>
 
           {/* Organization Overview */}
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-title">
                 Organization Overview

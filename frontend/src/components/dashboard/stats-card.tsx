@@ -34,7 +34,7 @@ export function StatsCard({
   return (
     <Card
       className={cn(
-        "shadow-none rounded-md gap-4 py-5 @lg:aspect-[3/2] transition-all duration-300 hover:shadow-md hover:border-primary/30 cursor-pointer group",
+        "shadow-none gap-4 py-5 @lg:aspect-[3/2] transition-all duration-300 hover:shadow-md hover:border-primary/30 cursor-pointer group",
         className
       )}
     >

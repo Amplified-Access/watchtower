@@ -216,7 +216,7 @@ const SuperAdminIncidentsContent = () => {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="flex justify-between">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-title text-nowrap">Search & Filters</CardTitle>
@@ -313,7 +313,7 @@ const SuperAdminIncidentsContent = () => {
       </Card>
 
       {/* Incidents Table */}
-      <Card className="shadow-none rounded-md">
+      <Card className="shadow-none">
         <CardContent className="p-0">
           {incidents.length === 0 ? (
             <div className="text-center py-12">

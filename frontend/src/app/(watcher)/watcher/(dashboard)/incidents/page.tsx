@@ -183,7 +183,7 @@ const Page = () => {
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Total Reported
@@ -198,7 +198,7 @@ const Page = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Under Investigation
@@ -218,7 +218,7 @@ const Page = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Resolved</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
@@ -233,7 +233,7 @@ const Page = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-none rounded-md">
+          <Card className="shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pending</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -248,7 +248,7 @@ const Page = () => {
         </div>
 
         {/* Filters */}
-        <Card className="shadow-none rounded-md">
+        <Card className="shadow-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-title text-lg">
               <Filter className="h-5 w-5" />
@@ -287,7 +287,7 @@ const Page = () => {
         </Card>
 
         {/* Incidents Table */}
-        <Card className="shadow-none rounded-md">
+        <Card className="shadow-none">
           <CardHeader>
             <CardTitle className="font-title text-lg">My Incidents</CardTitle>
             <p className="text-sm text-muted-foreground">
