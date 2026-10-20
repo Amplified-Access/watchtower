@@ -42,13 +42,14 @@ export function StatsCard({
       {/* The icon is a watermark: large and faint, in the card's empty
           right-hand middle and bleeding off its edge, under the text. It
           grows with the figure (card 20rem wide) and tints with the title on
-          hover. A Hugeicon, with a thin stroke, since the stroke scales with
-          the icon. */}
+          hover. A Hugeicon at its standard stroke (2), heavier than Lucide's
+          thin look so the outline reads as a shape; solid variants would need
+          Hugeicons Pro. */}
       <HugeiconsIcon
         icon={icon}
         aria-hidden
-        strokeWidth={1.5}
-        className="pointer-events-none absolute top-1/2 -right-5 size-24 -translate-y-1/2 text-foreground/[0.07] transition-colors group-hover:text-primary/15 @xs/stat:size-32"
+        strokeWidth={2}
+        className="pointer-events-none absolute top-1/2 -right-5 size-24 -translate-y-1/2 text-foreground/[0.09] transition-colors group-hover:text-primary/15 @xs/stat:size-32"
       />
       <CardHeader className="relative flex flex-row items-center space-y-0 px-5 pb-2">
         <CardTitle className="text-lg font-title group-hover:text-primary transition-colors">
