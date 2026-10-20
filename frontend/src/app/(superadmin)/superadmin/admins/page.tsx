@@ -3,7 +3,7 @@ import AdminsContent from "@/features/super-admin/components/admins/admins-conte
 
 const Page = () => {
   return (
-    <div className="pt-6">
+    <div className="pb-6">
       <Container size="lg">
         <AdminsContent />
       </Container>
