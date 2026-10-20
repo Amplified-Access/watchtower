@@ -19,6 +19,8 @@ export interface Deployment {
   incidentTypes: IncidentType[];
   /** Live and inside its dates, when the response was made (Go decides). */
   acceptingReports: boolean;
+  /** Reports that came through its reporting link. */
+  reportCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -45,11 +47,27 @@ export interface DeploymentCounts {
   closed: number;
 }
 
+interface GrowthMetric {
+  current: number;
+  previous: number;
+  percentage: number;
+}
+
+/** An admin's dashboard (entity.OrganizationDeploymentStats). */
+export interface OrganizationDeploymentStats {
+  deployments: DeploymentCounts;
+  totalReports: number;
+  /** This month (current) against last month (previous). */
+  reports: GrowthMetric;
+  byType: { name: string; count: number }[];
+  weekly: { week: string; count: number }[];
+}
+
 export const deploymentsApi = {
   // The admin's own organization's, from their session.
   getOrganizationDeployments: () => api.get<Deployment[]>("/admin/deployments"),
 
-  getOrganizationCounts: () => api.get<DeploymentCounts>("/admin/deployments/counts"),
+  getOrganizationStats: () => api.get<OrganizationDeploymentStats>("/admin/deployments/stats"),
 
   create: (data: NewDeployment) => api.post<Deployment>("/admin/deployments", data),
 

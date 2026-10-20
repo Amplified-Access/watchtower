@@ -41,6 +41,17 @@ export interface PlatformStats {
   /** Public reports: this month (current) against last month (previous). */
   reports: GrowthMetric;
   growth: { organizations: GrowthMetric };
+  /** The deployments with the most reports this month, busiest first. */
+  mostActiveDeployments: {
+    id: string;
+    name: string;
+    slug: string;
+    organizationId: string;
+    organizationName: string;
+    status: "draft" | "live" | "closed";
+    reportsThisMonth: number;
+    totalReports: number;
+  }[];
 }
 
 export interface OrganizationTypeDistribution {

@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import {
-  Archive01Icon,
+  Analytics01Icon,
+  File02Icon,
   MapsLocation01Icon,
-  PencilEdit01Icon,
   SignalIcon,
 } from "@hugeicons/core-free-icons";
 
 import { trpc } from "@/_trpc/client";
 import Container from "@/components/common/container";
+import { monthOnMonth } from "@/components/dashboard/month-on-month";
+import { RechartsLineChart } from "@/components/dashboard/recharts-line-chart";
+import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { Button } from "@/components/ui/button";
@@ -20,14 +23,13 @@ import { DeploymentsTable } from "@/features/deployments/components/deployments-
 // How many deployments the home page lists before "View all".
 const LIST_LIMIT = 5;
 
-// The admin's home, on the deployments model: their organization's
-// deployments, by status and newest first. Report numbers per deployment
-// come once reports are tagged with the deployment they arrive through.
+// The admin's home: their organization's deployments, and the reports that
+// came through their reporting links (counted by Go).
 export default function AdminDashboardContent() {
-  const counts = trpc.getOrganizationDeploymentCounts.useQuery();
+  const stats = trpc.getOrganizationDeploymentStats.useQuery();
   const deployments = trpc.getOrganizationDeployments.useQuery();
 
-  if (counts.isLoading || deployments.isLoading) {
+  if (stats.isLoading || deployments.isLoading) {
     return (
       <Container size="lg" className="space-y-6 pb-6">
         <StatsGrid>
@@ -43,7 +45,7 @@ export default function AdminDashboardContent() {
     );
   }
 
-  if (counts.error || deployments.error || !counts.data) {
+  if (stats.error || deployments.error || !stats.data) {
     return (
       <Container size="lg" className="pb-6">
         <p className="py-12 text-center text-red-500">
@@ -53,7 +55,8 @@ export default function AdminDashboardContent() {
     );
   }
 
-  const c = counts.data;
+  const s = stats.data;
+  const c = s.deployments;
   const recent = (deployments.data ?? []).slice(0, LIST_LIMIT);
 
   return (
@@ -63,7 +66,7 @@ export default function AdminDashboardContent() {
           title="Deployments"
           value={c.total}
           icon={MapsLocation01Icon}
-          description="Your organization's maps"
+          description={`${c.draft} draft · ${c.closed} closed`}
         />
         <StatsCard
           title="Live"
@@ -72,18 +75,35 @@ export default function AdminDashboardContent() {
           description="Taking reports now"
         />
         <StatsCard
-          title="Drafts"
-          value={c.draft}
-          icon={PencilEdit01Icon}
-          description="Being set up"
+          title="Reports This Month"
+          value={s.reports.current}
+          icon={Analytics01Icon}
+          change={monthOnMonth(s.reports)}
+          description="Through your reporting links"
         />
         <StatsCard
-          title="Closed"
-          value={c.closed}
-          icon={Archive01Icon}
-          description="Finished"
+          title="All Reports"
+          value={s.totalReports}
+          icon={File02Icon}
+          description="Since your first deployment"
         />
       </StatsGrid>
+
+      {s.totalReports > 0 && (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <RechartsPieChart
+            title="Reports by Incident Type"
+            data={s.byType.map((t) => ({ name: t.name, value: t.count }))}
+          />
+          <RechartsLineChart
+            title="Reports per Week"
+            data={s.weekly.map((w) => ({ period: w.week, value: w.count }))}
+            currentValue={s.reports.current}
+            currentChange={Math.round(s.reports.percentage)}
+            timeframe="7w"
+          />
+        </div>
+      )}
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">

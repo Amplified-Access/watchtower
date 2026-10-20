@@ -10,52 +10,25 @@ import {
 
 import { trpc } from "@/_trpc/client";
 import Container from "@/components/common/container";
+import { monthOnMonth } from "@/components/dashboard/month-on-month";
 import { QuickOverview } from "@/components/dashboard/quick-overview";
 import { RechartsLineChart } from "@/components/dashboard/recharts-line-chart";
 import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { Card } from "@/components/ui/card";
+import { MostActiveDeployments } from "./most-active-deployments";
 
-// How many deployments and applications the home page lists.
+// How many applications the home page lists.
 const LIST_LIMIT = 5;
 
 const formatDate = (iso: string) => new Date(iso).toLocaleDateString();
 
-// "+12% vs last month", or what to say when last month had none.
-function monthOnMonth({
-  current,
-  previous,
-  percentage,
-}: {
-  current: number;
-  previous: number;
-  percentage: number;
-}) {
-  if (previous === 0) {
-    return {
-      value: current > 0 ? "None last month" : "None this month",
-      type: "neutral" as const,
-    };
-  }
-  const rounded = Math.round(percentage);
-  return {
-    value: `${rounded > 0 ? "+" : ""}${rounded}% vs last month`,
-    type:
-      rounded > 0
-        ? ("increase" as const)
-        : rounded < 0
-          ? ("decrease" as const)
-          : ("neutral" as const),
-  };
-}
-
 // The super admin's home, on the deployments model: organizations and the
-// deployments they run, the public reports coming in, and the applications
-// waiting for review.
+// deployments they run (the busiest this month), the public reports coming
+// in, and the applications waiting for review.
 export default function SuperAdminDashboardContent() {
   const stats = trpc.getDashboardStats.useQuery();
-  const deployments = trpc.getAllDeployments.useQuery({});
   const applications = trpc.getPendingApplications.useQuery({
     limit: LIST_LIMIT,
   });
@@ -143,18 +116,7 @@ export default function SuperAdminDashboardContent() {
       </StatsGrid>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <QuickOverview
-          title="Recent Deployments"
-          items={(deployments.data ?? []).slice(0, LIST_LIMIT).map((d) => ({
-            id: d.id,
-            title: `${d.name} (${d.organizationName})`,
-            status: d.status,
-            date: formatDate(d.createdAt),
-            href: `/superadmin/deployments?organization=${d.organizationId}`,
-          }))}
-          emptyMessage="No organization has created a deployment yet"
-          viewAllHref="/superadmin/deployments"
-        />
+        <MostActiveDeployments deployments={s.mostActiveDeployments} />
         <QuickOverview
           title="Pending Applications"
           items={(applications.data ?? []).slice(0, LIST_LIMIT).map((a) => ({

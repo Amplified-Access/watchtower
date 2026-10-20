@@ -107,13 +107,14 @@ export const adminRouter = router({
     return res.data ?? [];
   }),
 
-  // How many deployments the admin's organization has, by status.
-  getOrganizationDeploymentCounts: organizationProcedure.query(async () => {
-    const res = await deploymentsApi.getOrganizationCounts();
+  // The admin's dashboard: their deployments by status and the reports that
+  // came through them, as Go counts them.
+  getOrganizationDeploymentStats: organizationProcedure.query(async () => {
+    const res = await deploymentsApi.getOrganizationStats();
     if (!res.success || !res.data) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: res.error ?? "Failed to count deployments",
+        message: res.error ?? "Failed to load deployment numbers",
       });
     }
     return res.data;

@@ -15,9 +15,9 @@ describe("deploymentsApi", () => {
     expect(mockApi.get).toHaveBeenCalledWith("/admin/deployments");
   });
 
-  it("counts the admin's own deployments", () => {
-    deploymentsApi.getOrganizationCounts();
-    expect(mockApi.get).toHaveBeenCalledWith("/admin/deployments/counts");
+  it("reads the admin's deployment numbers", () => {
+    deploymentsApi.getOrganizationStats();
+    expect(mockApi.get).toHaveBeenCalledWith("/admin/deployments/stats");
   });
 
   it("creates a deployment", () => {

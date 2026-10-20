@@ -88,6 +88,7 @@ export function DeploymentsTable({
               <TableHead>Deployment</TableHead>
               {showOrganization && <TableHead>Organization</TableHead>}
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Reports</TableHead>
               <TableHead>Theme</TableHead>
               <TableHead>Area</TableHead>
               <TableHead>Dates</TableHead>
@@ -122,6 +123,9 @@ export function DeploymentsTable({
                     >
                       {d.status}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {d.reportCount}
                   </TableCell>
                   <TableCell>
                     <div
