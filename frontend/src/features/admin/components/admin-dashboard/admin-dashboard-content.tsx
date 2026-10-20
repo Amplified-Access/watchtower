@@ -11,15 +11,14 @@ import { QuickOverview } from "@/components/dashboard/quick-overview";
 import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
 import { RechartsLineChart } from "@/components/dashboard/recharts-line-chart";
 import {
-  Users,
-  Shield,
-  FileText,
-  AlertTriangle,
-  TrendingUp,
   Activity,
-  FormInput,
-  Building2,
 } from "lucide-react";
+import {
+  Activity01Icon,
+  Alert02Icon,
+  Task01Icon,
+  UserGroupIcon,
+} from "@hugeicons/core-free-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AdminDashboardContent() {
@@ -94,7 +93,7 @@ export default function AdminDashboardContent() {
           <StatsCard
             title="Active Watchers"
             value={totalWatchers}
-            icon={Users}
+            icon={UserGroupIcon}
             change={{
               value: "+2 this week",
               type: "increase",
@@ -104,7 +103,7 @@ export default function AdminDashboardContent() {
           <StatsCard
             title="Total Incidents"
             value={totalIncidents}
-            icon={AlertTriangle}
+            icon={Alert02Icon}
             change={{
               value: `${openIncidents} open`,
               type: openIncidents > 0 ? "increase" : "neutral",
@@ -114,7 +113,7 @@ export default function AdminDashboardContent() {
           <StatsCard
             title="Active Forms"
             value={`${activeForms}/${totalForms}`}
-            icon={FormInput}
+            icon={Task01Icon}
             change={{
               value: `${totalForms} total forms`,
               type: "neutral",
@@ -124,7 +123,7 @@ export default function AdminDashboardContent() {
           <StatsCard
             title="Published Reports"
             value={dashboardStats?.reports.published || 0}
-            icon={Activity}
+            icon={Activity01Icon}
             change={{
               value: `${dashboardStats?.reports.draft || 0} drafts`,
               type: "neutral",

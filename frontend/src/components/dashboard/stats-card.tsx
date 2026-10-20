@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
 interface StatsCardProps {
   title: string;
@@ -11,7 +11,7 @@ interface StatsCardProps {
     value: string;
     type: "increase" | "decrease" | "neutral";
   };
-  icon: LucideIcon;
+  icon: IconSvgElement;
   description?: string;
   className?: string;
 }
@@ -28,7 +28,7 @@ export function StatsCard({
   title,
   value,
   change,
-  icon: Icon,
+  icon,
   description,
   className,
 }: StatsCardProps) {
@@ -42,8 +42,10 @@ export function StatsCard({
       {/* The icon is a watermark: large and faint, in the card's empty
           right-hand middle and bleeding off its edge, under the text. It
           grows with the figure (card 20rem wide) and tints with the title on
-          hover. A thinner stroke, since Lucide's scales with the icon. */}
-      <Icon
+          hover. A Hugeicon, with a thin stroke, since the stroke scales with
+          the icon. */}
+      <HugeiconsIcon
+        icon={icon}
         aria-hidden
         strokeWidth={1.5}
         className="pointer-events-none absolute top-1/2 -right-5 size-24 -translate-y-1/2 text-foreground/[0.07] transition-colors group-hover:text-primary/15 @xs/stat:size-32"

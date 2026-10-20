@@ -10,7 +10,13 @@ import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { QuickOverview } from "@/components/dashboard/quick-overview";
 import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
 import { RechartsLineChart } from "@/components/dashboard/recharts-line-chart";
-import { Building2, Shield, Eye, Activity } from "lucide-react";
+import { Activity } from "lucide-react";
+import {
+  Activity01Icon,
+  Building03Icon,
+  UserMultipleIcon,
+  UserShield01Icon,
+} from "@hugeicons/core-free-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
@@ -225,7 +231,7 @@ export default function SuperAdminDashboardContent() {
             <StatsCard
               title="Organizations"
               value={stats.totalOrganizations}
-              icon={Building2}
+              icon={Building03Icon}
               change={{
                 value: formatGrowthText(stats.growth.organizations),
                 type: getGrowthType(stats.growth.organizations.percentage),
@@ -237,7 +243,7 @@ export default function SuperAdminDashboardContent() {
             <StatsCard
               title="Admins"
               value={stats.totalAdmins}
-              icon={Shield}
+              icon={UserShield01Icon}
               change={{
                 value: formatGrowthText(stats.growth.admins),
                 type: getGrowthType(stats.growth.admins.percentage),
@@ -249,7 +255,7 @@ export default function SuperAdminDashboardContent() {
             <StatsCard
               title="Users"
               value={stats.totalWatchers}
-              icon={Eye}
+              icon={UserMultipleIcon}
               change={{
                 value: formatGrowthText(stats.growth.watchers),
                 type: getGrowthType(stats.growth.watchers.percentage),
@@ -261,7 +267,7 @@ export default function SuperAdminDashboardContent() {
           <StatsCard
             title="Platform Health"
             value={`${stats.uptimePercentage}%`}
-            icon={Activity}
+            icon={Activity01Icon}
             change={{
               value: "Last 30 days",
               type:

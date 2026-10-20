@@ -13,12 +13,15 @@ import {
   AlertTriangle,
   FileText,
   FormInput,
-  TrendingUp,
   Activity,
-  CheckCircle,
-  Clock,
   Building2,
 } from "lucide-react";
+import {
+  CheckmarkCircle02Icon,
+  Clock01Icon,
+  File02Icon,
+  Task01Icon,
+} from "@hugeicons/core-free-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -123,13 +126,13 @@ export default function WatcherDashboardContent() {
           <StatsCard
             title="Available Forms"
             value={totalForms}
-            icon={FormInput}
+            icon={Task01Icon}
             description="Forms ready for reporting"
           />
           <StatsCard
             title="My Reports Today"
             value={dashboardStats?.incidents?.open || 0}
-            icon={FileText}
+            icon={File02Icon}
             change={{
               value: "Open incidents",
               type: "neutral",
@@ -141,7 +144,7 @@ export default function WatcherDashboardContent() {
             value={
               myIncidents.filter((i) => i.status === "reported").length
             }
-            icon={Clock}
+            icon={Clock01Icon}
             change={{
               value: "Awaiting review",
               type: "neutral",
@@ -153,7 +156,7 @@ export default function WatcherDashboardContent() {
             value={`${
               myIncidents.filter((i) => i.status === "resolved").length
             }/${myIncidents.length || 1}`}
-            icon={CheckCircle}
+            icon={CheckmarkCircle02Icon}
             change={{
               value: "This week",
               type: "neutral",
