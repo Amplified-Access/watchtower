@@ -33,11 +33,6 @@ export default function AdminDashboardContent() {
       { organizationId: user?.organizationId || "" },
       { enabled: !!user?.organizationId }
     );
-  const { data: organizationData, isLoading: orgLoading } =
-    trpc.getAdminOrganization.useQuery(
-      { userId: user?.id || "" },
-      { enabled: !!user?.id }
-    );
 
   // Fetch real dashboard stats
   const { data: dashboardStats, isLoading: statsLoading } =
@@ -76,7 +71,6 @@ export default function AdminDashboardContent() {
     userLoading ||
     watchersLoading ||
     formsLoading ||
-    orgLoading ||
     statsLoading ||
     activityLoading ||
     incidentsLoading ||
@@ -95,26 +89,6 @@ export default function AdminDashboardContent() {
   return (
     <div className="flex-1 space-y-6 py-4 md:p-6">
       <Container size="lg" className="space-y-6">
-        {/* Welcome Section */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight font-title pb-2">
-              Welcome back, {user?.name}
-            </h1>
-            <p className="text-muted-foreground">
-              Here's your organization's overview for today.
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Organization</p>
-            <p className="text-sm font-medium">
-              {organizationData && "organization" in organizationData
-                ? organizationData.organization
-                : "Your Organization"}
-            </p>
-          </div>
-        </div>
-
         {/* Stats Grid */}
         <StatsGrid>
           <StatsCard

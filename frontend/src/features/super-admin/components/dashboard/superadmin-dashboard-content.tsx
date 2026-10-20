@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export default function SuperAdminDashboardContent() {
-  const { user, isLoading: userLoading } = useExtendedSession();
+  const { isLoading: userLoading } = useExtendedSession();
 
   // Fetch dashboard data from our new endpoints
   const { data: dashboardStats, isLoading: statsLoading } =
@@ -44,18 +44,6 @@ export default function SuperAdminDashboardContent() {
     return (
       <div className="py-6">
         <Container size="lg" className="space-y-6">
-          {/* Welcome Section Skeleton */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="h-8 w-64 bg-muted rounded-md animate-pulse mb-2" />
-              <div className="h-4 w-96 bg-muted rounded-md animate-pulse" />
-            </div>
-            <div className="text-right">
-              <div className="h-3 w-20 bg-muted rounded-md animate-pulse mb-1" />
-              <div className="h-3 w-16 bg-muted rounded-md animate-pulse" />
-            </div>
-          </div>
-
           {/* Stats Grid Skeleton */}
           <StatsGrid>
             {Array.from({ length: 4 }).map((_, i) => (
@@ -232,24 +220,6 @@ export default function SuperAdminDashboardContent() {
   return (
     <div className="py-6">
       <Container size="lg" className="space-y-6">
-        {/* Welcome Section */}
-        <div className="flex md:items-center justify-between gap-16">
-          <div>
-            <h1 className="text-2xl font-bold font-title tracking-tight pb-2">
-              Welcome back, {user?.name}
-            </h1>
-            <p className="text-muted-foreground">
-              Here's what's happening across all organizations today.
-            </p>
-          </div>
-          <div className="text-right text-nowrap">
-            <p className="text-sm text-muted-foreground">Last updated</p>
-            <p className="text-sm font-medium">
-              {new Date().toLocaleTimeString()}
-            </p>
-          </div>
-        </div>
-
         {/* Stats Grid */}
         <StatsGrid>
           <Link href="/superadmin/organizations" className="block">

@@ -99,16 +99,8 @@ export default function WatcherDashboardContent() {
   return (
     <div className="flex-1 space-y-6 py-4 md:p-6">
       <Container size="lg" className="space-y-6">
-        {/* Welcome Section */}
-        <div className="flex md:items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-title pb-2">
-              Welcome back, {user?.name}
-            </h1>
-            <p className="text-muted-foreground">
-              Manage incidents for your organization.
-            </p>
-          </div>
+        {/* The organization and the watcher's main action */}
+        <div className="flex justify-end">
           <div className="flex flex-col items-end gap-2 justify-between">
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Organization</p>
