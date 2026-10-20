@@ -226,6 +226,116 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/deployments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the deployments of the authenticated admin's organization, newest first, each with its incident types",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Deployments"
+                ],
+                "summary": "List the organization's deployments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a deployment for the authenticated admin's organization. It needs a name and at least one incident type; its slug is made from the name. Status defaults to draft. Dates are RFC 3339.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Deployments"
+                ],
+                "summary": "Create a deployment",
+                "parameters": [
+                    {
+                        "description": "Deployment",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_domain_entity.NewDeployment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/forms": {
             "get": {
                 "security": [
@@ -3779,6 +3889,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/superadmin/deployments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns every deployment on the platform, newest first, with its organization's name and its incident types",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Super Admin – Deployments"
+                ],
+                "summary": "List all deployments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Only this organization's deployments",
+                        "name": "organizationId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/superadmin/forms": {
             "get": {
                 "security": [
@@ -4349,6 +4510,19 @@ const docTemplate = `{
                 }
             }
         },
+        "backend_internal_domain_entity.DeploymentStatus": {
+            "type": "string",
+            "enum": [
+                "draft",
+                "live",
+                "closed"
+            ],
+            "x-enum-varnames": [
+                "DeploymentDraft",
+                "DeploymentLive",
+                "DeploymentClosed"
+            ]
+        },
         "backend_internal_domain_entity.KnowledgeMatch": {
             "type": "object",
             "properties": {
@@ -4502,6 +4676,38 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "backend_internal_domain_entity.NewDeployment": {
+            "type": "object",
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "endsAt": {
+                    "type": "string"
+                },
+                "incidentTypeIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "startsAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/backend_internal_domain_entity.DeploymentStatus"
                 }
             }
         },

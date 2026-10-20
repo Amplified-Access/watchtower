@@ -143,6 +143,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 			admin.GET("/watchers", s.userHandler.GetAllWatchers)
 			admin.POST("/watchers", strictLimiter, s.authHandler.InviteUser)
 
+			admin.GET("/deployments", s.deploymentHandler.GetOrganizationDeployments)
+			admin.POST("/deployments", s.deploymentHandler.CreateDeployment)
+
 			admin.GET("/incident-types", s.incidentHandler.GetTypesByOrganization)
 			admin.GET("/incident-types/available", s.incidentHandler.GetAvailableTypes)
 			admin.POST("/incident-types", s.incidentHandler.CreateIncidentType)
@@ -189,6 +192,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 			superAdmin.DELETE("/forms/:id", s.adminHandler.DeleteForm)
 
 			superAdmin.GET("/reports", s.reportHandler.GetAllReports)
+
+			superAdmin.GET("/deployments", s.deploymentHandler.GetAllDeployments)
 
 			// The same handler as /admin/incident-types: it creates a
 			// platform-wide type. Here because /admin requires an

@@ -23,6 +23,7 @@ import (
 	insightuc "backend/internal/usecase/insight"
 	orguc "backend/internal/usecase/organization"
 	reportuc "backend/internal/usecase/report"
+	deploymentuc "backend/internal/usecase/deployment"
 	useruc "backend/internal/usecase/user"
 	emailSvc "backend/pkg/email"
 	"backend/pkg/gemini"
@@ -40,6 +41,7 @@ type Server struct {
 	userHandler      *handler.UserHandler
 	incidentHandler  *handler.IncidentHandler
 	reportHandler    *handler.ReportHandler
+	deploymentHandler *handler.DeploymentHandler
 	insightHandler   *handler.InsightHandler
 	alertHandler     *handler.AlertHandler
 	adminHandler     *handler.AdminHandler
@@ -66,6 +68,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	appRepo := pgRepo.NewOrganizationApplicationRepository(sqlDB)
 	orgReportRepo := pgRepo.NewOrganizationIncidentReportRepository(sqlDB)
 	reportRepo := pgRepo.NewReportRepository(sqlDB)
+	deploymentRepo := pgRepo.NewDeploymentRepository(sqlDB)
 	alertRepo := pgRepo.NewAlertSubscriptionRepository(sqlDB)
 	knowledgeRepo := pgRepo.NewKnowledgeRepository(sqlDB)
 
@@ -87,6 +90,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	orgUC := orguc.New(orgRepo, appRepo, userRepo)
 	incidentUC := incidentuc.New(incidentRepo, incidentTypeRepo, anonReportRepo, orgReportRepo)
 	reportUC := reportuc.New(reportRepo)
+	deploymentUC := deploymentuc.New(deploymentRepo)
 	insightUC := insightuc.New(insightRepo)
 	alertUC := alertuc.New(alertRepo)
 	assistantUC := assistantuc.New(gemini.New(), knowledgeRepo)
@@ -103,6 +107,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 		orgHandler:       handler.NewOrganizationHandler(orgUC),
 		incidentHandler:  handler.NewIncidentHandler(incidentUC),
 		reportHandler:    handler.NewReportHandler(reportUC),
+		deploymentHandler: handler.NewDeploymentHandler(deploymentUC),
 		insightHandler:   handler.NewInsightHandler(insightUC),
 		alertHandler:     handler.NewAlertHandler(alertUC),
 		adminHandler:     handler.NewAdminHandler(adminUC),
