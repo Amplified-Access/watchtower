@@ -28,7 +28,7 @@ const StudioPage = () => (
         <h1>The content studio isn&apos;t set up</h1>
         <p>
           Set <code>NEXT_PUBLIC_SANITY_PROJECT_ID</code> and <code>NEXT_PUBLIC_SANITY_DATASET</code> (run{" "}
-          <code>pnpm sanity:setup</code> in <code>frontend/</code>), then restart the server.
+          <code>pnpm sanity:setup</code> in <code>web/</code>), then restart the server.
         </p>
       </main>
     )}

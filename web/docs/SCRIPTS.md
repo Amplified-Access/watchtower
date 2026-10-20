@@ -1,6 +1,6 @@
 # Frontend Scripts
 
-All commands are run from the `frontend/` directory using `pnpm`.
+All commands are run from the `web/` directory using `pnpm`.
 
 ## Development
 

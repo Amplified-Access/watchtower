@@ -86,7 +86,7 @@ fi
 
 # ── 2. Install frontend dependencies ──────────────────────────────────────────
 header "Installing frontend dependencies (pnpm install)..."
-(cd "$SCRIPT_DIR/frontend" && pnpm install)
+(cd "$SCRIPT_DIR/web" && pnpm install)
 pass "frontend dependencies installed"
 
 # ── 3. Install Husky git hooks ────────────────────────────────────────────────
@@ -104,10 +104,10 @@ else
   pass "backend/.env.example → backend/.env"
 fi
 
-if [[ -f "$SCRIPT_DIR/frontend/.env.local" ]]; then
-  info "frontend/.env.local already exists — skipping"
+if [[ -f "$SCRIPT_DIR/web/.env.local" ]]; then
+  info "web/.env.local already exists — skipping"
 else
-  info "frontend/.env.local not found — there is no committed template for it yet."
+  info "web/.env.local not found — there is no committed template for it yet."
   info "Ask a teammate for the frontend env vars (DATABASE_URL, NEXT_PUBLIC_API_URL,"
   info "NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN, auth/AI/AWS keys, etc.) and create it before running the frontend."
 fi
@@ -154,9 +154,9 @@ echo ""
 echo -e "  ${BOLD}Or start each service individually:${RESET}"
 echo -e "    ${BLUE}cd backend && make docker-run${RESET}   # Postgres"
 echo -e "    ${GREEN}cd backend && make watch${RESET}        # Go backend  → http://localhost:8080"
-echo -e "    ${YELLOW}cd frontend && pnpm dev${RESET}         # Next.js frontend → http://localhost:3000"
+echo -e "    ${YELLOW}cd web && pnpm dev${RESET}         # Next.js frontend → http://localhost:3000"
 echo ""
 echo -e "  ${BOLD}Before starting, make sure you've filled in:${RESET}"
 echo -e "    backend/.env         — DB credentials, OAuth, R2, email, etc."
-echo -e "    frontend/.env.local  — API URL, Mapbox token, auth secrets, etc."
+echo -e "    web/.env.local  — API URL, Mapbox token, auth secrets, etc."
 echo ""

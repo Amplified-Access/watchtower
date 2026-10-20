@@ -7,7 +7,7 @@ Watchtower is an open-source incident monitoring platform for civil society orga
 ```
 watchtower/
 ├── backend/      Go 1.25 REST API (Clean Architecture)
-└── frontend/     Next.js 15 + TypeScript + tRPC (also serves the Sanity Studio at /studio)
+└── web/     Next.js 15 + TypeScript + tRPC (also serves the Sanity Studio at /studio)
 ```
 
 ## Documentation map
@@ -26,7 +26,7 @@ watchtower/
 │       ├── BOOTSTRAP.md             # Startup sequence and DI wiring
 │       ├── PACKAGES.md              # pkg/ service wrappers
 │       └── SCRIPTS.md               # All make commands
-└── frontend/
+└── web/
     ├── README.md                    # Frontend overview, project structure, stack
     └── docs/
         ├── README.md                # Docs index
@@ -41,8 +41,8 @@ watchtower/
 **Where to put new documentation:**
 - New project-wide concept or decision → root `README.md` or a new root-level doc
 - Backend architecture decision or service → `backend/docs/`
-- Frontend pattern, feature guide, or component reference → `frontend/docs/`
-- Do **not** create READMEs inside `src/features/` or component folders — those belong in `frontend/docs/`
+- Frontend pattern, feature guide, or component reference → `web/docs/`
+- Do **not** create READMEs inside `src/features/` or component folders — those belong in `web/docs/`
 
 ## Working across sessions
 
@@ -89,13 +89,13 @@ make refresh      # insert a fresh batch of weekly anonymous reports (safe to re
 
 **Schema changes are goose migrations** in `backend/migrations/` (`NNNNN_name.sql`, each with a `-- +goose Up` and a `-- +goose Down` section), embedded into `cmd/migrate` and run with `make migrate` against `DATABASE_URL`. goose records what it applied in `goose_db_version`. The schema before `00001` was made by Drizzle from the frontend, whose migrations were deleted, so it exists only in the databases; new tables and columns go through a migration. goose is pinned to v3.27.0 because later releases require Go 1.26 and CI builds with 1.25.
 
-### Sanity (run from `frontend/`)
+### Sanity (run from `web/`)
 ```
 pnpm sanity:setup       # one-time: log in, create/pick the Sanity project, CORS, import the seed, add env vars
 pnpm sanity:validate    # validate the content schema
 pnpm sanity:seed:build  # regenerate sanity/seed/seed.ndjson from its sources
 ```
-The Studio is part of the site: `pnpm dev`, then `/studio`. See `frontend/docs/CMS.md`. The root Makefile has `make sanity-setup`.
+The Studio is part of the site: `pnpm dev`, then `/studio`. See `web/docs/CMS.md`. The root Makefile has `make sanity-setup`.
 
 ### Weekly data refresh (Railway cron)
 `cmd/refresh/main.go` inserts 5–10 anonymous incident reports dated within the last 7 days.
@@ -108,14 +108,14 @@ To schedule on Railway:
 3. Set the schedule to `0 0 * * 0` (every Sunday at midnight UTC).
 4. Add the `DATABASE_URL` environment variable (same value as the main API service).
 
-### Frontend (run from `frontend/`)
+### Frontend (run from `web/`)
 ```
 pnpm dev          # start dev server on :3000
 pnpm build        # production build
 pnpm lint         # ESLint
 pnpm test         # Jest
 pnpm test:watch   # Jest watch mode
-pnpm i18n:check   # fail if any marketing string is still English (see frontend/docs/SCRIPTS.md)
+pnpm i18n:check   # fail if any marketing string is still English (see web/docs/SCRIPTS.md)
 ```
 
 **Local env:** the frontend needs `NEXT_PUBLIC_API_URL` (the Go API, e.g. `http://localhost:8080/api/v1` — plain `http` for a local Go server) and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`. It has no database connection, so no `DATABASE_URL`, and no storage credentials: the R2 settings (`CLOUDFLARE_*`) go in `backend/.env`. The chat assistant's model still runs in Next and needs `GOOGLE_GENERATIVE_AI_API_KEY` there (optionally `GEMINI_MODEL_CHAIN` to change the fallback order); its knowledge-base search runs in Go and needs the same key on the backend. Location search (the report forms and alert sign-up) needs `GOOGLE_MAPS_API_KEY` (server-only, with Places API (New) enabled). For the case study and privacy policy pages it also needs `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` (`pnpm sanity:setup` adds them). Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
@@ -187,7 +187,7 @@ src/
 - **Sanity queries are tested against the seed** with groq-js (`lib/sanity/queries.test.ts`), Sanity's own query engine, so no project is needed in CI. groq-js is ESM-only, which is why `jest.config.js` transforms it.
 - **Sanity content updates live** (Sanity Live, `lib/sanity/live.ts`, `defineLive` from `next-sanity/live`): fetches are cached under Sanity's sync tags, and `<SanityLive />` in the browser revalidates exactly those tags and soft-refreshes the page when a document is published. **`<SanityLive />` is rendered once, by the `(main)` layout**, since the footer puts Sanity content on every public page; pages don't render their own. A Sanity-backed page outside `(main)` would need it. Fallbacks for publishes no open page sees: every fetch also carries the `sanity` tag, which a Sanity webhook (`POST /api/revalidate`, signed with `SANITY_REVALIDATE_SECRET`) drops, and fetches expire after 60 s. `next-sanity` is pinned to 11.6.13, the last release supporting Next 15; its `sanity ^5` peer warning is expected (only `/live` is used). Without `NEXT_PUBLIC_SANITY_PROJECT_ID` nothing is defined and the pages render empty, so builds and tests don't need Sanity. Images go through `components/common/sanity-image.tsx` (Sanity's CDN resizes them; it's a client component because next/image's `loader` is a function).
 - **The Studio is embedded at `/studio` as the app's only Pages Router page** (`src/pages/studio/[[...tool]].tsx`, rendering Sanity's `<Studio>`, not next-sanity's `NextStudio`, which needs Next 16). Sanity v6 imports React 19.2's `Activity`; the React that Next 15 bundles for the App Router (a 19.2 canary) lacks it, so a Studio under `app/` passes `next dev` but fails `next build`. The Pages Router uses the installed `react` (19.2.8). Because `pages/` exists, Next types `useParams`/`useSearchParams`/`usePathname` as nullable app-wide: handle `null` in new App Router code (it never is null there). The Studio loads in the browser only (`next/dynamic`, `ssr: false`) and on that route only. Every origin serving the site must be a Sanity CORS origin with credentials, for the Studio and for Sanity Live. On Next 16, move the Studio to `app/studio/`, drop the null handling and upgrade `next-sanity`. Files the Sanity CLI also loads (`sanity.config.ts`, `src/sanity/`) import each other relatively: the CLI doesn't know the `@/` alias.
-- **Search, link previews and AI discoverability go through `lib/seo/`** (see `frontend/docs/SEO.md`). Every public page exports `generateMetadata` built with `pageMetadata()` / `codePageMetadata()` (canonical URL on `https://www.thewatchtower.tech`, Open Graph, X card) and renders one JSON-LD `@graph` with `<JsonLd>` (`pageJsonLd()` / `codePageJsonLd()`). Search titles, descriptions and share images are editable per language in Sanity ("Search and sharing": the `seoSettings` singleton, plus a `seo` field on Home, About, case studies and policy pages), falling back to the English in `lib/seo/defaults.ts`. Because `"use client"` pages can't export metadata, public `page.tsx` files stay server components and the interactive body lives in `features/`. Next merges metadata shallowly, so `pageMetadata()` repeats the site name, locale and image in every page's `openGraph`. Only production is indexed (`isIndexable()`, from `VERCEL_ENV`): staging and previews get a disallow-all `robots.txt` and `noindex`. `robots.ts`, `sitemap.ts`, `manifest.ts`, `og-image.png/` and the `llms.txt` / `llms-full.txt` routes (generated from Sanity) live in `app/`. The publisher in structured data is Amplified Access, under the `@id` amplifiedaccess.org uses, so both sites describe one organisation.
+- **Search, link previews and AI discoverability go through `lib/seo/`** (see `web/docs/SEO.md`). Every public page exports `generateMetadata` built with `pageMetadata()` / `codePageMetadata()` (canonical URL on `https://www.thewatchtower.tech`, Open Graph, X card) and renders one JSON-LD `@graph` with `<JsonLd>` (`pageJsonLd()` / `codePageJsonLd()`). Search titles, descriptions and share images are editable per language in Sanity ("Search and sharing": the `seoSettings` singleton, plus a `seo` field on Home, About, case studies and policy pages), falling back to the English in `lib/seo/defaults.ts`. Because `"use client"` pages can't export metadata, public `page.tsx` files stay server components and the interactive body lives in `features/`. Next merges metadata shallowly, so `pageMetadata()` repeats the site name, locale and image in every page's `openGraph`. Only production is indexed (`isIndexable()`, from `VERCEL_ENV`): staging and previews get a disallow-all `robots.txt` and `noindex`. `robots.ts`, `sitemap.ts`, `manifest.ts`, `og-image.png/` and the `llms.txt` / `llms-full.txt` routes (generated from Sanity) live in `app/`. The publisher in structured data is Amplified Access, under the `@id` amplifiedaccess.org uses, so both sites describe one organisation.
 - **Location search is Google Places** (Places API (New)) on every form that asks where something is: the public report form, the organisation report forms (quick report and the watcher's new incident) and the alert sign-up. `lib/google/places.ts` calls Google from the server through the `places` tRPC router (`autocomplete`, then `details` for the place picked), `hooks/use-place-search.ts` debounces the search, and `components/common/place-search-combobox.tsx` is the picker the forms use; the forms store its value with `locationSchema`, `emptyLocation` and `pickedLocation` from the anonymous report schema. The key (`GOOGLE_MAPS_API_KEY`) is server-only on purpose: there is no Google map on the page, so the browser never needs it, and a `NEXT_PUBLIC_` key would ship in every visitor's JavaScript. Autocomplete and details share a session token, so Google bills each search as one session. Details are requested in English, so reports store an English address and country name (the maps group by it) whatever language the reporter searched in. Google requires a "Google Maps" attribution when its results are shown without a map; the suggestion list carries one. LocationIQ, used before, is gone.
 - **Submitting a form is the agreement**: the report form and alert sign-up have no consent checkbox; a line by the button says submitting (or subscribing) means agreeing to the privacy policy (`IncidentReporting.submitAgreement`, `Alerts.subscribeAgreement`). Don't add tick-to-agree boxes to new forms.
 - Server-only code (API keys, DB access) must import `server-only`.
@@ -218,7 +218,7 @@ src/
 
 Two path-scoped pipelines, each only runs when its area changed:
 - **`backend-pipeline.yml`** — PRs to `main`/`staging`/`production` touching `backend/**`: `go vet` + `make build` + `make test` (Redis sidecar) + `make itest`. Pushes to `staging`/`production` re-run the same job, then deploy to Railway on success.
-- **`frontend-pipeline.yml`** — PRs touching `frontend/**`: `pnpm lint` + `pnpm test` + `pnpm build`. No deploy job yet — Vercel deploys from its own git integration on push to `staging`/`production` — but named/structured to match `backend-pipeline.yml` in case one's added later.
+- **`frontend-pipeline.yml`** — PRs touching `web/**`: `pnpm lint` + `pnpm test` + `pnpm build`. No deploy job yet — Vercel deploys from its own git integration on push to `staging`/`production` — but named/structured to match `backend-pipeline.yml` in case one's added later.
 
 `staging` auto-syncs from `main` on every push (`sync-staging.yml`); `production` is promoted deliberately via `make deploy-prod`.
 
@@ -230,6 +230,6 @@ Always ensure `make test` and `pnpm test` pass before marking work done.
 - Common scopes: `auth`, `incidents`, `alerts`, `reports`, `insights`, `admin`, `superadmin`, `map`, `i18n`, `api`, `db`, `ci`
 - No attribution trailer in commits — do not add `Co-authored-by` or any AI attribution lines
 - New API routes require Swagger annotations — run `make swagger` after adding them.
-- New i18n strings must be added to all language files in `frontend/messages/`. Run `pnpm i18n:check` (from `frontend/`) to catch English strings left in marketing sections.
+- New i18n strings must be added to all language files in `web/messages/`. Run `pnpm i18n:check` (from `web/`) to catch English strings left in marketing sections.
 - Never commit `.env` files or credentials.
 - No business logic in adapter layer. No direct DB access from usecases (use repository interfaces).

@@ -4,15 +4,15 @@ echo "Running pre-commit checks..."
 
 echo ""
 echo "Frontend: lint"
-(cd frontend && pnpm lint) || exit 1
+(cd web && pnpm lint) || exit 1
 
 echo ""
 echo "Frontend: tests"
-(cd frontend && pnpm exec jest --passWithNoTests) || exit 1
+(cd web && pnpm exec jest --passWithNoTests) || exit 1
 
 echo ""
 echo "Frontend: build"
-(cd frontend && pnpm build) || exit 1
+(cd web && pnpm build) || exit 1
 
 echo ""
 echo "Backend: vet"

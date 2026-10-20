@@ -42,7 +42,7 @@ watchtower/
 │   ├── docs/                       # Auto-generated Swagger API docs
 │   └── docker-compose.yml          # Local database container
 │
-└── frontend/                       # Next.js application
+└── web/                       # Next.js application
     ├── src/
     │   ├── app/                    # App Router — auth, admin, watcher, and public routes
     │   ├── features/               # Feature modules (maps, alerts, reports, insights...)
@@ -96,7 +96,7 @@ The API will be available at `http://localhost:8080`. Swagger UI is at `http://l
 ### Frontend
 
 ```bash
-cd frontend
+cd web
 
 # Install dependencies
 pnpm install

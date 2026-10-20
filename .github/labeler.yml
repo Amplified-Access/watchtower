@@ -4,7 +4,7 @@ backend:
 
 frontend:
   - changed-files:
-      - any-glob-to-any-file: ["frontend/**"]
+      - any-glob-to-any-file: ["web/**"]
 
 ci/cd:
   - changed-files:
@@ -12,14 +12,14 @@ ci/cd:
 
 documentation:
   - changed-files:
-      - any-glob-to-any-file: ["**/*.md", "backend/docs/**", "frontend/docs/**"]
+      - any-glob-to-any-file: ["**/*.md", "backend/docs/**", "web/docs/**"]
 
 dependencies:
   - changed-files:
       - any-glob-to-any-file:
           - "backend/go.mod"
           - "backend/go.sum"
-          - "frontend/package.json"
-          - "frontend/pnpm-lock.yaml"
+          - "web/package.json"
+          - "web/pnpm-lock.yaml"
           - "package.json"
           - "pnpm-lock.yaml"

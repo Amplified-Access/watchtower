@@ -18,12 +18,12 @@ dev-backend:
 	cd backend && make watch
 
 dev-frontend:
-	cd frontend && pnpm dev
+	cd web && pnpm dev
 
 # One-time: log in to Sanity, create/pick the project, import the seed content.
-# The Studio itself runs with the site, at /studio — see frontend/docs/CMS.md
+# The Studio itself runs with the site, at /studio — see web/docs/CMS.md
 sanity-setup:
-	cd frontend && pnpm sanity:setup
+	cd web && pnpm sanity:setup
 
 # ── Testing ──────────────────────────────────────────────────────────────────
 
@@ -31,7 +31,7 @@ test-backend:
 	cd backend && make test
 
 test-frontend:
-	cd frontend && pnpm test
+	cd web && pnpm test
 
 test: test-backend test-frontend
 
@@ -41,7 +41,7 @@ build-backend:
 	cd backend && make build
 
 build-frontend:
-	cd frontend && pnpm build
+	cd web && pnpm build
 
 build: build-backend build-frontend
 
@@ -51,7 +51,7 @@ lint-backend:
 	cd backend && go vet ./...
 
 lint-frontend:
-	cd frontend && pnpm lint
+	cd web && pnpm lint
 
 lint: lint-backend lint-frontend
 
