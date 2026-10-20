@@ -3,7 +3,7 @@
 import { BsIncognito } from "react-icons/bs";
 import { FaExternalLinkSquareAlt } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
-import { MdCategory, MdSpaceDashboard } from "react-icons/md";
+import { MdCategory, MdMap, MdSpaceDashboard } from "react-icons/md";
 import { TiWarning } from "react-icons/ti";
 
 import {
@@ -13,6 +13,7 @@ import {
 
 const items: DashboardNavItem[] = [
   { title: "Home", url: "/admin", icon: <MdSpaceDashboard />, exact: true },
+  { title: "Deployments", url: "/admin/deployments", icon: <MdMap /> },
   { title: "Watchers", url: "/admin/watchers", icon: <BsIncognito /> },
   { title: "Reports", url: "/admin/reports", icon: <IoDocumentText /> },
   {
