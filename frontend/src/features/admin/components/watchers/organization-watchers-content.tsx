@@ -8,8 +8,6 @@ import { toast } from "sonner";
 const OrganizationWatchersContent = () => {
   const { data, isLoading, error } = trpc.getOrganizationWatchers.useQuery();
 
-  console.log("Organization Watchers: ", data);
-
   if (error) {
     toast.error("An error occurred while fetching watchers");
     return (
@@ -20,16 +18,7 @@ const OrganizationWatchersContent = () => {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold tracking-tight font-title">
-          Organization Watchers
-        </h2>
-        <div className="text-sm text-muted-foreground">
-          {Array.isArray(data) ? data.length : 0} watchers found
-        </div>
-      </div>
-
+    <div>
       {isLoading ? (
         <div className="flex justify-center p-8">
           <Loader />
