@@ -251,18 +251,16 @@ export default function SuperAdminDashboardContent() {
               description="Organization administrators"
             />
           </Link>
-          <Link href="/superadmin/watchers" className="block">
-            <StatsCard
-              title="Users"
-              value={stats.totalWatchers}
-              icon={UserMultipleIcon}
-              change={{
-                value: formatGrowthText(stats.growth.watchers),
-                type: getGrowthType(stats.growth.watchers.percentage),
-              }}
-              description="Field watchers across all orgs"
-            />
-          </Link>
+          <StatsCard
+            title="Users"
+            value={stats.totalWatchers}
+            icon={UserMultipleIcon}
+            change={{
+              value: formatGrowthText(stats.growth.watchers),
+              type: getGrowthType(stats.growth.watchers.percentage),
+            }}
+            description="Field watchers across all orgs"
+          />
 
           <StatsCard
             title="Platform Health"
@@ -403,7 +401,6 @@ export default function SuperAdminDashboardContent() {
               date: i.createdAt,
             }))}
             emptyMessage="No critical incidents"
-            viewAllHref="/superadmin/incidents"
           />
         </div>
 

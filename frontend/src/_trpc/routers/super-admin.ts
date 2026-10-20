@@ -5,7 +5,6 @@ import { superAdminProcedure } from "../middleware";
 import { adminApi } from "@/lib/api/admin";
 import { organizationsApi } from "@/lib/api/organizations";
 import { incidentsApi } from "@/lib/api/incidents";
-import { reportsApi } from "@/lib/api/reports";
 import { deploymentsApi } from "@/lib/api/deployments";
 
 export const superAdminRouter = router({
@@ -115,110 +114,6 @@ export const superAdminRouter = router({
     }
   }),
 
-  getAllWatchers: superAdminProcedure.query(async () => {
-    try {
-      const res = await adminApi.getAllWatchers();
-      if (!res.success) throw new Error(res.error ?? "Failed to fetch watchers");
-      return { success: true, data: res.data };
-    } catch (error) {
-      console.error("Error fetching watchers:", error);
-      return { success: false, message: "Failed to fetch watchers.", data: [] };
-    }
-  }),
-
-  getAllIncidentsForSuperAdmin: superAdminProcedure
-    .input(
-      z.object({
-        search: z.string().optional(),
-        status: z.enum(["reported", "investigating", "resolved", "closed"]).optional(),
-        organizationId: z.string().optional(),
-        sortBy: z.enum(["createdAt", "updatedAt", "status"]).default("createdAt"),
-        sortOrder: z.enum(["asc", "desc"]).default("desc"),
-        limit: z.number().default(50),
-        offset: z.number().default(0),
-      }),
-    )
-    .query(async ({ input }) => {
-      try {
-        const res = await incidentsApi.getAllIncidents({
-          limit: input.limit,
-          offset: input.offset,
-          search: input.search,
-          status: input.status,
-          organizationId: input.organizationId,
-          sort: input.sortBy,
-          sortOrder: input.sortOrder,
-        });
-        if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
-        return { incidents: res.data ?? [], totalCount: res.total ?? 0 };
-      } catch (error) {
-        console.error("Failed to retrieve incidents:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to retrieve incidents",
-        });
-      }
-    }),
-
-  getIncidentByIdForSuperAdmin: superAdminProcedure
-    .input(z.object({ incidentId: z.string() }))
-    .query(async ({ input }) => {
-      try {
-        const res = await incidentsApi.getIncidentById(input.incidentId);
-        if (!res.success) {
-          if (res.error?.includes("404")) {
-            throw new TRPCError({ code: "NOT_FOUND", message: "Incident not found" });
-          }
-          throw new Error(res.error ?? "Failed to fetch incident");
-        }
-        return res.data ?? null;
-      } catch (error) {
-        if (error instanceof TRPCError) throw error;
-        console.error("Failed to fetch incident:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch incident",
-        });
-      }
-    }),
-
-  updateIncidentStatusForSuperAdmin: superAdminProcedure
-    .input(
-      z.object({
-        incidentId: z.string(),
-        status: z.enum(["reported", "investigating", "resolved", "closed"]),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      try {
-        const res = await incidentsApi.updateIncidentStatus(input.incidentId, input.status);
-        if (!res.success) throw new Error(res.error ?? "Failed to update status");
-        return { success: true };
-      } catch (error) {
-        console.error("Failed to update incident:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to update incident status",
-        });
-      }
-    }),
-
-  deleteIncidentForSuperAdmin: superAdminProcedure
-    .input(z.object({ incidentId: z.string() }))
-    .mutation(async ({ input }) => {
-      try {
-        const res = await incidentsApi.deleteIncident(input.incidentId);
-        if (!res.success) throw new Error(res.error ?? "Failed to delete incident");
-        return { success: true };
-      } catch (error) {
-        console.error("Failed to delete incident:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to delete incident",
-        });
-      }
-    }),
-
   getAllFormsForSuperAdmin: superAdminProcedure
     .input(
       z.object({
@@ -304,36 +199,6 @@ export const superAdminRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to delete form",
-        });
-      }
-    }),
-
-  getAllReportsForSuperAdmin: superAdminProcedure
-    .input(
-      z.object({
-        search: z.string().optional(),
-        organizationId: z.string().optional(),
-        status: z.enum(["draft", "published", "all"]).default("all"),
-        sortBy: z.enum(["createdAt", "updatedAt", "title"]).default("updatedAt"),
-        sortOrder: z.enum(["asc", "desc"]).default("desc"),
-        limit: z.number().default(50),
-        offset: z.number().default(0),
-      }),
-    )
-    .query(async ({ input }) => {
-      try {
-        const res = await reportsApi.getAllReports({
-          limit: input.limit,
-          offset: input.offset,
-          search: input.search,
-        });
-        if (!res.success) throw new Error(res.error ?? "Failed to fetch reports");
-        return { reports: res.data ?? [], totalCount: res.total ?? 0 };
-      } catch (error) {
-        console.error("Failed to retrieve reports:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to retrieve reports",
         });
       }
     }),

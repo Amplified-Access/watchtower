@@ -116,18 +116,3 @@ describe("reportsApi.deleteReport", () => {
 });
 
 // ─── Super admin ──────────────────────────────────────────────────────────────
-
-describe("reportsApi.getAllReports (super admin)", () => {
-  it("fetches /superadmin/reports with no query by default", () => {
-    reportsApi.getAllReports();
-    expect(mockApi.get).toHaveBeenCalledWith("/superadmin/reports");
-  });
-
-  it("appends params when provided", () => {
-    reportsApi.getAllReports({ limit: 5, offset: 0, search: "flood" });
-    const url: string = mockApi.get.mock.calls[0][0];
-    expect(url).toContain("/superadmin/reports?");
-    expect(url).toContain("limit=5");
-    expect(url).toContain("search=flood");
-  });
-});

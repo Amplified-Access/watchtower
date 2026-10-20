@@ -1,6 +1,5 @@
 import { api } from "./client";
 import type { Incident, IncidentStats, WeeklyTrendPoint } from "./incidents";
-import type { Report } from "./reports";
 import type { Form } from "./forms";
 
 export interface DashboardStats {
@@ -81,8 +80,6 @@ export const adminApi = {
   // Super admin
   getAllAdmins: () => api.get<WatcherUser[]>("/superadmin/users/admins"),
 
-  getAllWatchers: () => api.get<WatcherUser[]>("/superadmin/users/watchers"),
-
   getAllForms: (params?: { limit?: number; offset?: number; search?: string }) => {
     const query = new URLSearchParams();
     if (params?.limit) query.set("limit", String(params.limit));
@@ -90,15 +87,6 @@ export const adminApi = {
     if (params?.search) query.set("search", params.search);
     const qs = query.toString();
     return api.get<Form[]>(`/superadmin/forms${qs ? `?${qs}` : ""}`);
-  },
-
-  getAllReports: (params?: { limit?: number; offset?: number; search?: string }) => {
-    const query = new URLSearchParams();
-    if (params?.limit) query.set("limit", String(params.limit));
-    if (params?.offset) query.set("offset", String(params.offset));
-    if (params?.search) query.set("search", params.search);
-    const qs = query.toString();
-    return api.get<Report[]>(`/superadmin/reports${qs ? `?${qs}` : ""}`);
   },
 
   getPendingApplications: () =>

@@ -357,19 +357,9 @@ const SuperAdminFormsContent = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          {form.incidentCount}
-                        </span>
-                        {(form.incidentCount ?? 0) > 0 && (
-                          <Link
-                            href={`/superadmin/incidents?formId=${form.id}`}
-                            className="text-blue-600 hover:text-blue-800 text-xs"
-                          >
-                            View
-                          </Link>
-                        )}
-                      </div>
+                      <span className="font-medium">
+                        {form.incidentCount}
+                      </span>
                     </TableCell>
                     <TableCell>
                       {new Date(form.createdAt).toLocaleDateString()}

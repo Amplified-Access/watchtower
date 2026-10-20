@@ -180,8 +180,6 @@ export const incidentsApi = {
     return api.get<Incident[]>(`/superadmin/incidents${qs ? `?${qs}` : ""}`);
   },
 
-  deleteIncident: (id: string) => api.delete(`/superadmin/incidents/${id}`),
-
   // Anonymous reporting
   submitAnonymousReport: (data: {
     incidentTypeId: string;

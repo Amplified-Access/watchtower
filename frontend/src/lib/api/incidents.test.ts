@@ -172,13 +172,6 @@ describe("incidentsApi.getAllIncidents (super admin)", () => {
   });
 });
 
-describe("incidentsApi.deleteIncident", () => {
-  it("calls delete on superadmin endpoint", () => {
-    incidentsApi.deleteIncident("inc-99");
-    expect(mockApi.delete).toHaveBeenCalledWith("/superadmin/incidents/inc-99");
-  });
-});
-
 // ─── Anonymous reports ───────────────────────────────────────────────────────
 
 describe("incidentsApi.getAnonymousReports", () => {

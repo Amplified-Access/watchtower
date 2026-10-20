@@ -52,13 +52,4 @@ export const reportsApi = {
     api.patch(`/admin/reports/${id}`, data),
 
   deleteReport: (id: string) => api.delete(`/admin/reports/${id}`),
-
-  getAllReports: (params?: ListParams) => {
-    const query = new URLSearchParams();
-    if (params?.limit) query.set("limit", String(params.limit));
-    if (params?.offset) query.set("offset", String(params.offset));
-    if (params?.search) query.set("search", params.search);
-    const qs = query.toString();
-    return api.get<Report[]>(`/superadmin/reports${qs ? `?${qs}` : ""}`);
-  },
 };

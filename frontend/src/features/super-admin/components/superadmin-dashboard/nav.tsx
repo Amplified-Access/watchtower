@@ -1,6 +1,4 @@
-import { BsIncognito } from "react-icons/bs";
 import { IoIosDocument } from "react-icons/io";
-import { IoDocumentText } from "react-icons/io5";
 import {
   MdAdminPanelSettings,
   MdCategory,
@@ -8,7 +6,6 @@ import {
   MdSpaceDashboard,
 } from "react-icons/md";
 import { RiBuilding2Fill } from "react-icons/ri";
-import { TiWarning } from "react-icons/ti";
 
 import type { DashboardNavItem } from "@/components/dashboard/dashboard-sidebar";
 
@@ -37,9 +34,6 @@ export const superAdminNav: DashboardNavItem[] = [
     url: "/superadmin/admins",
     icon: <MdAdminPanelSettings />,
   },
-  { title: "Watchers", url: "/superadmin/watchers", icon: <BsIncognito /> },
-  { title: "Reports", url: "/superadmin/reports", icon: <IoDocumentText /> },
-  { title: "Incidents", url: "/superadmin/incidents", icon: <TiWarning /> },
   {
     title: "Incident Types",
     url: "/superadmin/incident-types",

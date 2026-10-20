@@ -7,5 +7,5 @@ import type { AppRouter } from "./routers/_app";
 
 export const trpc = createTRPCReact<AppRouter>({});
 
-/** Inferred return types of every procedure: RouterOutputs["getAllReportsForSuperAdmin"]. */
+/** Inferred return types of every procedure: RouterOutputs["getAllDeployments"]. */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
