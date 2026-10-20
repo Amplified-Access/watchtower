@@ -115,12 +115,9 @@ const FormsContent = () => {
   }
 
   return (
-    <Container className="space-y-20" size="sm">
-      {/* Header */}
-
-      {/* Forms Grid */}
+    <Container className="space-y-6 pb-6" size="lg">
+      {/* One grid: the dashed "Create New Form" card first, then the forms. */}
       <div>
-        <h1 className="text-2xl pb-6 font-bold font-title">Forms</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* New Form Card */}
           <Link href="/admin/forms/new">
@@ -133,12 +130,7 @@ const FormsContent = () => {
               </CardContent>
             </Card>
           </Link>
-        </div>
-      </div>
 
-      <div className="mt-10">
-        <h1 className="text-2xl font-bold pb-6 font-title">Existing Forms</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* Existing Forms */}
           {forms?.map((form: Form) => (
             <Card key={form.id} className="shadow-none relative">
