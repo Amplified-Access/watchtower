@@ -107,6 +107,18 @@ export const adminRouter = router({
     return res.data ?? [];
   }),
 
+  // How many deployments the admin's organization has, by status.
+  getOrganizationDeploymentCounts: organizationProcedure.query(async () => {
+    const res = await deploymentsApi.getOrganizationCounts();
+    if (!res.success || !res.data) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: res.error ?? "Failed to count deployments",
+      });
+    }
+    return res.data;
+  }),
+
   createDeployment: organizationProcedure
     .input(
       z.object({

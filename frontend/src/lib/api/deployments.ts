@@ -35,9 +35,19 @@ export interface NewDeployment {
   incidentTypeIds: string[];
 }
 
+/** How many deployments there are, by status (entity.DeploymentCounts). */
+export interface DeploymentCounts {
+  total: number;
+  draft: number;
+  live: number;
+  closed: number;
+}
+
 export const deploymentsApi = {
   // The admin's own organization's, from their session.
   getOrganizationDeployments: () => api.get<Deployment[]>("/admin/deployments"),
+
+  getOrganizationCounts: () => api.get<DeploymentCounts>("/admin/deployments/counts"),
 
   create: (data: NewDeployment) => api.post<Deployment>("/admin/deployments", data),
 

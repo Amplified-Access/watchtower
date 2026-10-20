@@ -15,6 +15,11 @@ describe("deploymentsApi", () => {
     expect(mockApi.get).toHaveBeenCalledWith("/admin/deployments");
   });
 
+  it("counts the admin's own deployments", () => {
+    deploymentsApi.getOrganizationCounts();
+    expect(mockApi.get).toHaveBeenCalledWith("/admin/deployments/counts");
+  });
+
   it("creates a deployment", () => {
     const body = { name: "Uganda 2026 elections", incidentTypeIds: ["t1"] };
     deploymentsApi.create(body);
