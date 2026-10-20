@@ -6,8 +6,35 @@ import { adminApi } from "@/lib/api/admin";
 import { organizationsApi } from "@/lib/api/organizations";
 import { incidentsApi } from "@/lib/api/incidents";
 import { reportsApi } from "@/lib/api/reports";
+import { deploymentsApi } from "@/lib/api/deployments";
 
 export const superAdminRouter = router({
+  // Every deployment, or one organization's.
+  getAllDeployments: superAdminProcedure
+    .input(z.object({ organizationId: z.string().optional() }).optional())
+    .query(async ({ input }) => {
+      const res = await deploymentsApi.getAll(input?.organizationId);
+      if (!res.success) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: res.error ?? "Failed to fetch deployments",
+        });
+      }
+      return res.data ?? [];
+    }),
+
+  // Every organization with how many deployments it has made.
+  getOrganizationsWithDeploymentCounts: superAdminProcedure.query(async () => {
+    const res = await organizationsApi.listWithDeploymentCounts();
+    if (!res.success) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: res.error ?? "Failed to fetch organizations",
+      });
+    }
+    return res.data ?? [];
+  }),
+
   // Every incident type on the platform, active or not: the super admin's
   // incident types page, which isn't about any one organization's set.
   getAllIncidentTypesForSuperAdmin: superAdminProcedure.query(async () => {
