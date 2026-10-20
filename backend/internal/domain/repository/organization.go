@@ -12,6 +12,9 @@ type OrganizationRepository interface {
 	FindByID(ctx context.Context, id string) (*entity.Organization, error)
 	FindBySlug(ctx context.Context, slug string) (*entity.Organization, error)
 	CountCreatedSince(ctx context.Context, since time.Time) (int, error)
+	// FindAllWithDeploymentCounts is every organization, newest first, with
+	// how many deployments each has made.
+	FindAllWithDeploymentCounts(ctx context.Context) ([]*entity.OrganizationWithDeployments, error)
 	Create(ctx context.Context, org *entity.Organization) error
 	Update(ctx context.Context, org *entity.Organization) error
 }

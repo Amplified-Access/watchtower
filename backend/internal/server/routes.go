@@ -194,6 +194,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			superAdmin.GET("/reports", s.reportHandler.GetAllReports)
 
 			superAdmin.GET("/deployments", s.deploymentHandler.GetAllDeployments)
+			superAdmin.GET("/organizations", s.orgHandler.GetAllWithDeploymentCounts)
 
 			// The same handler as /admin/incident-types: it creates a
 			// platform-wide type. Here because /admin requires an

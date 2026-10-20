@@ -4219,6 +4219,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/superadmin/organizations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns every organization, newest first, with how many deployments each has made",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Super Admin – Organizations"
+                ],
+                "summary": "List organizations with deployment counts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/superadmin/reports": {
             "get": {
                 "security": [

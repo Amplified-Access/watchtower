@@ -3001,6 +3001,34 @@ paths:
       summary: Delete incident
       tags:
       - Super Admin – Incidents
+  /superadmin/organizations:
+    get:
+      description: Returns every organization, newest first, with how many deployments
+        each has made
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: List organizations with deployment counts
+      tags:
+      - Super Admin – Organizations
   /superadmin/reports:
     get:
       description: Returns a paginated list of all reports across the platform (super

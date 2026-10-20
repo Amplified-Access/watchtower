@@ -60,6 +60,29 @@ func (r *OrganizationRepository) FindAll(ctx context.Context, params entity.List
 	return orgs, total, err
 }
 
+func (r *OrganizationRepository) FindAllWithDeploymentCounts(ctx context.Context) ([]*entity.OrganizationWithDeployments, error) {
+	const q = `SELECT o.id, o.name, o.slug, o.description, o.website, o.location, o.contact_email,
+			o.created_at, o.updated_at, COUNT(d.id)
+		FROM organizations o LEFT JOIN deployments d ON d.organization_id = o.id
+		GROUP BY o.id
+		ORDER BY o.created_at DESC`
+	rows, err := r.db.QueryContext(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	orgs := []*entity.OrganizationWithDeployments{}
+	for rows.Next() {
+		var o entity.OrganizationWithDeployments
+		if err := rows.Scan(&o.ID, &o.Name, &o.Slug, &o.Description, &o.Website, &o.Location,
+			&o.ContactEmail, &o.CreatedAt, &o.UpdatedAt, &o.DeploymentCount); err != nil {
+			return nil, err
+		}
+		orgs = append(orgs, &o)
+	}
+	return orgs, rows.Err()
+}
+
 func (r *OrganizationRepository) FindByID(ctx context.Context, id string) (*entity.Organization, error) {
 	const q = `SELECT id, name, slug, description, website, location, contact_email, created_at, updated_at
 		FROM organizations WHERE id=$1`

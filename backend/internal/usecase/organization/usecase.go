@@ -29,6 +29,12 @@ func (uc *UseCase) GetAll(ctx context.Context, params entity.ListParams) ([]*ent
 	return uc.orgRepo.FindAll(ctx, params)
 }
 
+// GetAllWithDeploymentCounts is every organization with how many
+// deployments it has made, for the super admin.
+func (uc *UseCase) GetAllWithDeploymentCounts(ctx context.Context) ([]*entity.OrganizationWithDeployments, error) {
+	return uc.orgRepo.FindAllWithDeploymentCounts(ctx)
+}
+
 func (uc *UseCase) GetBySlug(ctx context.Context, slug string) (*entity.Organization, error) {
 	org, err := uc.orgRepo.FindBySlug(ctx, slug)
 	if err != nil {

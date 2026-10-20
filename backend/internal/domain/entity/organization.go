@@ -22,6 +22,13 @@ type Organization struct {
 	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
+// OrganizationWithDeployments is an organization and how many deployments
+// it has made, for the super admin's organizations table.
+type OrganizationWithDeployments struct {
+	Organization
+	DeploymentCount int `json:"deploymentCount"`
+}
+
 type OrganizationApplication struct {
 	ID                         int               `json:"id"`
 	OrganizationName           string            `json:"organizationName"`
