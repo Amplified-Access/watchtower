@@ -480,6 +480,34 @@ paths:
       summary: Create a deployment
       tags:
       - Admin – Deployments
+  /admin/deployments/counts:
+    get:
+      description: Returns how many deployments the authenticated admin's organization
+        has, in total and by status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Count the organization's deployments
+      tags:
+      - Admin – Deployments
   /admin/forms:
     get:
       description: Returns all forms belonging to the admin's organization
@@ -2698,39 +2726,6 @@ paths:
       summary: Decline organization application
       tags:
       - Super Admin – Organizations
-  /superadmin/dashboard/activity:
-    get:
-      description: Returns the most recent activity events across the platform (super
-        admin only)
-      parameters:
-      - description: 'Number of events to return (default: 10)'
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
-      security:
-      - BearerAuth: []
-      summary: Get recent platform activity
-      tags:
-      - Super Admin – Dashboard
   /superadmin/dashboard/stats:
     get:
       description: Returns aggregate statistics across the entire platform (super
@@ -2761,8 +2756,8 @@ paths:
       - Super Admin – Dashboard
   /superadmin/dashboard/trend:
     get:
-      description: Returns weekly incident counts over the past 7 weeks (super admin
-        only)
+      description: Returns weekly counts of public reports over the past 7 weeks (super
+        admin only)
       produces:
       - application/json
       responses:

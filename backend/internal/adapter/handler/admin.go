@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -291,34 +290,10 @@ func (h *AdminHandler) GetPlatformStats(c *gin.Context) {
 	presenter.OK(c, stats)
 }
 
-// GetRecentActivity godoc
-//
-//	@Summary		Get recent platform activity
-//	@Description	Returns the most recent activity events across the platform (super admin only)
-//	@Tags			Super Admin – Dashboard
-//	@Produce		json
-//	@Security		BearerAuth
-//	@Param			limit	query		int	false	"Number of events to return (default: 10)"
-//	@Success		200		{object}	presenter.Response
-//	@Failure		401		{object}	presenter.Response
-//	@Failure		403		{object}	presenter.Response
-//	@Failure		500		{object}	presenter.Response
-//	@Router			/superadmin/dashboard/activity [get]
-func (h *AdminHandler) GetRecentActivity(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "10")
-	limit, _ := strconv.Atoi(limitStr)
-	activity, err := h.uc.GetRecentActivity(c.Request.Context(), limit)
-	if err != nil {
-		presenter.Error(c, err)
-		return
-	}
-	presenter.OK(c, activity)
-}
-
 // GetPlatformActivityTrend godoc
 //
 //	@Summary		Get platform activity trend
-//	@Description	Returns weekly incident counts over the past 7 weeks (super admin only)
+//	@Description	Returns weekly counts of public reports over the past 7 weeks (super admin only)
 //	@Tags			Super Admin – Dashboard
 //	@Produce		json
 //	@Security		BearerAuth

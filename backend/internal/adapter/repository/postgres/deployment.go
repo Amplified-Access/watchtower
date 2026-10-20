@@ -84,6 +84,22 @@ func (r *DeploymentRepository) FindAll(ctx context.Context, organizationID *stri
 	return deployments, typeRows.Err()
 }
 
+func (r *DeploymentRepository) CountByStatus(ctx context.Context, organizationID *string) (entity.DeploymentCounts, error) {
+	q := `SELECT COUNT(*),
+			COUNT(*) FILTER (WHERE status = 'draft'),
+			COUNT(*) FILTER (WHERE status = 'live'),
+			COUNT(*) FILTER (WHERE status = 'closed')
+		FROM deployments`
+	args := []interface{}{}
+	if organizationID != nil {
+		q += " WHERE organization_id = $1"
+		args = append(args, *organizationID)
+	}
+	var c entity.DeploymentCounts
+	err := r.db.QueryRowContext(ctx, q, args...).Scan(&c.Total, &c.Draft, &c.Live, &c.Closed)
+	return c, err
+}
+
 func (r *DeploymentRepository) SlugExists(ctx context.Context, slug string) (bool, error) {
 	var exists bool
 	err := r.db.QueryRowContext(ctx, `SELECT EXISTS (SELECT 1 FROM deployments WHERE slug = $1)`, slug).Scan(&exists)

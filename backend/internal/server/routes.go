@@ -145,6 +145,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 			admin.GET("/deployments", s.deploymentHandler.GetOrganizationDeployments)
 			admin.POST("/deployments", s.deploymentHandler.CreateDeployment)
+			admin.GET("/deployments/counts", s.deploymentHandler.GetOrganizationDeploymentCounts)
 
 			admin.GET("/incident-types", s.incidentHandler.GetTypesByOrganization)
 			admin.GET("/incident-types/available", s.incidentHandler.GetAvailableTypes)
@@ -205,7 +206,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 			superAdmin.GET("/alerts/stats", s.alertHandler.GetStats)
 
 			superAdmin.GET("/dashboard/stats", s.adminHandler.GetPlatformStats)
-			superAdmin.GET("/dashboard/activity", s.adminHandler.GetRecentActivity)
 			superAdmin.GET("/dashboard/trend", s.adminHandler.GetPlatformActivityTrend)
 			superAdmin.GET("/dashboard/report-types", s.adminHandler.GetPlatformReportsByType)
 		}

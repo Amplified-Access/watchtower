@@ -29,6 +29,12 @@ func (uc *UseCase) ListForOrganization(ctx context.Context, organizationID strin
 	return uc.repo.FindAll(ctx, &organizationID)
 }
 
+// CountsForOrganization is how many deployments an organization has, by
+// status, for its admin's dashboard.
+func (uc *UseCase) CountsForOrganization(ctx context.Context, organizationID string) (entity.DeploymentCounts, error) {
+	return uc.repo.CountByStatus(ctx, &organizationID)
+}
+
 // ListAll is every deployment on the platform, for the super admin;
 // organizationID, when set, narrows it to one organization.
 func (uc *UseCase) ListAll(ctx context.Context, organizationID *string) ([]*entity.Deployment, error) {

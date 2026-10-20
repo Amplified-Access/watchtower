@@ -104,10 +104,6 @@ func (r *CachedIncidentRepository) GetPending(ctx context.Context, orgID string)
 	return result, nil
 }
 
-func (r *CachedIncidentRepository) CountAllSince(ctx context.Context, since time.Time) (int, error) {
-	return r.repo.CountAllSince(ctx, since)
-}
-
 func (r *CachedIncidentRepository) GetPlatformWeeklyTrend(ctx context.Context) ([]*entity.WeeklyTrendPoint, error) {
 	const key = "inc:platform:trend"
 	if cached, ok := cacheGet[[]*entity.WeeklyTrendPoint](ctx, r.rdb, key); ok {

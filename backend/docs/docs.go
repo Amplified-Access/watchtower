@@ -336,6 +336,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/deployments/counts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns how many deployments the authenticated admin's organization has, in total and by status",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin – Deployments"
+                ],
+                "summary": "Count the organization's deployments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/forms": {
             "get": {
                 "security": [
@@ -3752,57 +3795,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/superadmin/dashboard/activity": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Returns the most recent activity events across the platform (super admin only)",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Super Admin – Dashboard"
-                ],
-                "summary": "Get recent platform activity",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Number of events to return (default: 10)",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_adapter_presenter.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/superadmin/dashboard/stats": {
             "get": {
                 "security": [
@@ -3853,7 +3845,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns weekly incident counts over the past 7 weeks (super admin only)",
+                "description": "Returns weekly counts of public reports over the past 7 weeks (super admin only)",
                 "produces": [
                     "application/json"
                 ],

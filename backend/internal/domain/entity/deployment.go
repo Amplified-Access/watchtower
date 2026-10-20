@@ -37,6 +37,14 @@ type Deployment struct {
 	UpdatedAt        time.Time        `json:"updatedAt"`
 }
 
+// DeploymentCounts is how many deployments there are, by status.
+type DeploymentCounts struct {
+	Total  int `json:"total"`
+	Draft  int `json:"draft"`
+	Live   int `json:"live"`
+	Closed int `json:"closed"`
+}
+
 // NewDeployment is what an admin submits to create a deployment.
 type NewDeployment struct {
 	Name            string           `json:"name"`

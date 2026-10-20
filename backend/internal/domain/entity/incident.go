@@ -130,32 +130,16 @@ type GrowthMetric struct {
 	Percentage float64 `json:"percentage"`
 }
 
+// PlatformStats is the super admin's dashboard: what the platform holds
+// now, on the deployments model.
 type PlatformStats struct {
-	TotalOrganizations  int     `json:"totalOrganizations"`
-	TotalAdmins         int     `json:"totalAdmins"`
-	TotalWatchers       int     `json:"totalWatchers"`
-	PendingApplications int     `json:"pendingApplications"`
-	ReportsThisMonth    int     `json:"reportsThisMonth"`
-	ActiveForms         int     `json:"activeForms"`
-	CriticalIncidents   int     `json:"criticalIncidents"`
-	UptimePercentage    float64 `json:"uptimePercentage"`
-	Growth              struct {
+	TotalOrganizations  int              `json:"totalOrganizations"`
+	PendingApplications int              `json:"pendingApplications"`
+	Deployments         DeploymentCounts `json:"deployments"`
+	// Public reports this month against last month.
+	Reports GrowthMetric `json:"reports"`
+	Growth  struct {
+		// New organizations this month against last month.
 		Organizations GrowthMetric `json:"organizations"`
-		Admins        GrowthMetric `json:"admins"`
-		Watchers      GrowthMetric `json:"watchers"`
 	} `json:"growth"`
-	Metrics struct {
-		NewOrganizationsThisMonth int     `json:"newOrganizationsThisMonth"`
-		NewAdminsThisMonth        int     `json:"newAdminsThisMonth"`
-		NewWatchersThisMonth      int     `json:"newWatchersThisMonth"`
-		AverageReportsPerOrg      float64 `json:"averageReportsPerOrg"`
-	} `json:"metrics"`
-}
-
-type ActivityItem struct {
-	ID          string    `json:"id"`
-	Type        string    `json:"type"`
-	Description string    `json:"description"`
-	Timestamp   time.Time `json:"timestamp"`
-	UserName    string    `json:"userName"`
 }

@@ -321,22 +321,14 @@ func (r *IncidentRepository) GetPending(ctx context.Context, orgID string) ([]*e
 	return scanIncidents(rows)
 }
 
-func (r *IncidentRepository) CountAllSince(ctx context.Context, since time.Time) (int, error) {
-	var count int
-	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM incidents WHERE created_at >= $1`, since).Scan(&count)
-	return count, err
-}
-
+// GetPlatformWeeklyTrend counts public reports per week over the last seven
+// weeks. It used to add the watchers' incidents and organization reports,
+// from the model deployments replaced.
 func (r *IncidentRepository) GetPlatformWeeklyTrend(ctx context.Context) ([]*entity.WeeklyTrendPoint, error) {
 	const q = `
 		SELECT TO_CHAR(DATE_TRUNC('week', created_at), 'YYYY-MM-DD') AS week, COUNT(*) AS count
-		FROM (
-			SELECT created_at FROM incidents WHERE created_at >= NOW() - INTERVAL '7 weeks'
-			UNION ALL
-			SELECT created_at FROM organization_incident_reports WHERE created_at >= NOW() - INTERVAL '7 weeks'
-			UNION ALL
-			SELECT created_at FROM anonymous_incident_reports WHERE created_at >= NOW() - INTERVAL '7 weeks'
-		) combined
+		FROM anonymous_incident_reports
+		WHERE created_at >= NOW() - INTERVAL '7 weeks'
 		GROUP BY week ORDER BY week ASC`
 	rows, err := r.db.QueryContext(ctx, q)
 	if err != nil {
@@ -455,6 +447,13 @@ func (r *AnonymousIncidentReportRepository) Create(ctx context.Context, report *
 		report.ID, report.IncidentTypeID, locJSON, report.Description, textArray(report.Entities),
 		report.Injuries, report.Fatalities, report.EvidenceFileKey, report.AudioFileKey, now, now)
 	return err
+}
+
+func (r *AnonymousIncidentReportRepository) CountCreatedSince(ctx context.Context, since time.Time) (int, error) {
+	var count int
+	err := r.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM anonymous_incident_reports WHERE created_at >= $1`, since).Scan(&count)
+	return count, err
 }
 
 func (r *AnonymousIncidentReportRepository) GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error) {
@@ -795,12 +794,6 @@ func (r *OrganizationIncidentReportRepository) GetStats(ctx context.Context, org
 	var s entity.IncidentStats
 	err := r.db.QueryRowContext(ctx, q, orgID).Scan(&s.Total, &s.ThisWeek, &s.LastWeek)
 	return &s, err
-}
-
-func (r *OrganizationIncidentReportRepository) CountCritical(ctx context.Context) (int, error) {
-	var count int
-	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM organization_incident_reports WHERE severity='critical'`).Scan(&count)
-	return count, err
 }
 
 func scanOrgReports(rows *sql.Rows) ([]*entity.OrganizationIncidentReport, error) {

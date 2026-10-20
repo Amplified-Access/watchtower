@@ -11,6 +11,9 @@ type DeploymentRepository interface {
 	// name and incident types; organizationID narrows it to one.
 	FindAll(ctx context.Context, organizationID *string) ([]*entity.Deployment, error)
 	SlugExists(ctx context.Context, slug string) (bool, error)
+	// CountByStatus counts deployments by status; organizationID narrows
+	// it to one organization.
+	CountByStatus(ctx context.Context, organizationID *string) (entity.DeploymentCounts, error)
 	// Create saves the deployment and its incident types together.
 	Create(ctx context.Context, d *entity.Deployment, incidentTypeIDs []string) error
 }

@@ -96,7 +96,7 @@ func NewServer(dbSvc pgClient.Service, redisSvc redisClient.Service) *http.Serve
 	assistantUC := assistantuc.New(gemini.New(), knowledgeRepo)
 	analyticsUC := analyticsuc.New(anonReportRepo)
 	fileUC := fileuc.New(r2.New(), allowedExternalDomains())
-	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo, orgReportRepo, anonReportRepo)
+	adminUC := adminuc.New(userRepo, incidentRepo, formRepo, orgRepo, appRepo, orgReportRepo, anonReportRepo, deploymentRepo)
 
 	// Handlers
 	newServer := &Server{

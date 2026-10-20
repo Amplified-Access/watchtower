@@ -21,6 +21,9 @@ func (m *mockRepo) FindAll(_ context.Context, orgID *string) ([]*entity.Deployme
 	m.listedOrg = orgID
 	return nil, nil
 }
+func (m *mockRepo) CountByStatus(_ context.Context, _ *string) (entity.DeploymentCounts, error) {
+	return entity.DeploymentCounts{}, nil
+}
 func (m *mockRepo) SlugExists(_ context.Context, slug string) (bool, error) {
 	return m.taken[slug], nil
 }

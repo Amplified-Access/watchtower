@@ -135,6 +135,12 @@ func (r *CachedAnonymousReportRepository) GetHeatmapData(ctx context.Context) ([
 	return result, nil
 }
 
+// CountCreatedSince isn't cached: only the super admin's dashboard reads
+// it, and every new report would make a cached count stale.
+func (r *CachedAnonymousReportRepository) CountCreatedSince(ctx context.Context, since time.Time) (int, error) {
+	return r.repo.CountCreatedSince(ctx, since)
+}
+
 func (r *CachedAnonymousReportRepository) GetTypeDistribution(ctx context.Context) ([]*entity.TypeCount, error) {
 	const key = "anon:type-dist"
 	if cached, ok := cacheGet[[]*entity.TypeCount](ctx, r.rdb, key); ok {
