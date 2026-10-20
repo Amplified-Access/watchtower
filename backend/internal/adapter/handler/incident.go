@@ -540,7 +540,7 @@ func (h *IncidentHandler) GetAvailableTypes(c *gin.Context) {
 // CreateIncidentType godoc
 //
 //	@Summary		Create incident type
-//	@Description	Creates a new platform-wide incident type (admin only)
+//	@Description	Creates a new platform-wide incident type (admin or super admin)
 //	@Tags			Admin – Incident Types
 //	@Accept			json
 //	@Produce		json
@@ -552,6 +552,7 @@ func (h *IncidentHandler) GetAvailableTypes(c *gin.Context) {
 //	@Failure		403		{object}	presenter.Response
 //	@Failure		500		{object}	presenter.Response
 //	@Router			/admin/incident-types [post]
+//	@Router			/superadmin/incident-types [post]
 func (h *IncidentHandler) CreateIncidentType(c *gin.Context) {
 	var input struct {
 		Name        string  `json:"name" binding:"required"`

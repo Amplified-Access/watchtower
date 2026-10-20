@@ -196,6 +196,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 			superAdmin.GET("/reports", s.reportHandler.GetAllReports)
 
+			// The same handler as /admin/incident-types: it creates a
+			// platform-wide type. Here because /admin requires an
+			// organization, which a super admin has none of.
+			superAdmin.POST("/incident-types", s.incidentHandler.CreateIncidentType)
+
 			superAdmin.GET("/datasets", s.datasetHandler.GetAllDatasets)
 			superAdmin.POST("/datasets", s.datasetHandler.CreateDataset)
 			superAdmin.DELETE("/datasets/:id", s.datasetHandler.DeleteDataset)

@@ -607,7 +607,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Creates a new platform-wide incident type (admin only)
+      description: Creates a new platform-wide incident type (admin or super admin)
       parameters:
       - description: Incident type payload
         in: body
@@ -3004,6 +3004,53 @@ paths:
       summary: List all forms
       tags:
       - Super Admin – Forms
+  /superadmin/incident-types:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new platform-wide incident type (admin or super admin)
+      parameters:
+      - description: Incident type payload
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            color:
+              type: string
+            description:
+              type: string
+            name:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/backend_internal_adapter_presenter.Response'
+      security:
+      - BearerAuth: []
+      summary: Create incident type
+      tags:
+      - Admin – Incident Types
   /superadmin/incidents:
     get:
       description: Returns a paginated list of all incidents across the platform (super
