@@ -21,7 +21,8 @@ interface StatsCardProps {
 // closing). The title sits at the top and the figure at the bottom, so the
 // height reads as deliberate. The ratio applies inside a <StatsGrid>, whose
 // columns are sized so a card is never too narrow for its content at 3:2:
-// 136px of content needs 204px of width. On one column (a narrow container)
+// 136px of content needs 204px of width. The title is text-lg, like
+// the other dashboard cards' titles. On one column (a narrow container)
 // the card keeps its natural height instead of growing into a tall slab.
 export function StatsCard({
   title,
@@ -39,10 +40,10 @@ export function StatsCard({
       )}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 px-5 pb-2">
-        <CardTitle className="text-sm font-medium font-title group-hover:text-primary transition-colors">
+        <CardTitle className="text-lg font-title group-hover:text-primary transition-colors">
           {title}
         </CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+        <Icon className="size-5 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
       </CardHeader>
       <CardContent className="mt-auto px-5">
         <div className="flex justify-between items-center pb-1">
