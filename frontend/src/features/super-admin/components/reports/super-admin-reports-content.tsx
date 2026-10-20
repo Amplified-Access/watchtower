@@ -24,13 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,6 +68,9 @@ interface Report {
   authorEmail: string | null;
   organizationName: string | null;
 }
+
+// The filter row's controls: filled with the muted grey, no outline.
+const filledControl = "bg-muted border-transparent shadow-none";
 
 const statusColors: Record<"draft" | "published", string> = {
   draft: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -192,80 +189,56 @@ const SuperAdminReportsContent = () => {
     : [];
 
   return (
-    <Container className="space-y-6" size="lg">
-      {/* Header */}
-      <div className="flex items-center justify-between mt-4">
-        <div>
-          <h1 className="text-2xl font-bold font-title pb-2">
-            All Reports (Superadmin)
-          </h1>
-          <p className="text-muted-foreground">
-            {totalCount} total report{totalCount !== 1 ? "s" : ""} across all
-            organizations
-          </p>
+    <Container className="space-y-6 pb-6" size="lg">
+      {/* Search, filters and refresh in one row, straight on the page (no
+          card or heading): the search takes the room the rest leave. The
+          controls are filled with the muted grey instead of outlined, like
+          the dashboard cards. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative sm:flex-1">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search reports..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={`pl-9 ${filledControl}`}
+          />
         </div>
-        <Button onClick={() => refetch()} variant="outline" size="sm">
-          <RefreshCw className="w-4 h-4 mr-2" />
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className={`w-full sm:w-40 ${filledControl}`}>
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={organizationFilter} onValueChange={setOrganizationFilter}>
+          <SelectTrigger className={`w-full sm:w-48 ${filledControl}`}>
+            <SelectValue placeholder="Filter by organization" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All organizations</SelectItem>
+            {organizations.map((org: { id: string; name: string }) => (
+              <SelectItem key={org.id} value={org.id}>
+                {org.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          onClick={() => refetch()}
+          variant="secondary"
+          className="bg-muted shadow-none hover:bg-muted/70"
+        >
+          <RefreshCw className="w-4 h-4" />
           Refresh
         </Button>
       </div>
 
-      {/* Filters */}
-      <Card className="shadow-none">
-        <CardContent className="flex justify-between">
-        <CardHeader className="">
-          <CardTitle className="text-lg font-title">Filters</CardTitle>
-        </CardHeader>
-          <div className="flex gap-4">
-            <div>
-              <Input
-                placeholder="Search reports..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="published">Published</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Select
-                value={organizationFilter}
-                onValueChange={setOrganizationFilter}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by organization" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All organizations</SelectItem>
-                  {organizations.map((org: { id: string; name: string }) => (
-                    <SelectItem key={org.id} value={org.id}>
-                      {org.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center">
-              <p className="text-sm text-muted-foreground">
-                Showing {reports.length} of {totalCount} reports
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Reports Table */}
-      <Card className="shadow-none">
+      {/* Reports Table: a flush card, in the dashboards' card style */}
+      <Card className="gap-0 overflow-hidden py-0 shadow-none">
         <CardContent className="p-0">
           {reports.length === 0 ? (
             <div className="text-center py-12">
