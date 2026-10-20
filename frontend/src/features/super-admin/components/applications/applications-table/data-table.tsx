@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { fileDownloadUrl } from "@/utils/file-download";
 
 import Link from "next/link";
@@ -43,7 +44,9 @@ export function DataTable<
   console.log(data);
 
   return (
-    <div className="overflow-hidden rounded-md border">
+    // A Card, so it takes the dashboards' card style (filled with the muted
+    // grey, no outline), flush to the table: no padding or gap.
+    <Card className="gap-0 overflow-hidden py-0 shadow-none">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -152,6 +155,6 @@ export function DataTable<
           )}
         </TableBody>
       </Table>
-    </div>
+    </Card>
   );
 }
