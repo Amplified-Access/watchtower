@@ -15,13 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +64,9 @@ type IncidentStatusFilter =
   | "investigating"
   | "resolved"
   | "closed";
+
+// The top row's controls: filled with the muted grey, no outline.
+const filledControl = "bg-muted border-transparent shadow-none";
 
 const IncidentsContent = () => {
   const { user, isLoading: userLoading } = useExtendedSession();
@@ -167,118 +164,88 @@ const IncidentsContent = () => {
   const totalCount = incidentsData?.totalCount || 0;
 
   return (
-    <Container className="space-y-6" size="lg">
-      {/* Header */}
-      <div className="flex items-center justify-between pt-4">
-        <div>
-          <h1 className="text-2xl font-bold font-title">Incidents</h1>
-          <p className="text-muted-foreground">
-            {totalCount} total incident{totalCount !== 1 ? "s" : ""} reported
-          </p>
+    <Container className="space-y-6 pb-6" size="lg">
+      {/* Search, filters, sort and refresh in one row, straight on the page,
+          filled with the muted grey; the search takes the room the rest
+          leave. Six controls, so the row forms from lg up. */}
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="relative lg:flex-1">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search incidents..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={`pl-9 ${filledControl}`}
+          />
         </div>
-        <Button onClick={() => refetch()} variant="outline" size="sm">
-          <RefreshCw className="w-4 h-4 mr-2" />
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => setStatusFilter(value as IncidentStatusFilter)}
+        >
+          <SelectTrigger className={`w-full lg:w-40 ${filledControl}`}>
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="reported">Reported</SelectItem>
+            <SelectItem value="investigating">Investigating</SelectItem>
+            <SelectItem value="resolved">Resolved</SelectItem>
+            <SelectItem value="closed">Closed</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={formFilter} onValueChange={setFormFilter}>
+          <SelectTrigger className={`w-full lg:w-44 ${filledControl}`}>
+            <SelectValue placeholder="Filter by form" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All forms</SelectItem>
+            {forms?.map((form) => (
+              <SelectItem key={form.id} value={form.id}>
+                {form.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <div className="flex gap-2">
+          <Select
+            value={sortBy}
+            onValueChange={(value: "createdAt" | "updatedAt" | "status") => setSortBy(value)}
+          >
+            <SelectTrigger className={`w-full lg:w-40 ${filledControl}`}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt">Created Date</SelectItem>
+              <SelectItem value="updatedAt">Updated Date</SelectItem>
+              <SelectItem value="status">Status</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            variant="secondary"
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+            className="bg-muted px-3 shadow-none hover:bg-muted/70"
+            aria-label={sortOrder === "asc" ? "Oldest first" : "Newest first"}
+          >
+            {sortOrder === "asc" ? "↑" : "↓"}
+          </Button>
+        </div>
+        <Button
+          onClick={() => refetch()}
+          variant="secondary"
+          className="bg-muted shadow-none hover:bg-muted/70"
+        >
+          <RefreshCw className="w-4 h-4" />
           Refresh
         </Button>
+        {(search || statusFilter !== "all" || formFilter !== "all") && (
+          <Button onClick={clearFilters} variant="ghost">
+            Clear filters
+          </Button>
+        )}
       </div>
 
-      {/* Filters */}
-      <Card className="shadow-none">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">Search & Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search incidents..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            {/* Status Filter */}
-            <Select
-              value={statusFilter}
-              onValueChange={(value) =>
-                setStatusFilter(value as IncidentStatusFilter)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="reported">Reported</SelectItem>
-                <SelectItem value="investigating">Investigating</SelectItem>
-                <SelectItem value="resolved">Resolved</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Form Filter */}
-            <Select value={formFilter} onValueChange={setFormFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by form" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All forms</SelectItem>
-                {forms?.map((form) => (
-                  <SelectItem key={form.id} value={form.id}>
-                    {form.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Sort */}
-            <div className="flex gap-2">
-              <Select
-                value={sortBy}
-                onValueChange={(value: any) => setSortBy(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="createdAt">Created Date</SelectItem>
-                  <SelectItem value="updatedAt">Updated Date</SelectItem>
-                  <SelectItem value="status">Status</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-                }
-                className="px-3"
-              >
-                {sortOrder === "asc" ? "↑" : "↓"}
-              </Button>
-            </div>
-          </div>
-
-          {/* Clear Filters */}
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-2">
-              {(search || statusFilter !== "all" || formFilter !== "all") && (
-                <Button onClick={clearFilters} variant="ghost" size="sm">
-                  Clear filters
-                </Button>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Showing {incidents.length} of {totalCount} incidents
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Incidents Table */}
-      <Card className="shadow-none">
+      {/* Incidents Table: a flush card, in the dashboards' card style */}
+      <Card className="gap-0 overflow-hidden py-0 shadow-none">
         <CardContent className="p-0">
           {incidents.length === 0 ? (
             <div className="text-center py-12">
