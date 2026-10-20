@@ -72,7 +72,7 @@ export default function SuperAdminDashboardContent() {
           </StatsGrid>
 
           {/* Main Content Grid Skeleton */}
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Recent Activity Skeleton - spans 2 columns */}
             <div className="lg:col-span-2">
               <Card className="shadow-none">
@@ -111,7 +111,7 @@ export default function SuperAdminDashboardContent() {
           </div>
 
           {/* Quick Actions Grid Skeleton */}
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {Array.from({ length: 2 }).map((_, i) => (
               <Card key={i} className="shadow-none">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -135,7 +135,7 @@ export default function SuperAdminDashboardContent() {
           </div>
 
           {/* Analytics Section Skeleton */}
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Pie Chart Skeleton */}
             <Card className="shadow-none flex flex-col">
               <CardHeader className="flex-row items-start space-y-0 pb-0">
@@ -282,7 +282,7 @@ export default function SuperAdminDashboardContent() {
         </StatsGrid>
 
         {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Recent Activity - spans 2 columns */}
           <div className="lg:col-span-2">
             <RecentActivity
@@ -382,7 +382,7 @@ export default function SuperAdminDashboardContent() {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <QuickOverview
             title="Pending Applications"
             items={(pendingApplications || []).map((a) => ({
@@ -408,7 +408,7 @@ export default function SuperAdminDashboardContent() {
         </div>
 
         {/* Analytics Section */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <RechartsPieChart
             title="Reports by Incident Type"
             data={organizationTypes || []}

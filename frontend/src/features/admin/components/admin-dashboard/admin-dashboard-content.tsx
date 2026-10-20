@@ -133,7 +133,7 @@ export default function AdminDashboardContent() {
         </StatsGrid>
 
         {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Recent Activity - spans 2 columns */}
           <div className="lg:col-span-2">
             <RecentActivity
@@ -184,7 +184,7 @@ export default function AdminDashboardContent() {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <QuickOverview
             title="Recent Incidents"
             items={recentIncidents.map((i) => ({
@@ -208,7 +208,7 @@ export default function AdminDashboardContent() {
         </div>
 
         {/* Analytics Section */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <RechartsPieChart
             title="Incident Types This Month"
             data={incidentTypesAnalytics}

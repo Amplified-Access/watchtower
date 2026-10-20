@@ -90,11 +90,14 @@ export function RecentActivity({
               {getActivityIcon(activity.type)}
               </div> */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-base font-medium truncate">
+                {/* min-w-0 lets the title shrink and truncate; without it a
+                    flex item keeps its full one-line width and the row
+                    overflows the card on phones. */}
+                <div className="flex items-center justify-between gap-2">
+                  <p className="min-w-0 text-base font-medium truncate">
                     {activity.title}
                   </p>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex shrink-0 items-center space-x-2">
                     {/* {activity.status && (
                       <Badge
                         variant="outline"
@@ -115,7 +118,7 @@ export function RecentActivity({
                     </p>
                   </div>
                 </div>
-                <p className="text-sm text-muted-foreground/80">
+                <p className="text-sm text-muted-foreground/80 break-words">
                   {activity.description}
                 </p>
               </div>

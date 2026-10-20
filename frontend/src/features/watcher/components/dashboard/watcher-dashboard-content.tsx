@@ -166,7 +166,7 @@ export default function WatcherDashboardContent() {
         </StatsGrid>
 
         {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Recent Activity - spans 2 columns */}
           <div className="lg:col-span-2">
             <RecentActivity
@@ -234,7 +234,7 @@ export default function WatcherDashboardContent() {
         </div>
 
         {/* Quick Overview Grid */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <QuickOverview
             title="My Recent Incidents"
             items={myIncidents}
