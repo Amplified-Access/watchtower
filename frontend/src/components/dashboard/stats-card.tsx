@@ -21,7 +21,7 @@ interface StatsCardProps {
 // closing). The title sits at the top and the figure at the bottom, so the
 // height reads as deliberate. The ratio applies inside a <StatsGrid>, whose
 // columns are sized so a card is never too narrow for its content at 3:2:
-// 136px of content needs 204px of width. The title is text-lg, like
+// 140px of content needs 210px of width. The title is text-lg, like
 // the other dashboard cards' titles. On one column (a narrow container)
 // the card keeps its natural height instead of growing into a tall slab.
 export function StatsCard({
@@ -35,7 +35,7 @@ export function StatsCard({
   return (
     <Card
       className={cn(
-        "shadow-none gap-4 py-5 @lg:aspect-[3/2] transition-all duration-300 hover:shadow-md hover:border-primary/30 cursor-pointer group",
+        "@container/stat shadow-none gap-4 py-5 @lg:aspect-[3/2] transition-all duration-300 hover:shadow-md hover:border-primary/30 cursor-pointer group",
         className
       )}
     >
@@ -46,12 +46,17 @@ export function StatsCard({
         <Icon className="size-5 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
       </CardHeader>
       <CardContent className="mt-auto px-5">
-        <div className="flex justify-between items-center pb-1">
-          <div className="text-2xl font-bold">{value}</div>
+        {/* The figure is the card's point: 36px, and 48px once the card is
+            20rem wide (its own width, so it follows the sidebar). leading-none
+            keeps it inside the 3:2 shape on the narrowest cards. */}
+        <div className="flex justify-between items-baseline gap-2 pb-1">
+          <div className="text-4xl @xs/stat:text-5xl font-bold leading-none tabular-nums">
+            {value}
+          </div>
           {change && (
             <p
               className={cn(
-                "text-xs",
+                "text-xs text-right",
                 change.type === "increase" && "text-green-600",
                 change.type === "decrease" && "text-red-600",
                 change.type === "neutral" && "text-muted-foreground"
