@@ -5,6 +5,7 @@ import { useExtendedSession } from "@/hooks/use-extended-session";
 import PageLoader from "@/components/common/page-loader";
 import Container from "@/components/common/container";
 import { StatsCard } from "@/components/dashboard/stats-card";
+import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { QuickOverview } from "@/components/dashboard/quick-overview";
 import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
@@ -115,7 +116,7 @@ export default function AdminDashboardContent() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatsGrid>
           <StatsCard
             title="Active Watchers"
             value={totalWatchers}
@@ -156,7 +157,7 @@ export default function AdminDashboardContent() {
             }}
             description="Reports published this month"
           />
-        </div>
+        </StatsGrid>
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">

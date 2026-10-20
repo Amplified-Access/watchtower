@@ -5,6 +5,7 @@ import { useExtendedSession } from "@/hooks/use-extended-session";
 import Loader from "@/components/common/loader";
 import Container from "@/components/common/container";
 import { StatsCard } from "@/components/dashboard/stats-card";
+import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { QuickOverview } from "@/components/dashboard/quick-overview";
 import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
@@ -56,10 +57,13 @@ export default function SuperAdminDashboardContent() {
           </div>
 
           {/* Stats Grid Skeleton */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatsGrid>
             {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="rounded-md shadow-none">
-                <CardContent className="p-6">
+              <Card
+                key={i}
+                className="rounded-md shadow-none py-0 @lg:aspect-[3/2]"
+              >
+                <CardContent className="flex h-full flex-col justify-between p-5">
                   <div className="flex items-center justify-between space-y-0 pb-2">
                     <div className="h-4 w-24 bg-muted rounded-md animate-pulse" />
                     <div className="h-4 w-4 bg-muted rounded animate-pulse" />
@@ -72,7 +76,7 @@ export default function SuperAdminDashboardContent() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </StatsGrid>
 
           {/* Main Content Grid Skeleton */}
           <div className="grid gap-6 lg:grid-cols-3">
@@ -247,7 +251,7 @@ export default function SuperAdminDashboardContent() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatsGrid>
           <Link href="/superadmin/organizations" className="block">
             <StatsCard
               title="Organizations"
@@ -300,7 +304,7 @@ export default function SuperAdminDashboardContent() {
             }}
             description="System uptime"
           />
-        </div>
+        </StatsGrid>
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
