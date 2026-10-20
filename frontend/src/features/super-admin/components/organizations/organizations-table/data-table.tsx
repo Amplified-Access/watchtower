@@ -40,13 +40,13 @@ import { trpc } from "@/_trpc/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { BsQuestionCircle } from "react-icons/bs";
 
-interface DataTableProps<TData extends { id: number }, TValue> {
+interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
 export function DataTable<
-  TData extends { id: number; organizationName: string },
+  TData extends { id: string; organizationName: string },
   TValue
 >({ columns, data }: DataTableProps<TData, TValue>) {
   const queryClient = useQueryClient();
