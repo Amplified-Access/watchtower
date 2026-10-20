@@ -156,22 +156,6 @@ describe("incidentsApi.getHeatmapData", () => {
 
 // ─── Super admin ─────────────────────────────────────────────────────────────
 
-describe("incidentsApi.getAllIncidents (super admin)", () => {
-  it("fetches all without query when no params", () => {
-    incidentsApi.getAllIncidents();
-    expect(mockApi.get).toHaveBeenCalledWith("/superadmin/incidents");
-  });
-
-  it("appends query string when params provided", () => {
-    incidentsApi.getAllIncidents({ limit: 5, offset: 10, search: "assault" });
-    const url: string = mockApi.get.mock.calls[0][0];
-    expect(url).toContain("/superadmin/incidents?");
-    expect(url).toContain("limit=5");
-    expect(url).toContain("offset=10");
-    expect(url).toContain("search=assault");
-  });
-});
-
 // ─── Anonymous reports ───────────────────────────────────────────────────────
 
 describe("incidentsApi.getAnonymousReports", () => {

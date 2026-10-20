@@ -27,12 +27,20 @@ export interface WatcherUser {
   updatedAt: string;
 }
 
-export interface ActivityItem {
-  id: string;
-  type: string;
-  description: string;
-  timestamp: string;
-  userName: string;
+interface GrowthMetric {
+  current: number;
+  previous: number;
+  percentage: number;
+}
+
+/** The super admin's dashboard, as entity.PlatformStats serialises it. */
+export interface PlatformStats {
+  totalOrganizations: number;
+  pendingApplications: number;
+  deployments: { total: number; draft: number; live: number; closed: number };
+  /** Public reports: this month (current) against last month (previous). */
+  reports: GrowthMetric;
+  growth: { organizations: GrowthMetric };
 }
 
 export interface OrganizationTypeDistribution {
@@ -92,10 +100,8 @@ export const adminApi = {
   getPendingApplications: () =>
     api.get<unknown[]>("/superadmin/applications"),
 
-  getPlatformStats: () => api.get<any>("/superadmin/dashboard/stats"),
+  getPlatformStats: () => api.get<PlatformStats>("/superadmin/dashboard/stats"),
 
-  getRecentActivity: (limit?: number) =>
-    api.get<ActivityItem[]>(`/superadmin/dashboard/activity${limit ? `?limit=${limit}` : ""}`),
 
   getPlatformActivityTrend: () =>
     api.get<{ week: string; count: number }[]>("/superadmin/dashboard/trend"),

@@ -203,56 +203,17 @@ export const superAdminRouter = router({
       }
     }),
 
+  // The platform's numbers on the deployments model, as Go computes them.
   getDashboardStats: superAdminProcedure.query(async () => {
-    try {
-      const res = await adminApi.getPlatformStats();
-      if (!res.success) throw new Error(res.error ?? "Failed to fetch platform stats");
-      const data = res.data;
-      return {
-        totalOrganizations: data?.totalOrganizations ?? 0,
-        totalAdmins: data?.totalAdmins ?? 0,
-        totalWatchers: data?.totalWatchers ?? 0,
-        pendingApplications: data?.pendingApplications ?? 0,
-        reportsThisMonth: data?.reportsThisMonth ?? 0,
-        activeForms: data?.activeForms ?? 0,
-        criticalIncidents: data?.criticalIncidents ?? 0,
-        uptimePercentage: data?.uptimePercentage ?? 99.9,
-        growth: {
-          organizations: data?.growth?.organizations ?? { current: 0, previous: 0, percentage: 0 },
-          admins: data?.growth?.admins ?? { current: 0, previous: 0, percentage: 0 },
-          watchers: data?.growth?.watchers ?? { current: 0, previous: 0, percentage: 0 },
-        },
-        metrics: {
-          newOrganizationsThisMonth: data?.metrics?.newOrganizationsThisMonth ?? 0,
-          newAdminsThisMonth: data?.metrics?.newAdminsThisMonth ?? 0,
-          newWatchersThisMonth: data?.metrics?.newWatchersThisMonth ?? 0,
-          averageReportsPerOrg: data?.metrics?.averageReportsPerOrg ?? 0,
-        },
-      };
-    } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
+    const res = await adminApi.getPlatformStats();
+    if (!res.success || !res.data) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch dashboard statistics",
+        message: res.error ?? "Failed to fetch platform stats",
       });
     }
+    return res.data;
   }),
-
-  getRecentActivity: superAdminProcedure
-    .input(z.object({ limit: z.number().min(1).max(50).default(10) }))
-    .query(async ({ input }) => {
-      try {
-        const res = await adminApi.getRecentActivity(input.limit);
-        if (!res.success) throw new Error(res.error ?? "Failed to fetch activity");
-        return res.data ?? [];
-      } catch (error) {
-        console.error("Error fetching recent activity:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch recent activity",
-        });
-      }
-    }),
 
   getPendingApplications: superAdminProcedure
     .input(z.object({ limit: z.number().min(1).max(20).default(5) }))
@@ -267,22 +228,6 @@ export const superAdminRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to fetch pending applications",
-        });
-      }
-    }),
-
-  getCriticalIncidents: superAdminProcedure
-    .input(z.object({ limit: z.number().min(1).max(20).default(5) }))
-    .query(async ({ input }) => {
-      try {
-        const res = await incidentsApi.getAllIncidents({ limit: input.limit });
-        if (!res.success) throw new Error(res.error ?? "Failed to fetch incidents");
-        return res.data ?? [];
-      } catch (error) {
-        console.error("Error fetching critical incidents:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch critical incidents",
         });
       }
     }),

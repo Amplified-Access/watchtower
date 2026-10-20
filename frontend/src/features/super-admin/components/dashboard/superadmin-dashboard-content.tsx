@@ -1,427 +1,190 @@
 "use client";
 
+import Link from "next/link";
+import {
+  Building03Icon,
+  MapsLocation01Icon,
+  Megaphone01Icon,
+  UserAdd01Icon,
+} from "@hugeicons/core-free-icons";
+
 import { trpc } from "@/_trpc/client";
-import { useExtendedSession } from "@/hooks/use-extended-session";
-import Loader from "@/components/common/loader";
 import Container from "@/components/common/container";
+import { QuickOverview } from "@/components/dashboard/quick-overview";
+import { RechartsLineChart } from "@/components/dashboard/recharts-line-chart";
+import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatsGrid } from "@/components/dashboard/stats-grid";
-import { RecentActivity } from "@/components/dashboard/recent-activity";
-import { QuickOverview } from "@/components/dashboard/quick-overview";
-import { RechartsPieChart } from "@/components/dashboard/recharts-pie-chart";
-import { RechartsLineChart } from "@/components/dashboard/recharts-line-chart";
-import { Activity } from "lucide-react";
-import {
-  Activity01Icon,
-  Building03Icon,
-  UserMultipleIcon,
-  UserShield01Icon,
-} from "@hugeicons/core-free-icons";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
+import { Card } from "@/components/ui/card";
 
+// How many deployments and applications the home page lists.
+const LIST_LIMIT = 5;
+
+const formatDate = (iso: string) => new Date(iso).toLocaleDateString();
+
+// "+12% vs last month", or what to say when last month had none.
+function monthOnMonth({
+  current,
+  previous,
+  percentage,
+}: {
+  current: number;
+  previous: number;
+  percentage: number;
+}) {
+  if (previous === 0) {
+    return {
+      value: current > 0 ? "None last month" : "None this month",
+      type: "neutral" as const,
+    };
+  }
+  const rounded = Math.round(percentage);
+  return {
+    value: `${rounded > 0 ? "+" : ""}${rounded}% vs last month`,
+    type:
+      rounded > 0
+        ? ("increase" as const)
+        : rounded < 0
+          ? ("decrease" as const)
+          : ("neutral" as const),
+  };
+}
+
+// The super admin's home, on the deployments model: organizations and the
+// deployments they run, the public reports coming in, and the applications
+// waiting for review.
 export default function SuperAdminDashboardContent() {
-  const { isLoading: userLoading } = useExtendedSession();
+  const stats = trpc.getDashboardStats.useQuery();
+  const deployments = trpc.getAllDeployments.useQuery({});
+  const applications = trpc.getPendingApplications.useQuery({
+    limit: LIST_LIMIT,
+  });
+  const reportsByType = trpc.getOrganizationTypeDistribution.useQuery();
+  const reportsTrend = trpc.getPlatformActivityTrend.useQuery();
 
-  // Fetch dashboard data from our new endpoints
-  const { data: dashboardStats, isLoading: statsLoading } =
-    trpc.getDashboardStats.useQuery();
-  const { data: recentActivity, isLoading: activityLoading } =
-    trpc.getRecentActivity.useQuery({ limit: 5 });
-  const { data: pendingApplications, isLoading: applicationsLoading } =
-    trpc.getPendingApplications.useQuery({ limit: 5 });
-  const { data: criticalIncidents, isLoading: incidentsLoading } =
-    trpc.getCriticalIncidents.useQuery({ limit: 5 });
-  const { data: organizationTypes, isLoading: typesLoading } =
-    trpc.getOrganizationTypeDistribution.useQuery();
-  const { data: activityTrend, isLoading: trendLoading } =
-    trpc.getPlatformActivityTrend.useQuery();
-
-  const isLoading =
-    userLoading ||
-    statsLoading ||
-    activityLoading ||
-    applicationsLoading ||
-    incidentsLoading ||
-    typesLoading ||
-    trendLoading;
-
-  if (isLoading) {
+  if (stats.isLoading) {
     return (
-      <div className="flex-1 pb-6">
-        <Container size="lg" className="space-y-6">
-          {/* Stats Grid Skeleton */}
-          <StatsGrid>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Card
-                key={i}
-                className="shadow-none py-0 @lg:aspect-[3/2]"
-              >
-                <CardContent className="flex h-full flex-col justify-between p-5">
-                  <div className="pb-2">
-                    <div className="h-4 w-24 bg-muted rounded-md animate-pulse" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-8 w-16 bg-muted rounded-md animate-pulse" />
-                    <div className="h-3 w-20 bg-muted rounded-md animate-pulse" />
-                    <div className="h-3 w-32 bg-muted rounded-md animate-pulse" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </StatsGrid>
-
-          {/* Main Content Grid Skeleton */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Recent Activity Skeleton - spans 2 columns */}
-            <div className="lg:col-span-2">
-              <Card className="shadow-none">
-                <CardHeader>
-                  <div className="h-6 w-48 bg-muted rounded-md animate-pulse" />
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex items-center space-x-4">
-                      <div className="h-10 w-10 bg-muted rounded-full animate-pulse" />
-                      <div className="space-y-2 flex-1">
-                        <div className="h-4 w-full bg-muted rounded-md animate-pulse" />
-                        <div className="h-3 w-3/4 bg-muted rounded-md animate-pulse" />
-                      </div>
-                      <div className="h-3 w-16 bg-muted rounded-md animate-pulse" />
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* System Overview Skeleton */}
-            <Card className="shadow-none">
-              <CardHeader>
-                <div className="h-6 w-32 bg-muted rounded-md animate-pulse" />
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="h-4 w-24 bg-muted rounded-md animate-pulse" />
-                    <div className="h-4 w-12 bg-muted rounded-md animate-pulse" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Quick Actions Grid Skeleton */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <Card key={i} className="shadow-none">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <div className="h-6 w-40 bg-muted rounded-md animate-pulse" />
-                  <div className="h-8 w-20 bg-muted rounded-md animate-pulse" />
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {Array.from({ length: 3 }).map((_, j) => (
-                    <div key={j} className="flex items-center space-x-4">
-                      <div className="h-8 w-8 bg-muted rounded-full animate-pulse" />
-                      <div className="space-y-2 flex-1">
-                        <div className="h-4 w-full bg-muted rounded-md animate-pulse" />
-                        <div className="h-3 w-2/3 bg-muted rounded-md animate-pulse" />
-                      </div>
-                      <div className="h-3 w-12 bg-muted rounded-md animate-pulse" />
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Analytics Section Skeleton */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Pie Chart Skeleton */}
-            <Card className="shadow-none flex flex-col">
-              <CardHeader className="flex-row items-start space-y-0 pb-0">
-                <div className="grid gap-1">
-                  <div className="h-6 w-40 bg-muted rounded-md animate-pulse" />
-                </div>
-                <div className="ml-auto h-7 w-32 bg-muted rounded-lg animate-pulse" />
-              </CardHeader>
-              <CardContent className="flex flex-1 justify-center pb-0">
-                <div className="mx-auto aspect-square w-full max-w-75 flex items-center justify-center">
-                  <div className="h-62.5 w-62.5 bg-muted rounded-full animate-pulse" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Line Chart Skeleton */}
-            <Card className="shadow-none">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="h-6 w-44 bg-muted rounded-md animate-pulse" />
-                <div className="h-6 w-12 bg-muted rounded-md animate-pulse" />
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="h-8 w-16 bg-muted rounded-md animate-pulse" />
-                  <div className="flex items-center space-x-1">
-                    <div className="h-4 w-4 bg-muted rounded animate-pulse" />
-                    <div className="h-4 w-12 bg-muted rounded-md animate-pulse" />
-                  </div>
-                </div>
-                <div className="h-50 w-full bg-muted rounded-md animate-pulse" />
-                <div className="mt-4 h-3 w-64 bg-muted rounded-md animate-pulse" />
-              </CardContent>
-            </Card>
-          </div>
-        </Container>
-      </div>
+      <Container size="lg" className="space-y-6 pb-6">
+        <StatsGrid>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card
+              key={i}
+              className="h-36 animate-pulse shadow-none @lg:aspect-[3/2] @lg:h-auto"
+            />
+          ))}
+        </StatsGrid>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card className="h-72 animate-pulse shadow-none" />
+          <Card className="h-72 animate-pulse shadow-none" />
+        </div>
+      </Container>
     );
   }
 
-  const stats = dashboardStats || {
-    totalOrganizations: 0,
-    totalAdmins: 0,
-    totalWatchers: 0,
-    pendingApplications: 0,
-    reportsThisMonth: 0,
-    activeForms: 0,
-    criticalIncidents: 0,
-    uptimePercentage: 99.9,
-    growth: {
-      organizations: { current: 0, previous: 0, percentage: 0 },
-      admins: { current: 0, previous: 0, percentage: 0 },
-      watchers: { current: 0, previous: 0, percentage: 0 },
-    },
-    metrics: {
-      newOrganizationsThisMonth: 0,
-      newAdminsThisMonth: 0,
-      newWatchersThisMonth: 0,
-      averageReportsPerOrg: 0,
-    },
-  };
+  if (stats.error || !stats.data) {
+    return (
+      <Container size="lg" className="pb-6">
+        <p className="py-12 text-center text-red-500">
+          Couldn&apos;t load the platform&apos;s numbers. Please try again.
+        </p>
+      </Container>
+    );
+  }
 
-  // Helper function to format growth text
-  const formatGrowthText = (growth: {
-    current: number;
-    previous: number;
-    percentage: number;
-  }) => {
-    if (growth.current === 0 && growth.previous === 0) {
-      return "No data yet";
-    }
-    if (growth.percentage === 0) {
-      return "No change this month";
-    }
-    const sign = growth.percentage > 0 ? "+" : "";
-    return `${sign}${growth.percentage}% this month`;
-  };
-
-  // Helper function to determine growth type
-  const getGrowthType = (
-    percentage: number
-  ): "increase" | "decrease" | "neutral" => {
-    if (percentage > 0) return "increase";
-    if (percentage < 0) return "decrease";
-    return "neutral";
-  };
+  const s = stats.data;
+  const newOrgs = s.growth.organizations.current;
 
   return (
-    <div className="flex-1 pb-6">
-      <Container size="lg" className="space-y-6">
-        {/* Stats Grid */}
-        <StatsGrid>
-          <Link href="/superadmin/organizations" className="block">
-            <StatsCard
-              title="Organizations"
-              value={stats.totalOrganizations}
-              icon={Building03Icon}
-              change={{
-                value: formatGrowthText(stats.growth.organizations),
-                type: getGrowthType(stats.growth.organizations.percentage),
-              }}
-              description="Organizations on the platform"
-            />
-          </Link>
-          <Link href="/superadmin/admins" className="block">
-            <StatsCard
-              title="Admins"
-              value={stats.totalAdmins}
-              icon={UserShield01Icon}
-              change={{
-                value: formatGrowthText(stats.growth.admins),
-                type: getGrowthType(stats.growth.admins.percentage),
-              }}
-              description="Organization administrators"
-            />
-          </Link>
+    <Container size="lg" className="space-y-6 pb-6">
+      <StatsGrid>
+        <Link href="/superadmin/organizations" className="block">
           <StatsCard
-            title="Users"
-            value={stats.totalWatchers}
-            icon={UserMultipleIcon}
+            title="Organizations"
+            value={s.totalOrganizations}
+            icon={Building03Icon}
             change={{
-              value: formatGrowthText(stats.growth.watchers),
-              type: getGrowthType(stats.growth.watchers.percentage),
+              value: newOrgs > 0 ? `+${newOrgs} this month` : "None new this month",
+              type: newOrgs > 0 ? "increase" : "neutral",
             }}
-            description="Field watchers across all orgs"
+            description="Approved to run deployments"
           />
-
+        </Link>
+        <Link href="/superadmin/deployments" className="block">
           <StatsCard
-            title="Platform Health"
-            value={`${stats.uptimePercentage}%`}
-            icon={Activity01Icon}
+            title="Deployments"
+            value={s.deployments.total}
+            icon={MapsLocation01Icon}
             change={{
-              value: "Last 30 days",
-              type:
-                stats.uptimePercentage >= 99.5
-                  ? "increase"
-                  : stats.uptimePercentage >= 98
-                  ? "neutral"
-                  : "decrease",
+              value: `${s.deployments.live} live`,
+              type: s.deployments.live > 0 ? "increase" : "neutral",
             }}
-            description="System uptime"
+            description={`${s.deployments.draft} draft · ${s.deployments.closed} closed`}
           />
-        </StatsGrid>
+        </Link>
+        <StatsCard
+          title="Public Reports"
+          value={s.reports.current}
+          icon={Megaphone01Icon}
+          change={monthOnMonth(s.reports)}
+          description="This month, across the platform"
+        />
+        <Link href="/superadmin/applications" className="block">
+          <StatsCard
+            title="Applications"
+            value={s.pendingApplications}
+            icon={UserAdd01Icon}
+            change={{
+              value: s.pendingApplications > 0 ? "Awaiting review" : "All reviewed",
+              type: "neutral",
+            }}
+            description="Organizations waiting to join"
+          />
+        </Link>
+      </StatsGrid>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Recent Activity - spans 2 columns */}
-          <div className="lg:col-span-2">
-            <RecentActivity
-              activities={(recentActivity || []).map((a) => ({
-                ...a,
-                title: a.description,
-              }))}
-              title="Recent Platform Activity"
-            />
-          </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <QuickOverview
+          title="Recent Deployments"
+          items={(deployments.data ?? []).slice(0, LIST_LIMIT).map((d) => ({
+            id: d.id,
+            title: `${d.name} (${d.organizationName})`,
+            status: d.status,
+            date: formatDate(d.createdAt),
+            href: `/superadmin/deployments?organization=${d.organizationId}`,
+          }))}
+          emptyMessage="No organization has created a deployment yet"
+          viewAllHref="/superadmin/deployments"
+        />
+        <QuickOverview
+          title="Pending Applications"
+          items={(applications.data ?? []).slice(0, LIST_LIMIT).map((a) => ({
+            id: String(a.id),
+            title: a.organizationName || "New application",
+            status: a.status,
+            date: formatDate(a.createdAt),
+          }))}
+          emptyMessage="No pending applications"
+          viewAllHref="/superadmin/applications"
+          enableActions
+        />
+      </div>
 
-          {/* System Overview */}
-          <Card className="shadow-none">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 font-title">
-                System Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Total Users</span>
-                <span className="text-sm text-muted-foreground">
-                  {stats.totalAdmins + stats.totalWatchers}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">New This Month</span>
-                <span className="text-sm text-blue-600 font-medium">
-                  +
-                  {stats.metrics.newOrganizationsThisMonth +
-                    stats.metrics.newAdminsThisMonth +
-                    stats.metrics.newWatchersThisMonth}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  Pending Applications
-                </span>
-                <span
-                  className={`text-sm font-medium ${
-                    stats.pendingApplications > 0
-                      ? "text-orange-600"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {stats.pendingApplications}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Reports This Month</span>
-                <span className="text-sm text-muted-foreground">
-                  {stats.reportsThisMonth}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Avg Reports/Org</span>
-                <span className="text-sm text-muted-foreground">
-                  {stats.metrics.averageReportsPerOrg}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Active Forms</span>
-                <span className="text-sm text-muted-foreground">
-                  {stats.activeForms}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Critical Incidents</span>
-                <span
-                  className={`text-sm font-medium ${
-                    stats.criticalIncidents > 0
-                      ? "text-red-600"
-                      : "text-green-600"
-                  }`}
-                >
-                  {stats.criticalIncidents > 0
-                    ? stats.criticalIncidents
-                    : "None"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t">
-                <span className="text-sm font-medium">Platform Health</span>
-                <span
-                  className={`text-sm font-medium ${
-                    stats.uptimePercentage >= 99.5
-                      ? "text-green-600"
-                      : stats.uptimePercentage >= 98
-                      ? "text-yellow-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {stats.uptimePercentage}%
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <QuickOverview
-            title="Pending Applications"
-            items={(pendingApplications || []).map((a) => ({
-              ...a,
-              id: String(a.id),
-              title: (a as any).organizationName || "New Application",
-              date: (a as any).createdAt,
-            }))}
-            emptyMessage="No pending applications"
-            viewAllHref="/superadmin/applications"
-            enableActions={true}
-          />
-          <QuickOverview
-            title="Critical Incidents"
-            items={(criticalIncidents || []).map((i) => ({
-              ...i,
-              title: `Incident ${i.id.slice(0, 8)}`,
-              date: i.createdAt,
-            }))}
-            emptyMessage="No critical incidents"
-          />
-        </div>
-
-        {/* Analytics Section */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <RechartsPieChart
-            title="Reports by Incident Type"
-            data={organizationTypes || []}
-          />
-          <RechartsLineChart
-            title="Platform Activity Trend"
-            data={(activityTrend?.data || []).map((d: any) => ({
-              period: d.week || d.period,
-              value: d.count || d.value,
-            }))}
-            currentValue={activityTrend?.currentValue || 0}
-            currentChange={activityTrend?.currentChange || 0}
-            timeframe={activityTrend?.timeframe || "7w"}
-          />
-        </div>
-      </Container>
-    </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <RechartsPieChart
+          title="Public Reports by Incident Type"
+          data={reportsByType.data ?? []}
+        />
+        <RechartsLineChart
+          title="Public Reports per Week"
+          data={(reportsTrend.data?.data ?? []).map((d) => ({
+            period: d.week,
+            value: d.count,
+          }))}
+          currentValue={reportsTrend.data?.currentValue ?? 0}
+          currentChange={reportsTrend.data?.currentChange ?? 0}
+          timeframe={reportsTrend.data?.timeframe ?? "7w"}
+        />
+      </div>
+    </Container>
   );
 }

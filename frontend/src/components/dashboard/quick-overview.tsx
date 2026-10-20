@@ -109,6 +109,7 @@ export function QuickOverview({
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "resolved":
+      case "live":
       case "published":
       case "active":
       case "done":
