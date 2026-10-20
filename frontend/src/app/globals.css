@@ -243,9 +243,20 @@
 
 /* Inside a filled card, surfaces that were the same muted grey (skeleton
    bars, muted panels, accent highlights) would vanish, so they turn white:
-   white on grey instead of grey on grey. */
+   white on grey instead of grey on grey. Only plain bg-muted/NN classes:
+   the attribute selectors match a class at the start or after a space, so
+   a variant like hover:bg-muted/50 (every table row has it) isn't painted
+   white all the time. */
 [data-slot="dashboard-content"]
   [data-slot="card"]:not(.border-dashed)
-  :is(.bg-muted, .bg-accent, .bg-gray-100, [class*="bg-muted/"], [data-slot="skeleton"]) {
+  :is(.bg-muted, .bg-accent, .bg-gray-100, [class^="bg-muted/"], [class*=" bg-muted/"], [data-slot="skeleton"]) {
   background-color: var(--card);
+}
+
+/* A table row's hover (bg-muted/50) is invisible on a filled card; a white
+   wash shows on the grey instead. */
+[data-slot="dashboard-content"]
+  [data-slot="card"]:not(.border-dashed)
+  [data-slot="table-row"]:hover {
+  background-color: color-mix(in oklab, var(--card) 60%, transparent);
 }
