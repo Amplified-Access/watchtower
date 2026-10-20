@@ -86,7 +86,7 @@ export default function AdminDashboardContent() {
   const openIncidents = dashboardStats?.incidents.open || 0;
 
   return (
-    <div className="flex-1 space-y-6 py-4 md:p-6">
+    <div className="flex-1 pb-6">
       <Container size="lg" className="space-y-6">
         {/* Stats Grid */}
         <StatsGrid>

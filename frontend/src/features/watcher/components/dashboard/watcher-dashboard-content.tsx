@@ -100,7 +100,7 @@ export default function WatcherDashboardContent() {
   }));
 
   return (
-    <div className="flex-1 space-y-6 py-4 md:p-6">
+    <div className="flex-1 pb-6">
       <Container size="lg" className="space-y-6">
         {/* The organization and the watcher's main action */}
         <div className="flex justify-end">

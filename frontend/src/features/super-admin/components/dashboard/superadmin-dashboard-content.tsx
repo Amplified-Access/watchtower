@@ -48,7 +48,7 @@ export default function SuperAdminDashboardContent() {
 
   if (isLoading) {
     return (
-      <div className="py-6">
+      <div className="flex-1 pb-6">
         <Container size="lg" className="space-y-6">
           {/* Stats Grid Skeleton */}
           <StatsGrid>
@@ -223,7 +223,7 @@ export default function SuperAdminDashboardContent() {
   };
 
   return (
-    <div className="py-6">
+    <div className="flex-1 pb-6">
       <Container size="lg" className="space-y-6">
         {/* Stats Grid */}
         <StatsGrid>
