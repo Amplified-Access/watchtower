@@ -149,7 +149,9 @@ export function QuickOverview({
             <p className="text-muted-foreground">{emptyMessage}</p>
           </div>
         ) : (
-          <div className="border rounded-sm">
+          // A step smaller than the card (rounded-xl), and clipped so the
+          // rows' hover background follows the corners.
+          <div className="border rounded-lg overflow-hidden">
             <Table className="">
               <TableHeader>
                 <TableRow className="">
