@@ -3,7 +3,7 @@ import WatchersContent from "@/features/super-admin/components/watchers/watchers
 
 const Page = () => {
   return (
-    <div className="pt-2">
+    <div className="pb-6">
       <Container size="lg">
         <WatchersContent />
       </Container>
