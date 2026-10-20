@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 	"unicode"
 
 	"golang.org/x/text/runes"
@@ -26,7 +27,16 @@ func New(repo repository.DeploymentRepository) *UseCase {
 
 // ListForOrganization is an admin's own deployments.
 func (uc *UseCase) ListForOrganization(ctx context.Context, organizationID string) ([]*entity.Deployment, error) {
-	return uc.repo.FindAll(ctx, &organizationID)
+	return withAccepting(uc.repo.FindAll(ctx, &organizationID))
+}
+
+// withAccepting sets each deployment's AcceptingReports for now.
+func withAccepting(deployments []*entity.Deployment, err error) ([]*entity.Deployment, error) {
+	now := time.Now()
+	for _, d := range deployments {
+		d.AcceptingReports = d.AcceptsReports(now)
+	}
+	return deployments, err
 }
 
 // CountsForOrganization is how many deployments an organization has, by
@@ -38,7 +48,7 @@ func (uc *UseCase) CountsForOrganization(ctx context.Context, organizationID str
 // ListAll is every deployment on the platform, for the super admin;
 // organizationID, when set, narrows it to one organization.
 func (uc *UseCase) ListAll(ctx context.Context, organizationID *string) ([]*entity.Deployment, error) {
-	return uc.repo.FindAll(ctx, organizationID)
+	return withAccepting(uc.repo.FindAll(ctx, organizationID))
 }
 
 // GetPublic is a deployment as anyone may see it, by its slug: live or
@@ -51,6 +61,7 @@ func (uc *UseCase) GetPublic(ctx context.Context, slug string) (*entity.Deployme
 	if d == nil || d.Status == entity.DeploymentDraft {
 		return nil, domainerrors.NewNotFound("deployment not found")
 	}
+	d.AcceptingReports = d.AcceptsReports(time.Now())
 	return d, nil
 }
 
@@ -71,6 +82,7 @@ func (uc *UseCase) UpdateStatus(ctx context.Context, organizationID, id string, 
 		return nil, err
 	}
 	d.Status = status
+	d.AcceptingReports = d.AcceptsReports(time.Now())
 	return d, nil
 }
 

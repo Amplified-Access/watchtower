@@ -33,6 +33,9 @@ type Deployment struct {
 	StartsAt         *time.Time       `json:"startsAt,omitempty"`
 	EndsAt           *time.Time       `json:"endsAt,omitempty"`
 	IncidentTypes    []IncidentType   `json:"incidentTypes"`
+	// AcceptingReports is AcceptsReports at the time of the request, so
+	// pages can offer the reporting link without repeating the rule.
+	AcceptingReports bool `json:"acceptingReports"`
 	CreatedAt        time.Time        `json:"createdAt"`
 	UpdatedAt        time.Time        `json:"updatedAt"`
 }
