@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "ਚੋਣ ਅਧਿਕਾਰੀਆਂ ਨਾਲ ਹੱਲਾਂ 'ਤੇ ਗੱਲਬਾਤ",
     "outcomeRampsInstalled": "ਪੋਲਿੰਗ ਸਟੇਸ਼ਨਾਂ 'ਤੇ ਅਸਥਾਈ ਰੈਂਪ ਲਗਾਏ ਗਏ",
     "outcomeAccessibleVoting": "ਸਾਰਿਆਂ ਲਈ ਵਧੇਰੇ ਪਹੁੰਚਯੋਗ ਵੋਟਿੰਗ"
+  },
+  "DeploymentPage": {
+    "byOrganization": "{organization} ਵੱਲੋਂ",
+    "notTakingReports": "ਇਹ ਤੈਨਾਤੀ ਇਸ ਵੇਲੇ ਰਿਪੋਰਟਾਂ ਨਹੀਂ ਲੈ ਰਹੀ।",
+    "viewMap": "ਨਕਸ਼ਾ ਵੇਖੋ"
   }
 }

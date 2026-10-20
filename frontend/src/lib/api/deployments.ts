@@ -17,6 +17,8 @@ export interface Deployment {
   startsAt?: string;
   endsAt?: string;
   incidentTypes: IncidentType[];
+  /** Live and inside its dates, when the response was made (Go decides). */
+  acceptingReports: boolean;
   createdAt: string;
   updatedAt: string;
 }

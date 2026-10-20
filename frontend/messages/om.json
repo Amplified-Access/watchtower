@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
     "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
     "outcomeAccessibleVoting": "More accessible voting for everyone"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Kan {organization}",
+    "notTakingReports": "Hojiirrin kun amma gabaasa hin fudhatu.",
+    "viewMap": "Kaartaa ilaali"
   }
 }

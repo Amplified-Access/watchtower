@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "የምርጫ ባለሥልጣናት በመፍትሄዎች ላይ ተሳትፈዋል",
     "outcomeRampsInstalled": "በምርጫ ጣቢያዎች ጊዜያዊ መወጣጫዎች ተገንብተዋል",
     "outcomeAccessibleVoting": "ለሁሉም የበለጠ ተደራሽ ምርጫ"
+  },
+  "DeploymentPage": {
+    "byOrganization": "በ{organization}",
+    "notTakingReports": "ይህ ስምሪት በአሁኑ ጊዜ ሪፖርቶችን አይቀበልም።",
+    "viewMap": "ካርታውን ይመልከቱ"
   }
 }

@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
     "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
     "outcomeAccessibleVoting": "More accessible voting for everyone"
+  },
+  "DeploymentPage": {
+    "byOrganization": "By {organization}",
+    "notTakingReports": "This deployment isn't taking reports right now.",
+    "viewMap": "View the map"
   }
 }

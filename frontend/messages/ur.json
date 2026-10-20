@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "انتخابی حکام سے حل پر بات چیت",
     "outcomeRampsInstalled": "پولنگ اسٹیشنوں پر عارضی ریمپ نصب",
     "outcomeAccessibleVoting": "سب کے لیے زیادہ قابلِ رسائی ووٹنگ"
+  },
+  "DeploymentPage": {
+    "byOrganization": "{organization} کی جانب سے",
+    "notTakingReports": "یہ تعیناتی اس وقت رپورٹس وصول نہیں کر رہی۔",
+    "viewMap": "نقشہ دیکھیں"
   }
 }

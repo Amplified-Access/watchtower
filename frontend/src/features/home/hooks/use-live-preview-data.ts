@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { trpc } from "@/_trpc/client";
+import type { IncidentType } from "@/lib/api/incidents";
 import { languages as supportedLanguages } from "@/components/common/language-selector";
 import type { MapFeatureCollection, MapFilter } from "@/lib/api/map";
 
@@ -82,13 +83,25 @@ const useDebouncedValue = <T,>(value: T, delay: number) => {
 // query parameters. Two requests: the unfiltered summary, for the headline
 // stats, country list and top chips (so they don't shift as filters change),
 // and the filtered points the map draws.
-export function useLivePreviewData(filters: LivePreviewFilters) {
-  const typesQuery = trpc.anonymousReports.getActiveIncidentTypesForMaps.useQuery();
+/**
+ * A deployment's map: only the reports sent through its reporting link, and
+ * only its incident types in the panel.
+ */
+export interface MapDeployment {
+  id: string;
+  incidentTypes: IncidentType[];
+}
+
+export function useLivePreviewData(filters: LivePreviewFilters, deployment?: MapDeployment) {
+  const typesQuery = trpc.anonymousReports.getActiveIncidentTypesForMaps.useQuery(undefined, {
+    enabled: !deployment,
+  });
   const orgsQuery = trpc.getPublicOrganizations.useQuery({ limit: 1 });
-  const summaryQuery = trpc.map.summary.useQuery({});
+  const summaryQuery = trpc.map.summary.useQuery(deployment ? { deploymentId: deployment.id } : {});
 
   const search = useDebouncedValue(filters.search.trim(), SEARCH_DEBOUNCE_MS);
   const pointsFilter: MapFilter = {
+    deploymentId: deployment?.id,
     excludeTypes: filters.hiddenCategoryIds.length ? [...filters.hiddenCategoryIds].sort() : undefined,
     country: filters.country ?? undefined,
     q: search || undefined,
@@ -101,8 +114,13 @@ export function useLivePreviewData(filters: LivePreviewFilters) {
   const pointsQuery = trpc.map.points.useQuery(pointsFilter, { placeholderData: keepPreviousData });
 
   const incidentTypes = useMemo(
-    () => (typesQuery.data?.success ? (typesQuery.data.data ?? []) : []),
-    [typesQuery.data],
+    () =>
+      deployment
+        ? deployment.incidentTypes
+        : typesQuery.data?.success
+          ? (typesQuery.data.data ?? [])
+          : [],
+    [deployment, typesQuery.data],
   );
   const summary = summaryQuery.data;
 

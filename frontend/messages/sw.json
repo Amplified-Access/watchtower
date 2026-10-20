@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Suluhisho zimejadiliwa na mamlaka za uchaguzi",
     "outcomeRampsInstalled": "Njia panda za muda zimewekwa vituoni",
     "outcomeAccessibleVoting": "Upigaji kura unaofikika zaidi kwa wote"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Na {organization}",
+    "notTakingReports": "Uwekaji huu haupokei ripoti kwa sasa.",
+    "viewMap": "Tazama ramani"
   }
 }

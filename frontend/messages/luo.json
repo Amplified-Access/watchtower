@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Electoral authorities engaged on solutions",
     "outcomeRampsInstalled": "Temporary ramps installed at polling stations",
     "outcomeAccessibleVoting": "More accessible voting for everyone"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Gi {organization}",
+    "notTakingReports": "Tij-ni ok yud ripode sani.",
+    "viewMap": "Ne ramaki"
   }
 }

@@ -91,7 +91,10 @@ const Header = () => {
   // render their own header with the map's search and filter controls. The
   // marketing header would sit on top of it at a higher z-index and swallow
   // that search. /maps itself is the landing page and keeps this header.
-  const isFullScreenMap = pathname !== "/maps" && pathname.startsWith("/maps/");
+  // A deployment's map (/d/<slug>) is one too; its reporting page
+  // (/d/<slug>/report) keeps this header.
+  const isFullScreenMap =
+    (pathname !== "/maps" && pathname.startsWith("/maps/")) || /^\/d\/[^/]+\/?$/.test(pathname);
   // The conversation view is a full-height thread with its own back button, so
   // it reclaims the header's vertical space too.
   const isConversation = pathname.startsWith("/chat/conversation");

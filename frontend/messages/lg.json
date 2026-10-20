@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Ab'ebyokulonda batuukiriddwa",
     "outcomeRampsInstalled": "Amakubo ag'ekiseera mu bifo by'okulondera",
     "outcomeAccessibleVoting": "Okulonda okutuukirika eri buli muntu"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Kyategekebwa {organization}",
+    "notTakingReports": "Pulojekiti eno tekyakkiriza alipoota kati.",
+    "viewMap": "Laba mmaapu"
   }
 }

@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Inzego z'amatora zaganirijwe ku bisubizo",
     "outcomeRampsInstalled": "Inzira z'agateganyo zashyizwe ku biro by'itora",
     "outcomeAccessibleVoting": "Itora rigerwaho na bose"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Na {organization}",
+    "notTakingReports": "Iki gikorwa ntikiri kwakira raporo ubu.",
+    "viewMap": "Reba ikarita"
   }
 }

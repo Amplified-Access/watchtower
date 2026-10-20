@@ -512,5 +512,10 @@
     "outcomeAuthoritiesEngaged": "Autorités électorales associées aux solutions",
     "outcomeRampsInstalled": "Rampes temporaires dans les bureaux de vote",
     "outcomeAccessibleVoting": "Un vote plus accessible pour tous"
+  },
+  "DeploymentPage": {
+    "byOrganization": "Par {organization}",
+    "notTakingReports": "Ce déploiement ne reçoit pas de signalements pour le moment.",
+    "viewMap": "Voir la carte"
   }
 }
