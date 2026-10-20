@@ -32,6 +32,12 @@ interface DashboardShellProps {
 // and, from md up, the content as a white card with rounded corners, inset
 // from the edges, with no border or shadow. On phones the content is
 // full-bleed white and the sidebar opens as a sheet.
+//
+// The card is a viewport, as in Blaze: the shell is locked to the screen
+// height (h-svh, overflow-hidden), so the card always ends 8px above the
+// bottom edge with its rounded corners in view, and the page scrolls inside
+// it, under the header, clipped by the card's corners. Without this the card
+// grew with the page and its bottom ran off the screen.
 export function DashboardShell({
   sidebar,
   title,
@@ -41,13 +47,13 @@ export function DashboardShell({
   return (
     <SidebarProvider
       defaultOpen={defaultOpen}
-      className="has-data-[variant=inset]:bg-background"
+      className="h-svh overflow-hidden has-data-[variant=inset]:bg-background"
     >
       {sidebar}
       {/* Collapsed, the inset variant adds an 8px left margin that widens the
           grey strip past the icon rail, pushing the icons off-centre; drop it
           so the strip is exactly the rail. */}
-      <SidebarInset className="flex min-w-0 flex-col bg-card md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-none md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0">
+      <SidebarInset className="flex min-h-0 min-w-0 flex-col overflow-hidden bg-card md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-none md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0">
         <header className="flex h-14 shrink-0 items-center justify-between gap-3 px-4">
           <div className="flex min-w-0 items-center gap-2">
             <SidebarTrigger className="-ml-1" />
@@ -55,7 +61,12 @@ export function DashboardShell({
           </div>
           <UserButton />
         </header>
-        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        {/* The scroll area. Pages that fill the card (a map, a table with
+            its own scroll) can still use flex-1/min-h-0, since its height
+            is now bounded. */}
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
