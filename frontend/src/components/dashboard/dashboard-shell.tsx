@@ -74,8 +74,13 @@ export function DashboardShell({
             is now bounded. Pages' <Container>s drop the public site's max
             width and its 64px viewport-based padding, which inside the card
             only left empty bands at the sides, so the content fills the
-            card at its normal size. */}
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto **:data-[slot=container]:max-w-none **:data-[slot=container]:px-4 md:**:data-[slot=container]:px-6">
+            card at its normal size. Cards in it are filled with the muted
+            grey instead of outlined; see the dashboard-content rules in
+            globals.css. */}
+        <div
+          data-slot="dashboard-content"
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto **:data-[slot=container]:max-w-none **:data-[slot=container]:px-4 md:**:data-[slot=container]:px-6"
+        >
           {children}
         </div>
       </SidebarInset>

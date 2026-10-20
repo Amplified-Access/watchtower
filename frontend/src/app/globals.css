@@ -228,3 +228,24 @@
     animation: none;
   }
 }
+
+/* Dashboard cards are filled, not outlined: the muted grey of the sidebar
+   accent and the skeletons, with no visible border (kept transparent so the
+   cards don't shift by a pixel). Scoped to the dashboard shell's content
+   area (components/dashboard/dashboard-shell.tsx), so the public site's
+   cards keep their outline. A dashed card is an "add" placeholder and stays
+   outlined. Unlayered on purpose: it must beat the bg-card and border
+   utilities Card itself sets, which a rule in a layer can't. */
+[data-slot="dashboard-content"] [data-slot="card"]:not(.border-dashed) {
+  background-color: var(--muted);
+  border-color: transparent;
+}
+
+/* Inside a filled card, surfaces that were the same muted grey (skeleton
+   bars, muted panels, accent highlights) would vanish, so they turn white:
+   white on grey instead of grey on grey. */
+[data-slot="dashboard-content"]
+  [data-slot="card"]:not(.border-dashed)
+  :is(.bg-muted, .bg-accent, .bg-gray-100, [class*="bg-muted/"], [data-slot="skeleton"]) {
+  background-color: var(--card);
+}
