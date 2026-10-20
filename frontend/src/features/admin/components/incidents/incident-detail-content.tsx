@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -122,25 +121,33 @@ const IncidentDetailContent = ({ incidentId }: IncidentDetailContentProps) => {
   };
 
   return (
-    <Container className="space-y-6" size="lg">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
+    <Container className="space-y-6 pb-6" size="lg">
+      {/* Back, which incident and its status, and its actions, in one row. */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.back()}
+            aria-label="Back"
+          >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Incident Details</h1>
-            <p className="text-muted-foreground font-mono text-sm">
-              ID: {incident.id}
-            </p>
-          </div>
+          <p className="truncate font-title text-lg font-semibold" title={incident.id}>
+            Incident {incident.id.slice(0, 8)}
+          </p>
+          <Badge
+            variant="outline"
+            className={statusColors[incident.status as keyof typeof statusColors]}
+          >
+            {incident.status}
+          </Badge>
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              <MoreHorizontal className="w-4 h-4 mr-2" />
+            <Button variant="secondary" className="bg-muted shadow-none hover:bg-muted/70">
+              <MoreHorizontal className="w-4 h-4" />
               Actions
             </Button>
           </DropdownMenuTrigger>
@@ -176,19 +183,9 @@ const IncidentDetailContent = ({ incidentId }: IncidentDetailContentProps) => {
 
       <div className="grid gap-6">
         {/* Overview Card */}
-        <Card>
+        <Card className="shadow-none">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Incident Overview</CardTitle>
-              <Badge
-                variant="outline"
-                className={
-                  statusColors[incident.status as keyof typeof statusColors]
-                }
-              >
-                {incident.status}
-              </Badge>
-            </div>
+            <CardTitle className="font-title text-lg">Overview</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -234,12 +231,9 @@ const IncidentDetailContent = ({ incidentId }: IncidentDetailContentProps) => {
         </Card>
 
         {/* Form Data Card */}
-        <Card>
+        <Card className="shadow-none">
           <CardHeader>
-            <CardTitle>Submitted Data</CardTitle>
-            <CardDescription>
-              Information submitted through the form
-            </CardDescription>
+            <CardTitle className="font-title text-lg">Submitted Data</CardTitle>
           </CardHeader>
           <CardContent>{renderFormData(incident.data)}</CardContent>
         </Card>
