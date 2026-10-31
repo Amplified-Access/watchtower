@@ -43,7 +43,7 @@ This project follows the [AmplifiedAccess Code of Conduct](./CODE_OF_CONDUCT.md)
 
 | Tool | Version |
 |------|---------|
-| Go   | 1.25+   |
+| Go   | 1.26+   |
 | Node.js | 20+ |
 | pnpm | 9+      |
 | Docker | Latest (for local Redis/PostgreSQL) |

@@ -6,7 +6,7 @@ Watchtower is an open-source incident monitoring platform for civil society orga
 
 ```
 watchtower/
-├── backend/      Go 1.25 REST API (Clean Architecture)
+├── backend/      Go 1.26 REST API (Clean Architecture)
 └── web/     Next.js 15 + TypeScript + tRPC (also serves the Sanity Studio at /studio)
 ```
 
@@ -87,7 +87,7 @@ make seed         # one-time DB seed (skips tables that already have rows)
 make refresh      # insert a fresh batch of weekly anonymous reports (safe to re-run)
 ```
 
-**Schema changes are goose migrations** in `backend/migrations/` (`NNNNN_name.sql`, each with a `-- +goose Up` and a `-- +goose Down` section), embedded into `cmd/migrate` and run with `make migrate` against `DATABASE_URL`. goose records what it applied in `goose_db_version`. The schema before `00001` was made by Drizzle from the frontend, whose migrations were deleted, so it exists only in the databases; new tables and columns go through a migration. goose is pinned to v3.27.0 because later releases require Go 1.26 and CI builds with 1.25.
+**Schema changes are goose migrations** in `backend/migrations/` (`NNNNN_name.sql`, each with a `-- +goose Up` and a `-- +goose Down` section), embedded into `cmd/migrate` and run with `make migrate` against `DATABASE_URL`. goose records what it applied in `goose_db_version`. The schema before `00001` was made by Drizzle from the frontend, whose migrations were deleted, so it exists only in the databases; new tables and columns go through a migration. goose is pinned to v3.27.0; it was held there while CI built with Go 1.25, and later releases (which need Go 1.26) can now be adopted deliberately.
 
 ### Sanity (run from `web/`)
 ```
@@ -119,6 +119,8 @@ pnpm i18n:check   # fail if any marketing string is still English (see web/docs/
 ```
 
 **Local env:** the frontend needs `NEXT_PUBLIC_API_URL` (the Go API, e.g. `http://localhost:8080/api/v1` — plain `http` for a local Go server) and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`. It has no database connection, so no `DATABASE_URL`, and no storage credentials: the R2 settings (`CLOUDFLARE_*`) go in `backend/.env`. The chat assistant's model still runs in Next and needs `GOOGLE_GENERATIVE_AI_API_KEY` there (optionally `GEMINI_MODEL_CHAIN` to change the fallback order); its knowledge-base search runs in Go and needs the same key on the backend. Location search (the report forms and alert sign-up) needs `GOOGLE_MAPS_API_KEY` (server-only, with Places API (New) enabled). For the case study and privacy policy pages it also needs `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` (`pnpm sanity:setup` adds them). Pull the dev envs with `vercel env pull .env.development.local --environment=development` (project `watchtower`, team `monarc-engineering`); `.env*` is gitignored.
+
+**Dependencies and vulnerabilities:** `web/pnpm-workspace.yaml` holds the overrides. Besides the two that keep a single `@opentelemetry/instrumentation` and `import-in-the-middle` (both are `serverExternalPackages`, so there must be one copy; the instrumentation version follows what `@sentry/node` asks for), a commented block of **security floors** (`'pkg@<patched': ^patched`) raises transitive packages that a parent pins below a fix (Next's exact `postcss`, Sanity CLI tooling's `undici`/`adm-zip`/`js-yaml`/`smol-toml`, the AI SDK's `undici` 5). Each is a no-op once the parent catches up; remove one when `pnpm why <pkg>` shows only patched versions without it. pnpm enforces a `minimumReleaseAge`, but `pnpm add pkg@<exact version>` of a too-new release silently writes a `minimumReleaseAgeExclude` list into `pnpm-workspace.yaml` instead of refusing, so add with a range and don't commit that list. pnpm audit and Dependabot both missed `undici` 5.29.0 here; to check properly, also query OSV for every `name@version` in the lockfile (`api.osv.dev/v1/querybatch`). Backend: `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` from `backend/`. Known open, dev-tooling only: `glob` and `minimatch` under jest/eslint/Sentry's build plugin (fixed only in new majors those tools don't accept yet) and `deepmerge` under jest (no fix).
 
 ## Backend architecture — Clean Architecture (strict)
 
