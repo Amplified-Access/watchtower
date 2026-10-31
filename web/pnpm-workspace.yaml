@@ -1,6 +1,10 @@
 overrides:
   '@opentelemetry/instrumentation': 0.220.0
   import-in-the-middle: 3.0.1
+  # Security floors: raise packages that a parent pins or that resolve below
+  # the patched release. Each is a no-op once the parent catches up; drop it
+  # when `pnpm why <pkg>` shows only patched versions without it.
+  'esbuild@<0.28.1': ^0.28.1
 
 allowBuilds:
   '@parcel/watcher': true
