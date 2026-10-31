@@ -1,5 +1,5 @@
 overrides:
-  '@opentelemetry/instrumentation': 0.215.0
+  '@opentelemetry/instrumentation': 0.220.0
   import-in-the-middle: 3.0.1
 
 allowBuilds:
