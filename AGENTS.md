@@ -6,7 +6,7 @@ Watchtower is an open-source incident monitoring platform for civil society orga
 
 ```
 watchtower/
-├── backend/      Go 1.25 REST API (Clean Architecture)
+├── backend/      Go 1.26 REST API (Clean Architecture)
 └── web/     Next.js 15 + TypeScript + tRPC (also serves the Sanity Studio at /studio)
 ```
 
@@ -87,7 +87,7 @@ make seed         # one-time DB seed (skips tables that already have rows)
 make refresh      # insert a fresh batch of weekly anonymous reports (safe to re-run)
 ```
 
-**Schema changes are goose migrations** in `backend/migrations/` (`NNNNN_name.sql`, each with a `-- +goose Up` and a `-- +goose Down` section), embedded into `cmd/migrate` and run with `make migrate` against `DATABASE_URL`. goose records what it applied in `goose_db_version`. The schema before `00001` was made by Drizzle from the frontend, whose migrations were deleted, so it exists only in the databases; new tables and columns go through a migration. goose is pinned to v3.27.0 because later releases require Go 1.26 and CI builds with 1.25.
+**Schema changes are goose migrations** in `backend/migrations/` (`NNNNN_name.sql`, each with a `-- +goose Up` and a `-- +goose Down` section), embedded into `cmd/migrate` and run with `make migrate` against `DATABASE_URL`. goose records what it applied in `goose_db_version`. The schema before `00001` was made by Drizzle from the frontend, whose migrations were deleted, so it exists only in the databases; new tables and columns go through a migration. goose is pinned to v3.27.0; it was held there while CI built with Go 1.25, and later releases (which need Go 1.26) can now be adopted deliberately.
 
 ### Sanity (run from `web/`)
 ```

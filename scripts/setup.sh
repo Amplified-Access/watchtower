@@ -31,15 +31,15 @@ header() { echo -e "\n${BOLD}$*${RESET}"; }
 # ── 1. Prerequisite checks ─────────────────────────────────────────────────────
 header "Checking prerequisites..."
 
-# go ≥ 1.25
+# go ≥ 1.26 (1.25 is out of security support)
 if command -v go &>/dev/null; then
   GO_VERSION=$(go env GOVERSION)
   GO_VERSION="${GO_VERSION#go}"
   IFS=. read -r GO_MAJOR GO_MINOR _ <<< "$GO_VERSION"
-  if [[ "$GO_MAJOR" -gt 1 ]] || [[ "$GO_MAJOR" -eq 1 && "$GO_MINOR" -ge 25 ]]; then
-    pass "go $GO_VERSION (≥ 1.25)"
+  if [[ "$GO_MAJOR" -gt 1 ]] || [[ "$GO_MAJOR" -eq 1 && "$GO_MINOR" -ge 26 ]]; then
+    pass "go $GO_VERSION (≥ 1.26)"
   else
-    fail "go $GO_VERSION found — need ≥ 1.25. Install from https://go.dev/dl/"
+    fail "go $GO_VERSION found — need ≥ 1.26. Install from https://go.dev/dl/"
   fi
 else
   fail "go not found. Install from https://go.dev/dl/"

@@ -63,7 +63,7 @@ Full API reference: [`docs/API.md`](./docs/API.md)
 
 ## Local Development
 
-**Prerequisites**: Go 1.25+, Docker
+**Prerequisites**: Go 1.26+, Docker
 
 ```bash
 # Start the database container

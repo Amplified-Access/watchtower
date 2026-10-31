@@ -16,7 +16,7 @@ Watchtower is an incident monitoring and reporting platform built for civil soci
 
 | Layer      | Technology                                          |
 |------------|-----------------------------------------------------|
-| Backend    | Go 1.25, Clean Architecture, REST                   |
+| Backend    | Go 1.26, Clean Architecture, REST                   |
 | Frontend   | Next.js 15, TypeScript, tRPC, Tailwind CSS          |
 | Database   | PostgreSQL (Neon)                                   |
 | Cache      | Redis (Railway)                                     |
@@ -58,7 +58,7 @@ watchtower/
 
 ### Prerequisites
 
-- Go 1.25+
+- Go 1.26+
 - Node.js 20+ with pnpm
 - Docker (for local database)
 
