@@ -25,8 +25,9 @@ import FilterPanel from "./filter-panel";
 // reads as a dead product. The live map's sidebar shows the real count.
 const SAMPLE_RECENT_REPORTS = 24;
 // Likewise its All Reports badge and Reports stat show this display figure
-// in place of the live total.
+// in place of the live total, and its Deployments badge and stat this one.
 const DISPLAY_TOTAL_REPORTS = 90962;
+const DISPLAY_TOTAL_DEPLOYMENTS = 22;
 
 const LivePreviewSection = () => {
   const t = useTranslations("HomeLivePreview");
@@ -104,6 +105,7 @@ const LivePreviewSection = () => {
               stats={{
                 ...stats,
                 totalReports: DISPLAY_TOTAL_REPORTS,
+                totalDeployments: DISPLAY_TOTAL_DEPLOYMENTS,
                 recentReports: stats.recentReports || SAMPLE_RECENT_REPORTS,
               }}
             />
