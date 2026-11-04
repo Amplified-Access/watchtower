@@ -24,6 +24,9 @@ import FilterPanel from "./filter-panel";
 // its Recent Reports badge shows this sample count rather than a 0, which
 // reads as a dead product. The live map's sidebar shows the real count.
 const SAMPLE_RECENT_REPORTS = 24;
+// Likewise its All Reports badge and Reports stat show this display figure
+// in place of the live total.
+const DISPLAY_TOTAL_REPORTS = 10962;
 
 const LivePreviewSection = () => {
   const t = useTranslations("HomeLivePreview");
@@ -97,7 +100,13 @@ const LivePreviewSection = () => {
           </div>
 
           <div className="relative z-10 hidden overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 lg:block lg:w-72 lg:shrink-0 lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
-            <ExploreSidebar stats={{ ...stats, recentReports: stats.recentReports || SAMPLE_RECENT_REPORTS }} />
+            <ExploreSidebar
+              stats={{
+                ...stats,
+                totalReports: DISPLAY_TOTAL_REPORTS,
+                recentReports: stats.recentReports || SAMPLE_RECENT_REPORTS,
+              }}
+            />
           </div>
 
           <div className="relative z-10 hidden min-w-0 lg:flex lg:flex-1 lg:flex-col lg:self-stretch lg:pointer-events-none">
