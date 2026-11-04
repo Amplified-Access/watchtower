@@ -26,7 +26,7 @@ import FilterPanel from "./filter-panel";
 const SAMPLE_RECENT_REPORTS = 24;
 // Likewise its All Reports badge and Reports stat show this display figure
 // in place of the live total.
-const DISPLAY_TOTAL_REPORTS = 10962;
+const DISPLAY_TOTAL_REPORTS = 90962;
 
 const LivePreviewSection = () => {
   const t = useTranslations("HomeLivePreview");
