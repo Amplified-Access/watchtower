@@ -1,4 +1,4 @@
-.PHONY: setup dev dev-backend dev-frontend sanity-setup \
+.PHONY: setup dev dev-backend dev-web sanity-setup \
         test test-backend test-frontend \
         build build-backend build-frontend \
         lint lint-backend lint-frontend \
@@ -17,7 +17,7 @@ dev:
 dev-backend:
 	cd backend && make watch
 
-dev-frontend:
+dev-web:
 	cd web && pnpm dev
 
 # One-time: log in to Sanity, create/pick the project, import the seed content.
