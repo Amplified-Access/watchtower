@@ -92,7 +92,7 @@ const LivePreviewSection = () => {
               href="/maps/live-incident-map"
               className="flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 font-title font-medium text-white transition-colors hover:bg-primary/90"
             >
-              {t("viewReportsCta", { count: stats.totalReports })}
+              {t("viewReportsCta", { count: stats.loaded ? stats.totalReports : "…" })}
             </Link>
           </div>
 
