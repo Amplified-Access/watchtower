@@ -20,13 +20,9 @@ import SearchAndChips from "./search-and-chips";
 import GlobeMap, { type GlobeMapHandle } from "./globe-map";
 import FilterPanel from "./filter-panel";
 
-// The home page's sidebar is a preview: while there are no recent reports,
-// its Recent Reports badge shows this sample count rather than a 0, which
-// reads as a dead product. The live map's sidebar shows the real count.
-const SAMPLE_RECENT_REPORTS = 24;
-// Likewise its All Reports badge and Reports stat show this display figure
-// in place of the live total, and its Deployments badge and stat this one.
-const DISPLAY_TOTAL_REPORTS = 90962;
+// The report numbers in the home page's sidebar are the live map's own
+// (from /map/summary), so the two always agree. Its Deployments badge and
+// stat still show this display figure in place of the live count.
 const DISPLAY_TOTAL_DEPLOYMENTS = 22;
 
 const LivePreviewSection = () => {
@@ -102,12 +98,7 @@ const LivePreviewSection = () => {
 
           <div className="relative z-10 hidden overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 lg:block lg:w-72 lg:shrink-0 lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
             <ExploreSidebar
-              stats={{
-                ...stats,
-                totalReports: DISPLAY_TOTAL_REPORTS,
-                totalDeployments: DISPLAY_TOTAL_DEPLOYMENTS,
-                recentReports: stats.recentReports || SAMPLE_RECENT_REPORTS,
-              }}
+              stats={{ ...stats, totalDeployments: DISPLAY_TOTAL_DEPLOYMENTS }}
             />
           </div>
 
