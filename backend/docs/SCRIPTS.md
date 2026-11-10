@@ -90,7 +90,7 @@ One-time seed for a fresh database (`go run cmd/seed/main.go`). Inserts incident
 make refresh
 ```
 
-Weekly data refresh (`go run cmd/refresh/main.go`). Inserts 5–10 anonymous incident reports dated within the last 7 days. Unlike `seed`, it has no skip-if-exists guard and is designed to run on a repeating schedule.
+Data refresh (`go run cmd/refresh/main.go`). Fills the time since the newest report at the pace of the 28 days before it (plus about 3% a month of growth), so the maps keep the pace the top-up set: roughly 1,500 reports a week at 90k. A run straight after another finds no gap and adds next to nothing, and an advisory lock stops two runs filling the same gap, so the staging and production crons can share the database. With no reports to take a pace from, it adds 5–10 over the last week. **Run it daily**: reports are only ever dated in the past, so with a weekly run the "recent reports" count (last 7 days) sags towards the end of each week.
 
 ```bash
 make topup TARGET=90962            # dry run: reads only, prints what it would do
@@ -99,7 +99,7 @@ make topup TARGET=90962 APPLY=1    # writes it
 
 Brings the demonstration data up to `TARGET` anonymous reports (`go run ./cmd/topup`). It adds the reports missing, spread from `-from` (default 2025-05-01) until now and growing busier over time, and rewrites any placeholder reports the old refresh cron wrote ("Weekly refresh report #3 — Nairobi"). Without `APPLY=1` it opens a read-only transaction, so it is safe to point at production. With it, everything runs in one transaction; every added row shares one `updated_at`, which the command prints together with the `DELETE` that removes them again. Running it again once the target is reached adds nothing. Map caches expire within 5 minutes.
 
-**What the reports look like** comes from `pkg/demoreports`, shared by `refresh` and `topup`: 42 towns across Kenya, Uganda, Tanzania, Ethiopia, Rwanda and Pakistan, weighted by size, each report scattered up to 6 km from the town centre; a three-sentence description (what happened, a witness's detail, what has happened since) written for its incident type; and injuries or deaths only when the text says people were hurt. Incident types without sentences of their own get generic ones — add sentences to `byType` in `descriptions.go` when adding a type.
+**What the reports look like** comes from `pkg/demoreports`, shared by `refresh` and `topup`: 42 towns across Kenya, Uganda, Tanzania, Ethiopia, Rwanda and Pakistan, weighted by size, each report scattered up to 6 km from the town centre; a three-sentence description (what happened, a witness's detail, what has happened since) written for its incident type; and injuries or deaths only when the text says people were hurt. Sentences carry tags (`[hurt]`, `[needs:arrested]`, `[no:calm]`…, documented in `descriptions.go`) so the three always fit together. Towns on a lake, the sea or a border have an inland point and a smaller radius. Incident types without sentences of their own get generic ones — add sentences to `byType` in `descriptions.go` when adding a type.
 
 **`DATABASE_URL` in `backend/.env` points at the production Neon database** (as of November 2026), so these commands write to production when run locally. Staging and production share that database too: both Railway environments' API and refresh cron use it.
 

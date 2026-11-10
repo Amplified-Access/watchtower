@@ -100,8 +100,7 @@ The Studio is part of the site: `pnpm dev`, then `/studio`. See `web/docs/CMS.md
 
 ### Weekly data refresh (Railway cron)
 The public maps run on demonstration data: anonymous reports written by `pkg/demoreports` (believable descriptions per incident type, towns in six countries), topped up to a target with `make topup` and added to weekly by the cron. **Staging and production share one Neon database**, and `backend/.env` points at it too. See `backend/docs/SCRIPTS.md`.
-`cmd/refresh/main.go` inserts 5–10 anonymous incident reports dated within the last 7 days.
-It has no skip-if-exists guard — running it weekly keeps the "past week" map filter populated.
+`cmd/refresh/main.go` fills the time since the newest report at the pace of the 28 days before it, so it can run on any schedule (daily keeps the "recent" count steady) and two crons on one database don't double up.
 Locations are spread across the supported countries: Kenya, Uganda, Tanzania, Ethiopia, Rwanda, Pakistan.
 
 To schedule on Railway:
