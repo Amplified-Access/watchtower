@@ -18,42 +18,21 @@ package main
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"math/rand"
 	"os"
-	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 
 	"backend/pkg/demoreports"
 )
 
-// insertBatch keeps each INSERT under Postgres's 65,535 parameter limit
-// (9 columns × 1,000 rows) while needing few round trips.
-const insertBatch = 1000
-
-type location struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-	Country   string  `json:"country"`
-	Name      string  `json:"name"`
-}
-
 type incidentType struct {
 	id, name string
-}
-
-type report struct {
-	id, typeID, description string
-	location                []byte
-	injuries, fatalities    int
-	createdAt               time.Time
 }
 
 func main() {
@@ -85,7 +64,8 @@ func main() {
 	defer cancel()
 
 	rng := rand.New(rand.NewSource(*seed))
-	// One timestamp marks every row this run writes, so it can be undone.
+	// One timestamp marks every row this run adds, so it can be undone.
+	// created_at and updated_at have no time zone and hold UTC.
 	stamp := time.Now().UTC().Truncate(time.Microsecond)
 
 	// A dry run only reads, so it is safe to point at production.
@@ -114,12 +94,14 @@ func main() {
 	}
 
 	missing := max(*target-current, 0)
-	reports := make([]report, missing)
-	for i := range reports {
-		reports[i] = newReport(rng, types, from, stamp)
+	rows := make([]demoreports.Row, missing)
+	for i := range rows {
+		typ := types[rng.Intn(len(types))]
+		rows[i] = demoreports.NewRow(rng, typ.id, typ.name, demoreports.RampedTime(rng, from, stamp))
+		rows[i].UpdatedAt = stamp
 	}
 	if *apply {
-		if err := insertReports(ctx, tx, reports, stamp); err != nil {
+		if err := demoreports.InsertRows(ctx, tx, rows); err != nil {
 			log.Fatalf("insert reports: %v", err)
 		}
 	}
@@ -128,10 +110,10 @@ func main() {
 	fmt.Printf("placeholders rewritten: %d\n", rewritten)
 	fmt.Printf("reports to add:         %d (from %s, spread over %d incident types)\n", missing, from.Format(time.DateOnly), len(types))
 	fmt.Printf("reports after:          %d\n", current+missing)
-	if len(reports) > 0 {
+	if len(rows) > 0 {
 		fmt.Println("\nsample of new reports:")
-		for _, r := range reports[:min(3, len(reports))] {
-			fmt.Printf("  %s  %s\n    %s\n", r.createdAt.Format(time.DateOnly), r.location, r.description)
+		for _, r := range rows[:min(3, len(rows))] {
+			fmt.Printf("  %s  %s\n    %s\n", r.CreatedAt.Format(time.DateOnly), r.Location, r.Description)
 		}
 	}
 
@@ -164,26 +146,10 @@ func activeTypes(ctx context.Context, tx *sql.Tx) ([]incidentType, error) {
 	return out, rows.Err()
 }
 
-func newReport(rng *rand.Rand, types []incidentType, from, to time.Time) report {
-	place := demoreports.RandomPlace(rng)
-	typ := types[rng.Intn(len(types))]
-	lat, lon := demoreports.Scatter(rng, place.Latitude, place.Longitude)
-	loc, _ := json.Marshal(location{Latitude: lat, Longitude: lon, Country: place.Country, Name: place.Name})
-	text := demoreports.NewReport(rng, typ.name, place.Name)
-	return report{
-		id:          uuid.NewString(),
-		typeID:      typ.id,
-		description: text.Description,
-		location:    loc,
-		injuries:    text.Injuries,
-		fatalities:  text.Fatalities,
-		createdAt:   demoreports.RampedTime(rng, from, to),
-	}
-}
-
 // rewritePlaceholders gives each of the old cron's placeholder reports a
-// description (and casualties) fitting its incident type and town. Its date,
-// place and type stay as they are.
+// description and casualties fitting its incident type and town, and moves
+// it off the town's exact centre (where the old cron stacked them) to a
+// point scattered over the town. Its date, town and type stay as they are.
 func rewritePlaceholders(ctx context.Context, tx *sql.Tx, rng *rand.Rand, write bool) (int, error) {
 	rows, err := tx.QueryContext(ctx, `
 		SELECT r.id, t.name, COALESCE(r.location->>'name', '')
@@ -192,11 +158,11 @@ func rewritePlaceholders(ctx context.Context, tx *sql.Tx, rng *rand.Rand, write 
 	if err != nil {
 		return 0, err
 	}
-	type placeholder struct{ id, typeName, place string }
+	type placeholder struct{ id, typeName, town string }
 	var found []placeholder
 	for rows.Next() {
 		var p placeholder
-		if err := rows.Scan(&p.id, &p.typeName, &p.place); err != nil {
+		if err := rows.Scan(&p.id, &p.typeName, &p.town); err != nil {
 			rows.Close()
 			return 0, err
 		}
@@ -208,41 +174,22 @@ func rewritePlaceholders(ctx context.Context, tx *sql.Tx, rng *rand.Rand, write 
 	}
 
 	for _, p := range found {
-		place := p.place
-		if place == "" {
-			place = demoreports.RandomPlace(rng).Name
+		place, ok := demoreports.PlaceNamed(p.town)
+		if !ok {
+			place = demoreports.RandomPlace(rng)
 		}
-		r := demoreports.NewReport(rng, p.typeName, place)
+		r := demoreports.NewReport(rng, p.typeName, place.Name)
+		loc := demoreports.LocationJSON(rng, place)
 		if !write {
 			continue
 		}
 		if _, err := tx.ExecContext(ctx,
-			`UPDATE anonymous_incident_reports SET description = $2, injuries = $3, fatalities = $4 WHERE id = $1`,
-			p.id, r.Description, r.Injuries, r.Fatalities); err != nil {
+			`UPDATE anonymous_incident_reports
+			 SET description = $2, injuries = $3, fatalities = $4, location = $5
+			 WHERE id = $1`,
+			p.id, r.Description, r.Injuries, r.Fatalities, string(loc)); err != nil {
 			return 0, err
 		}
 	}
 	return len(found), nil
-}
-
-func insertReports(ctx context.Context, tx *sql.Tx, reports []report, stamp time.Time) error {
-	for start := 0; start < len(reports); start += insertBatch {
-		batch := reports[start:min(start+insertBatch, len(reports))]
-		var sb strings.Builder
-		sb.WriteString(`INSERT INTO anonymous_incident_reports
-			(id, incident_type_id, location, description, entities, injuries, fatalities, created_at, updated_at) VALUES `)
-		args := make([]any, 0, len(batch)*8)
-		for i, r := range batch {
-			if i > 0 {
-				sb.WriteString(",")
-			}
-			n := len(args)
-			fmt.Fprintf(&sb, "($%d, $%d, $%d, $%d, '{}', $%d, $%d, $%d, $%d)", n+1, n+2, n+3, n+4, n+5, n+6, n+7, n+8)
-			args = append(args, r.id, r.typeID, string(r.location), r.description, r.injuries, r.fatalities, r.createdAt, stamp)
-		}
-		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
-			return fmt.Errorf("rows %d–%d: %w", start, start+len(batch), err)
-		}
-	}
-	return nil
 }
