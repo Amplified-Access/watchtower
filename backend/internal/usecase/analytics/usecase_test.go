@@ -42,6 +42,9 @@ func (f *fakeReports) GetTypeDistribution(context.Context) ([]*entity.TypeCount,
 func (f *fakeReports) CountCreatedSince(context.Context, time.Time) (int, error) {
 	return 0, nil
 }
+func (f *fakeReports) CountForMap(context.Context, entity.MapFilter, time.Duration) (*entity.MapCounts, error) {
+	return nil, nil
+}
 func (f *fakeReports) FindForMap(context.Context, entity.MapFilter) ([]*entity.MapReportRow, error) {
 	return nil, nil
 }

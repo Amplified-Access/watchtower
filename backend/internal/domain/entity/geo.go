@@ -26,6 +26,17 @@ var countryCenters = map[string][2]float64{ // [lon, lat]
 	"Myanmar":                      {95.9560, 21.9162},
 }
 
+// MappableCountries are the countries whose reports can go on a map without
+// coordinates, at the country's centre. Queries that count what a map shows
+// need them to match MapCoordinates.
+func MappableCountries() []string {
+	names := make([]string, 0, len(countryCenters))
+	for name := range countryCenters {
+		names = append(names, name)
+	}
+	return names
+}
+
 // MapCoordinates returns where a report belongs on a map as [lon, lat]. A
 // report stored at 0,0 falls back to its country's centre; ok is false when
 // there is nowhere to put it.

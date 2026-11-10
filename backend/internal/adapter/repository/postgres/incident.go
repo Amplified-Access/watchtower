@@ -527,6 +527,60 @@ func (r *AnonymousIncidentReportRepository) FindForMap(ctx context.Context, f en
 	return out, rows.Err()
 }
 
+// CountForMap counts in one query, with grouping sets for the total, each
+// country and each type. Its "has a place on the map" clause mirrors
+// entity.Location.MapCoordinates: coordinates other than 0,0, or a country
+// with a known centre.
+func (r *AnonymousIncidentReportRepository) CountForMap(ctx context.Context, f entity.MapFilter, recent time.Duration) (*entity.MapCounts, error) {
+	args := []interface{}{}
+	where := mapFilterSQL(f, &args)
+	args = append(args, strings.Join(entity.MappableCountries(), "|"))
+	countriesArg := len(args)
+	args = append(args, fmt.Sprintf("%d seconds", int64(recent.Seconds())))
+	recentArg := len(args)
+
+	q := fmt.Sprintf(`WITH m AS (
+			SELECT r.incident_type_id::text AS type_id,
+				NULLIF(r.location->>'country', '') AS country,
+				r.created_at
+			FROM anonymous_incident_reports r
+			WHERE 1=1%s AND (
+				COALESCE((r.location->>'latitude')::float8, 0) <> 0
+				OR COALESCE((r.location->>'longitude')::float8, 0) <> 0
+				OR r.location->>'country' = ANY(string_to_array($%d, '|')))
+		)
+		SELECT GROUPING(country), GROUPING(type_id), country, type_id, count(*),
+			count(*) FILTER (WHERE created_at >= now() - $%d::interval)
+		FROM m
+		GROUP BY GROUPING SETS ((), (country), (type_id))`, where, countriesArg, recentArg)
+
+	rows, err := r.db.QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	counts := &entity.MapCounts{Countries: []entity.MapCountryCount{}, Types: []entity.MapTypeCount{}}
+	for rows.Next() {
+		var countryGrouped, typeGrouped int
+		var country, typeID sql.NullString
+		var total, recentCount int
+		if err := rows.Scan(&countryGrouped, &typeGrouped, &country, &typeID, &total, &recentCount); err != nil {
+			return nil, err
+		}
+		// GROUPING() is 1 for a column rolled up in that row's set.
+		switch {
+		case countryGrouped == 1 && typeGrouped == 1:
+			counts.Total, counts.Recent = total, recentCount
+		case countryGrouped == 0 && country.Valid:
+			counts.Countries = append(counts.Countries, entity.MapCountryCount{Name: country.String, Count: total})
+		case typeGrouped == 0:
+			counts.Types = append(counts.Types, entity.MapTypeCount{ID: typeID.String, Count: total})
+		}
+	}
+	return counts, rows.Err()
+}
+
 // mapFilterSQL appends the shared WHERE clauses for a map filter and returns
 // them, growing args as it goes. The maps and the analytics aggregates run
 // through it so they always count the same rows.

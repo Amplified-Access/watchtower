@@ -117,6 +117,20 @@ func (r *CachedAnonymousReportRepository) Overview(ctx context.Context, limit in
 	return result, nil
 }
 
+// CountForMap is cached like the map rows: same version, same TTL.
+func (r *CachedAnonymousReportRepository) CountForMap(ctx context.Context, filter entity.MapFilter, recent time.Duration) (*entity.MapCounts, error) {
+	key := fmt.Sprintf("%s:counts:r=%d", mapRowsKey(r.rdb.Get(ctx, keyMapVersion).Val(), filter), int64(recent.Seconds()))
+	if cached, ok := cacheGet[*entity.MapCounts](ctx, r.rdb, key); ok {
+		return cached, nil
+	}
+	result, err := r.repo.CountForMap(ctx, filter, recent)
+	if err != nil {
+		return nil, err
+	}
+	cacheSet(ctx, r.rdb, key, result, mapRowsTTL)
+	return result, nil
+}
+
 // analyticsKey reuses the map filter's canonical form, plus the grouping and
 // limit that shape the buckets.
 func analyticsKey(version string, q entity.AnalyticsQuery) string {

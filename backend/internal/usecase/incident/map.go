@@ -93,9 +93,15 @@ func (uc *UseCase) GetMapPoints(ctx context.Context, f entity.MapFilter) (*entit
 }
 
 // GetMapSummary counts the same reports GetMapPoints would draw, so the
-// numbers around a map always match its markers.
+// numbers around a map always match its markers. The counting happens in
+// the database: the summary covers every report, and loading them all to
+// count them would grow with the data.
 func (uc *UseCase) GetMapSummary(ctx context.Context, f entity.MapFilter) (*entity.MapSummary, error) {
-	rows, err := uc.mapRows(ctx, f)
+	f.Query = strings.TrimSpace(f.Query)
+	if err := validateMapFilter(f); err != nil {
+		return nil, err
+	}
+	counts, err := uc.anonRepo.CountForMap(ctx, f, recentWindow)
 	if err != nil {
 		return nil, err
 	}
@@ -108,26 +114,11 @@ func (uc *UseCase) GetMapSummary(ctx context.Context, f entity.MapFilter) (*enti
 		typeByID[t.ID] = t
 	}
 
-	summary := &entity.MapSummary{Countries: []entity.MapCountryCount{}, Types: []entity.MapTypeCount{}}
-	byCountry := map[string]int{}
-	byType := map[string]int{}
-	recentSince := time.Now().Add(-recentWindow)
-	for _, row := range rows {
-		if _, ok := row.Location.MapCoordinates(); !ok {
-			continue
-		}
-		summary.TotalReports++
-		if row.CreatedAt.After(recentSince) {
-			summary.RecentReports++
-		}
-		if row.Location.Country != nil && *row.Location.Country != "" {
-			byCountry[*row.Location.Country]++
-		}
-		byType[row.IncidentTypeID]++
-	}
-
-	for name, count := range byCountry {
-		summary.Countries = append(summary.Countries, entity.MapCountryCount{Name: name, Count: count})
+	summary := &entity.MapSummary{
+		TotalReports:  counts.Total,
+		RecentReports: counts.Recent,
+		Countries:     append([]entity.MapCountryCount{}, counts.Countries...),
+		Types:         make([]entity.MapTypeCount, 0, len(counts.Types)),
 	}
 	sort.Slice(summary.Countries, func(i, j int) bool {
 		a, b := summary.Countries[i], summary.Countries[j]
@@ -137,9 +128,9 @@ func (uc *UseCase) GetMapSummary(ctx context.Context, f entity.MapFilter) (*enti
 		return a.Name < b.Name
 	})
 
-	for id, count := range byType {
-		entry := entity.MapTypeCount{ID: id, Count: count, Name: "Incident"}
-		if t, ok := typeByID[id]; ok {
+	for _, c := range counts.Types {
+		entry := entity.MapTypeCount{ID: c.ID, Count: c.Count, Name: "Incident"}
+		if t, ok := typeByID[c.ID]; ok {
 			entry.Name = t.Name
 			entry.Color = strings.TrimSpace(t.Color)
 		}
