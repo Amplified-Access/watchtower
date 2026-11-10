@@ -63,9 +63,15 @@ refresh:
 	@echo "Refreshing weekly reports..."
 	@go run cmd/refresh/main.go
 
+# Bring the demonstration reports up to TARGET (dry run unless APPLY=1):
+#   make topup TARGET=90962            # show what would change
+#   make topup TARGET=90962 APPLY=1    # change it
+topup:
+	@go run ./cmd/topup -target $(TARGET) $(if $(APPLY),-apply,)
+
 # Generate Swagger docs
 swagger:
 	@echo "Generating Swagger docs..."
 	@swag init -g cmd/api/main.go --parseDependency --parseInternal
 
-.PHONY: all build run test clean watch docker-run docker-down itest swagger seed refresh migrate migrate-status
+.PHONY: all build run test clean watch docker-run docker-down itest swagger seed refresh topup migrate migrate-status
