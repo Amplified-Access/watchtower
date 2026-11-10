@@ -40,6 +40,11 @@ type AnonymousIncidentReportRepository interface {
 	CountCreatedSince(ctx context.Context, since time.Time) (int, error)
 	// FindForMap returns the rows behind the public maps, newest first.
 	FindForMap(ctx context.Context, filter entity.MapFilter) ([]*entity.MapReportRow, error)
+	// CountForMap counts the rows FindForMap returns that have a place on
+	// the map (see entity.Location.MapCoordinates), in total, within the
+	// last `recent`, and by country and incident type. It counts in the
+	// database, so it costs the same however many reports there are.
+	CountForMap(ctx context.Context, filter entity.MapFilter, recent time.Duration) (*entity.MapCounts, error)
 	// Aggregate counts reports and casualties for a filter, optionally
 	// split by one dimension. It counts the same rows FindForMap returns.
 	Aggregate(ctx context.Context, query entity.AnalyticsQuery) (*entity.AnalyticsResult, error)

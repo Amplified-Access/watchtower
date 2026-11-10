@@ -23,6 +23,8 @@ interface ExploreSidebarProps {
     totalCountries: number;
     totalDeployments: number;
     totalLanguages: number;
+    /** False until the map's numbers arrive; they show as a dash meanwhile, not 0. */
+    loaded?: boolean;
   };
   /** "dark" floats over the homepage preview; "light" is the docked live map panel. */
   variant?: "dark" | "light";
@@ -85,13 +87,14 @@ const ExploreSidebar = ({ stats, variant = "dark", headerAction }: ExploreSideba
   const t = useTranslations("HomeLivePreview");
   const s = STYLES[variant];
   const isLight = variant === "light";
+  const count = (value: number) => (stats.loaded === false ? "–" : value);
 
   const navItems = [
     {
       icon: Globe2,
       title: t("navAllReports"),
       subtitle: t("navAllReportsSub"),
-      badge: `${stats.totalReports}+`,
+      badge: stats.loaded === false ? "–" : `${stats.totalReports}+`,
       active: true,
       href: "/maps",
     },
@@ -99,7 +102,7 @@ const ExploreSidebar = ({ stats, variant = "dark", headerAction }: ExploreSideba
       icon: Clock,
       title: t("navRecentReports"),
       subtitle: t("navRecentReportsSub"),
-      badge: String(stats.recentReports),
+      badge: String(count(stats.recentReports)),
       href: "/maps",
     },
     {
@@ -214,8 +217,11 @@ const ExploreSidebar = ({ stats, variant = "dark", headerAction }: ExploreSideba
         </div>
         <div className={s.statGrid}>
           {[
-            { label: t("statReports"), value: isLight ? `${stats.totalReports}+` : stats.totalReports },
-            { label: t("statCountries"), value: stats.totalCountries },
+            {
+              label: t("statReports"),
+              value: isLight && stats.loaded !== false ? `${stats.totalReports}+` : count(stats.totalReports),
+            },
+            { label: t("statCountries"), value: count(stats.totalCountries) },
             { label: t("statLanguages"), value: stats.totalLanguages },
             { label: t("statDeployments"), value: stats.totalDeployments },
           ].map((stat) => (

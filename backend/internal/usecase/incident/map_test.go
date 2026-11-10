@@ -18,7 +18,9 @@ type mockAnonRepo struct {
 	rows       []*entity.MapReportRow
 	report     *entity.AnonymousIncidentReport
 	err        error
+	counts     *entity.MapCounts
 	lastFilter entity.MapFilter
+	lastRecent time.Duration
 	calls      int
 }
 
@@ -26,6 +28,13 @@ func (m *mockAnonRepo) FindForMap(_ context.Context, f entity.MapFilter) ([]*ent
 	m.calls++
 	m.lastFilter = f
 	return m.rows, m.err
+}
+
+func (m *mockAnonRepo) CountForMap(_ context.Context, f entity.MapFilter, recent time.Duration) (*entity.MapCounts, error) {
+	m.calls++
+	m.lastFilter = f
+	m.lastRecent = recent
+	return m.counts, m.err
 }
 
 func (m *mockAnonRepo) FindByID(_ context.Context, _ string) (*entity.AnonymousIncidentReport, error) {
@@ -147,23 +156,30 @@ func TestGetMapPoints_RejectsBadFilters(t *testing.T) {
 
 // ─── GetMapSummary ───────────────────────────────────────────────────────────
 
-func TestGetMapSummary_CountsWhatThePointsShow(t *testing.T) {
-	now := time.Now()
-	old := now.AddDate(0, -2, 0)
-	anon := &mockAnonRepo{rows: []*entity.MapReportRow{
-		{ID: "1", IncidentTypeID: "t1", Location: entity.Location{Latitude: 1, Longitude: 1, Country: strPtr("Kenya")}, CreatedAt: now},
-		{ID: "2", IncidentTypeID: "t1", Location: entity.Location{Latitude: 1, Longitude: 1, Country: strPtr("Kenya")}, CreatedAt: old},
-		{ID: "3", IncidentTypeID: "t2", Location: entity.Location{Latitude: 2, Longitude: 2, Country: strPtr("Uganda")}, CreatedAt: now},
-		// Unplaceable, so it isn't on the map and mustn't be counted either.
-		{ID: "4", IncidentTypeID: "t2", Location: entity.Location{Country: strPtr("Atlantis")}, CreatedAt: now},
+func TestGetMapSummary_NamesAndSortsTheCounts(t *testing.T) {
+	anon := &mockAnonRepo{counts: &entity.MapCounts{
+		Total:  3,
+		Recent: 2,
+		Countries: []entity.MapCountryCount{
+			{Name: "Uganda", Count: 1},
+			{Name: "Kenya", Count: 2},
+		},
+		Types: []entity.MapTypeCount{
+			{ID: "t2", Count: 1},
+			{ID: "t1", Count: 2},
+			{ID: "gone", Count: 1},
+		},
 	}}
 	types := []*entity.IncidentType{
 		{ID: "t1", Name: "Police misconduct", Color: "#ef4444"},
 		{ID: "t2", Name: "Community petitions", Color: "#00FFFF\r\n"},
 	}
-	s, err := newMapUseCase(anon, types).GetMapSummary(context.Background(), entity.MapFilter{})
+	s, err := newMapUseCase(anon, types).GetMapSummary(context.Background(), entity.MapFilter{Query: "  kampala "})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+	if anon.lastRecent != recentWindow || anon.lastFilter.Query != "kampala" {
+		t.Errorf("repository got recent=%v query=%q", anon.lastRecent, anon.lastFilter.Query)
 	}
 	if s.TotalReports != 3 || s.RecentReports != 2 {
 		t.Errorf("total/recent = %d/%d, want 3/2", s.TotalReports, s.RecentReports)
@@ -171,11 +187,28 @@ func TestGetMapSummary_CountsWhatThePointsShow(t *testing.T) {
 	if len(s.Countries) != 2 || s.Countries[0] != (entity.MapCountryCount{Name: "Kenya", Count: 2}) {
 		t.Errorf("countries should be sorted by count, got %+v", s.Countries)
 	}
-	if len(s.Types) != 2 || s.Types[0].Name != "Police misconduct" || s.Types[0].Count != 2 {
+	if len(s.Types) != 3 || s.Types[0].Name != "Police misconduct" || s.Types[0].Count != 2 {
 		t.Errorf("types should be sorted by count, got %+v", s.Types)
+	}
+	// Ties sort by name: "Community petitions" before "Incident" (a type
+	// that has since been deleted).
+	if s.Types[1].Name != "Community petitions" || s.Types[2].Name != "Incident" {
+		t.Errorf("tied types should sort by name, got %+v", s.Types)
 	}
 	if s.Types[1].Color != "#00FFFF" {
 		t.Errorf("type colors should be trimmed, got %q", s.Types[1].Color)
+	}
+}
+
+func TestGetMapSummary_RejectsBadFilters(t *testing.T) {
+	anon := &mockAnonRepo{counts: &entity.MapCounts{}}
+	_, err := newMapUseCase(anon, nil).GetMapSummary(context.Background(), entity.MapFilter{Period: "fortnight"})
+	var domErr *domainerrors.DomainError
+	if !errors.As(err, &domErr) {
+		t.Fatalf("want a domain error, got %v", err)
+	}
+	if anon.calls != 0 {
+		t.Error("a bad filter must not reach the repository")
 	}
 }
 

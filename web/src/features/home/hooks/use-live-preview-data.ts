@@ -130,6 +130,7 @@ export function useLivePreviewData(filters: LivePreviewFilters, deployment?: Map
     totalCountries: summary?.countries.length ?? 0,
     totalDeployments: orgsQuery.data?.total ?? 0,
     totalLanguages: supportedLanguages.length,
+    loaded: summaryQuery.isSuccess,
   };
 
   const categoryIds = useMemo(() => {

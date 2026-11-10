@@ -99,6 +99,15 @@ type MapTypeCount struct {
 	Count int    `json:"count"`
 }
 
+// MapCounts are the numbers behind a MapSummary, counted in the database:
+// Types carry only an ID and a count, and the usecase names them.
+type MapCounts struct {
+	Total     int
+	Recent    int
+	Countries []MapCountryCount
+	Types     []MapTypeCount
+}
+
 // MapSummary is what the map chrome shows around the points: headline
 // numbers, the country list and the most-reported countries and types.
 type MapSummary struct {
