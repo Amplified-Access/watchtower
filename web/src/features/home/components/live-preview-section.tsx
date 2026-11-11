@@ -37,7 +37,7 @@ const LivePreviewSection = () => {
   // The map-layer toggles are gone from the panel, so these are fixed for now.
   const layers = { reports: false, clusters: true, heatmap: false, boundaries: true };
 
-  const { incidentTypes, categoryIds, points, stats, topChips } = useLivePreviewData({
+  const { incidentTypes, categoryIds, points, mappedReports, stats, topChips } = useLivePreviewData({
     timePeriod,
     customRange,
     hiddenCategoryIds,
@@ -99,6 +99,7 @@ const LivePreviewSection = () => {
           <div className="relative z-10 hidden overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10 lg:block lg:w-72 lg:shrink-0 lg:rounded-2xl lg:shadow-2xl lg:backdrop-blur-xl [zoom:var(--viewport-scale)]">
             <ExploreSidebar
               stats={{ ...stats, totalDeployments: DISPLAY_TOTAL_DEPLOYMENTS }}
+              mappedReports={mappedReports}
             />
           </div>
 
@@ -159,7 +160,7 @@ const LivePreviewSection = () => {
               onToggleCategory={(id) =>
                 setHiddenCategoryIds((current) => toggleCategoryVisibility(current, id))
               }
-              totalReports={stats.totalReports}
+              totalReports={mappedReports ?? 0}
               onReset={handleReset}
             />
           </div>
