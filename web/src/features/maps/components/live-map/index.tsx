@@ -60,7 +60,7 @@ const LiveMap = ({ deployment }: { deployment?: Deployment }) => {
   // The map-layer toggles are gone from the panel, so these are fixed for now.
   const layers = DEFAULT_LAYERS;
 
-  const { incidentTypes, categoryIds, countries, points, pointsAreCurrent, mappedReports, stats, topChips } =
+  const { incidentTypes, categoryIds, countries, points, pointsAreCurrent, stats, topChips } =
     useLivePreviewData(
       {
         timePeriod,
@@ -168,7 +168,6 @@ const LiveMap = ({ deployment }: { deployment?: Deployment }) => {
           <div className="h-full">
             <ExploreSidebar
               stats={stats}
-              mappedReports={mappedReports}
               variant="light"
               headerAction={
                 <button
@@ -340,7 +339,7 @@ const LiveMap = ({ deployment }: { deployment?: Deployment }) => {
               countries={countries}
               country={country}
               onCountryChange={setCountry}
-              totalReports={mappedReports ?? 0}
+              totalReports={stats.totalReports}
               onReset={resetFilters}
               onViewReports={() => setIsFiltersOpen(false)}
               headerAction={

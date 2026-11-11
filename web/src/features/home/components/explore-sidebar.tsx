@@ -26,8 +26,6 @@ interface ExploreSidebarProps {
     /** False until the map's numbers arrive; they show as a dash meanwhile, not 0. */
     loaded?: boolean;
   };
-  /** Reports currently shown on the map. When set, it replaces `totalReports` so the count matches what is mapped. */
-  mappedReports?: number;
   /** "dark" floats over the homepage preview; "light" is the docked live map panel. */
   variant?: "dark" | "light";
   /** Rendered beside the Explore heading, e.g. a collapse button. */
@@ -85,25 +83,18 @@ const STYLES = {
 // highlight on hover. Set to true to make them links to their `href` again.
 const NAV_LINKS_ENABLED = false;
 
-const ExploreSidebar = ({
-  stats,
-  mappedReports,
-  variant = "dark",
-  headerAction,
-}: ExploreSidebarProps) => {
+const ExploreSidebar = ({ stats, variant = "dark", headerAction }: ExploreSidebarProps) => {
   const t = useTranslations("HomeLivePreview");
   const s = STYLES[variant];
   const isLight = variant === "light";
   const count = (value: number) => (stats.loaded === false ? "–" : value);
-  const reports = mappedReports ?? stats.totalReports;
-  const reportsLoaded = mappedReports !== undefined || stats.loaded !== false;
 
   const navItems = [
     {
       icon: Globe2,
       title: t("navAllReports"),
       subtitle: t("navAllReportsSub"),
-      badge: reportsLoaded ? `${reports}+` : "–",
+      badge: stats.loaded === false ? "–" : `${stats.totalReports}+`,
       active: true,
       href: "/maps",
     },
@@ -228,7 +219,7 @@ const ExploreSidebar = ({
           {[
             {
               label: t("statReports"),
-              value: isLight && reportsLoaded ? `${reports}+` : reportsLoaded ? reports : "–",
+              value: isLight && stats.loaded !== false ? `${stats.totalReports}+` : count(stats.totalReports),
             },
             { label: t("statCountries"), value: count(stats.totalCountries) },
             { label: t("statLanguages"), value: stats.totalLanguages },
