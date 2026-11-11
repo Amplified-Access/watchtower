@@ -163,18 +163,14 @@ export function useLivePreviewData(filters: LivePreviewFilters, deployment?: Map
     return [...topCountries, ...topCategories];
   }, [summary, incidentTypes]);
 
-  const points = pointsQuery.data ?? EMPTY_POINTS;
-
   return {
     isLoading: pointsQuery.isLoading || typesQuery.isLoading || summaryQuery.isLoading,
     incidentTypes,
     categoryIds,
     countries,
-    points,
+    points: pointsQuery.data ?? EMPTY_POINTS,
     /** False while the map still shows the previous filter's points. */
     pointsAreCurrent: pointsQuery.isSuccess && !pointsQuery.isPlaceholderData,
-    /** Reports currently on the map for the active filters, once loaded. */
-    mappedReports: pointsQuery.data ? points.features.length : undefined,
     stats,
     topChips,
   };
